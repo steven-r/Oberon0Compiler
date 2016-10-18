@@ -30,7 +30,7 @@ namespace Oberon0.Compiler.Expressions
         }
     }
 
-    internal abstract class OperatorExpression: Expression, ICalculatable
+    public abstract class OperatorExpression: Expression, ICalculatable
     {
         public TokenType Operator { get; set; }
         public abstract Expression Calc(Block block);

@@ -2,7 +2,7 @@
 
 namespace Oberon0.Compiler.Expressions
 {
-    class UnaryExpression : OperatorExpression 
+    public class UnaryExpression : OperatorExpression 
     {
         public override Expression Calc(Block block)
         {

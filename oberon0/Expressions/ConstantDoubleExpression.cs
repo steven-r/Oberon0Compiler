@@ -5,7 +5,7 @@ using Oberon0.Compiler.Solver;
 namespace Oberon0.Compiler.Expressions
 {
     [Export(typeof(ICalculatable))]
-    class ConstantDoubleExpression : ConstantExpression, ICalculatable
+    public class ConstantDoubleExpression : ConstantExpression, ICalculatable
     {
         public double Value { get; set; }
 

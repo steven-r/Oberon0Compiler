@@ -19,6 +19,16 @@ namespace UnitTestProject1
         }
 
         [Test]
+        public void EmptyApplication2()
+        {
+            var compiler = new CompilerParser();
+            Module m = compiler.Calculate("MODULE Test; END.");
+
+            Assert.AreEqual("Test", m.Name);
+            Assert.AreEqual(0, m.Block.Declarations.Count);
+        }
+
+        [Test]
         public void ModuleMissingId()
         {
             var compiler = new CompilerParser();

@@ -98,7 +98,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ConstTests.cs" />
+    <Compile Include="ProcedureTests.cs" />
     <Compile Include="RecordTests.cs" />
+    <Compile Include="SimpleExpressionTest.cs" />
     <Compile Include="SimpleStatements.cs" />
     <Compile Include="SimpleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

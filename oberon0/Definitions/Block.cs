@@ -11,6 +11,9 @@ namespace Oberon0.Compiler.Definitions
         public List<TypeDefinition> Types { get; }
 
         public List<BasicStatement> Statements { get; }
+
+        public List<ProcedureDeclaration> Procedures { get; }
+
         public Block Parent { get; set; }
 
         public Block()
@@ -18,6 +21,7 @@ namespace Oberon0.Compiler.Definitions
             Declarations = new List<Declaration>();
             Types = new List<TypeDefinition>();
             Statements = new List<BasicStatement>();
+            Procedures = new List<ProcedureDeclaration>();
         }
 
         public TypeDefinition LookupType(string name)

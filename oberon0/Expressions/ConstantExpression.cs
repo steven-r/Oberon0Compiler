@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Globalization;
 using Loyc;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Solver;
 
 namespace Oberon0.Compiler.Expressions
 {
-    abstract class ConstantExpression : Expression, ICalculatable
+    public abstract class ConstantExpression : Expression, ICalculatable
     {
         public BaseType BaseType { get; set; }
         public TokenType Operator { get; set; }
@@ -20,15 +21,28 @@ namespace Oberon0.Compiler.Expressions
         internal static Expression Create(Token t)
         {
             if (t.Type != TokenType.Num) throw new LogException(null, "Number expected");
-            double val = (double) t.Value;
-            // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if ((val%1) == 0)
-            {
-                return new ConstantIntExpression(Convert.ToInt32(val));
+            string sVal = t.Value as string;
+            double dValue;
+            bool isFloat;
+            if (sVal != null)
+            { // from string
+                dValue = double.Parse(sVal, CultureInfo.InvariantCulture);
+                isFloat = sVal.IndexOf('.') >= 0;
             }
             else
             {
-                return new ConstantDoubleExpression(val);
+                isFloat = t.Value is double || t.Value is float || t.Value is decimal;
+                dValue = Convert.ToDouble(t.Value);
+            }
+
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if (!isFloat)
+            {
+                return new ConstantIntExpression(Convert.ToInt32(t.Value));
+            }
+            else
+            {
+                return new ConstantDoubleExpression(dValue);
             }
         }
 

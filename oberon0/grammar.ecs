@@ -63,6 +63,7 @@ namespace Oberon0.Compiler {
 		Repeat, Until,
 		Type, Var, Const,
 		Array, Of, Record,
+		Procedure,
 
 		Id,
 		Num,
@@ -163,6 +164,7 @@ namespace Oberon0.Compiler {
 			/ "MODULE"	EndId {_tok.Type = TT.Module; }
 			/ "OF"		EndId {_tok.Type = TT.Of; }
 			/ "RECORD"	EndId {_tok.Type = TT.Record; }
+			/ "PROCEDURE"	EndId {_tok.Type = TT.Procedure; }
 			/ "THEN"	EndId {_tok.Type = TT.Then; }
 			/ "TYPE"	EndId {_tok.Type = TT.Type; }
 			/ "VAR"		EndId {_tok.Type = TT.Var; }
@@ -185,7 +187,7 @@ namespace Oberon0.Compiler {
 		private token Num() @[
 			'0'..'9'+
 			('.' '0'..'9'+)?
-			{ _tok.Value = double.Parse(Src.CharSource.Slice(_tok.StartIndex, Src.InputPosition - _tok.StartIndex).ToString()); }
+			{ _tok.Value = Src.CharSource.Slice(_tok.StartIndex, Src.InputPosition - _tok.StartIndex).ToString(); }
 		];
 
 		unroll ((TEXT, TOKEN_NAME) in OPERATOR_TOKEN_LIST)
@@ -323,11 +325,57 @@ namespace Oberon0.Compiler {
 			}
 		];
 
+		private rule ProcedureBody(ProcedureDeclaration proc) @[
+			Declarations(proc.Block)
+			( TT.Begin StatementSequence(proc.Block) ) ?
+			TT.End n:=TT.Id
+			{ string name = n.Value.ToString();
+			  if (name != proc.Name) {
+				Src.Error(0, "END name does not match procedure declaration");
+			  }
+			}
+			// declarations ["BEGIN" StatementSequence] "END" ident
+		];
+
+		private rule FPSection(ProcedureDeclaration proc) @[
+			{bool isVar = false; }
+			(TT.Var { isVar= true;}) ? 
+			n:=TT.Id ":" v:=VarTypeReference(proc.Block)
+			{
+				string name = n.Value.ToString();
+				proc.Parameters.Add(new ProcedureParameter(name, v, isVar)); 
+			}
+		];
+
+		private rule FormalParameters(ProcedureDeclaration proc) @[
+			FPSection(proc) 
+			( ";" FPSection(proc) ) * 
+		];
+
+		private rule ProcedureDeclaration ProcedureHeading(Block block) @[
+			TT.Procedure n:=TT.Id 
+			{ 
+				string name = n.Value.ToString();
+				if (block.Procedures.Any(x => x.Name == name))
+				{
+					Src.Error(0, "This procedure has been defined before");
+				}
+				$result = new ProcedureDeclaration(name, block);
+				block.Procedures.Add($result);
+			}
+			( "(" FormalParameters(result) ")" ) ?
+		];
+
+		// procedure
+		private rule ProcedureDeclaration(Block block) @[
+			p:=ProcedureHeading(block) ";" ProcedureBody(p)
+		];
+		
 		private rule Declarations(Block block) @[
-			(TT.Var ( SingleVarDeclaration(block) ";" ) + 
-			|TT.Type ( SimpleTypeDeclaration(block) ";" ) +
-			|TT.Const ( SingleConstDeclaration(block) ";" ) + 
-			) *
+			( TT.Const ( SingleConstDeclaration(block) ";" ) + ) ?
+			( TT.Type ( SimpleTypeDeclaration(block) ";" ) + ) ?
+			( TT.Var ( SingleVarDeclaration(block) ";" ) + ) ?
+			( ProcedureDeclaration(block) ";" ) *
 		];
 
 		// Expressions
@@ -418,8 +466,8 @@ namespace Oberon0.Compiler {
 		rule Module Module() @[
 			{ $result = module = new Module(); block = module.Block; }
 			TT.Module m:=TT.Id TT.Semicolon Declarations(result.Block) 
-			TT.Begin 
-				StatementSequence(block)
+			( TT.Begin 
+				StatementSequence(block) ) ?
 			TT.End TT.Dot
 			{ $result.Name = m.Value.ToString(); }
 		];
