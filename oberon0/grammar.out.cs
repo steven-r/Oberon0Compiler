@@ -1205,6 +1205,7 @@ namespace Oberon0.Compiler
 		}
 		Module Module()
 		{
+			TokenType la0;
 			Module result = default(Module);
 			#line 419 "grammar.ecs"
 			result = module = new Module();
@@ -1215,8 +1216,12 @@ namespace Oberon0.Compiler
 			var m = Src.Match((int) TT.Id);
 			Src.Match((int) TT.Semicolon);
 			Declarations(result.Block);
-			Src.Match((int) TT.Begin);
-			StatementSequence(block);
+			// Line 421: (TT.Begin StatementSequence)?
+			la0 = (TokenType) Src.LA0;
+			if (la0 == TT.Begin) {
+				Src.Skip();
+				StatementSequence(block);
+			}
 			Src.Match((int) TT.End);
 			Src.Match((int) TT.Dot);
 			result.Name = m.Value.ToString();

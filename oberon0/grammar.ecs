@@ -418,8 +418,8 @@ namespace Oberon0.Compiler {
 		rule Module Module() @[
 			{ $result = module = new Module(); block = module.Block; }
 			TT.Module m:=TT.Id TT.Semicolon Declarations(result.Block) 
-			TT.Begin 
-				StatementSequence(block)
+			( TT.Begin 
+				StatementSequence(block) ) ?
 			TT.End TT.Dot
 			{ $result.Name = m.Value.ToString(); }
 		];
