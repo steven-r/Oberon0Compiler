@@ -102,7 +102,6 @@
     <Compile Include="Statements\IfStatement.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="grammar.ecs">
       <Generator>LLLPG</Generator>
       <LastGenOutput>grammar.out.cs</LastGenOutput>
