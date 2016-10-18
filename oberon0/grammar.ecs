@@ -185,7 +185,7 @@ namespace Oberon0.Compiler {
 		private token Num() @[
 			'0'..'9'+
 			('.' '0'..'9'+)?
-			{ _tok.Value = double.Parse(Src.CharSource.Slice(_tok.StartIndex, Src.InputPosition - _tok.StartIndex).ToString()); }
+			{ _tok.Value = Src.CharSource.Slice(_tok.StartIndex, Src.InputPosition - _tok.StartIndex).ToString(); }
 		];
 
 		unroll ((TEXT, TOKEN_NAME) in OPERATOR_TOKEN_LIST)

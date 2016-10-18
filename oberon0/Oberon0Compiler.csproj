@@ -73,6 +73,7 @@
     <Compile Include="Definitions\RecordTypeDefinition.cs" />
     <Compile Include="Definitions\SimpleTypeDefinition.cs" />
     <Compile Include="Definitions\TypeDefinition.cs" />
+    <Compile Include="Expressions\Arithmetic\PowerExpression.cs" />
     <Compile Include="Expressions\Arithmetic\AddExpression.cs" />
     <Compile Include="Expressions\Arithmetic\ArithmeticRepository.cs" />
     <Compile Include="Expressions\Arithmetic\ModExpression.cs" />

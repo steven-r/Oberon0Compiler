@@ -755,7 +755,7 @@ namespace Oberon0.Compiler
 				}
 			}
 			#line 188 "grammar.ecs"
-			_tok.Value = double.Parse(Src.CharSource.Slice(_tok.StartIndex, Src.InputPosition - _tok.StartIndex).ToString());
+			_tok.Value = Src.CharSource.Slice(_tok.StartIndex, Src.InputPosition - _tok.StartIndex).ToString();
 			#line default
 		}
 	}
