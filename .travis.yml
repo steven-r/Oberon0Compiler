@@ -5,4 +5,4 @@ install:
   - nuget install NUnit.ConsoleRunner -Version 3.5.0 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release oberon0.sln
-  - mono ./testrunner/NUnit.ConsoleRunner.3.5.0/tools/nunit-console.exe ./UnitTestProject1/bin/Release/UnitTestProject1.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.5.0/tools/nunit3-console.exe ./UnitTestProject1/bin/Release/UnitTestProject1.dll
