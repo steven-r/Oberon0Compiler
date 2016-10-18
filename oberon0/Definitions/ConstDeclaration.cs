@@ -7,7 +7,7 @@ using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Definitions
 {
-    class ConstDeclaration: Declaration
+    public class ConstDeclaration: Declaration
     {
         public ConstantExpression Value { get; set; }
 

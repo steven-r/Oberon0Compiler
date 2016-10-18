@@ -7,7 +7,7 @@ using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Compiler.Expressions
 {
-    class VariableReferenceExpression: Expression
+    public class VariableReferenceExpression : Expression
     {
         public string Name { get; set; }
 

@@ -4,7 +4,7 @@ using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Statements
 {
-    class IfStatement : BasicStatement
+    public class IfStatement : BasicStatement
     {
         public List<Expression> Conditions { get; set; }
 

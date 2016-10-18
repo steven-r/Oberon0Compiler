@@ -6,7 +6,7 @@ using Oberon0.Compiler.Solver;
 
 namespace Oberon0.Compiler.Expressions
 {
-    abstract class ConstantExpression : Expression, ICalculatable
+    public abstract class ConstantExpression : Expression, ICalculatable
     {
         public BaseType BaseType { get; set; }
         public TokenType Operator { get; set; }

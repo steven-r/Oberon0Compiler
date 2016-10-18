@@ -6,7 +6,7 @@ using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Compiler.Expressions
 {
-    abstract class Expression
+    public abstract class Expression
     {
 
         public BaseType TargetType { get; set; }
