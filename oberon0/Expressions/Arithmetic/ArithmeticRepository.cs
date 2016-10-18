@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Oberon0.Compiler.Solver;
 
 namespace Oberon0.Compiler.Expressions.Arithmetic
@@ -16,6 +11,7 @@ namespace Oberon0.Compiler.Expressions.Arithmetic
 
 #pragma warning disable 649
         [ImportMany(typeof(ICalculatable))]
+        // ReSharper disable once CollectionNeverUpdated.Global
         public List<ICalculatable> ClassRepository;
 #pragma warning restore 649
 
