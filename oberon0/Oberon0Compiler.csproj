@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FE7E3848-F08B-45EA-8083-353BDA6BCC92}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Oberon0.Compiler</RootNamespace>
+    <AssemblyName>Oberon0.Compiler</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Loyc.Collections, Version=1.7.6.0, Culture=neutral, PublicKeyToken=b1460dff8a28f7a7, processorArchitecture=MSIL">
+      <HintPath>..\packages\LoycCore.1.8.0\lib\net45\Loyc.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Loyc.Essentials, Version=1.7.6.0, Culture=neutral, PublicKeyToken=b1460dff8a28f7a7, processorArchitecture=MSIL">
+      <HintPath>..\packages\LoycCore.1.8.0\lib\net45\Loyc.Essentials.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Loyc.Syntax, Version=1.7.6.0, Culture=neutral, PublicKeyToken=b1460dff8a28f7a7, processorArchitecture=MSIL">
+      <HintPath>..\packages\LoycCore.1.8.0\lib\net45\Loyc.Syntax.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Loyc.Utilities, Version=1.7.6.0, Culture=neutral, PublicKeyToken=b1460dff8a28f7a7, processorArchitecture=MSIL">
+      <HintPath>..\packages\LoycCore.1.8.0\lib\net45\Loyc.Utilities.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.Composition.Registration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Reflection.Context" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Definitions\ArrayTypeDefinition.cs" />
+    <Compile Include="Definitions\BaseType.cs" />
+    <Compile Include="Definitions\Block.cs" />
+    <Compile Include="Definitions\ConstDeclaration.cs" />
+    <Compile Include="Definitions\Declaration.cs" />
+    <Compile Include="Definitions\RecordTypeDefinition.cs" />
+    <Compile Include="Definitions\SimpleTypeDefinition.cs" />
+    <Compile Include="Definitions\TypeDefinition.cs" />
+    <Compile Include="Expressions\Arithmetic\AddExpression.cs" />
+    <Compile Include="Expressions\Arithmetic\ArithmeticRepository.cs" />
+    <Compile Include="Expressions\Arithmetic\ModExpression.cs" />
+    <Compile Include="Expressions\Arithmetic\MultExpression.cs" />
+    <Compile Include="Expressions\Arithmetic\SubExpression.cs" />
+    <Compile Include="Expressions\Arithmetic\DivExpression.cs" />
+    <Compile Include="Expressions\Arithmetic\UnaryMinusExpression.cs" />
+    <Compile Include="Expressions\BinaryExpression.cs" />
+    <Compile Include="Expressions\ConstantDoubleExpression.cs" />
+    <Compile Include="Expressions\ConstantExpression.cs" />
+    <Compile Include="Expressions\ConstantIntExpression.cs" />
+    <Compile Include="Expressions\Expression.cs" />
+    <Compile Include="Expressions\ExpressionHelper.cs" />
+    <Compile Include="Expressions\UnaryExpression.cs" />
+    <Compile Include="Expressions\VariableReferenceExpression.cs" />
+    <Compile Include="grammar.out.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>grammar.ecs</DependentUpon>
+    </Compile>
+    <Compile Include="Definitions\Module.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Solver\ConstantSolver.cs" />
+    <Compile Include="Solver\ICalculatable.cs" />
+    <Compile Include="Statements\AssignmentStatement.cs" />
+    <Compile Include="Statements\BasicStatement.cs" />
+    <Compile Include="Statements\IfStatement.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="grammar.ecs">
+      <Generator>LLLPG</Generator>
+      <LastGenOutput>grammar.out.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

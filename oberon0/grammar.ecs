@@ -1,0 +1,427 @@
+﻿/*
+*/
+#importMacros(Loyc.LLPG); // Only needed if compiling with Custom Tool = LeMP
+using System;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using Loyc;
+using Loyc.Collections;
+using Loyc.Syntax.Lexing; // for LexerSource, ISimpleToken<int>
+using Loyc.Syntax;        // for ParserSource<Token>
+
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Solver;
+using Oberon0.Compiler.Statements;
+
+using Oberon0.Compiler.Expressions.Arithmetic;
+
+namespace Oberon0.Compiler {
+	// Please read this article to learn more about `unroll` and `replace`:
+	// http://www.codeproject.com/Articles/995264/Avoid-tedious-coding-with-LeMP-Part
+	//
+	// A list of simple tokens to be represented literally (note: a slightly more
+	// sophisticated approach is needed for keywords, see LLLPG Part 5 article.)
+	replace (OPERATOR_TOKEN_LIST => (
+		(">>", Shr),    // Note: as a general rule, in your lexer you should list 
+		(">=", GE),
+		(">",  GT),
+		("<<", Shl),    // longer operators first. We will use this token list 
+		("<=", LE),
+		("<",  LT),
+		(".",  Dot),
+		("^",  Exp),
+		("*",  Mul),
+		("/",  Div),
+		("+",  Add),
+		("-",  Sub),
+		(";",  Semicolon),
+		(":=", Assign),
+		("=",  Equals),
+		(":",  Colon),
+		(",",  Comma),
+		("#",  NotEquals),
+		("(",  LParen),
+		(")",  RParen)));
+
+	
+	using TT = TokenType; // Abbreviate TokenType as TT
+
+	// Usually you'll need an enum containing the kinds of tokens you'll recognize.
+	public enum TokenType
+	{
+		EOF = 0, // If you use EOF = 0, default(Token) represents End-Of-File (or end-of-input)
+		
+		// keywords
+		Or,
+		Mod,
+		Module,
+		If, Then, IfElse, Else,
+		Begin, End,
+		While, Do,
+		Repeat, Until,
+		Type, Var, Const,
+		Array, Of, Record,
+
+		Id,
+		Num,
+		unroll ((_, TOKEN_NAME) in OPERATOR_TOKEN_LIST)
+		{
+			TOKEN_NAME; // inside 'unroll', must use ';' instead of ',' as separator
+		},
+		Unary, // -value
+		Unknown
+	}
+
+	public struct Token : ISimpleToken<int>
+	{
+		public TokenType Type { get; set; }
+		public object Value   { get; set; }
+		public int StartIndex { get; set; }
+		int ISimpleToken<int>.Type { get { return (int)Type; } }
+		public override string ToString() {
+			return string.Format("{0:G} -> {1}", Type, Value ?? "NULL");
+		}
+	}
+
+	//--------------------------------------------------------------------------
+	//-- LEXER -----------------------------------------------------------------
+	//--------------------------------------------------------------------------
+
+	partial class CalculatorLexer : IEnumerator<Token>
+	{
+		LLLPG (lexer(inputSource: Src, inputClass: LexerSource));
+		
+		// The Src object provides the API used by LLLPG. It holds three things: 
+		// 1. The input data (Src.CharSource, a wrapper around the original
+		//    input string that implements ICharSource) 
+		// 2. The current input position (InputPosition), which is incremented
+		//    whenever a character is matched.
+		// 3. A "source file" object (Src.SourceFile, an implementation of
+		//    ISourceFile). It which holds an optional file name, and can 
+		//    convert a character index to a line+column pair with code like
+		//    Src.SourceFile.IndexToLine(index).Line
+		public LexerSource Src { get; set; }
+
+
+		public CalculatorLexer(string text, string fileName = "") 
+			{ Src = (LexerSource)text; }
+		public CalculatorLexer(ICharSource text, string fileName = "") 
+			{ Src = new LexerSource(text); }
+
+		Token _tok;
+		public Token Current
+		{
+			get { return _tok; }
+		}
+
+		#region IEnumerator
+		// Three annoying extra things required by IEnumerator. To avoid writing
+		// these functions, set the base class to EnumeratorBase<Token>. (But if 
+		// you do that, MoveNext() must set the base class's Current property).
+		object System.Collections.IEnumerator.Current
+		{ 
+			get { return Current; }
+		}
+		void System.Collections.IEnumerator.Reset()
+		{
+			Src.Reset();
+		}
+		void IDisposable.Dispose() 
+		{
+		}
+		#endregion 
+
+		public token bool MoveNext()
+		{
+			@[ (' '|'\t'|'\n'|'\r')* ];  // Skip spaces between tokens
+			_tok.StartIndex = Src.InputPosition;
+			_tok.Value = null;
+			@[ { _tok.Type = TT.Num;    } Num
+			 | { _tok.Type = TT.Num;    } ".nan" { _tok.Value = double.NaN; }
+			 | { _tok.Type = TT.Num;    } ".inf" { _tok.Value = double.PositiveInfinity; }
+			 | any punctuation // matches any of the punctuation rules
+			 | IdOrKeyword
+			 | error           // error branch - if input matches none of the above
+			   { _tok.Type = TT.EOF; } (_ { _tok.Type = TT.Unknown; })? 
+			 ];
+			return _tok.Type != TT.EOF;
+		}
+
+		[k(9)]
+		private token IdOrKeyword @[ 
+			  "ARRAY"	EndId {_tok.Type = TT.Array;}
+			/ "BEGIN"	EndId {_tok.Type = TT.Begin;}
+			/ "CONST"	EndId {_tok.Type = TT.Const;}
+			/ "IF"		EndId {_tok.Type = TT.If; }
+			/ "IFELSE"	EndId {_tok.Type = TT.IfElse; }
+			/ "DIV"		EndId {_tok.Type = TT.Div; }
+			/ "END"		EndId {_tok.Type = TT.End;}
+			/ "ELSE"	EndId {_tok.Type = TT.Else; }
+			/ "MOD"		EndId {_tok.Type = TT.Mod; }
+			/ "MODULE"	EndId {_tok.Type = TT.Module; }
+			/ "OF"		EndId {_tok.Type = TT.Of; }
+			/ "RECORD"	EndId {_tok.Type = TT.Record; }
+			/ "THEN"	EndId {_tok.Type = TT.Then; }
+			/ "TYPE"	EndId {_tok.Type = TT.Type; }
+			/ "VAR"		EndId {_tok.Type = TT.Var; }
+		    / Id              {_tok.Type = TT.Id; }
+		];
+
+		// If a keyword is followed by a letter or number then it is NOT a keyword.
+		// So this rule is used to cause LLLPG to verify that there is no letter or
+		// number after the keyword. 'inline' ensures that the effect of this rule 
+		// internalized to IdOrKeyword, and `extern` suppresses generating the empty 
+		// method that would be created for this rule.
+		extern inline token EndId @{ (~('a'..'z'|'A'..'Z'|'0'..'9'|'_') | EOF) => };
+
+		private token Id() @[
+			('a'..'z'|'A'..'Z'|'_')
+			('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+			{ _tok.Value = Src.CharSource.Slice(_tok.StartIndex, Src.InputPosition - _tok.StartIndex).ToString(); }
+		];
+
+		private token Num() @[
+			'0'..'9'+
+			('.' '0'..'9'+)?
+			{ _tok.Value = double.Parse(Src.CharSource.Slice(_tok.StartIndex, Src.InputPosition - _tok.StartIndex).ToString()); }
+		];
+
+		unroll ((TEXT, TOKEN_NAME) in OPERATOR_TOKEN_LIST)
+		{
+			extern inline punctuation rule TOKEN_NAME() { 
+				@[ TEXT ]; _tok.Type = TT.TOKEN_NAME;
+			}
+		}
+	}
+
+	//--------------------------------------------------------------------------
+	//-- PARSER ----------------------------------------------------------------
+	//--------------------------------------------------------------------------
+
+	public partial class CompilerParser
+	{
+		public ParserSource<Token> Src { get; set; } // LLLPG API
+
+		internal static ArithmeticRepository CalculationRepository = new ArithmeticRepository();
+
+		public Module module {get; set;}
+		public Block block {get; set;}
+
+		public Module Calculate(string input)
+		{
+			Token EofToken = new Token { Type = TT.EOF };
+			var lexer = new CalculatorLexer(input);
+			// ParserSource accepts any IEnumerator<Token> for its first parameter
+			Src = new ParserSource<Token>(lexer, EofToken, lexer.Src.SourceFile) { 
+				TokenTypeToString = tt => ((TT)tt).ToString()
+			};
+			var result = Module();
+			// emit an error if we reach end of expression before end-of-input
+			Src.Match((int) TT.EOF);
+			return result;
+		}
+
+		
+		LLLPG (parser(laType: TokenType, matchType: int, 
+		              inputSource: Src, inputClass: ParserSource<Token>));
+
+		unroll ((TEXT, TOKEN_NAME) in OPERATOR_TOKEN_LIST) {
+			alias(TEXT = TT.TOKEN_NAME);
+		}
+
+		private rule RecordElement(RecordTypeDefinition typeDefinition) @[
+			i:=TT.Id ":" v:=VarTypeReference(block) 
+			{
+				string name = i.Value.ToString();
+				if (typeDefinition.Elements.Any (x => x.Name == name)) {
+					Src.Error(0, "The element '{0}' has been defined already", name);
+				} 
+				else
+				{
+					typeDefinition.Elements.Add(new Declaration(i.Value.ToString(), v));
+				}
+			}
+		];
+
+		private rule TypeDefinition VarTypeReference(Block block) @[
+		    i:=TT.Id { 
+				$result = block.LookupType(i.Value.ToString()); 
+				if ($result == null) Src.Error(0, "Type '{0}' not found", i.Value.ToString()); 
+			}
+			| TT.Array e:=SimpleExpression TT.Of t:=VarTypeReference(block) {
+				var constex = ConstantSolver.Solve(e, block) as ConstantIntExpression;
+				if (constex == null) {
+					Src.Error(0, "The array size must resolve as INTEGER");
+				}
+				else {
+					$result = new ArrayTypeDefinition(constex.ToInt32(), t);
+				}
+			}
+			| TT.Record { var rtd = new RecordTypeDefinition(); }
+				( RecordElement(rtd) ";") +
+			  TT.End { $result = rtd; }
+		];
+
+		private rule IdListElement(Block block, List<string> idList) @[
+			n:=TT.Id { 
+				string name = n.Value.ToString();
+				if (block.Declarations.Any (x => x.Name == name) || idList.Any(x => x == name)) {
+					Src.Error(0, "The identifier {0} has been defined already", name);
+				} 
+				else
+				{
+					idList.Add(name);
+				}
+			}
+		];
+
+		private rule List<string> IdList(Block block) @[
+			{ List<string> ids = new List<string>(); }
+			(
+			 IdListElement(block, ids)
+			 ( "," IdListElement(block, ids) ) *
+			)
+			{return ids;} 
+			| error { Src.Error(0, "An identifier is expected here"); return null;}
+		];
+
+		private rule SingleVarDeclaration(Block block) @[
+			ids:=IdList(block)
+			":" t:=VarTypeReference(block) {
+				foreach(string v in ids)
+					block.Declarations.Add(new Declaration(v, t, block));
+			}
+		];
+
+		private rule SimpleTypeDeclaration(Block block) @[
+			i:=TT.Id "=" v:=VarTypeReference(block) {
+				string name = i.Value.ToString();
+				if (block.Types.Any (x => x.Name == name)) {
+					Src.Error(0, "The type '{0}' has been defined already", name);
+				} 
+				else
+				{
+					v.Name = i.Value.ToString();
+					block.Types.Add(v);
+				}
+			}
+		];
+
+		private rule SingleConstDeclaration(Block block) @[
+			i:=TT.Id "=" e:=SimpleExpression {
+				string name = i.Value.ToString();
+				if (block.Declarations.Any (x => x.Name == name)) {
+					Src.Error(0, "The identifier '{0}' has been defined already", name);
+				} 
+				else
+				{
+					var constex = ConstantSolver.Solve(e, block) as ConstantExpression;
+					block.Declarations.Add(new ConstDeclaration(name, new SimpleTypeDefinition(constex.TargetType, name), constex, block));
+				}
+			}
+		];
+
+		private rule Declarations(Block block) @[
+			(TT.Var ( SingleVarDeclaration(block) ";" ) + 
+			|TT.Type ( SimpleTypeDeclaration(block) ";" ) +
+			|TT.Const ( SingleConstDeclaration(block) ";" ) + 
+			) *
+		];
+
+		// Expressions
+		private rule Expression Term @[
+			( t:=TT.Id  { $result = VariableReferenceExpression.Create(block, t.Value.ToString()); 
+				if ($result == null) { Src.Error(0, "The variable {0} is not known", t.Value); }
+				}
+			| t:=TT.Num { $result = ConstantExpression.Create(t); }
+			| "(" result:SimpleExpression ")"
+			| error     { $result = null; Src.Error(0, "Expected identifer, number, or (parens)"); }
+			)
+			greedy 
+			[ "^" t:=Term { $result = BinaryExpression.Create(TT.Exp, result, t); } ]*
+		];
+
+		private rule Expression PrefixExpr @[
+			"-" t:=Term { $result = Expression.CreateUnary(TT.Unary, t); }
+			| t:=Term { $result = t; }
+		];
+
+		private rule Expression MulExpr @[
+			result:PrefixExpr
+			(op:=("*"|"/") rhs:=PrefixExpr { $result = BinaryExpression.Create(op.Type, $result, rhs); })*
+		];
+
+		private rule Expression SimpleExpression @[
+			result:MulExpr
+			(op:=("+"|"-") rhs:=MulExpr { $result = BinaryExpression.Create(op.Type, $result, rhs); })*
+		];
+
+		private rule Expression RelationalExpression @[
+			result:SimpleExpression 
+			{
+				if ($result.TargetType != BaseType.BoolType) {
+					Src.Error(0, "Expression which can evaluate to bool required");
+				}
+			}
+			( t:=("<" | "<=" | ">" | ">=" | "=" | "#") 
+				  rhs:=SimpleExpression { $result = BinaryExpression.Create(t.Type, $result, rhs); } 
+				if ($result.TargetType != BaseType.BoolType) {
+					Src.Error(0, "Expression which can evaluate to bool required");
+				}
+			) ?
+		];
+
+		// statements
+		private rule StatementSequence(Block block) @[
+			( SingleStatement(block) ";" ) *
+		];
+
+		private rule AssignmentStmt(Block block) @[
+			v:=TT.Id 
+			{
+				var variable = block.LookupVar(v.Value.ToString());
+				if (variable == null) {
+					Src.Error(0, "Variable not found");
+				}
+			}
+			":=" e:=SimpleExpression 
+			{
+				block.Statements.Add(new AssignmentStatement{Variable = variable, Expression = e});
+			}
+		];
+
+		private rule IfStmt(Block block) @[
+			{ IfStatement ifs = new IfStatement(); }
+			c:=RelationalExpression TT.Then
+				{ Block thenBlock = new Block(); thenBlock.Parent = block; }
+			StatementSequence(thenBlock) { ifs.Conditions.Add(c); ifs.ThenParts.Add(thenBlock); }
+			( TT.IfElse c1:=RelationalExpression TT.Then 
+				{ thenBlock = new Block(); thenBlock.Parent = block; }
+			  StatementSequence(thenBlock)
+				{ ifs.Conditions.Add(c1); ifs.ThenParts.Add(thenBlock); }
+			) *
+			( TT.Else 
+				{ Block elseBlock = new Block(); elseBlock.Parent = block; }
+			  StatementSequence(elseBlock)
+			) ?
+			{ block.Statements.Add(ifs); }
+		];
+
+		private rule SingleStatement(Block block) @[
+			AssignmentStmt(block)
+			| TT.If IfStmt(block)
+		];
+
+		// Module
+		rule Module Module() @[
+			{ $result = module = new Module(); block = module.Block; }
+			TT.Module m:=TT.Id TT.Semicolon Declarations(result.Block) 
+			TT.Begin 
+				StatementSequence(block)
+			TT.End TT.Dot
+			{ $result.Name = m.Value.ToString(); }
+		];
+	}
+} // end namespace
