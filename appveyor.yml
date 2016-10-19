@@ -20,6 +20,7 @@ before_build:
 
 test_script:
 - cmd: nunit3-console "%APPVEYOR_BUILD_FOLDER%\UnitTestProject1\bin\Debug\UnitTestProject1.dll" --result:nunit2
+- cmd: dir
 
 after_test:
 - cmd: MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
