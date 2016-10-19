@@ -19,7 +19,7 @@ before_build:
 - cmd: MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"{version}" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken%
 
 test_script:
-- cmd: nunit3-console "%APPVEYOR_BUILD_FOLDER%\UnitTestProject1\bin\Debug\UnitTestProject1.dll" --result:nunit2
+- cmd: nunit3-console "%APPVEYOR_BUILD_FOLDER%\UnitTestProject1\bin\Debug\UnitTestProject1.dll" --result:TestReport.xml;format=nunit2
 - cmd: dir
 
 after_test:
