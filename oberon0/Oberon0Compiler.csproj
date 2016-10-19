@@ -70,6 +70,7 @@
     <Compile Include="Definitions\Block.cs" />
     <Compile Include="Definitions\ConstDeclaration.cs" />
     <Compile Include="Definitions\Declaration.cs" />
+    <Compile Include="Definitions\Module.StandardFunctions.cs" />
     <Compile Include="Definitions\ProcedureDeclaration.cs" />
     <Compile Include="Definitions\ProcedureParameter.cs" />
     <Compile Include="Definitions\RecordTypeDefinition.cs" />

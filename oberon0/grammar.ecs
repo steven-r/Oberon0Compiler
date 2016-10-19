@@ -332,7 +332,6 @@ namespace Oberon0.Compiler {
 				Src.Error(0, "END name does not match procedure declaration");
 			  }
 			}
-			// declarations ["BEGIN" StatementSequence] "END" ident
 		];
 
 		private rule FPSection(ProcedureDeclaration proc) @[
@@ -396,7 +395,7 @@ namespace Oberon0.Compiler {
 
 		private rule Expression MulExpr @[
 			result:PrefixExpr
-			(op:=("*"|"/") rhs:=PrefixExpr { $result = BinaryExpression.Create(op.Type, $result, rhs); })*
+			(op:=("*"|"/"|TT.Div|TT.Mod) rhs:=PrefixExpr { $result = BinaryExpression.Create(op.Type, $result, rhs); })*
 		];
 
 		private rule Expression SimpleExpression @[

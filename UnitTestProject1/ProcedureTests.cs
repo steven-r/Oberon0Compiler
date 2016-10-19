@@ -23,8 +23,7 @@ END Test1;
 
 BEGIN END.");
 
-            Assert.AreEqual(1, m.Block.Procedures.Count);
-            Assert.AreEqual("Test1", m.Block.Procedures[0].Name);
+            Assert.NotNull(m.Block.LookupProcedure("Test1"));
         }
 
         [Test]
@@ -38,9 +37,11 @@ END Test1;
 
 BEGIN END.");
 
-            Assert.AreEqual(1, m.Block.Procedures[0].Parameters.Count);
-            Assert.AreEqual("a", m.Block.Procedures[0].Parameters[0].Name);
-            Assert.AreEqual(false, m.Block.Procedures[0].Parameters[0].IsVar);
+            ProcedureDeclaration p = m.Block.LookupProcedure("Test1");
+            Assert.NotNull(p);
+            Assert.AreEqual(1, p.Parameters.Count);
+            Assert.AreEqual("a", p.Parameters[0].Name);
+            Assert.AreEqual(false, p.Parameters[0].IsVar);
         }
 
         [Test]
@@ -54,8 +55,11 @@ END Test1;
 
 BEGIN END.");
 
-            Assert.AreEqual(1, m.Block.Procedures[0].Parameters.Count);
-            Assert.AreEqual(true, m.Block.Procedures[0].Parameters[0].IsVar);
+            ProcedureDeclaration p = m.Block.LookupProcedure("Test1");
+            Assert.NotNull(p);
+            Assert.AreEqual(1, p.Parameters.Count);
+            Assert.AreEqual(BaseType.IntType, p.Parameters[0].Type.BaseType);
+            Assert.AreEqual(true, p.Parameters[0].IsVar);
         }
 
     }

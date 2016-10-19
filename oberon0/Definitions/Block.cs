@@ -39,12 +39,37 @@ namespace Oberon0.Compiler.Definitions
             return null;
         }
 
+        /// <summary>
+        /// Lookups a variable.
+        /// </summary>
+        /// <param name="name">The variable name.</param>
+        /// <returns>Declaration.</returns>
         public Declaration LookupVar(string name)
         {
             Block b = this;
             while (b != null)
             {
                 var res = b.Declarations.FirstOrDefault(x => x.Name == name);
+                if (res != null)
+                {
+                    return res;
+                }
+                b = b.Parent;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Lookup a procedure definition
+        /// </summary>
+        /// <param name="procedureName">Name of the procedure.</param>
+        /// <returns>ProcedureDeclaration.</returns>
+        public ProcedureDeclaration LookupProcedure(string procedureName)
+        {
+            Block b = this;
+            while (b != null)
+            {
+                var res = b.Procedures.FirstOrDefault(x => x.Name == procedureName);
                 if (res != null)
                 {
                     return res;
