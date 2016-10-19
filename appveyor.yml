@@ -18,5 +18,5 @@ before_build:
 - cmd: choco install "msbuild-sonarqube-runner" -y
 - cmd: MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"{version}" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken%
 
-after_build:
+after_test:
 - cmd: MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
