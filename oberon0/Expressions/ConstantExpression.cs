@@ -13,7 +13,8 @@ namespace Oberon0.Compiler.Expressions
 
         protected ConstantExpression(BaseType baseType)
         {
-            BaseType = TargetType = baseType;
+            BaseType = baseType;
+            TargetType = baseType;
         }
 
         private ConstantExpression() {}

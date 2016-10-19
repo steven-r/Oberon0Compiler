@@ -1,4 +1,7 @@
-# Oberon0Compiler
+# Oberon-0 Compiler
+
+[![Build status](https://ci.appveyor.com/api/projects/status/pcc7f0s3bq7m6sfh/branch/develop?svg=true)](https://ci.appveyor.com/project/steven-r/oberon0compiler/branch/develop)
+
 An implementation of N. Wirths Oberon 0 language implemented with C# and LLPG. 
 The aim is to support both, the RISC instruction set by N. Wirth and MSIL.
 

@@ -14,11 +14,21 @@ namespace Oberon0.Compiler.Definitions
 
         public List<ProcedureParameter> Parameters { get; }
 
-        public ProcedureDeclaration(string name, Block parent)
+        public bool IsInternal { get; set; }
+
+        public ProcedureDeclaration(string name, Block parent, params ProcedureParameter[] parameters)
         {
             Name = name;
-            Block = new Block {Parent = parent};
-            Parameters = new List<ProcedureParameter>();
+            Block = new Block { Parent = parent };
+            Parameters = new List<ProcedureParameter>(parameters);
+        }
+
+        public ProcedureDeclaration(string name, Block parent, bool isInternal, params ProcedureParameter[] parameters)
+        {
+            Name = name;
+            Block = new Block { Parent = parent };
+            Parameters = new List<ProcedureParameter>(parameters);
+            IsInternal = isInternal;
         }
     }
 }
