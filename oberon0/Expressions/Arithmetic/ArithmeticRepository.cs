@@ -15,18 +15,15 @@ namespace Oberon0.Compiler.Expressions.Arithmetic
         public List<ICalculatable> ClassRepository;
 #pragma warning restore 649
 
-        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-        private readonly CompositionContainer _container;
-
         public ArithmeticRepository()
         {
             var catalog = new AggregateCatalog();
             catalog.Catalogs.Add(new AssemblyCatalog(typeof(ICalculatable).Assembly));
 
-            _container = new CompositionContainer(catalog,
-                                      CompositionOptions.DisableSilentRejection |
-                                      CompositionOptions.IsThreadSafe);
-            _container.ComposeParts(this);
+            var container = new CompositionContainer(catalog,
+                CompositionOptions.DisableSilentRejection |
+                CompositionOptions.IsThreadSafe);
+            container.ComposeParts(this);
         }
     }
 }
