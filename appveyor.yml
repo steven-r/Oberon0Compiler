@@ -16,7 +16,7 @@ assembly_info:
 before_build:
 - cmd: nuget restore
 - cmd: choco install "msbuild-sonarqube-runner" -y
-- cmd: MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"{version}" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=[SonarToken]
+- cmd: MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"{version}" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken%
 
 after_build:
-- cmd: MSBuild.SonarQube.Runner.exe end /d:sonar.login=[SonarToken]
+- cmd: MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
