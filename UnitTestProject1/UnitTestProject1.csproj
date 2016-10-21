@@ -97,6 +97,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Complex\FullExample.cs" />
     <Compile Include="ConstTests.cs" />
     <Compile Include="ProcedureTests.cs" />
     <Compile Include="RecordTests.cs" />
@@ -113,6 +114,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>

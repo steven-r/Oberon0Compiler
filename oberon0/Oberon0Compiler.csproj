@@ -36,6 +36,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=10.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Loyc.Collections, Version=1.7.6.0, Culture=neutral, PublicKeyToken=b1460dff8a28f7a7, processorArchitecture=MSIL">
       <HintPath>..\packages\LoycCore.1.8.0\lib\net45\Loyc.Collections.dll</HintPath>
       <Private>True</Private>
@@ -54,7 +58,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.ComponentModel.Composition.Registration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Reflection.Context" />
     <Reference Include="System.Xml.Linq" />
@@ -71,26 +74,33 @@
     <Compile Include="Definitions\ConstDeclaration.cs" />
     <Compile Include="Definitions\Declaration.cs" />
     <Compile Include="Definitions\Module.StandardFunctions.cs" />
-    <Compile Include="Definitions\ProcedureDeclaration.cs" />
+    <Compile Include="Definitions\FunctionDeclaration.cs" />
     <Compile Include="Definitions\ProcedureParameter.cs" />
     <Compile Include="Definitions\RecordTypeDefinition.cs" />
     <Compile Include="Definitions\SimpleTypeDefinition.cs" />
     <Compile Include="Definitions\TypeDefinition.cs" />
-    <Compile Include="Expressions\Arithmetic\PowerExpression.cs" />
-    <Compile Include="Expressions\Arithmetic\AddExpression.cs" />
-    <Compile Include="Expressions\Arithmetic\ArithmeticRepository.cs" />
-    <Compile Include="Expressions\Arithmetic\ModExpression.cs" />
-    <Compile Include="Expressions\Arithmetic\MultExpression.cs" />
-    <Compile Include="Expressions\Arithmetic\SubExpression.cs" />
-    <Compile Include="Expressions\Arithmetic\DivExpression.cs" />
-    <Compile Include="Expressions\Arithmetic\UnaryMinusExpression.cs" />
+    <Compile Include="Definitions\VariableSelector.cs" />
+    <Compile Include="Expressions\ConstantBoolExpression.cs" />
+    <Compile Include="Expressions\FunctionCallExpression.cs" />
+    <Compile Include="Expressions\Operations\Internal\ArithmeticOperation.cs" />
+    <Compile Include="Expressions\Operations\Internal\ArithmeticOpKey.cs" />
+    <Compile Include="Expressions\ExpressionRepository.cs" />
     <Compile Include="Expressions\BinaryExpression.cs" />
     <Compile Include="Expressions\ConstantDoubleExpression.cs" />
     <Compile Include="Expressions\ConstantExpression.cs" />
     <Compile Include="Expressions\ConstantIntExpression.cs" />
     <Compile Include="Expressions\Expression.cs" />
-    <Compile Include="Expressions\ExpressionHelper.cs" />
-    <Compile Include="Expressions\UnaryExpression.cs" />
+    <Compile Include="Expressions\Operations\Internal\IArithmeticOpMetadataView.cs" />
+    <Compile Include="Expressions\Operations\Internal\IArithmeticOperation.cs" />
+    <Compile Include="Expressions\Operations\Internal\IArithmeticOpMetadata.cs" />
+    <Compile Include="Expressions\Operations\Internal\ArithmeticOperationAttribute.cs" />
+    <Compile Include="Expressions\Operations\OpModNumber.cs" />
+    <Compile Include="Expressions\Operations\OpNotNumber.cs" />
+    <Compile Include="Expressions\Operations\OpRelop.cs" />
+    <Compile Include="Expressions\Operations\OpMulNumber.cs" />
+    <Compile Include="Expressions\Operations\OpDivNumber.cs" />
+    <Compile Include="Expressions\Operations\OpAddNumber.cs" />
+    <Compile Include="Expressions\Operations\OpSubNumber.cs" />
     <Compile Include="Expressions\VariableReferenceExpression.cs" />
     <Compile Include="grammar.out.cs">
       <AutoGen>True</AutoGen>
@@ -104,6 +114,9 @@
     <Compile Include="Statements\AssignmentStatement.cs" />
     <Compile Include="Statements\BasicStatement.cs" />
     <Compile Include="Statements\IfStatement.cs" />
+    <Compile Include="Statements\ProcedureCallStatement.cs" />
+    <Compile Include="Statements\RepeatStatement.cs" />
+    <Compile Include="Statements\WhileStatement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="grammar.ecs">

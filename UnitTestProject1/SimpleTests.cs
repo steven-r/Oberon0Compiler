@@ -12,20 +12,19 @@ namespace UnitTestProject1
         public void EmptyApplication()
         {
             var compiler = new CompilerParser();
-            Module m = compiler.Calculate("MODULE Test; BEGIN END.");
+            Module m = compiler.Calculate("MODULE Test; END Test.");
 
             Assert.AreEqual("Test", m.Name);
-            Assert.AreEqual(0, m.Block.Declarations.Count);
+            Assert.AreEqual(2, m.Block.Declarations.Count);
         }
 
         [Test]
         public void EmptyApplication2()
         {
             var compiler = new CompilerParser();
-            Module m = compiler.Calculate("MODULE Test; END.");
-
-            Assert.AreEqual("Test", m.Name);
-            Assert.AreEqual(0, m.Block.Declarations.Count);
+            Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE Test; 
+BEGIN END Test."); });
+            Assert.AreEqual(e.Message, "Statement expected");
         }
 
         [Test]
@@ -35,7 +34,7 @@ namespace UnitTestProject1
 
 
             Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE ; 
-BEGIN END."); });
+BEGIN END Test."); });
             Assert.AreEqual(e.Message, "\'Semicolon\': expected Id");
         }
 
@@ -46,7 +45,7 @@ BEGIN END."); });
 
 
             Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE Test; 
-BEGIN END"); });
+END Test"); });
             Assert.AreEqual(e.Message, "\'EOF\': expected Dot");
         }
 

@@ -18,40 +18,26 @@ namespace Oberon0.Compiler.Solver
         {
             if (expression == null) throw new ArgumentNullException(nameof(expression));
 
-            if (!CheckConst(expression, block)) return null;
-
-            var ex = expression as ICalculatable;
-            Debug.Assert(ex != null, "Shouldn't be here");
-            var result = ex.Calc(block);
-            if (!(result is ConstantExpression)) return null;
-            return result;
+            return Calculate(expression, block);
         }
 
-        private static bool CheckConst(Expression expression, Block block)
+        private static Expression Calculate(Expression expression, Block block)
         {
-            while (true)
+            if (expression is VariableReferenceExpression) return expression;
+            var bin = expression as BinaryExpression;
+            if (bin != null)
             {
-                var constExpression = expression as ConstantExpression;
-                if (constExpression != null) return true;
-                var binaryExpression = expression as BinaryExpression;
-                if (binaryExpression != null)
-                    return CheckConst(binaryExpression.LeftHandSide, block) &&
-                           CheckConst(binaryExpression.RightHandSide, block);
-                var unaryExpression = expression as UnaryExpression;
-                if (unaryExpression != null)
-                {
-                    expression = unaryExpression.Operand;
-                    continue;
-                }
-                var varExpression = expression as VariableReferenceExpression;
-                if (varExpression != null)
-                {
-                    expression = ((ConstDeclaration) varExpression.Declaration).Value;
-                    continue;
-                }
-
-                return false; // assume that all other are wrong
+                if (!bin.LeftHandSide.IsConst)
+                    bin.LeftHandSide = Calculate(bin.LeftHandSide, block);
+                if (!bin.RightHandSide.IsConst)
+                    bin.RightHandSide = Calculate(bin.RightHandSide, block);
+                return bin.Operation.Operation.Operate(bin, block, bin.Operation.Metadata);
             }
+            var c = expression as ConstantExpression;
+            if (c != null) return c;
+
+            throw new InvalidOperationException($"Calculate does not support operation on {expression.GetType()}");
         }
+
     }
 }

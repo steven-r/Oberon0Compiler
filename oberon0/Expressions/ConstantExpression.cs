@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Globalization;
-using Loyc;
 using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Solver;
 
 namespace Oberon0.Compiler.Expressions
 {
-    public abstract class ConstantExpression : Expression, ICalculatable
+    public abstract class ConstantExpression : Expression
     {
-        public BaseType BaseType { get; set; }
-        public TokenType Operator { get; set; }
-
         protected ConstantExpression(BaseType baseType)
         {
-            BaseType = baseType;
             TargetType = baseType;
         }
 
+        /// <summary>
+        /// Constant expressions are const by default
+        /// </summary>
+        /// <value><c>true</c> if this instance is constant; otherwise, <c>false</c>.</value>
+        public override bool IsConst => true;
+
         private ConstantExpression() {}
 
-        internal static Expression Create(Token t)
+        internal static Expression Create(object value)
         {
-            if (t.Type != TokenType.Num) throw new LogException(null, "Number expected");
-            string sVal = t.Value as string;
+            string sVal = value as string;
             double dValue;
             bool isFloat;
             if (sVal != null)
@@ -32,14 +31,14 @@ namespace Oberon0.Compiler.Expressions
             }
             else
             {
-                isFloat = t.Value is double || t.Value is float || t.Value is decimal;
-                dValue = Convert.ToDouble(t.Value);
+                isFloat = value is double || value is float || value is decimal;
+                dValue = Convert.ToDouble(value);
             }
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (!isFloat)
             {
-                return new ConstantIntExpression(Convert.ToInt32(t.Value));
+                return new ConstantIntExpression(Convert.ToInt32(value));
             }
             else
             {
@@ -69,6 +68,11 @@ namespace Oberon0.Compiler.Expressions
             return dconst.Value;
         }
 
-        public abstract Expression Calc(Block block);
+        public bool ToBool()
+        {
+            var bval = this as ConstantBoolExpression;
+            if (bval != null) return bval.Value;
+            throw new InvalidOperationException("Value is not of type bool");
+        }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 
@@ -20,10 +15,10 @@ namespace UnitTestProject1
 CONST
   Test = 1;
 
-BEGIN END.");
+ END Test.");
 
             Assert.AreEqual("Test", m.Name);
-            Assert.AreEqual(1, m.Block.Declarations.Count);
+            Assert.AreEqual(3, m.Block.Declarations.Count);
         }
 
         [Test]
@@ -34,11 +29,29 @@ BEGIN END.");
 CONST
   Test = 1+1;
 
-BEGIN END.");
+ END Test.");
 
-            Assert.AreEqual(1, m.Block.Declarations.Count);
-            Assert.IsAssignableFrom(typeof(ConstDeclaration), m.Block.Declarations[0]);
-            Assert.AreEqual(2, ((ConstDeclaration)m.Block.Declarations[0]).Value.ToInt32());
+            Assert.AreEqual(3, m.Block.Declarations.Count);
+            Assert.IsAssignableFrom(typeof(ConstDeclaration), m.Block.Declarations[2]);
+            Assert.AreEqual(2, ((ConstDeclaration)m.Block.Declarations[2]).Value.ToInt32());
+        }
+
+        [Test]
+        public void ConstConstExpr()
+        {
+            var compiler = new CompilerParser();
+            Module m = compiler.Calculate(@"MODULE Test;
+CONST
+  Test1 = 2;
+  Test = 1+Test1;
+
+ END Test.");
+
+            Assert.AreEqual(4, m.Block.Declarations.Count);
+            Assert.IsAssignableFrom(typeof(ConstDeclaration), m.Block.Declarations[2]);
+            Assert.AreEqual(2, ((ConstDeclaration)m.Block.Declarations[2]).Value.ToInt32());
+            Assert.IsAssignableFrom(typeof(ConstDeclaration), m.Block.Declarations[3]);
+            Assert.AreEqual(3, ((ConstDeclaration)m.Block.Declarations[3]).Value.ToInt32());
         }
 
     }

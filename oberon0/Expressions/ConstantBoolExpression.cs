@@ -3,19 +3,19 @@ using Oberon0.Compiler.Solver;
 
 namespace Oberon0.Compiler.Expressions
 {
-    public class ConstantIntExpression : ConstantExpression
+    public class ConstantBoolExpression : ConstantExpression
     {
-        public int Value { get; }
+        public bool Value { get; set; }
 
-        public ConstantIntExpression(int value)
-            : base(BaseType.IntType)
+        public ConstantBoolExpression(bool value)
+            : base(BaseType.BoolType)
         {
             Value = value;
         }
 
         public override string ToString()
         {
-            return Value.ToString("G");
+            return Value.ToString();
         }
     }
 }

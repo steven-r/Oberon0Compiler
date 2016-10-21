@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
@@ -24,8 +19,8 @@ VAR
   x: INTEGER;
 
 BEGIN 
-    x := 1;
-END.
+    x := 1
+END Test.
 ");
             Assert.AreEqual(1, m.Block.Statements.Count);
             Assert.IsAssignableFrom(typeof(AssignmentStatement), m.Block.Statements[0]);
@@ -46,8 +41,8 @@ VAR
 
 BEGIN 
     x := 1;
-    x := 2;
-END.
+    x := 2
+END Test.
 ");
             Assert.AreEqual(2, m.Block.Statements.Count);
             Assert.IsAssignableFrom(typeof(AssignmentStatement), m.Block.Statements[0]);

@@ -1,18 +1,11 @@
-﻿using System.ComponentModel.Composition;
-using Oberon0.Compiler.Definitions;
+﻿using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Solver;
 
 namespace Oberon0.Compiler.Expressions
 {
-    [Export(typeof(ICalculatable))]
-    public class ConstantDoubleExpression : ConstantExpression, ICalculatable
+    public class ConstantDoubleExpression : ConstantExpression
     {
-        public double Value { get; set; }
-
-        public ConstantDoubleExpression()
-            : base(BaseType.DecimalType)
-        {
-        }
+        public double Value { get; }
 
         public ConstantDoubleExpression(double value)
             : base(BaseType.DecimalType)
@@ -20,10 +13,9 @@ namespace Oberon0.Compiler.Expressions
             Value = value;
         }
 
-        public override Expression Calc(Block block)
+        public override string ToString()
         {
-            return this;
+            return Value.ToString("G");
         }
-
     }
 }

@@ -15,10 +15,10 @@ namespace UnitTestProject1
             Module m = compiler.Calculate(@"MODULE Test; 
 VAR
   id: INTEGER;
-BEGIN END.");
+ END Test.");
 
-            Assert.AreEqual(1, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[0].Type.BaseType);
+            Assert.AreEqual(3, m.Block.Declarations.Count);
+            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[2].Type.BaseType);
         }
 
         [Test]
@@ -29,12 +29,12 @@ BEGIN END.");
             Module m = compiler.Calculate(@"MODULE Test; 
 VAR
   id: ARRAY 5 OF INTEGER;
-BEGIN END.");
+ END Test.");
 
-            Assert.AreEqual(1, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.ComplexType, m.Block.Declarations[0].Type.BaseType);
-            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), m.Block.Declarations[0].Type);
-            ArrayTypeDefinition atd = (ArrayTypeDefinition)m.Block.Declarations[0].Type;
+            Assert.AreEqual(3, m.Block.Declarations.Count);
+            Assert.AreEqual(BaseType.ComplexType, m.Block.Declarations[2].Type.BaseType);
+            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), m.Block.Declarations[2].Type);
+            ArrayTypeDefinition atd = (ArrayTypeDefinition)m.Block.Declarations[2].Type;
             Assert.AreEqual(5, atd.Size);
             Assert.AreEqual("INTEGER", atd.ArrayType.Name);
         }
@@ -47,12 +47,12 @@ BEGIN END.");
             Module m = compiler.Calculate(@"MODULE Test; 
 VAR
   id: ARRAY 5 OF ARRAY 10 OF INTEGER;
-BEGIN END.");
+ END Test.");
 
-            Assert.AreEqual(1, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.ComplexType, m.Block.Declarations[0].Type.BaseType);
-            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), m.Block.Declarations[0].Type);
-            ArrayTypeDefinition atd = (ArrayTypeDefinition) m.Block.Declarations[0].Type;
+            Assert.AreEqual(3, m.Block.Declarations.Count);
+            Assert.AreEqual(BaseType.ComplexType, m.Block.Declarations[2].Type.BaseType);
+            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), m.Block.Declarations[2].Type);
+            ArrayTypeDefinition atd = (ArrayTypeDefinition) m.Block.Declarations[2].Type;
             Assert.AreEqual(5, atd.Size);
             Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), atd.ArrayType);
             atd = (ArrayTypeDefinition)atd.ArrayType;
@@ -70,11 +70,11 @@ BEGIN END.");
 VAR
   id: INTEGER;
   id1: INTEGER;
-BEGIN END.");
+ END Test.");
 
-            Assert.AreEqual(2, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[0].Type.BaseType);
-            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[1].Type.BaseType);
+            Assert.AreEqual(4, m.Block.Declarations.Count);
+            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[2].Type.BaseType);
+            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[3].Type.BaseType);
         }
 
         [Test]
@@ -84,11 +84,11 @@ BEGIN END.");
             Module m = compiler.Calculate(@"MODULE Test; 
 VAR
   id, id1: INTEGER;
-BEGIN END.");
+ END Test.");
 
-            Assert.AreEqual(2, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[0].Type.BaseType);
-            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[1].Type.BaseType);
+            Assert.AreEqual(4, m.Block.Declarations.Count);
+            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[2].Type.BaseType);
+            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[3].Type.BaseType);
         }
 
         [Test]
@@ -99,7 +99,7 @@ BEGIN END.");
 VAR
   id: INTEGER;
   id: INTEGER;
-BEGIN END."); });
+ END Test."); });
             Assert.AreEqual(e.Message, "The identifier id has been defined already");
         }
 
@@ -110,7 +110,7 @@ BEGIN END."); });
             Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE Test; 
 VAR
   id, id: INTEGER;
-BEGIN END."); });
+ END Test."); });
             Assert.AreEqual(e.Message, "The identifier id has been defined already");
         }
 
@@ -122,7 +122,7 @@ BEGIN END."); });
 
             Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE Test; 
 VAR
-BEGIN END."); });
+ END Test."); });
             Assert.AreEqual(e.Message, "An identifier is expected here");
         }
     }

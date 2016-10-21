@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using NUnit.Framework;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
@@ -20,7 +16,7 @@ namespace UnitTestProject1
 TYPE
   Demo = INTEGER;
 
-BEGIN END.");
+END Test.");
 
             Assert.AreEqual(true, m.Block.Types.Any(x => x.Name == "Demo"));
             Assert.NotNull(m.Block.LookupType("Demo"));
@@ -34,7 +30,7 @@ BEGIN END.");
 TYPE
   Demo = INTEGER;
 
-BEGIN END.");
+END Test.");
 
             Assert.NotNull(m.Block.LookupType("Demo"));
         }
@@ -47,7 +43,7 @@ BEGIN END.");
 TYPE
   Demo = INTEGER;
 
-BEGIN END.");
+END Test.");
 
             Assert.IsNull(m.Block.LookupType("?Unknown"));
         }
@@ -62,7 +58,7 @@ TYPE
     a: INTEGER;
   END;
 
-BEGIN END.");
+END Test.");
 
             Assert.IsAssignableFrom(typeof(RecordTypeDefinition), m.Block.LookupType("Demo"));
             RecordTypeDefinition rtd = (RecordTypeDefinition) m.Block.LookupType("Demo");
@@ -70,6 +66,5 @@ BEGIN END.");
             Assert.AreEqual("a", rtd.Elements[0].Name);
             Assert.AreEqual("INTEGER", rtd.Elements[0].Type.Name);
         }
-
     }
 }

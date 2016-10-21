@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 
@@ -21,9 +16,9 @@ PROCEDURE Test1;
 
 END Test1;
 
-BEGIN END.");
+END Test.");
 
-            Assert.NotNull(m.Block.LookupProcedure("Test1"));
+            Assert.NotNull(m.Block.LookupFunction("Test1"));
         }
 
         [Test]
@@ -35,9 +30,9 @@ PROCEDURE Test1 (a: INTEGER);
 
 END Test1;
 
-BEGIN END.");
+END Test.");
 
-            ProcedureDeclaration p = m.Block.LookupProcedure("Test1");
+            FunctionDeclaration p = m.Block.LookupFunction("Test1");
             Assert.NotNull(p);
             Assert.AreEqual(1, p.Parameters.Count);
             Assert.AreEqual("a", p.Parameters[0].Name);
@@ -53,9 +48,9 @@ PROCEDURE Test1 (VAR a: INTEGER);
 
 END Test1;
 
-BEGIN END.");
+END Test.");
 
-            ProcedureDeclaration p = m.Block.LookupProcedure("Test1");
+            FunctionDeclaration p = m.Block.LookupFunction("Test1");
             Assert.NotNull(p);
             Assert.AreEqual(1, p.Parameters.Count);
             Assert.AreEqual(BaseType.IntType, p.Parameters[0].Type.BaseType);
