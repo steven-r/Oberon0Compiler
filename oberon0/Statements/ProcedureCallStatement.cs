@@ -1,0 +1,22 @@
+﻿using System.Collections.Generic;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions;
+
+namespace Oberon0.Compiler.Statements
+{
+    public class ProcedureCallStatement : BasicStatement
+    {
+        public List<Expression> Parameters { get; set; }
+
+        public Block Block { get; set; }
+
+        public FunctionDeclaration FunctionDeclaration { get; set; }
+
+        public ProcedureCallStatement(FunctionDeclaration functionDeclaration, Block block, List<Expression> parameters)
+        {
+            Block = block;
+            FunctionDeclaration = functionDeclaration;
+            Parameters = parameters;
+        }
+    }
+}

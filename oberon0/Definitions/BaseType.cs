@@ -35,6 +35,8 @@ namespace Oberon0.Compiler.Definitions
         /// <summary>
         /// Any type - used for internal functions (like WRITELN)
         /// </summary>
-        AnyType
+        AnyType,
+
+        VoidType
     }
 }

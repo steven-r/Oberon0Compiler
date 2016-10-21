@@ -8,10 +8,9 @@ namespace Oberon0.Compiler.Definitions
         public Module()
         {
             Block = new Block();
-            Block.Types.Add(new SimpleTypeDefinition(BaseType.IntType, "INTEGER"));
-            //Block.Types.Add(new SimpleTypeDefinition(BaseType.StringType, "STRING"));
-            Block.Types.Add(new SimpleTypeDefinition(BaseType.DecimalType, "REAL"));
 
+            DeclareStandardTypes();
+            DeclareStandardConsts();
             DeclareStandardFunctions();
         }
     }

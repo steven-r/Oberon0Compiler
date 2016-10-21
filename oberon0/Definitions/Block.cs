@@ -12,7 +12,7 @@ namespace Oberon0.Compiler.Definitions
 
         public List<BasicStatement> Statements { get; }
 
-        public List<ProcedureDeclaration> Procedures { get; }
+        public List<FunctionDeclaration> Procedures { get; }
 
         public Block Parent { get; set; }
 
@@ -21,7 +21,7 @@ namespace Oberon0.Compiler.Definitions
             Declarations = new List<Declaration>();
             Types = new List<TypeDefinition>();
             Statements = new List<BasicStatement>();
-            Procedures = new List<ProcedureDeclaration>();
+            Procedures = new List<FunctionDeclaration>();
         }
 
         public TypeDefinition LookupType(string name)
@@ -63,8 +63,8 @@ namespace Oberon0.Compiler.Definitions
         /// Lookup a procedure definition
         /// </summary>
         /// <param name="procedureName">Name of the procedure.</param>
-        /// <returns>ProcedureDeclaration.</returns>
-        public ProcedureDeclaration LookupProcedure(string procedureName)
+        /// <returns>FunctionDeclaration.</returns>
+        public FunctionDeclaration LookupFunction(string procedureName)
         {
             Block b = this;
             while (b != null)

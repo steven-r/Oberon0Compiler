@@ -13,20 +13,10 @@ namespace Oberon0.Compiler.Statements
         public Declaration Variable { get; set; }
 
         public Expression Expression { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Variable} := {Expression}";
+        }
     }
-
-    public class WhileStatement : BasicStatement
-    {
-        public Expression Condition { get; set; }
-
-        public Block Block { get; set; }
-    }
-
-    public class RepeatStatement : BasicStatement
-    {
-        public Expression Condition { get; set; }
-
-        public Block Block { get; set; }
-    }
-
 }
