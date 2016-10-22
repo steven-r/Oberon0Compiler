@@ -102,6 +102,7 @@
     <Compile Include="Expressions\Operations\OpAddNumber.cs" />
     <Compile Include="Expressions\Operations\OpSubNumber.cs" />
     <Compile Include="Expressions\VariableReferenceExpression.cs" />
+    <Compile Include="Generator\IGeneratorInfo.cs" />
     <Compile Include="grammar.out.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

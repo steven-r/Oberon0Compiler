@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Oberon0.Compiler.Generator;
 using Oberon0.Compiler.Statements;
 
 namespace Oberon0.Compiler.Definitions
@@ -15,6 +16,12 @@ namespace Oberon0.Compiler.Definitions
         public List<FunctionDeclaration> Procedures { get; }
 
         public Block Parent { get; set; }
+
+        /// <summary>
+        /// Additional information used by the generator engine
+        /// </summary>
+        /// <value>Generator information.</value>
+        public IGeneratorInfo GeneratorInfo { get; set; }
 
         public Block()
         {
