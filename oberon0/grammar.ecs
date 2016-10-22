@@ -218,11 +218,13 @@ namespace Oberon0.Compiler {
 			var lexer = new CalculatorLexer(input);
 			// ParserSource accepts any IEnumerator<Token> for its first parameter
 			Src = new ParserSource<Token>(lexer, EofToken, lexer.Src.SourceFile) { 
-				TokenTypeToString = tt => ((TT)tt).ToString(),
-				ErrorSink = new MessageSinkFromDelegate((type, ctx, msg, args) => {
+				TokenTypeToString = tt => ((TT)tt).ToString()
+			#if Verbose
+				,ErrorSink = new MessageSinkFromDelegate((type, ctx, msg, args) => {
                     MessageSink.Console.Write(type, ctx, msg, args);
                     throw new LogException(new LogMessage(type, ctx, msg, args));
                 })
+			#endif
 			};
 			var result = Module();
 			// emit an error if we reach end of expression before end-of-input
@@ -462,7 +464,9 @@ namespace Oberon0.Compiler {
 			}
 			e:=RelationalExpression(block)
 			{
+			#if Verbose
 				Console.WriteLine($"Assignment {varName} := {e.GetType().Name}");
+			#endif
 				block.Statements.Add(new AssignmentStatement{Variable = variable, Expression = e});
 			}
 		];

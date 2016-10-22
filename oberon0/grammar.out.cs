@@ -932,10 +932,7 @@ namespace Oberon0.Compiler
 			};
 			var lexer = new CalculatorLexer(input);
 			Src = new ParserSource<Token>(lexer, EofToken, lexer.Src.SourceFile) { 
-				TokenTypeToString = tt => ((TT) tt).ToString(), ErrorSink = new MessageSinkFromDelegate((type, ctx, msg, args) => {
-					MessageSink.Console.Write(type, ctx, msg, args);
-					throw new LogException(new LogMessage(type, ctx, msg, args));
-				})
+				TokenTypeToString = tt => ((TT) tt).ToString()
 			};
 			var result = Module();
 			Src.Match((int) TT.EOF);
@@ -946,7 +943,7 @@ namespace Oberon0.Compiler
 			var i = Src.Match((int) TT.Id);
 			Src.Match((int) TT.Colon);
 			var v = VarTypeReference(block);
-			#line 244 "grammar.ecs"
+			#line 246 "grammar.ecs"
 			string name = i.Value.ToString();
 			if (typeDefinition.Elements.Any(x => x.Name == name)) {
 				Src.Error(0, "The element '{0}' has been defined already", name);
@@ -959,11 +956,11 @@ namespace Oberon0.Compiler
 		{
 			TokenType la0;
 			TypeDefinition result = default(TypeDefinition);
-			// Line 256: ( TT.Id | TT.Array SimpleExpression TT.Of VarTypeReference | TT.Record RecordElement TT.Semicolon (RecordElement TT.Semicolon)* TT.End )
+			// Line 258: ( TT.Id | TT.Array SimpleExpression TT.Of VarTypeReference | TT.Record RecordElement TT.Semicolon (RecordElement TT.Semicolon)* TT.End )
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Id) {
 				var i = Src.MatchAny();
-				#line 257 "grammar.ecs"
+				#line 259 "grammar.ecs"
 				result = block.LookupType(i.Value.ToString());
 				if (result == null)
 					Src.Error(0, "Type '{0}' not found", i.Value.ToString());
@@ -973,7 +970,7 @@ namespace Oberon0.Compiler
 				var e = SimpleExpression(block);
 				Src.Match((int) TT.Of);
 				var t = VarTypeReference(block);
-				#line 261 "grammar.ecs"
+				#line 263 "grammar.ecs"
 				var constex = ConstantSolver.Solve(e, block)as ConstantIntExpression;
 				if (constex == null) {
 					Src.Error(0, "The array size must resolve as INTEGER");
@@ -983,12 +980,12 @@ namespace Oberon0.Compiler
 				#line default
 			} else {
 				Src.Match((int) TT.Record);
-				#line 269 "grammar.ecs"
+				#line 271 "grammar.ecs"
 				var rtd = new RecordTypeDefinition();
 				#line default
 				RecordElement(rtd, block);
 				Src.Match((int) TT.Semicolon);
-				// Line 270: (RecordElement TT.Semicolon)*
+				// Line 272: (RecordElement TT.Semicolon)*
 				for (;;) {
 					la0 = (TokenType) Src.LA0;
 					if (la0 == TT.Id) {
@@ -998,7 +995,7 @@ namespace Oberon0.Compiler
 						break;
 				}
 				Src.Match((int) TT.End);
-				#line 271 "grammar.ecs"
+				#line 273 "grammar.ecs"
 				result = rtd;
 				#line default
 			}
@@ -1007,7 +1004,7 @@ namespace Oberon0.Compiler
 		void IdListElement(Block block, List<string> idList)
 		{
 			var n = Src.Match((int) TT.Id);
-			#line 276 "grammar.ecs"
+			#line 278 "grammar.ecs"
 			string name = n.Value.ToString();
 			if (block.Declarations.Any(x => x.Name == name) || idList.Any(x => x == name)) {
 				Src.Error(0, "The identifier {0} has been defined already", name);
@@ -1019,14 +1016,14 @@ namespace Oberon0.Compiler
 		List<string> IdList(Block block)
 		{
 			TokenType la0;
-			// Line 288: (IdListElement (TT.Comma IdListElement)*)
+			// Line 290: (IdListElement (TT.Comma IdListElement)*)
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Id) {
-				#line 288 "grammar.ecs"
+				#line 290 "grammar.ecs"
 				List<string> ids = new List<string>();
 				#line default
 				IdListElement(block, ids);
-				// Line 291: (TT.Comma IdListElement)*
+				// Line 293: (TT.Comma IdListElement)*
 				for (;;) {
 					la0 = (TokenType) Src.LA0;
 					if (la0 == TT.Comma) {
@@ -1035,13 +1032,13 @@ namespace Oberon0.Compiler
 					} else
 						break;
 				}
-				#line 293 "grammar.ecs"
+				#line 295 "grammar.ecs"
 				return ids;
 				#line default
 			} else {
-				#line 294 "grammar.ecs"
+				#line 296 "grammar.ecs"
 				Src.Error(0, "An identifier is expected here");
-				#line 294 "grammar.ecs"
+				#line 296 "grammar.ecs"
 				return null;
 				#line default
 			}
@@ -1051,7 +1048,7 @@ namespace Oberon0.Compiler
 			var ids = IdList(block);
 			Src.Match((int) TT.Colon);
 			var t = VarTypeReference(block);
-			#line 300 "grammar.ecs"
+			#line 302 "grammar.ecs"
 			foreach (string v in ids)
 				block.Declarations.Add(new Declaration(v, t, block));
 			#line default
@@ -1061,7 +1058,7 @@ namespace Oberon0.Compiler
 			var i = Src.Match((int) TT.Id);
 			Src.Match((int) TT.Equals);
 			var v = VarTypeReference(block);
-			#line 307 "grammar.ecs"
+			#line 309 "grammar.ecs"
 			string name = i.Value.ToString();
 			if (block.Types.Any(x => x.Name == name)) {
 				Src.Error(0, "The type '{0}' has been defined already", name);
@@ -1076,7 +1073,7 @@ namespace Oberon0.Compiler
 			var i = Src.Match((int) TT.Id);
 			Src.Match((int) TT.Equals);
 			var e = SimpleExpression(block);
-			#line 321 "grammar.ecs"
+			#line 323 "grammar.ecs"
 			string name = i.Value.ToString();
 			if (block.Declarations.Any(x => x.Name == name)) {
 				Src.Error(0, "The identifier '{0}' has been defined already", name);
@@ -1090,7 +1087,7 @@ namespace Oberon0.Compiler
 		{
 			TokenType la0;
 			Declarations(proc.Block);
-			// Line 335: (TT.Begin StatementSequence)?
+			// Line 337: (TT.Begin StatementSequence)?
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Begin) {
 				Src.Skip();
@@ -1098,7 +1095,7 @@ namespace Oberon0.Compiler
 			}
 			Src.Match((int) TT.End);
 			var n = Src.Match((int) TT.Id);
-			#line 337 "grammar.ecs"
+			#line 339 "grammar.ecs"
 			string name = n.Value.ToString();
 			if (name != proc.Name) {
 				Src.Error(0, "END name does not match procedure declaration");
@@ -1108,21 +1105,21 @@ namespace Oberon0.Compiler
 		void FPSection(FunctionDeclaration proc)
 		{
 			TokenType la0;
-			#line 345 "grammar.ecs"
+			#line 347 "grammar.ecs"
 			bool isVar = false;
 			#line default
-			// Line 346: (TT.Var)?
+			// Line 348: (TT.Var)?
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Var) {
 				Src.Skip();
-				#line 346 "grammar.ecs"
+				#line 348 "grammar.ecs"
 				isVar = true;
 				#line default
 			}
 			var n = Src.Match((int) TT.Id);
 			Src.Match((int) TT.Colon);
 			var v = VarTypeReference(proc.Block);
-			#line 349 "grammar.ecs"
+			#line 351 "grammar.ecs"
 			string name = n.Value.ToString();
 			proc.Parameters.Add(new ProcedureParameter(name, v, isVar));
 			#line default
@@ -1131,7 +1128,7 @@ namespace Oberon0.Compiler
 		{
 			TokenType la0;
 			FPSection(proc);
-			// Line 356: (TT.Semicolon FPSection)*
+			// Line 358: (TT.Semicolon FPSection)*
 			for (;;) {
 				la0 = (TokenType) Src.LA0;
 				if (la0 == TT.Semicolon) {
@@ -1147,15 +1144,15 @@ namespace Oberon0.Compiler
 			FunctionDeclaration result = default(FunctionDeclaration);
 			Src.Skip();
 			var n = Src.Match((int) TT.Id);
-			#line 362 "grammar.ecs"
+			#line 364 "grammar.ecs"
 			string name = n.Value.ToString();
 			if (block.Procedures.Any(x => x.Name == name)) {
 				Src.Error(0, "This procedure has been defined before");
 			}
-			#line 367 "grammar.ecs"
+			#line 369 "grammar.ecs"
 			result = new FunctionDeclaration(name, block);
 			#line default
-			// Line 369: (TT.LParen FormalParameters TT.RParen)?
+			// Line 371: (TT.LParen FormalParameters TT.RParen)?
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.LParen) {
 				Src.Skip();
@@ -1169,20 +1166,20 @@ namespace Oberon0.Compiler
 			var p = ProcedureHeading(block);
 			Src.Match((int) TT.Semicolon);
 			ProcedureBody(p);
-			#line 376 "grammar.ecs"
+			#line 378 "grammar.ecs"
 			block.Procedures.Add(p);
 			#line default
 		}
 		void Declarations(Block block)
 		{
 			TokenType la0;
-			// Line 381: (TT.Const SingleConstDeclaration TT.Semicolon (SingleConstDeclaration TT.Semicolon)*)?
+			// Line 383: (TT.Const SingleConstDeclaration TT.Semicolon (SingleConstDeclaration TT.Semicolon)*)?
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Const) {
 				Src.Skip();
 				SingleConstDeclaration(block);
 				Src.Match((int) TT.Semicolon);
-				// Line 381: (SingleConstDeclaration TT.Semicolon)*
+				// Line 383: (SingleConstDeclaration TT.Semicolon)*
 				for (;;) {
 					la0 = (TokenType) Src.LA0;
 					if (la0 == TT.Id) {
@@ -1192,13 +1189,13 @@ namespace Oberon0.Compiler
 						break;
 				}
 			}
-			// Line 382: (TT.Type SimpleTypeDeclaration TT.Semicolon (SimpleTypeDeclaration TT.Semicolon)*)?
+			// Line 384: (TT.Type SimpleTypeDeclaration TT.Semicolon (SimpleTypeDeclaration TT.Semicolon)*)?
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Type) {
 				Src.Skip();
 				SimpleTypeDeclaration(block);
 				Src.Match((int) TT.Semicolon);
-				// Line 382: (SimpleTypeDeclaration TT.Semicolon)*
+				// Line 384: (SimpleTypeDeclaration TT.Semicolon)*
 				for (;;) {
 					la0 = (TokenType) Src.LA0;
 					if (la0 == TT.Id) {
@@ -1208,13 +1205,13 @@ namespace Oberon0.Compiler
 						break;
 				}
 			}
-			// Line 383: (TT.Var SingleVarDeclaration TT.Semicolon (SingleVarDeclaration TT.Semicolon)*)?
+			// Line 385: (TT.Var SingleVarDeclaration TT.Semicolon (SingleVarDeclaration TT.Semicolon)*)?
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Var) {
 				Src.Skip();
 				SingleVarDeclaration(block);
 				Src.Match((int) TT.Semicolon);
-				// Line 383: (SingleVarDeclaration TT.Semicolon)*
+				// Line 385: (SingleVarDeclaration TT.Semicolon)*
 				for (;;) {
 					la0 = (TokenType) Src.LA0;
 					if (la0 == TT.Id) {
@@ -1224,7 +1221,7 @@ namespace Oberon0.Compiler
 						break;
 				}
 			}
-			// Line 384: (ProcedureDeclaration TT.Semicolon)*
+			// Line 386: (ProcedureDeclaration TT.Semicolon)*
 			for (;;) {
 				la0 = (TokenType) Src.LA0;
 				if (la0 == TT.Procedure) {
@@ -1240,7 +1237,7 @@ namespace Oberon0.Compiler
 			Expression r1 = default(Expression);
 			List<Expression> result = default(List<Expression>);
 			result = new List<Expression>();
-			// Line 389: (RelationalExpression (TT.Comma RelationalExpression)*)?
+			// Line 391: (RelationalExpression (TT.Comma RelationalExpression)*)?
 			switch ((TokenType) Src.LA0) {
 			case TT.Id:
 			case TT.LParen:
@@ -1249,16 +1246,16 @@ namespace Oberon0.Compiler
 			case TT.Sub:
 				{
 					var r = RelationalExpression(block);
-					#line 389 "grammar.ecs"
+					#line 391 "grammar.ecs"
 					result.Add(r);
 					#line default
-					// Line 390: (TT.Comma RelationalExpression)*
+					// Line 392: (TT.Comma RelationalExpression)*
 					for (;;) {
 						la0 = (TokenType) Src.LA0;
 						if (la0 == TT.Comma) {
 							Src.Skip();
 							r1 = RelationalExpression(block);
-							#line 390 "grammar.ecs"
+							#line 392 "grammar.ecs"
 							result.Add(r1);
 							#line default
 						} else
@@ -1274,34 +1271,34 @@ namespace Oberon0.Compiler
 			TokenType la0;
 			List<Expression> pl1 = default(List<Expression>);
 			Expression result = default(Expression);
-			#line 395 "grammar.ecs"
+			#line 397 "grammar.ecs"
 			string name = string.Empty;
-			#line 395 "grammar.ecs"
+			#line 397 "grammar.ecs"
 			var pl = new List<Expression>();
 			#line default
-			// Line 398: ( TT.Id Selector (TT.LParen ParameterList ()? TT.RParen)? | TT.Num | TT.LParen SimpleExpression TT.RParen | TT.Not Term )
+			// Line 400: ( TT.Id Selector (TT.LParen ParameterList ()? TT.RParen)? | TT.Num | TT.LParen SimpleExpression TT.RParen | TT.Not Term )
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Id) {
 				var t = Src.MatchAny();
-				#line 398 "grammar.ecs"
+				#line 400 "grammar.ecs"
 				name = t.Value.ToString();
 				#line default
 				var s = Selector(block);
-				// Line 400: (TT.LParen ParameterList ()? TT.RParen)?
+				// Line 402: (TT.LParen ParameterList ()? TT.RParen)?
 				la0 = (TokenType) Src.LA0;
 				if (la0 == TT.LParen) {
 					Src.Skip();
 					pl1 = ParameterList(block);
-					// Line 400: ()?
+					// Line 402: ()?
 					la0 = (TokenType) Src.LA0;
 					if (la0 == TT.RParen) {
-						#line 400 "grammar.ecs"
+						#line 402 "grammar.ecs"
 						if (pl1 != null)
 							pl.AddRange(pl1);
 						#line default
 					}
 					Src.Match((int) TT.RParen);
-					#line 401 "grammar.ecs"
+					#line 403 "grammar.ecs"
 					FunctionDeclaration f = block.LookupFunction(name);
 					if (f == null) {
 						Src.Error(0, "There's no function named '{0}'", name);
@@ -1309,18 +1306,18 @@ namespace Oberon0.Compiler
 					if (f.ReturnType == BaseType.VoidType) {
 						Src.Error(0, "You cannot call procedure '{0}' as a function", name);
 					}
-					#line 406 "grammar.ecs"
+					#line 408 "grammar.ecs"
 					if (f.Parameters.Count != pl.Count) {
 						Src.Error(0, "The number of parameters doesn't match (Expected {0}, found {1})", f.Parameters.Count, pl.Count);
 					}
-					#line 409 "grammar.ecs"
+					#line 411 "grammar.ecs"
 					if (s.Count > 0) {
 						Src.Error(0, "Using selectors for functions is not allowed");
 					}
 					result = new FunctionCallExpression(f, block, pl.ToArray());
 					#line default
 				}
-				#line 414 "grammar.ecs"
+				#line 416 "grammar.ecs"
 				if (result == null) {
 					result = VariableReferenceExpression.Create(block, name, s);
 					if (result == null) {
@@ -1330,7 +1327,7 @@ namespace Oberon0.Compiler
 				#line default
 			} else if (la0 == TT.Num) {
 				var t = Src.MatchAny();
-				#line 420 "grammar.ecs"
+				#line 422 "grammar.ecs"
 				result = ConstantExpression.Create(t.Value);
 				#line default
 			} else if (la0 == TT.LParen) {
@@ -1340,17 +1337,17 @@ namespace Oberon0.Compiler
 			} else if (la0 == TT.Not) {
 				Src.Skip();
 				var n = Term(block);
-				#line 422 "grammar.ecs"
+				#line 424 "grammar.ecs"
 				result = BinaryExpression.Create(TT.Not, n, new ConstantBoolExpression(false));
 				#line default
 			} else {
-				#line 423 "grammar.ecs"
+				#line 425 "grammar.ecs"
 				result = null;
-				#line 423 "grammar.ecs"
+				#line 425 "grammar.ecs"
 				Src.Error(0, "Expected identifer, number, or (parens)");
 				#line default
 			}
-			// Line 426: greedy(TT.Exp Term)*
+			// Line 428: greedy(TT.Exp Term)*
 			for (;;) {
 				la0 = (TokenType) Src.LA0;
 				if (la0 == TT.Exp) {
@@ -1362,7 +1359,7 @@ namespace Oberon0.Compiler
 						{
 							Src.Skip();
 							var e = Term(block);
-							#line 426 "grammar.ecs"
+							#line 428 "grammar.ecs"
 							result = BinaryExpression.Create(TT.Exp, result, e);
 							#line default
 						}
@@ -1380,17 +1377,17 @@ namespace Oberon0.Compiler
 		{
 			TokenType la0;
 			Expression result = default(Expression);
-			// Line 430: (TT.Sub Term | Term)
+			// Line 432: (TT.Sub Term | Term)
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Sub) {
 				Src.Skip();
 				var t = Term(block);
-				#line 430 "grammar.ecs"
+				#line 432 "grammar.ecs"
 				result = BinaryExpression.Create(TT.Sub, ConstantExpression.Create(0), t);
 				#line default
 			} else {
 				var t = Term(block);
-				#line 431 "grammar.ecs"
+				#line 433 "grammar.ecs"
 				result = t;
 				#line default
 			}
@@ -1401,13 +1398,13 @@ namespace Oberon0.Compiler
 			TokenType la0;
 			Expression result = default(Expression);
 			result = PrefixExpr(block);
-			// Line 436: ((TT.Div|TT.Mod|TT.Mul) PrefixExpr)*
+			// Line 438: ((TT.Div|TT.Mod|TT.Mul) PrefixExpr)*
 			for (;;) {
 				la0 = (TokenType) Src.LA0;
 				if (la0 == TT.Div || la0 == TT.Mod || la0 == TT.Mul) {
 					var op = Src.MatchAny();
 					var rhs = PrefixExpr(block);
-					#line 436 "grammar.ecs"
+					#line 438 "grammar.ecs"
 					result = BinaryExpression.Create(op.Type, result, rhs);
 					#line default
 				} else
@@ -1420,13 +1417,13 @@ namespace Oberon0.Compiler
 			TokenType la0;
 			Expression result = default(Expression);
 			result = MulExpr(block);
-			// Line 441: ((TT.Add|TT.Sub) MulExpr)*
+			// Line 443: ((TT.Add|TT.Sub) MulExpr)*
 			for (;;) {
 				la0 = (TokenType) Src.LA0;
 				if (la0 == TT.Add || la0 == TT.Sub) {
 					var op = Src.MatchAny();
 					var rhs = MulExpr(block);
-					#line 441 "grammar.ecs"
+					#line 443 "grammar.ecs"
 					result = BinaryExpression.Create(op.Type, result, rhs);
 					#line default
 				} else
@@ -1438,7 +1435,7 @@ namespace Oberon0.Compiler
 		{
 			Expression result = default(Expression);
 			result = SimpleExpression(block);
-			// Line 446: ((TT.Equals|TT.GE|TT.GT|TT.LE|TT.LT|TT.NotEquals) SimpleExpression)?
+			// Line 448: ((TT.Equals|TT.GE|TT.GT|TT.LE|TT.LT|TT.NotEquals) SimpleExpression)?
 			switch ((TokenType) Src.LA0) {
 			case TT.Equals:
 			case TT.GE:
@@ -1449,7 +1446,7 @@ namespace Oberon0.Compiler
 				{
 					var t = Src.MatchAny();
 					var rhs = SimpleExpression(block);
-					#line 447 "grammar.ecs"
+					#line 449 "grammar.ecs"
 					result = BinaryExpression.Create(t.Type, result, rhs);
 					#line default
 				}
@@ -1461,7 +1458,7 @@ namespace Oberon0.Compiler
 		{
 			TokenType la0;
 			SingleStatement(block);
-			// Line 453: (TT.Semicolon SingleStatement)*
+			// Line 455: (TT.Semicolon SingleStatement)*
 			for (;;) {
 				la0 = (TokenType) Src.LA0;
 				if (la0 == TT.Semicolon) {
@@ -1473,15 +1470,14 @@ namespace Oberon0.Compiler
 		}
 		void AssignmentStmt(string varName, VariableSelector selector, Block block)
 		{
-			#line 458 "grammar.ecs"
+			#line 460 "grammar.ecs"
 			var variable = block.LookupVar(varName);
 			if (variable == null) {
 				Src.Error(0, "Variable '{0}' not found", varName);
 			}
 			#line default
 			var e = RelationalExpression(block);
-			#line 465 "grammar.ecs"
-			Console.WriteLine($"Assignment {varName} := {e.GetType().Name}");
+			#line 470 "grammar.ecs"
 			block.Statements.Add(new AssignmentStatement { 
 				Variable = variable, Expression = e
 			});
@@ -1492,24 +1488,24 @@ namespace Oberon0.Compiler
 			TokenType la0;
 			VariableSelector result = default(VariableSelector);
 			result = new VariableSelector();
-			// Line 472: (TT.Dot TT.Id | TT.LBracket SimpleExpression TT.RBracket)*
+			// Line 476: (TT.Dot TT.Id | TT.LBracket SimpleExpression TT.RBracket)*
 			for (;;) {
 				la0 = (TokenType) Src.LA0;
 				if (la0 == TT.Dot) {
 					Src.Skip();
 					var i = Src.Match((int) TT.Id);
-					#line 472 "grammar.ecs"
+					#line 476 "grammar.ecs"
 					result.Add(new IdentifierSelector(i.Value.ToString()));
 					#line default
 				} else if (la0 == TT.LBracket) {
 					Src.Skip();
 					var e = SimpleExpression(block);
 					Src.Match((int) TT.RBracket);
-					#line 475 "grammar.ecs"
+					#line 479 "grammar.ecs"
 					if (e.TargetType != BaseType.IntType) {
 						Src.Error(0, "Error offset needs to be integer type");
 					}
-					#line 478 "grammar.ecs"
+					#line 482 "grammar.ecs"
 					result.Add(new IndexSelector(e));
 					#line default
 				} else
@@ -1526,21 +1522,21 @@ namespace Oberon0.Compiler
 				Src.Error(0, "Procedure {0} not found", name);
 			}
 			List<Expression> pl = new List<Expression>();
-			// Line 489: (TT.LParen ParameterList TT.RParen)?
+			// Line 493: (TT.LParen ParameterList TT.RParen)?
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.LParen) {
 				Src.Skip();
 				pl1 = ParameterList(block);
 				Src.Match((int) TT.RParen);
-				#line 489 "grammar.ecs"
+				#line 493 "grammar.ecs"
 				pl.AddRange(pl1);
 				#line default
 			}
-			#line 491 "grammar.ecs"
+			#line 495 "grammar.ecs"
 			if (pl.Count != p.Parameters.Count) {
 				Src.Error(0, "Wrong number of parameters to call {0}. Expected {1}, found {2}", name, p.Parameters.Count, pl.Count);
 			}
-			#line 494 "grammar.ecs"
+			#line 498 "grammar.ecs"
 			block.Statements.Add(new ProcedureCallStatement(p, block, pl));
 			#line default
 		}
@@ -1549,14 +1545,14 @@ namespace Oberon0.Compiler
 			TokenType la0;
 			var v = Src.MatchAny();
 			var s = Selector(block);
-			// Line 501: (TT.Assign AssignmentStmt | ProcedureCall)
+			// Line 505: (TT.Assign AssignmentStmt | ProcedureCall)
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Assign) {
 				Src.Skip();
 				AssignmentStmt(v.Value.ToString(), s, block);
 			} else {
 				ProcedureCall(v.Value.ToString(), block);
-				#line 503 "grammar.ecs"
+				#line 507 "grammar.ecs"
 				if (s.Count > 0) {
 					Src.Error(0, "Procedure calls do not expect a selector");
 				}
@@ -1566,70 +1562,70 @@ namespace Oberon0.Compiler
 		void IfStmt(Block block)
 		{
 			TokenType la0;
-			#line 509 "grammar.ecs"
+			#line 513 "grammar.ecs"
 			IfStatement ifs = new IfStatement(block);
 			#line default
 			var c = RelationalExpression(block);
 			Src.Match((int) TT.Then);
-			#line 511 "grammar.ecs"
+			#line 515 "grammar.ecs"
 			Block thenBlock = new Block();
-			#line 511 "grammar.ecs"
+			#line 515 "grammar.ecs"
 			thenBlock.Parent = block;
 			#line default
 			StatementSequence(thenBlock);
-			#line 512 "grammar.ecs"
+			#line 516 "grammar.ecs"
 			ifs.Conditions.Add(c);
-			#line 512 "grammar.ecs"
+			#line 516 "grammar.ecs"
 			ifs.ThenParts.Add(thenBlock);
 			#line default
-			// Line 513: (TT.IfElse RelationalExpression TT.Then StatementSequence)*
+			// Line 517: (TT.IfElse RelationalExpression TT.Then StatementSequence)*
 			for (;;) {
 				la0 = (TokenType) Src.LA0;
 				if (la0 == TT.IfElse) {
 					Src.Skip();
 					var c1 = RelationalExpression(block);
 					Src.Match((int) TT.Then);
-					#line 514 "grammar.ecs"
+					#line 518 "grammar.ecs"
 					thenBlock = new Block();
-					#line 514 "grammar.ecs"
+					#line 518 "grammar.ecs"
 					thenBlock.Parent = block;
 					#line default
 					StatementSequence(thenBlock);
-					#line 516 "grammar.ecs"
+					#line 520 "grammar.ecs"
 					ifs.Conditions.Add(c1);
-					#line 516 "grammar.ecs"
+					#line 520 "grammar.ecs"
 					ifs.ThenParts.Add(thenBlock);
 					#line default
 				} else
 					break;
 			}
-			// Line 518: (TT.Else StatementSequence)?
+			// Line 522: (TT.Else StatementSequence)?
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Else) {
 				Src.Skip();
-				#line 519 "grammar.ecs"
+				#line 523 "grammar.ecs"
 				Block elseBlock = new Block();
-				#line 519 "grammar.ecs"
+				#line 523 "grammar.ecs"
 				elseBlock.Parent = block;
 				#line default
 				StatementSequence(elseBlock);
-				#line 521 "grammar.ecs"
+				#line 525 "grammar.ecs"
 				ifs.ElsePart = elseBlock;
 				#line default
 			}
 			Src.Match((int) TT.End);
-			#line 525 "grammar.ecs"
+			#line 529 "grammar.ecs"
 			block.Statements.Add(ifs);
 			#line default
 		}
 		void WhileStmt(Block block)
 		{
-			#line 529 "grammar.ecs"
+			#line 533 "grammar.ecs"
 			WhileStatement w = new WhileStatement(block);
 			#line default
 			var e = RelationalExpression(block);
 			Src.Match((int) TT.Do);
-			#line 530 "grammar.ecs"
+			#line 534 "grammar.ecs"
 			w.Condition = e;
 			#line default
 			StatementSequence(w.Block);
@@ -1637,13 +1633,13 @@ namespace Oberon0.Compiler
 		}
 		void RepeatStmt(Block block)
 		{
-			#line 536 "grammar.ecs"
+			#line 540 "grammar.ecs"
 			RepeatStatement r = new RepeatStatement(block);
 			#line default
 			StatementSequence(r.Block);
 			Src.Match((int) TT.Until);
 			var e = RelationalExpression(block);
-			#line 538 "grammar.ecs"
+			#line 542 "grammar.ecs"
 			r.Condition = e;
 			#line default
 			Src.Match((int) TT.End);
@@ -1651,7 +1647,7 @@ namespace Oberon0.Compiler
 		void SingleStatement(Block block)
 		{
 			TokenType la0;
-			// Line 543: ( AssignmentOrCall | TT.If IfStmt | TT.While WhileStmt | TT.Repeat RepeatStmt |  )
+			// Line 547: ( AssignmentOrCall | TT.If IfStmt | TT.While WhileStmt | TT.Repeat RepeatStmt |  )
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Id)
 				AssignmentOrCall(block);
@@ -1665,7 +1661,7 @@ namespace Oberon0.Compiler
 				Src.Skip();
 				RepeatStmt(block);
 			} else {
-				#line 547 "grammar.ecs"
+				#line 551 "grammar.ecs"
 				Src.Error(0, "Statement expected");
 				#line default
 			}
@@ -1674,14 +1670,14 @@ namespace Oberon0.Compiler
 		{
 			TokenType la0;
 			Module result = default(Module);
-			#line 552 "grammar.ecs"
+			#line 556 "grammar.ecs"
 			result = module = new Module();
 			#line default
 			Src.Match((int) TT.Module);
 			var m = Src.Match((int) TT.Id);
 			Src.Match((int) TT.Semicolon);
 			Declarations(result.Block);
-			// Line 554: (TT.Begin StatementSequence)?
+			// Line 558: (TT.Begin StatementSequence)?
 			la0 = (TokenType) Src.LA0;
 			if (la0 == TT.Begin) {
 				Src.Skip();
@@ -1689,7 +1685,7 @@ namespace Oberon0.Compiler
 			}
 			Src.Match((int) TT.End);
 			var e = Src.Match((int) TT.Id);
-			#line 558 "grammar.ecs"
+			#line 562 "grammar.ecs"
 			string endName = e.Value.ToString();
 			result.Name = m.Value.ToString();
 			if (endName != result.Name) {
