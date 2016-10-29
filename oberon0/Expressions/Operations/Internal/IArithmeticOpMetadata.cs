@@ -11,6 +11,5 @@ namespace Oberon0.Compiler.Expressions.Operations
         BaseType RightHandType { get; }
 
         BaseType TargetType { get; }
-
     }
 }

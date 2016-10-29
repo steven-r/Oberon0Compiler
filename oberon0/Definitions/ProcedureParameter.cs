@@ -7,12 +7,6 @@
     public class ProcedureParameter: Declaration
     {
         /// <summary>
-        /// If set, this parameter is referenced, not by value
-        /// </summary>
-        /// <value><c>true</c> if this instance is variable; otherwise, <c>false</c>.</value>
-        public bool IsVar { get; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ProcedureParameter"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
@@ -23,5 +17,11 @@
         {
             IsVar = isVar;
         }
+
+        /// <summary>
+        /// If set, this parameter is referenced, not by value
+        /// </summary>
+        /// <value><c>true</c> if this instance is variable; otherwise, <c>false</c>.</value>
+        public bool IsVar { get; }
     }
 }

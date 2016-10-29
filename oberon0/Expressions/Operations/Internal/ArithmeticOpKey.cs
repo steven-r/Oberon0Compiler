@@ -9,17 +9,6 @@ namespace Oberon0.Compiler.Expressions
     /// </summary>
     internal class ArithmeticOpKey: IArithmeticOpMetadata, IEquatable<ArithmeticOpKey>
     {
-        #region IEquatable
-
-        public bool Equals(ArithmeticOpKey other)
-        {
-            if (other == null) throw new ArgumentNullException(nameof(other));
-            return Operation == other.Operation &&
-                   LeftHandType == other.LeftHandType &&
-                   RightHandType == other.RightHandType;
-        }
-        #endregion
-
         #region Constructors
 
         public ArithmeticOpKey(TokenType operation, BaseType leftHandType, BaseType rightHandType, BaseType targetType = BaseType.AnyType)
@@ -36,6 +25,18 @@ namespace Oberon0.Compiler.Expressions
         public BaseType LeftHandType { get; }
         public BaseType RightHandType { get; }
         public BaseType TargetType { get; }
+
+        #region IEquatable
+
+        public bool Equals(ArithmeticOpKey other)
+        {
+            if (other == null) throw new ArgumentNullException(nameof(other));
+            return Operation == other.Operation &&
+                   LeftHandType == other.LeftHandType &&
+                   RightHandType == other.RightHandType;
+        }
+
+        #endregion
 
         public override int GetHashCode()
         {

@@ -21,9 +21,7 @@ namespace Oberon0.Compiler.Expressions.Operations
                 var left = (ConstantExpression)bin.LeftHandSide;
                 var right = (ConstantExpression)bin.RightHandSide;
                 if (bin.LeftHandSide.TargetType == BaseType.IntType && bin.RightHandSide.TargetType == BaseType.IntType)
-                {
                     return new ConstantIntExpression(left.ToInt32() - right.ToInt32());
-                }
                 return new ConstantDoubleExpression(left.ToDouble() - right.ToDouble());
             }
             return e; // expression remains the same

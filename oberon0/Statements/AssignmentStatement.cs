@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Oberon0.Compiler.Definitions;
+﻿using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Statements

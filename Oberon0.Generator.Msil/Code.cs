@@ -27,7 +27,7 @@ namespace Oberon0.Generator.Msil
             switch (Type.GetTypeCode(data.GetType()))
             {
                 case TypeCode.Boolean:
-                    WriteLine("ldc.i4." + (((bool)data)? "1": "0"));
+                    WriteLine("ldc.i4." + ((bool)data? "1": "0"));
                     break;
                 case TypeCode.Char:
                     WriteLine("ldc.i4.s " + Convert.ToByte((char)data).ToString("x2"));
@@ -67,9 +67,7 @@ namespace Oberon0.Generator.Msil
             StringBuilder sb = new StringBuilder(str.Length*2);
             sb.Append('"');
             foreach (char c in str)
-            {
                 if (char.IsControl(c) || c == '"')
-                {
                     switch (c)
                     {
                         case '\r':
@@ -88,12 +86,8 @@ namespace Oberon0.Generator.Msil
                             sb.Append('\\' + Convert.ToByte(c).ToString("x2"));
                             break;
                     }
-                }
                 else
-                {
                     sb.Append(c);
-                }
-            }
             sb.Append('"');
             return sb.ToString();
         }
@@ -158,9 +152,7 @@ namespace Oberon0.Generator.Msil
                 case BaseType.ComplexType:
                     var arrayTypeDefinition = type as ArrayTypeDefinition;
                     if (arrayTypeDefinition != null)
-                    {
                         return $"{GetTypeName(arrayTypeDefinition.ArrayType)} [{arrayTypeDefinition.Size}]";
-                    }
                     return type.Name;
                 case BaseType.BoolType:
                     return "Bool";
@@ -240,16 +232,12 @@ namespace Oberon0.Generator.Msil
                 DeclarationGeneratorInfo dgi = (DeclarationGeneratorInfo)variable.Declaration.GeneratorInfo;
                 ProcedureParameter pp = variable.Declaration as ProcedureParameter;
                 if (pp != null)
-                {
                     if (pp.IsVar)
                         WriteLine("\tldarg" + DotNumOrArg(dgi.Offset, 0, 3, false));
                     else
                         WriteLine("\tldarga " + dgi.Offset);
-                }
                 else
-                {
                     WriteLine("\tldloc" + DotNumOrArg(dgi.Offset, 0, 3));
-                }
             }
         }
 
@@ -258,15 +246,11 @@ namespace Oberon0.Generator.Msil
             if (value < min || value > max)
             {
                 if (value <= 255 && isSimpleShortForm)
-                {
                     return $".s {value}";
-                }
                 return $" {value}";
             }
             if (value < 0)
-            {
                 return $".m{-value}";
-            }
             return $".{value}";
         }
 
@@ -311,13 +295,9 @@ namespace Oberon0.Generator.Msil
                 var pp = assignmentVariable as ProcedureParameter;
                 var dgi = (DeclarationGeneratorInfo)assignmentVariable.GeneratorInfo;
                 if (pp != null)
-                {
                     WriteLine("\tstarg" + DotNumOrArg(dgi.Offset, 0, 3));
-                }
                 else
-                {
                     WriteLine("\tstloc" + DotNumOrArg(dgi.Offset, 0, 3));
-                }
             }
         }
 
@@ -349,9 +329,7 @@ namespace Oberon0.Generator.Msil
             if (func.IsInternal)
             {
                 if (func.Name == "eot")
-                {
                     WriteLine("\tcall bool isEof()");
-                }
                 else throw new NotImplementedException();
             }
             else

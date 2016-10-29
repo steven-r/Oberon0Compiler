@@ -43,10 +43,7 @@ namespace Oberon0.Generator.Msil
                 }
             }
             if (!isFirst)
-            {
-                // any local var
                 Code.WriteLine(")");
-            }
         }
     }
 }

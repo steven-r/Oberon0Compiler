@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Loyc.Geometry;
 using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Compiler.Expressions.Operations
@@ -25,7 +20,6 @@ namespace Oberon0.Compiler.Expressions.Operations
             var bin = e as BinaryExpression;
             if (bin == null) throw new InvalidCastException("Cannot cast expression to binary expression");
             if (bin.LeftHandSide.IsConst)
-            {
                 if (bin.LeftHandSide.TargetType == BaseType.IntType)
                 {
                     ConstantIntExpression left = (ConstantIntExpression)bin.LeftHandSide;
@@ -38,7 +32,6 @@ namespace Oberon0.Compiler.Expressions.Operations
                     left.Value = -(int)left.Value;
                     return left;
                 }
-            }
             return e; // expression remains the same
         }
     }

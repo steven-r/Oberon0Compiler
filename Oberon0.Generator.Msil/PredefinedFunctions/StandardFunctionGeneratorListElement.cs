@@ -4,17 +4,6 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
 {
     internal class StandardFunctionGeneratorListElement: IStandardFunctionMetadata
     {
-        /// <inheritdoc />
-        public string NameSpace { get; set; }
-
-        /// <inheritdoc />
-        public string Name { get; set; }
-        /// <inheritdoc />
-        public TypeDefinition ReturnType { get; set; }
-
-        /// <inheritdoc />
-        public ProcedureParameter[] ParameterTypes { get; set; }
-
         /// <summary>
         /// The instance handling the standard function
         /// </summary>
@@ -26,5 +15,17 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         /// </summary>
         /// <value>The instance key.</value>
         public string InstanceKey { get; set; }
+
+        /// <inheritdoc />
+        public string NameSpace { get; set; }
+
+        /// <inheritdoc />
+        public string Name { get; set; }
+
+        /// <inheritdoc />
+        public TypeDefinition ReturnType { get; set; }
+
+        /// <inheritdoc />
+        public ProcedureParameter[] ParameterTypes { get; set; }
     }
 }

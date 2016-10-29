@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Oberon0.Compiler.Expressions
+﻿namespace Oberon0.Compiler.Expressions
 {
     class UnaryExpression: BinaryExpression
     {

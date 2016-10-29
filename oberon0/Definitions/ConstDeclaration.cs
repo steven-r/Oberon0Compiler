@@ -4,8 +4,6 @@ namespace Oberon0.Compiler.Definitions
 {
     public class ConstDeclaration: Declaration
     {
-        public ConstantExpression Value { get; }
-
         public ConstDeclaration(string name, TypeDefinition type) 
             : this(name, type, null, null)
         {
@@ -15,6 +13,7 @@ namespace Oberon0.Compiler.Definitions
             : this(name, type, null, block)
         {
         }
+
         public ConstDeclaration(string name, TypeDefinition type, ConstantExpression value)
             : base(name, type)
         {
@@ -26,6 +25,8 @@ namespace Oberon0.Compiler.Definitions
         {
             Value = value;
         }
+
+        public ConstantExpression Value { get; }
 
         public override string ToString()
         {

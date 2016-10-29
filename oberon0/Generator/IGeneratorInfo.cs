@@ -5,6 +5,5 @@
     /// generator interfaces
     /// </summary>
     public interface IGeneratorInfo
-    {
-    }
+    {}
 }

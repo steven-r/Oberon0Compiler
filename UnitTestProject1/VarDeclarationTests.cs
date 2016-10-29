@@ -9,6 +9,26 @@ namespace UnitTestProject1
     public class VarDeclarationTests
     {
         [Test]
+        public void ArrayOfArray()
+        {
+            var compiler = new CompilerParser();
+            Module m = compiler.Calculate(@"MODULE Test; 
+VAR
+  id: ARRAY 5 OF ARRAY 10 OF INTEGER;
+ END Test.");
+
+            Assert.AreEqual(3, m.Block.Declarations.Count);
+            Assert.AreEqual(BaseType.ComplexType, m.Block.Declarations[2].Type.BaseType);
+            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), m.Block.Declarations[2].Type);
+            ArrayTypeDefinition atd = (ArrayTypeDefinition) m.Block.Declarations[2].Type;
+            Assert.AreEqual(5, atd.Size);
+            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), atd.ArrayType);
+            atd = (ArrayTypeDefinition)atd.ArrayType;
+            Assert.AreEqual(10, atd.Size);
+            Assert.AreEqual("INTEGER", atd.ArrayType.Name);
+        }
+
+        [Test]
         public void OneVar()
         {
             var compiler = new CompilerParser();
@@ -36,27 +56,6 @@ VAR
             Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), m.Block.Declarations[2].Type);
             ArrayTypeDefinition atd = (ArrayTypeDefinition)m.Block.Declarations[2].Type;
             Assert.AreEqual(5, atd.Size);
-            Assert.AreEqual("INTEGER", atd.ArrayType.Name);
-        }
-
-
-        [Test]
-        public void ArrayOfArray()
-        {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
-VAR
-  id: ARRAY 5 OF ARRAY 10 OF INTEGER;
- END Test.");
-
-            Assert.AreEqual(3, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.ComplexType, m.Block.Declarations[2].Type.BaseType);
-            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), m.Block.Declarations[2].Type);
-            ArrayTypeDefinition atd = (ArrayTypeDefinition) m.Block.Declarations[2].Type;
-            Assert.AreEqual(5, atd.Size);
-            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), atd.ArrayType);
-            atd = (ArrayTypeDefinition)atd.ArrayType;
-            Assert.AreEqual(10, atd.Size);
             Assert.AreEqual("INTEGER", atd.ArrayType.Name);
         }
 

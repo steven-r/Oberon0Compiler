@@ -4,11 +4,11 @@ namespace Oberon0.Generator.Msil
 {
     internal class DeclarationGeneratorInfo : IGeneratorInfo
     {
-        public int Offset { get; }
-
         public DeclarationGeneratorInfo(int offset)
         {
             Offset = offset;
         }
+
+        public int Offset { get; }
     }
 }

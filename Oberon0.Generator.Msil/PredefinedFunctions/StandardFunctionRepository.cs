@@ -24,7 +24,6 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
             var exports = container.GetExports<IStandardFunctionGenerator, IStandardFunctionMetadataView>();
 
             foreach (Lazy<IStandardFunctionGenerator, IStandardFunctionMetadataView> mefFunction in exports)
-            {
                 for (int i = 0; i < mefFunction.Metadata.Name.Length; i++)
                 {
                     StandardFunctionGeneratorListElement element = new StandardFunctionGeneratorListElement
@@ -43,9 +42,8 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
                     }
                     element.InstanceKey =
                         $"{element.Name}/{element.ReturnType.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.Name))}";
-                   _standardFunctionList.Add(element);
+                    _standardFunctionList.Add(element);
                 }
-            }
         }
 
 
@@ -62,9 +60,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
 
             var func = _standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
             if (func == null)
-            {
                 throw new InvalidOperationException("Cannot find function " + function);
-            }
             return func;
         }
 
@@ -72,6 +68,5 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         {
             return $"{(parameter.IsVar ? "&" : string.Empty)}{parameter.Type.Name}";
         }
-
     }
 }

@@ -9,20 +9,6 @@ namespace UnitTestProject1
     public class RecordTests
     {
         [Test]
-        public void SimpleRecord()
-        {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
-TYPE
-  Demo = INTEGER;
-
-END Test.");
-
-            Assert.AreEqual(true, m.Block.Types.Any(x => x.Name == "Demo"));
-            Assert.NotNull(m.Block.LookupType("Demo"));
-        }
-
-        [Test]
         public void LookupType()
         {
             var compiler = new CompilerParser();
@@ -65,6 +51,20 @@ END Test.");
             Assert.AreEqual(1, rtd.Elements.Count);
             Assert.AreEqual("a", rtd.Elements[0].Name);
             Assert.AreEqual("INTEGER", rtd.Elements[0].Type.Name);
+        }
+
+        [Test]
+        public void SimpleRecord()
+        {
+            var compiler = new CompilerParser();
+            Module m = compiler.Calculate(@"MODULE Test; 
+TYPE
+  Demo = INTEGER;
+
+END Test.");
+
+            Assert.AreEqual(true, m.Block.Types.Any(x => x.Name == "Demo"));
+            Assert.NotNull(m.Block.LookupType("Demo"));
         }
     }
 }

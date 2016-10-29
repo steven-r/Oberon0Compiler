@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 
@@ -38,6 +33,5 @@ namespace Oberon0.Compiler.Solver
 
             throw new InvalidOperationException($"Calculate does not support operation on {expression.GetType()}");
         }
-
     }
 }

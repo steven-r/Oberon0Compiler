@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Loyc.Geometry;
 using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Compiler.Expressions.Operations

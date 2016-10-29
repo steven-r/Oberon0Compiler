@@ -6,21 +6,20 @@ namespace Oberon0.Compiler.Expressions
 {
     public abstract class ConstantExpression : Expression
     {
-        public object Value { get; set; }
-
         protected ConstantExpression(BaseType baseType, object value)
         {
             TargetType = baseType;
             Value = value;
         }
 
+        private ConstantExpression() {}
+        public object Value { get; set; }
+
         /// <summary>
         /// Constant expressions are const by default
         /// </summary>
         /// <value><c>true</c> if this instance is constant; otherwise, <c>false</c>.</value>
         public override bool IsConst => true;
-
-        private ConstantExpression() {}
 
         internal static Expression Create(object value)
         {
@@ -40,22 +39,16 @@ namespace Oberon0.Compiler.Expressions
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (!isFloat)
-            {
                 return new ConstantIntExpression(Convert.ToInt32(value));
-            }
             else
-            {
                 return new ConstantDoubleExpression(dValue);
-            }
         }
 
         public int ToInt32()
         {
             var iconst = this as ConstantIntExpression;
             if (iconst == null)
-            {
                 throw new InvalidOperationException("Value is not of type int32");
-            }
             return (int)Value;
         }
 
@@ -82,6 +75,5 @@ namespace Oberon0.Compiler.Expressions
         {
             return Value.ToString();
         }
-
     }
 }

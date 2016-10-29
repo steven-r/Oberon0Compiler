@@ -4,6 +4,10 @@ namespace Oberon0.Generator.Msil
 {
     internal class BlockGeneratorInfo : IGeneratorInfo
     {
+        public BlockGeneratorInfo(uint startAddress)
+        {
+            Offset = startAddress;
+        }
 
         public uint DataSize { get; set; }
 
@@ -14,10 +18,5 @@ namespace Oberon0.Generator.Msil
         public uint Offset { get; set; }
 
         public uint CodeStart { get; set; }
-
-        public BlockGeneratorInfo(uint startAddress)
-        {
-            Offset = startAddress;
-        }
     }
 }

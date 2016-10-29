@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Operations;
-using Oberon0.Compiler.Solver;
 
 namespace Oberon0.Compiler.Expressions
 {
@@ -10,6 +8,8 @@ namespace Oberon0.Compiler.Expressions
     {
         public Expression LeftHandSide { get; set; }
         public Expression RightHandSide { get; set; }
+
+        internal ArithmeticOperation Operation { get; private set; }
 
         /// <summary>
         /// Creates the specified binary expression.
@@ -45,14 +45,10 @@ namespace Oberon0.Compiler.Expressions
             return result;
         }
 
-        internal ArithmeticOperation Operation { get; private set; }
-
         public override string ToString()
         {
             if (RightHandSide == null)
-            {
                 return $"{Operator:G} ({LeftHandSide.TargetType:G}) -> {TargetType}";
-            }
             return $"{Operator:G} ({LeftHandSide.TargetType:G}, {RightHandSide.TargetType:G}) -> {TargetType}";
         }
     }

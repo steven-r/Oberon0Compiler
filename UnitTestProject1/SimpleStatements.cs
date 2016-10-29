@@ -30,6 +30,7 @@ END Test.
             ConstantIntExpression cie = (ConstantIntExpression)ast.Expression;
             Assert.AreEqual(1, cie.Value);
         }
+
         [Test]
 
         public void TwoStatements()

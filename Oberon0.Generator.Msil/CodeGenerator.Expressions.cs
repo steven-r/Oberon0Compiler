@@ -8,7 +8,7 @@ namespace Oberon0.Generator.Msil
 {
     public partial class CodeGenerator
     {
-        private static Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, BinaryExpression>> OperatorMapping = 
+        private static readonly Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, BinaryExpression>> OperatorMapping = 
             new Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, BinaryExpression>>
             {
                 {TokenType.Add, HandleSimpleOperation},
@@ -26,7 +26,7 @@ namespace Oberon0.Generator.Msil
                 {TokenType.Not, HandleRelOperation},
             };
 
-       private static Dictionary<TokenType, string> SimpleInstructionMapping = 
+        private static readonly Dictionary<TokenType, string> SimpleInstructionMapping = 
             new Dictionary<TokenType, string>
             {
                 {TokenType.Add, "add" },
@@ -65,9 +65,7 @@ namespace Oberon0.Generator.Msil
             expression.GeneratorInfo = eInfo;
             var v = expression as VariableReferenceExpression;
             if (v != null)
-            {
                 return HandleVariableReferenceExpression(v);
-            }
             var s = expression as StringExpression;
             if (s != null)
             {
@@ -113,13 +111,9 @@ namespace Oberon0.Generator.Msil
         private void LoadConstantExpression(ConstantExpression cons, ConstDeclaration declaration)
         {
             if (declaration != null)
-            {
                 Code.LoadConstRef(declaration);
-            }
             else
-            {
                 Code.PushConst(cons.Value);
-            }
         }
 
         private Expression HandleVariableReferenceExpression(VariableReferenceExpression v)

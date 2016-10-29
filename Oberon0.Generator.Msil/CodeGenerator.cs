@@ -19,6 +19,18 @@ namespace Oberon0.Generator.Msil
         /// </summary>
         public const string DefaultNamespace = "$DEFAULT";
 
+        private static readonly Dictionary<TokenType, string> RelRevJumpMapping =
+            new Dictionary<TokenType, string>
+            {
+                {TokenType.Equals, "bne.un"},
+                {TokenType.LT, "bge.un"},
+                {TokenType.LE, "bgt.un"},
+                {TokenType.GT, "ble.un"},
+                {TokenType.GE, "blt.un"},
+                {TokenType.NotEquals, "beq.un"},
+                {TokenType.Not, "brfalse"},
+            };
+
         private readonly Module _module;
 
 
@@ -58,9 +70,7 @@ namespace Oberon0.Generator.Msil
             foreach (var functionDeclaration in block.Procedures)
             {
                 if (functionDeclaration.IsInternal)
-                {
                     continue;
-                }
                 Code.StartMethod(functionDeclaration);
                 ProcessDeclarations(functionDeclaration.Block);
                 ProcessStatements(functionDeclaration.Block);
@@ -69,18 +79,6 @@ namespace Oberon0.Generator.Msil
             Code.StartMainMethod();
             ProcessStatements(block);
         }
-
-        private static readonly Dictionary<TokenType, string> RelRevJumpMapping =
-            new Dictionary<TokenType, string>
-            {
-                {TokenType.Equals, "bne.un"},
-                {TokenType.LT, "bge.un"},
-                {TokenType.LE, "bgt.un"},
-                {TokenType.GT, "ble.un"},
-                {TokenType.GE, "blt.un"},
-                {TokenType.NotEquals, "beq.un"},
-                {TokenType.Not, "brfalse"},
-            };
 
         private void ProcessStatements(Block block)
         {
@@ -94,24 +92,16 @@ namespace Oberon0.Generator.Msil
                 }
                 var ifStmt = statement as IfStatement;
                 if (ifStmt != null)
-                {
                     GenerateIfStatement(ifStmt, block);
-                }
                 var whileStmt = statement as WhileStatement;
                 if (whileStmt != null)
-                {
                     GenerateWhileStatement(whileStmt, block);
-                }
                 var repeatStmt = statement as RepeatStatement;
                 if (repeatStmt != null)
-                {
                     GenerateRepeatStatement(repeatStmt, block);
-                }
                 var callStmt = statement as ProcedureCallStatement;
                 if (callStmt != null)
-                {
                     CallProcedure(callStmt, block);
-                }
             }
         }
 
@@ -129,9 +119,7 @@ namespace Oberon0.Generator.Msil
                 Code.EmitLabel(nextLabel);
             }
             if (stmt.ElsePart != null)
-            {
                 ProcessStatements(stmt.ElsePart);
-            }
             Code.EmitLabel(endLabel);
         }
 
