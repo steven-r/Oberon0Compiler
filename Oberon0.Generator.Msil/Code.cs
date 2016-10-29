@@ -80,10 +80,10 @@ namespace Oberon0.Generator.Msil
                             sb.Append("\\r");
                             break;
                         case '\t':
-                            sb.Append("\\r");
+                            sb.Append("\\t");
                             break;
                         case '\n':
-                            sb.Append("\\r");
+                            sb.Append("\\n");
                             break;
                         case '"':
                             sb.Append("\\");
