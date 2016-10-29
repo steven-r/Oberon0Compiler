@@ -44,12 +44,12 @@ namespace Oberon0.Generator.Msil
         public void Generate()
         {
             StandardFunctionRepository.Initialize(_module);
-            Code.Reference("mscorlib", auto: true);
+            Code.Reference("mscorlib");
             Code.StartAssembly(_module.Name);
             Code.EmitComment("Code compiled for module " + _module.Name);
             Code.StartModule(_module.Name);
             ProcessMainBlock(_module.Block);
-            Code.EndMethod(null);
+            Code.EndMethod();
         }
 
         private void ProcessMainBlock(Block block)
@@ -64,7 +64,7 @@ namespace Oberon0.Generator.Msil
                 Code.StartMethod(functionDeclaration);
                 ProcessDeclarations(functionDeclaration.Block);
                 ProcessStatements(functionDeclaration.Block);
-                Code.EndMethod(functionDeclaration);
+                Code.EndMethod();
             }
             Code.StartMainMethod();
             ProcessStatements(block);

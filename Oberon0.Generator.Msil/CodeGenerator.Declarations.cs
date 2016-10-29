@@ -6,10 +6,11 @@ namespace Oberon0.Generator.Msil
     {
         private void ProcessDeclarations(Block block, bool isRoot = false)
         {
-            foreach (TypeDefinition typeDefinition in block.Types)
-            {
+            //TODO: Type generation
+            //foreach (TypeDefinition typeDefinition in block.Types)
+            //{
                 
-            }
+            //}
             int id = 0;
             bool isFirst = true;
             foreach (Declaration declaration in block.Declarations)

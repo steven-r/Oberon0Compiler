@@ -8,8 +8,8 @@ namespace Oberon0.Generator.Msil
 {
     public partial class CodeGenerator
     {
-        private static Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, ExpressionGeneratorInfo, BinaryExpression>> OperatorMapping = 
-            new Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, ExpressionGeneratorInfo, BinaryExpression>>
+        private static Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, BinaryExpression>> OperatorMapping = 
+            new Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, BinaryExpression>>
             {
                 {TokenType.Add, HandleSimpleOperation},
                 {TokenType.Sub, HandleSimpleOperation},
@@ -36,7 +36,7 @@ namespace Oberon0.Generator.Msil
                 {TokenType.Mod, "rem" },
             };
 
-        private static BinaryExpression HandleSimpleOperation(CodeGenerator generator, Block block, BinaryExpression bin, ExpressionGeneratorInfo eInfo)
+        private static BinaryExpression HandleSimpleOperation(CodeGenerator generator, Block block, BinaryExpression bin)
         {
             generator.ExpressionCompiler(block, bin.LeftHandSide);
             if (!bin.IsUnary)
@@ -45,7 +45,7 @@ namespace Oberon0.Generator.Msil
             return bin;
         }
 
-        private static BinaryExpression HandleRelOperation(CodeGenerator generator, Block block, BinaryExpression bin, ExpressionGeneratorInfo eInfo)
+        private static BinaryExpression HandleRelOperation(CodeGenerator generator, Block block, BinaryExpression bin)
         {
             generator.ExpressionCompiler(block, bin.LeftHandSide);
             if (!bin.IsUnary)
@@ -66,7 +66,7 @@ namespace Oberon0.Generator.Msil
             var v = expression as VariableReferenceExpression;
             if (v != null)
             {
-                return HandleVariableReferenceExpression(block, v);
+                return HandleVariableReferenceExpression(v);
             }
             var s = expression as StringExpression;
             if (s != null)
@@ -78,7 +78,7 @@ namespace Oberon0.Generator.Msil
             if (bin != null)
             {
                 Code.EmitComment(bin.ToString());
-                return OperatorMapping[bin.Operator](this, block, bin, eInfo);
+                return OperatorMapping[bin.Operator](this, block, bin);
             }
             var cons = expression as ConstantExpression;
             if (cons != null)
@@ -122,7 +122,7 @@ namespace Oberon0.Generator.Msil
             }
         }
 
-        private Expression HandleVariableReferenceExpression(Block block, VariableReferenceExpression v)
+        private Expression HandleVariableReferenceExpression(VariableReferenceExpression v)
         {
             if (v.IsConst)
             {

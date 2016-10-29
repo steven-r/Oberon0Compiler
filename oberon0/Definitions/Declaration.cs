@@ -4,11 +4,11 @@ namespace Oberon0.Compiler.Definitions
 {
     public class Declaration
     {
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public TypeDefinition Type { get; set; }
+        public TypeDefinition Type { get; }
 
-        public Block Block { get; set; }
+        public Block Block { get; }
 
         /// <summary>
         /// Additional information used by the generator engine
@@ -16,7 +16,12 @@ namespace Oberon0.Compiler.Definitions
         /// <value>Generator information.</value>
         public IGeneratorInfo GeneratorInfo { get; set; }
 
-        public Declaration(string name, TypeDefinition type, Block block = null)
+        public Declaration(string name, TypeDefinition type) 
+            : this(name, type, null)
+        {
+        }
+
+        public Declaration(string name, TypeDefinition type, Block block)
         {
             Name = name;
             Type = type;

@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssignmentGeneratorInfo.cs" />
     <Compile Include="BlockGeneratorInfo.cs" />
     <Compile Include="CodeGenerator.Expressions.cs" />
     <Compile Include="Code.cs" />

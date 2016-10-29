@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using NUnit.Framework;
 using Oberon0.Compiler;
@@ -14,7 +13,7 @@ namespace Oberon0.Generator.Msil.Tests.Complex
         [Test]
         public void FullExample1()
         {
-            string expected = @".assembly extern mscorlib { }
+            const string expected = @".assembly extern mscorlib { }
 .assembly Samples { }
 // Code compiled for module Samples
 .module Samples.exe
@@ -392,3 +391,4 @@ END Samples.
         }
     }
 }
+

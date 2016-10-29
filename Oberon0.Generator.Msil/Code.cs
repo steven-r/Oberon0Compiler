@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,9 +11,7 @@ namespace Oberon0.Generator.Msil
 {
     public class Code: StringWriter
     {
-        private static int _labelId;
-
-        public string ModuleName { get; set; }
+        private int _labelId;
 
         public Code(StringBuilder sb): base(sb)
         {
@@ -56,17 +55,14 @@ namespace Oberon0.Generator.Msil
                     WriteLine("ldc.r8 " + data);
                     break;
                 case TypeCode.String:
-                    WriteLine("ldstr " + generateString((string)data));
+                    WriteLine("ldstr " + GenerateString((string)data));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-
-
-
-        internal string generateString(string str)
+        private string GenerateString(string str)
         {
             StringBuilder sb = new StringBuilder(str.Length*2);
             sb.Append('"');
@@ -102,24 +98,25 @@ namespace Oberon0.Generator.Msil
             return sb.ToString();
         }
 
+/*
         internal string GenerateBytes(byte[] data)
         {
             return string.Join(" ", Array.ConvertAll(data, x => x.ToString("X2")));
         }
+*/
 
         internal void EmitComment(string comment)
         {
             WriteLine("// " + comment);
         }
 
-        public void Reference(string assemblyName, bool auto)
+        public void Reference(string assemblyName)
         {
             WriteLine($".assembly extern {assemblyName} {{ }}");
         }
 
         public void StartAssembly(string moduleName)
         {
-            ModuleName = moduleName;
             WriteLine($".assembly {moduleName} {{ }}");
         }
 
@@ -142,7 +139,7 @@ namespace Oberon0.Generator.Msil
                 case BaseType.BoolType:
                     if (isLoad || isData)
                         return constantExpression.ToBool() ? "1" : "0";
-                    return constantExpression.ToBool().ToString().ToLower();
+                    return constantExpression.ToBool().ToString().ToLower(CultureInfo.InvariantCulture);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -193,13 +190,23 @@ namespace Oberon0.Generator.Msil
         }
 
 
-        public void DataField(Declaration declaration, bool isStatic = false)
+        public void DataField(Declaration declaration)
+        {
+            DataField(declaration, false);
+        }
+
+        public void DataField(Declaration declaration, bool isStatic)
         {
             WriteLine($".field {(isStatic ? "static " : string.Empty)}{GetTypeName(declaration.Type)} {declaration.Name}");
         }
 
 
-        public string EmitLabel(string label = null)
+        public string EmitLabel()
+        {
+            return EmitLabel(null);
+        }
+
+        public string EmitLabel(string label)
         {
             label = label ?? GetLabel();
             Write(label + ": ");
@@ -283,10 +290,11 @@ namespace Oberon0.Generator.Msil
                 parameter.GeneratorInfo = new DeclarationGeneratorInfo(id++);
                 paramList.Add($"{GetTypeName(parameter.Type)} {parameter.Name}");
             }
-            WriteLine(string.Join(", ", paramList) + ")\n{");
+            WriteLine(string.Join(", ", paramList) + @")
+{");
         }
 
-        public void EndMethod(FunctionDeclaration functionDeclaration)
+        public void EndMethod()
         {
             WriteLine("\tret");
             WriteLine("}");
@@ -353,11 +361,6 @@ namespace Oberon0.Generator.Msil
                 typeNames.AddRange(func.Parameters.Select(parameter => parameter.Name));
                 WriteLine($"{string.Join(", ", typeNames)})");
             }
-        }
-
-        public void Pop()
-        {
-            Write("\tpop");
         }
     }
 }
