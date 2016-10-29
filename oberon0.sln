@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0Compiler", "oberon0\Oberon0Compiler.csproj", "{FE7E3848-F08B-45EA-8083-353BDA6BCC92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{A73899C5-E473-4C83-B844-557F70D89AE2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0Compiler.Tests", "UnitTestProject1\Oberon0Compiler.Tests.csproj", "{A73899C5-E473-4C83-B844-557F70D89AE2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BD26F1AC-2AAF-4F42-851B-69FCAD750DD7}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,7 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.Generator.ORisc", "Oberon0.Generator.ORisc\Oberon0.Generator.ORisc.csproj", "{595E6037-EE61-48F6-88CA-64FC56EC368D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.Generator.Msil", "Oberon0.Generator.Msil\Oberon0.Generator.Msil.csproj", "{595E6037-EE61-48F6-88CA-64FC56EC368D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.Generator.Msil.Tests", "Oberon0.Generator.Msil.Tests\Oberon0.Generator.Msil.Tests.csproj", "{B6EED4F1-9799-4111-9170-E71E0F7066A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +80,22 @@ Global
 		{595E6037-EE61-48F6-88CA-64FC56EC368D}.Release|x64.Build.0 = Release|Any CPU
 		{595E6037-EE61-48F6-88CA-64FC56EC368D}.Release|x86.ActiveCfg = Release|Any CPU
 		{595E6037-EE61-48F6-88CA-64FC56EC368D}.Release|x86.Build.0 = Release|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Debug|ARM.Build.0 = Debug|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Debug|x64.Build.0 = Debug|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Debug|x86.Build.0 = Debug|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|ARM.ActiveCfg = Release|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|ARM.Build.0 = Release|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|x64.ActiveCfg = Release|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|x64.Build.0 = Release|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

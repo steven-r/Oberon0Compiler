@@ -22,5 +22,10 @@ namespace Oberon0.Compiler.Definitions
             Type = type;
             Block = block;
         }
+
+        public override string ToString()
+        {
+            return $"var {Name} = {Type}";
+        }
     }
 }

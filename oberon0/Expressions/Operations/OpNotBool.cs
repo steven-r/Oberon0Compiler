@@ -15,8 +15,8 @@ namespace Oberon0.Compiler.Expressions.Operations
     /// <seealso cref="IArithmeticOperation" />
     /// <remarks>This function is some kind of exception as ~ usually takes one parameter. The second is handled as a dummy</remarks>
     [Export(typeof(IArithmeticOperation))]
-    [ArithmeticOperation(TokenType.Not, BaseType.BoolType, BaseType.BoolType, BaseType.BoolType)]
-    public class OpNotNumber : IArithmeticOperation
+    [ArithmeticOperation(TokenType.Not, BaseType.BoolType, BaseType.AnyType, BaseType.BoolType)]
+    public class OpNotBool : IArithmeticOperation
     {
         public Expression Operate(Expression e, Block block, IArithmeticOpMetadata operationParameters)
         {
@@ -26,7 +26,7 @@ namespace Oberon0.Compiler.Expressions.Operations
             if (bin.LeftHandSide.IsConst)
             {
                 var left = (ConstantBoolExpression)bin.LeftHandSide;
-                left.Value = !left.Value;
+                left.Value = !(bool)left.Value;
                 return left;
             }
             return e; // expression remains the same

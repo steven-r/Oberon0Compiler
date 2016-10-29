@@ -8,6 +8,8 @@ namespace Oberon0.Compiler.Definitions
 
         public BaseType BaseType { get; }
 
+        public bool IsInternal { get; set; }
+
         /// <summary>
         /// Additional information used by the generator engine
         /// </summary>
@@ -17,6 +19,12 @@ namespace Oberon0.Compiler.Definitions
         public TypeDefinition(BaseType baseType)
         {
             BaseType = baseType;
+        }
+
+        public TypeDefinition(BaseType baseType, bool isInternal)
+        {
+            BaseType = baseType;
+            IsInternal = isInternal;
         }
     }
 }

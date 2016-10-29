@@ -16,5 +16,10 @@ namespace Oberon0.Compiler.Definitions
         {
             Value = value;
         }
+
+        public override string ToString()
+        {
+            return $"Const {Name} = {Value}";
+        }
     }
 }

@@ -6,9 +6,12 @@ namespace Oberon0.Compiler.Expressions
 {
     public abstract class ConstantExpression : Expression
     {
-        protected ConstantExpression(BaseType baseType)
+        public object Value { get; set; }
+
+        protected ConstantExpression(BaseType baseType, object value)
         {
             TargetType = baseType;
+            Value = value;
         }
 
         /// <summary>
@@ -53,7 +56,7 @@ namespace Oberon0.Compiler.Expressions
             {
                 throw new InvalidOperationException("Value is not of type int32");
             }
-            return iconst.Value;
+            return (int)Value;
         }
 
         public double ToDouble()
@@ -65,14 +68,20 @@ namespace Oberon0.Compiler.Expressions
                     return ToInt32();
                 throw new InvalidOperationException("Value is not of type int32");
             }
-            return dconst.Value;
+            return (double)Value;
         }
 
         public bool ToBool()
         {
             var bval = this as ConstantBoolExpression;
-            if (bval != null) return bval.Value;
+            if (bval != null) return (bool)Value;
             throw new InvalidOperationException("Value is not of type bool");
         }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
     }
 }

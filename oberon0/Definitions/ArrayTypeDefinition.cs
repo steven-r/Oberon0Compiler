@@ -12,5 +12,10 @@ namespace Oberon0.Compiler.Definitions
             Size = size;
             ArrayType = baseType;
         }
+
+        public override string ToString()
+        {
+            return $"ARRAY {Size} OF {ArrayType}";
+        }
     }
 }

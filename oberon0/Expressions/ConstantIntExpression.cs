@@ -5,17 +5,15 @@ namespace Oberon0.Compiler.Expressions
 {
     public class ConstantIntExpression : ConstantExpression
     {
-        public int Value { get; }
-
         public ConstantIntExpression(int value)
-            : base(BaseType.IntType)
+            : base(BaseType.IntType, value)
         {
             Value = value;
         }
 
         public override string ToString()
         {
-            return Value.ToString("G");
+            return ((int)Value).ToString("G");
         }
     }
 }

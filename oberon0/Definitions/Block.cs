@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Oberon0.Compiler.Generator;
@@ -33,10 +34,21 @@ namespace Oberon0.Compiler.Definitions
 
         public TypeDefinition LookupType(string name)
         {
+            // ReSharper disable once IntroduceOptionalParameters.Global
+            return LookupType(name, false);
+        }
+
+        public TypeDefinition LookupType(string name, bool allowInternal)
+        {
             Block b = this;
+            if (name.StartsWith("&", StringComparison.InvariantCulture))
+            {
+                // ignore reference marker
+                name = name.Substring(1);
+            }
             while (b != null)
             {
-                var res = b.Types.FirstOrDefault(x => x.Name == name);
+                var res = b.Types.FirstOrDefault(x => x.Name == name && (allowInternal || !x.IsInternal));
                 if (res != null)
                 {
                     return res;

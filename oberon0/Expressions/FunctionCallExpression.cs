@@ -20,7 +20,8 @@ namespace Oberon0.Compiler.Expressions
             FunctionDeclaration = functionDeclaration;
             Block = block;
             Parameters = new List<Expression>(parameters);
-            TargetType = functionDeclaration.ReturnType;
+            TargetType = functionDeclaration.ReturnType.BaseType;
         }
+
     }
 }

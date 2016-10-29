@@ -7,8 +7,8 @@
     <ProjectGuid>{595E6037-EE61-48F6-88CA-64FC56EC368D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Oberon0.Generator.ORisc</RootNamespace>
-    <AssemblyName>Oberon0.Generator.ORisc</AssemblyName>
+    <RootNamespace>Oberon0.Generator.Msil</RootNamespace>
+    <AssemblyName>Oberon0.Generator.Msil</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,7 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,9 +45,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="DataTypes\DataTypeBase.cs" />
-    <Compile Include="RegisterInstructions.cs" />
+    <Compile Include="AssignmentGeneratorInfo.cs" />
+    <Compile Include="BlockGeneratorInfo.cs" />
+    <Compile Include="CodeGenerator.Expressions.cs" />
+    <Compile Include="Code.cs" />
+    <Compile Include="CodeGenerator.cs" />
+    <Compile Include="DeclarationGeneratorInfo.cs" />
+    <Compile Include="ExpressionGeneratorInfo.cs" />
+    <Compile Include="PredefinedFunctions\IStandardFunctionExportMetadata.cs" />
+    <Compile Include="PredefinedFunctions\IStandardFunctionGenerator.cs" />
+    <Compile Include="PredefinedFunctions\IStandardFunctionMetadata.cs" />
+    <Compile Include="PredefinedFunctions\IStandardFunctionMetadataView.cs" />
+    <Compile Include="PredefinedFunctions\ReadHandler.cs" />
+    <Compile Include="PredefinedFunctions\StandardFunctionGeneratorListElement.cs" />
+    <Compile Include="PredefinedFunctions\StandardFunctionMetadataAttribute.cs" />
+    <Compile Include="PredefinedFunctions\StandardFunctionRepository.cs" />
+    <Compile Include="PredefinedFunctions\WriteHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +70,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeGenerator.Declarations.cs" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
