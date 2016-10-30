@@ -13,7 +13,7 @@ namespace Oberon0.Generator.Msil.Tests.Complex
         [Test]
         public void FullExample1()
         {
-            const string expected = @".assembly extern mscorlib { }
+            string expected = @".assembly extern mscorlib { }
 .assembly Samples { }
 // Code compiled for module Samples
 .module Samples.exe
@@ -284,7 +284,7 @@ L18: // Call BinSearch
 	call void BinSearch ()
 L16: 	ret
 }
-";
+".Replace("\r\n", "\n");
 
             string proc = @"
 MODULE Samples;
@@ -387,7 +387,7 @@ END Samples.
             {
                 cg.DumpCode(w);
             }
-            Assert.AreEqual(expected, sb.ToString());
+            Assert.AreEqual(expected, sb.ToString().Replace("\r\n", "\n"));
         }
     }
 }
