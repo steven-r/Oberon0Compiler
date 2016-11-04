@@ -56,6 +56,5 @@ END Test.");
             Assert.AreEqual(BaseType.IntType, p.Parameters[0].Type.BaseType);
             Assert.AreEqual(true, p.Parameters[0].IsVar);
         }
-
     }
 }

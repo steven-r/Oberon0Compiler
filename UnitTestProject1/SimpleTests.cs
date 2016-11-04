@@ -28,17 +28,6 @@ BEGIN END Test."); });
         }
 
         [Test]
-        public void ModuleMissingId()
-        {
-            var compiler = new CompilerParser();
-
-
-            Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE ; 
-BEGIN END Test."); });
-            Assert.AreEqual(e.Message, "\'Semicolon\': expected Id");
-        }
-
-        [Test]
         public void ModuleMissingDot()
         {
             var compiler = new CompilerParser();
@@ -49,5 +38,15 @@ END Test"); });
             Assert.AreEqual(e.Message, "\'EOF\': expected Dot");
         }
 
+        [Test]
+        public void ModuleMissingId()
+        {
+            var compiler = new CompilerParser();
+
+
+            Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE ; 
+BEGIN END Test."); });
+            Assert.AreEqual(e.Message, "\'Semicolon\': expected Id");
+        }
     }
 }

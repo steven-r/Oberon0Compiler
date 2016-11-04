@@ -40,6 +40,7 @@ namespace Oberon0.Compiler {
 		(",",  Comma),
 		("#",  NotEquals),
 		("(",  LParen),
+		("\"", DQuote),
 		("[",  LBracket),
 		("]",  RBracket),
 		(")",  RParen)));
@@ -66,6 +67,7 @@ namespace Oberon0.Compiler {
 
 		Id,
 		Num,
+		String,
 		unroll ((_, TOKEN_NAME) in OPERATOR_TOKEN_LIST)
 		{
 			TOKEN_NAME; // inside 'unroll', must use ';' instead of ',' as separator
@@ -133,9 +135,12 @@ namespace Oberon0.Compiler {
 		}
 		#endregion 
 
+
+
 		public token bool MoveNext()
 		{
 			@[ (' '|'\t'|'\n'|'\r')* ];  // Skip spaces between tokens
+			@[ (SLComment|MLComment)* ]; // ignore comments
 			_tok.StartIndex = Src.InputPosition;
 			_tok.Value = null;
 			@[ { _tok.Type = TT.Num;    } Num
@@ -143,11 +148,26 @@ namespace Oberon0.Compiler {
 			 | { _tok.Type = TT.Num;    } ".inf" { _tok.Value = double.PositiveInfinity; }
 			 | any punctuation // matches any of the punctuation rules
 			 | IdOrKeyword
+			 | SQString
 			 | error           // error branch - if input matches none of the above
 			   { _tok.Type = TT.EOF; } (_ { _tok.Type = TT.Unknown; })? 
 			 ];
 			return _tok.Type != TT.EOF;
 		}
+
+		private token SQString @[
+			( '\'' ['\\' _ | ~('\''|'\\'|'\r'|'\n')]* '\'' )
+			{ _tok.Type = TT.String; _tok.Value = Src.CharSource.Slice(_tok.StartIndex, Src.InputPosition - _tok.StartIndex).ToString(); }
+		];
+
+		private token SLComment @[
+			"//" (~('\r'|'\n'))*
+		];
+
+		[k(3)]
+		private token MLComment @[
+			"(*" nongreedy('\r'/'\n'/ _)* "*)"
+		];
 
 		[k(9)]
 		private token IdOrKeyword @[ 
@@ -218,11 +238,13 @@ namespace Oberon0.Compiler {
 			var lexer = new CalculatorLexer(input);
 			// ParserSource accepts any IEnumerator<Token> for its first parameter
 			Src = new ParserSource<Token>(lexer, EofToken, lexer.Src.SourceFile) { 
-				TokenTypeToString = tt => ((TT)tt).ToString(),
-				ErrorSink = new MessageSinkFromDelegate((type, ctx, msg, args) => {
+				TokenTypeToString = tt => ((TT)tt).ToString()
+			#if Verbose
+				,ErrorSink = new MessageSinkFromDelegate((type, ctx, msg, args) => {
                     MessageSink.Console.Write(type, ctx, msg, args);
                     throw new LogException(new LogMessage(type, ctx, msg, args));
                 })
+			#endif
 			};
 			var result = Module();
 			// emit an error if we reach end of expression before end-of-input
@@ -400,7 +422,7 @@ namespace Oberon0.Compiler {
 				( "(" pl1:ParameterList(block) { if (pl1 != null) pl.AddRange(pl1); } ? ")" 
 				{ FunctionDeclaration f = block.LookupFunction(name);
 					if (f == null) { Src.Error(0, "There's no function named '{0}'", name); }
-					if (f.ReturnType == BaseType.VoidType) {
+					if (f.ReturnType.BaseType == BaseType.VoidType) {
 						Src.Error(0, "You cannot call procedure '{0}' as a function", name);
 					}
 					if (f.Parameters.Count != pl.Count) {
@@ -418,8 +440,9 @@ namespace Oberon0.Compiler {
 				}
 			)
 			| t:=TT.Num { $result = ConstantExpression.Create(t.Value); }
+			| s:=TT.String { $result = new StringExpression(s.Value.ToString()); }
 			| "(" result:SimpleExpression(block) ")"
-			| "~" n:=Term(block) {$result = BinaryExpression.Create(TT.Not, n, new ConstantBoolExpression(false)); }
+			| "~" n:=Term(block) {$result = BinaryExpression.Create(TT.Not, n, null); }
 			| error     { $result = null; Src.Error(0, "Expected identifer, number, or (parens)"); }
 			)
 			greedy 
@@ -427,7 +450,7 @@ namespace Oberon0.Compiler {
 		];
 
 		private rule Expression PrefixExpr(Block block) @[
-			"-" t:=Term(block) { $result = BinaryExpression.Create(TT.Sub, ConstantExpression.Create(0), t); }
+			"-" t:=Term(block) { $result = BinaryExpression.Create(TT.Unary, t, null); }
 			| t:=Term(block) { $result = t; }
 		];
 
@@ -462,8 +485,10 @@ namespace Oberon0.Compiler {
 			}
 			e:=RelationalExpression(block)
 			{
+			#if Verbose
 				Console.WriteLine($"Assignment {varName} := {e.GetType().Name}");
-				block.Statements.Add(new AssignmentStatement{Variable = variable, Expression = e});
+			#endif
+				block.Statements.Add(new AssignmentStatement{Variable = variable, Expression = e, Selector = selector});
 			}
 		];
 
@@ -530,6 +555,7 @@ namespace Oberon0.Compiler {
 			e:=RelationalExpression(block) TT.Do { w.Condition = e; }
 				StatementSequence(w.Block)
 			TT.End
+			{block.Statements.Add(w);}
 		];
 
 		private rule RepeatStmt(Block block) @[
@@ -537,6 +563,7 @@ namespace Oberon0.Compiler {
 			StatementSequence(r.Block)
 			TT.Until e:=RelationalExpression(block) { r.Condition = e; }
 			TT.End
+			{block.Statements.Add(r);}
 		];
 
 		private rule SingleStatement(Block block) @[

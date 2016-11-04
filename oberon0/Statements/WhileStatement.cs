@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Oberon0.Compiler.Definitions;
+﻿using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Statements
@@ -14,6 +9,11 @@ namespace Oberon0.Compiler.Statements
     /// <seealso cref="BasicStatement" />
     public class WhileStatement: BasicStatement
     {
+        public WhileStatement(Block parent)
+        {
+            Block = new Block {Parent = parent};
+        }
+
         /// <summary>
         /// Gets or sets the condition.
         /// </summary>
@@ -25,10 +25,5 @@ namespace Oberon0.Compiler.Statements
         /// </summary>
         /// <value>The block.</value>
         public Block Block { get; set; }
-
-        public WhileStatement(Block parent)
-        {
-            Block = new Block {Parent = parent};
-        }
     }
 }

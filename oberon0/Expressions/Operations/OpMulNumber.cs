@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Loyc.Geometry;
 using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Compiler.Expressions.Operations
@@ -26,9 +21,7 @@ namespace Oberon0.Compiler.Expressions.Operations
                 var left = (ConstantExpression)bin.LeftHandSide;
                 var right = (ConstantExpression)bin.RightHandSide;
                 if (bin.LeftHandSide.TargetType == BaseType.IntType && bin.RightHandSide.TargetType == BaseType.IntType)
-                {
                     return new ConstantIntExpression(left.ToInt32() * right.ToInt32());
-                }
                 return new ConstantDoubleExpression(left.ToDouble() * right.ToDouble());
             }
             return e; // expression remains the same

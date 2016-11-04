@@ -2,24 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Linq;
+using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Operations;
-using JetBrains.Annotations;
 
 namespace Oberon0.Compiler.Expressions
 {
     class ExpressionRepository
     {
-
-#pragma warning disable 649
-        [ImportMany]
-        // ReSharper disable once CollectionNeverUpdated.Local
-        // ReSharper disable once MemberCanBePrivate.Local
-        private Lazy<IArithmeticOperation, IArithmeticOpMetadataView>[] MefArithmeticOperations { get; set; }
-#pragma warning restore 649
-
-        private Dictionary<ArithmeticOpKey, ArithmeticOperation> ArithmeticOperations { get; }
+        private static ExpressionRepository _instance = null;
 
         private ExpressionRepository()
         {
@@ -34,7 +25,6 @@ namespace Oberon0.Compiler.Expressions
             // translate all arithmentic operations to a dictionary
             ArithmeticOperations = new Dictionary<ArithmeticOpKey, ArithmeticOperation>();
             foreach (Lazy<IArithmeticOperation, IArithmeticOpMetadataView> mefArithmeticOperation in MefArithmeticOperations)
-            {
                 for (int i = 0; i < mefArithmeticOperation.Metadata.Operation.Length; i++)
                 {
                     var key = new ArithmeticOpKey(mefArithmeticOperation.Metadata.Operation[i],
@@ -43,11 +33,17 @@ namespace Oberon0.Compiler.Expressions
                         mefArithmeticOperation.Metadata.TargetType[i]);
                     ArithmeticOperations.Add(key, new ArithmeticOperation(mefArithmeticOperation.Value, key));
                 }
-            }
         }
 
+#pragma warning disable 649
+        [ImportMany]
+        // ReSharper disable once CollectionNeverUpdated.Local
+        // ReSharper disable once MemberCanBePrivate.Local
+        private Lazy<IArithmeticOperation, IArithmeticOpMetadataView>[] MefArithmeticOperations { get; set; }
+#pragma warning restore 649
 
-        private static ExpressionRepository _instance = null;
+        private Dictionary<ArithmeticOpKey, ArithmeticOperation> ArithmeticOperations { get; }
+
         /// <summary>
         /// Gets a singleton instance.
         /// </summary>

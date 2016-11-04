@@ -33,36 +33,12 @@ namespace UnitTestProject1
         }
 
         [Test]
-        public void Sub1()
+        public void Div0()
         {
-            var e = BinaryExpression.Create(TokenType.Sub,
-                        ConstantExpression.Create(1),
-                        ConstantExpression.Create(1));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantIntExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(0, result.ToInt32());
-        }
-
-        [Test]
-        public void Sub2()
-        {
-            var e = BinaryExpression.Create(TokenType.Sub,
-                        ConstantExpression.Create(1.5),
-                        ConstantExpression.Create(1));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantDoubleExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(0.5, result.ToDouble());
-        }
-
-        [Test]
-        public void Mult1()
-        {
-            var e = BinaryExpression.Create(TokenType.Mul,
-                        ConstantExpression.Create(6),
-                        ConstantExpression.Create(7));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantIntExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(42, result.ToInt32());
+            var e = BinaryExpression.Create(TokenType.Div,
+                        ConstantExpression.Create("10.0"),
+                        ConstantExpression.Create(0));
+            Assert.Throws<ArithmeticException>(() => { ConstantSolver.Solve(e, new Block()); });
         }
 
         [Test]
@@ -99,13 +75,36 @@ namespace UnitTestProject1
         }
 
         [Test]
-        public void Div0()
+        public void Mult1()
         {
-            var e = BinaryExpression.Create(TokenType.Div,
-                        ConstantExpression.Create("10.0"),
-                        ConstantExpression.Create(0));
-            Assert.Throws<ArithmeticException>(() => { ConstantSolver.Solve(e, new Block()); });
+            var e = BinaryExpression.Create(TokenType.Mul,
+                        ConstantExpression.Create(6),
+                        ConstantExpression.Create(7));
+            var result = ConstantSolver.Solve(e, new Block()) as ConstantIntExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(42, result.ToInt32());
         }
 
+        [Test]
+        public void Sub1()
+        {
+            var e = BinaryExpression.Create(TokenType.Sub,
+                        ConstantExpression.Create(1),
+                        ConstantExpression.Create(1));
+            var result = ConstantSolver.Solve(e, new Block()) as ConstantIntExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, result.ToInt32());
+        }
+
+        [Test]
+        public void Sub2()
+        {
+            var e = BinaryExpression.Create(TokenType.Sub,
+                        ConstantExpression.Create(1.5),
+                        ConstantExpression.Create(1));
+            var result = ConstantSolver.Solve(e, new Block()) as ConstantDoubleExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0.5, result.ToDouble());
+        }
     }
 }
