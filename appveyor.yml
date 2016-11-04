@@ -16,7 +16,7 @@ assembly_info:
 before_build:
 - cmd: nuget restore
 - cmd: choco install "msbuild-sonarqube-runner" -y
-- cmd: MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"{version}" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken%
+- cmd: MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken%
 
 test_script:
 - cmd: nunit3-console "%APPVEYOR_BUILD_FOLDER%\UnitTestProject1\bin\Debug\UnitTestProject1.dll" "%APPVEYOR_BUILD_FOLDER%\Oberon0.Generator.Msil.Tests\bin\Debug\Oberon0.Generator.Msil.Tests.dll" --result:TestReport.xml;format=nunit2
