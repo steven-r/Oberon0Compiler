@@ -22,40 +22,38 @@ namespace Oberon0.Generator.Msil
         {
             if (!string.IsNullOrWhiteSpace(label))
                 Write(label + ": ");
-            else 
-                Write('\t');
             switch (Type.GetTypeCode(data.GetType()))
             {
                 case TypeCode.Boolean:
-                    WriteLine("ldc.i4." + ((bool)data? "1": "0"));
+                    Emit("ldc.i4." + ((bool)data? "1": "0"));
                     break;
                 case TypeCode.Char:
-                    WriteLine("ldc.i4.s " + Convert.ToByte((char)data).ToString("x2"));
+                    Emit("ldc.i4.s ", Convert.ToByte((char)data).ToString("x2"));
                     break;
                 case TypeCode.Int16:
                 case TypeCode.SByte:
                 case TypeCode.UInt16:
-                    WriteLine("ldc.i2 " + data);
+                    Emit("ldc.i2", data);
                     break;
                 case TypeCode.Byte:
-                    WriteLine("ldc.i1.s " + data);
+                    Emit("ldc.i1.s", data);
                     break;
                 case TypeCode.Int32:
                 case TypeCode.UInt32:
-                    WriteLine("ldc.i4" + DotNumOrArg((int)data, -1, 8));
+                    Emit("ldc.i4" + DotNumOrArg((int)data, -1, 8));
                     break;
                 case TypeCode.Int64:
                 case TypeCode.UInt64:
-                    WriteLine("ldc.i8 " + data);
+                    Emit("ldc.i8 ", data);
                     break;
                 case TypeCode.Single:
-                    WriteLine("ldc.r4 " + data);
+                    Emit("ldc.r4", data);
                     break;
                 case TypeCode.Double:
-                    WriteLine("ldc.r8 " + data);
+                    Emit("ldc.r8", data);
                     break;
                 case TypeCode.String:
-                    WriteLine("ldstr " + GenerateString((string)data));
+                    Emit("ldstr", GenerateString((string)data));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -139,9 +137,9 @@ namespace Oberon0.Generator.Msil
             }
         }
 
-        private string GetTypeName(TypeDefinition type)
+        internal static string GetTypeName(BaseType type)
         {
-            switch (type.BaseType)
+            switch (type)
             {
                 case BaseType.IntType:
                     return "int32";
@@ -149,17 +147,29 @@ namespace Oberon0.Generator.Msil
                     return "string";
                 case BaseType.DecimalType:
                     return "double";
-                case BaseType.ComplexType:
-                    var arrayTypeDefinition = type as ArrayTypeDefinition;
-                    if (arrayTypeDefinition != null)
-                        return $"{GetTypeName(arrayTypeDefinition.ArrayType)} [{arrayTypeDefinition.Size}]";
-                    return type.Name;
                 case BaseType.BoolType:
-                    return "Bool";
+                    return "bool";
                 case BaseType.VoidType:
                     return "void";
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        internal static string GetTypeName(TypeDefinition type)
+        {
+            // ReSharper disable once SwitchStatementMissingSomeCases
+            switch (type.BaseType)
+            {
+                case BaseType.ComplexType:
+                    var arrayTypeDefinition = type as ArrayTypeDefinition;
+                    if (arrayTypeDefinition != null)
+                    {
+                        return $"{GetTypeName(arrayTypeDefinition.ArrayType)}[]";
+                    }
+                    return type.Name;
+                default:
+                    return GetTypeName(type.BaseType);
             }
         }
 
@@ -212,7 +222,7 @@ namespace Oberon0.Generator.Msil
 
         public void LoadConstRef(ConstDeclaration constDeclaration)
         {
-            WriteLine("\tldvar " + constDeclaration.Name);
+            Emit("ldvar", constDeclaration.Name);
         }
 
         public void StartModule(string moduleName)
@@ -220,28 +230,8 @@ namespace Oberon0.Generator.Msil
             WriteLine($".module {moduleName}.exe");
         }
 
-        public void Load(VariableReferenceExpression variable)
-        {
-            if (variable.Declaration.Block.Parent == null)
-            {
-                // global
-                WriteLine($"\tldsfld {GetTypeName(variable.Declaration.Type)} " + variable.Name);
-            }
-            else
-            {
-                DeclarationGeneratorInfo dgi = (DeclarationGeneratorInfo)variable.Declaration.GeneratorInfo;
-                ProcedureParameter pp = variable.Declaration as ProcedureParameter;
-                if (pp != null)
-                    if (pp.IsVar)
-                        WriteLine("\tldarg" + DotNumOrArg(dgi.Offset, 0, 3, false));
-                    else
-                        WriteLine("\tldarga " + dgi.Offset);
-                else
-                    WriteLine("\tldloc" + DotNumOrArg(dgi.Offset, 0, 3));
-            }
-        }
 
-        private string DotNumOrArg(int value, int min, int max, bool isSimpleShortForm = true)
+        internal string DotNumOrArg(int value, int min, int max, bool isSimpleShortForm = true)
         {
             if (value < min || value > max)
             {
@@ -261,7 +251,7 @@ namespace Oberon0.Generator.Msil
 
         public void Branch(string brType, string label)
         {
-            WriteLine($"\t{brType} {label}");
+            Emit(brType, label);
         }
 
         public void StartMethod(FunctionDeclaration functionDeclaration)
@@ -280,25 +270,8 @@ namespace Oberon0.Generator.Msil
 
         public void EndMethod()
         {
-            WriteLine("\tret");
+            Emit("ret");
             WriteLine("}");
-        }
-
-        public void StoreVar(Declaration assignmentVariable)
-        {
-            if (assignmentVariable.Block.Parent == null)
-            {
-                WriteLine($"\tstsfld {GetTypeName(assignmentVariable.Type)} {assignmentVariable.Name}");
-            }
-            else
-            {
-                var pp = assignmentVariable as ProcedureParameter;
-                var dgi = (DeclarationGeneratorInfo)assignmentVariable.GeneratorInfo;
-                if (pp != null)
-                    WriteLine("\tstarg" + DotNumOrArg(dgi.Offset, 0, 3));
-                else
-                    WriteLine("\tstloc" + DotNumOrArg(dgi.Offset, 0, 3));
-            }
         }
 
         public void StartMainMethod()
@@ -329,16 +302,80 @@ namespace Oberon0.Generator.Msil
             if (func.IsInternal)
             {
                 if (func.Name == "eot")
-                    WriteLine("\tcall bool isEof()");
-                else throw new NotImplementedException();
+                    Emit("call", "bool" ,"isEof()");
+                else
+                    throw new NotImplementedException();
             }
             else
             {
-                Write($"\tcall {GetTypeName(func.ReturnType)} {func.Name} (");
+                EmitNoNl("call", GetTypeName(func.ReturnType), func.Name, "(");
                 List<string> typeNames = new List<string>(func.Parameters.Count);
                 typeNames.AddRange(func.Parameters.Select(parameter => parameter.Name));
                 WriteLine($"{string.Join(", ", typeNames)})");
             }
         }
+
+        /// <summary>
+        /// Emits the ldelem.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <param name="arrayTypeDefinition">The array type definition.</param>
+        public void EmitLdelem(IndexSelector index, ArrayTypeDefinition arrayTypeDefinition)
+        {
+            Write("\tldelem");
+            switch (arrayTypeDefinition.BaseType)
+            {
+                case BaseType.IntType:
+                case BaseType.BoolType:
+                    WriteLine(".i4");
+                    break;
+                case BaseType.DecimalType:
+                    WriteLine(".r8");
+                    break;
+                default:
+                    WriteLine(" " + GetTypeName(arrayTypeDefinition.ArrayType));
+                    break;
+            }
+        }
+
+        public void EmitStelem(IndexSelector indexSelector)
+        {
+            Write("\tstelem");
+            switch (indexSelector.IndexDefinition.TargetType)
+            {
+                case BaseType.IntType:
+                case BaseType.BoolType:
+                    WriteLine(".i4");
+                    break;
+                case BaseType.DecimalType:
+                    WriteLine(".r8");
+                    break;
+                default:
+                    WriteLine(".ref\t" + GetTypeName(indexSelector.IndexDefinition.TargetType));
+                    break;
+            }
+        }
+
+        internal void EmitStfld(IdentifierSelector identSelector)
+        {
+            //TODO: Get type information from identSelector
+            Emit("stelem");
+        }
+
+        internal void Emit(string opCode, params object[] parameters)
+        {
+            EmitNoNl(opCode, parameters);
+            WriteLine();
+        }
+
+        internal void EmitNoNl(string opCode, params object[] parameters)
+        {
+            Write("\t" + opCode);
+            foreach (string parameter in parameters)
+            {
+                Write("\t" + parameter);
+            }
+        }
+
     }
 }

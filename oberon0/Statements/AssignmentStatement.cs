@@ -9,6 +9,8 @@ namespace Oberon0.Compiler.Statements
 
         public Expression Expression { get; set; }
 
+        public VariableSelector Selector { get; set; }
+
         public override string ToString()
         {
             return $"{Variable} := {Expression}";

@@ -19,7 +19,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
             if (parameter.IsVar)
             {
                 VariableReferenceExpression reference = (VariableReferenceExpression)parameters[0];
-                generator.Code.Load(reference);
+                generator.Load(block, reference.Declaration, reference.Selector);
             }
             else
             {

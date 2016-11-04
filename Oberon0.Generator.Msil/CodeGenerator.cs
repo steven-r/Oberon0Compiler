@@ -82,13 +82,15 @@ namespace Oberon0.Generator.Msil
 
         private void ProcessStatements(Block block)
         {
+            InitComplexData(block);
             foreach (var statement in block.Statements)
             {
                 var assignment = statement as AssignmentStatement;
                 if (assignment != null)
                 {
+                    StartStoreVar(block, assignment.Variable, assignment.Selector);
                     ExpressionCompiler(block, assignment.Expression);
-                    Code.StoreVar(assignment.Variable);
+                    StoreVar(block, assignment.Variable, assignment.Selector);
                 }
                 var ifStmt = statement as IfStatement;
                 if (ifStmt != null)
@@ -160,7 +162,7 @@ namespace Oberon0.Generator.Msil
                     if (parameter.IsVar)
                     {
                         VariableReferenceExpression reference = (VariableReferenceExpression)call.Parameters[i];
-                        Code.Load(reference);
+                        Load(block, reference.Declaration, reference.Selector);
                     }
                     else
                     {

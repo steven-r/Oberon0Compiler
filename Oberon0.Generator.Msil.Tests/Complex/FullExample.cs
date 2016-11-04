@@ -3,6 +3,7 @@ using System.Text;
 using NUnit.Framework;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Generator.Msil.Tests.Arrays;
 
 namespace Oberon0.Generator.Msil.Tests.Complex
 {
@@ -37,7 +38,7 @@ namespace Oberon0.Generator.Msil.Tests.Complex
 L1: // GT (IntType, IntType) -> BoolType
 	ldloc.0
 	ldc.i4.0
-	ble.un L0
+	ble.un	L0
 // IF
 // Equals (IntType, IntType) -> BoolType
 // Mod (IntType, IntType) -> IntType
@@ -45,13 +46,13 @@ L1: // GT (IntType, IntType) -> BoolType
 	ldc.i4.2
 	rem
 	ldc.i4.1
-	bne.un L3
+	bne.un	L3
 // Add (IntType, IntType) -> IntType
 	ldloc.2
 	ldloc.1
 	add
 	stloc.2
-	br L2
+	br	L2
 L3: L2: // Mul (IntType, IntType) -> IntType
 	ldc.i4.2
 	ldloc.1
@@ -62,7 +63,7 @@ L3: L2: // Mul (IntType, IntType) -> IntType
 	ldc.i4.2
 	div
 	stloc.0
-	br L1
+	br	L1
 L0: // Call WriteInt
 	ldstr ""{0}""
 	ldloc.0
@@ -103,18 +104,18 @@ L0: // Call WriteInt
 L5: // LE (IntType, IntType) -> BoolType
 	ldloc.s 4
 	ldloc.2
-	bgt.un L4
+	bgt.un	L4
 // Mul (IntType, IntType) -> IntType
 	ldc.i4.2
 	ldloc.s 4
 	mul
 	stloc.s 4
-	br L5
+	br	L5
 L4: // WHILE
 L7: // GT (IntType, IntType) -> BoolType
 	ldloc.s 4
 	ldloc.1
-	ble.un L6
+	ble.un	L6
 // Mul (IntType, IntType) -> IntType
 	ldc.i4.2
 	ldloc.3
@@ -129,7 +130,7 @@ L7: // GT (IntType, IntType) -> BoolType
 // LE (IntType, IntType) -> BoolType
 	ldloc.s 4
 	ldloc.2
-	bgt.un L9
+	bgt.un	L9
 // Sub (IntType, IntType) -> IntType
 	ldloc.2
 	ldloc.s 4
@@ -140,8 +141,8 @@ L7: // GT (IntType, IntType) -> BoolType
 	ldc.i4.1
 	add
 	stloc.3
-	br L8
-L9: L8: 	br L7
+	br	L8
+L9: L8: 	br	L7
 L6: // Call WriteInt
 	ldstr ""{0}""
 	ldloc.0
@@ -168,7 +169,10 @@ L6: // Call WriteInt
 }
 .method private static void BinSearch()
 {
-	.locals (int32 i, int32 j, int32 k, int32 n, int32 x, int32 [32] a)
+	.locals (int32 i, int32 j, int32 k, int32 n, int32 x, int32[] a)
+	ldc.i4.s 32
+	newarr	int32
+	stloc.s 5
 // Call WriteString
 	ldstr ""'enter x: '""
 	call void [mscorlib]System.Console::Write(string)
@@ -181,18 +185,20 @@ L6: // Call WriteInt
 // WHILE
 L11: // Not (BoolType) -> BoolType
 // internal BOOLEAN eot()
-	call bool isEof()
-	brfalse L10
+	call	bool	isEof()
+	brfalse	L10
 // Call ReadInt
+	ldloc.s 5
+	ldloc.2
 	call string [mscorlib]System.Console::ReadLine()
 	call int32 [mscorlib]System.Int32::Parse(string)
-	stloc.s 5
+	stelem.i4
 // Add (IntType, IntType) -> IntType
 	ldloc.2
 	ldc.i4.1
 	add
 	stloc.2
-	br L11
+	br	L11
 L10: 	ldc.i4.0
 	stloc.0
 	ldloc.3
@@ -201,7 +207,7 @@ L10: 	ldc.i4.0
 L13: // LT (IntType, IntType) -> BoolType
 	ldloc.0
 	ldloc.1
-	bge.un L12
+	bge.un	L12
 // Div (IntType, IntType) -> IntType
 // Add (IntType, IntType) -> IntType
 	ldloc.0
@@ -214,16 +220,18 @@ L13: // LT (IntType, IntType) -> BoolType
 // LT (IntType, IntType) -> BoolType
 	ldloc.s 4
 	ldloc.s 5
-	bge.un L15
+	ldloc.2
+	ldelem int32
+	bge.un	L15
 	ldloc.2
 	stloc.1
-	br L14
+	br	L14
 L15: // Add (IntType, IntType) -> IntType
 	ldloc.2
 	ldc.i4.1
 	add
 	stloc.0
-L14: 	br L13
+L14: 	br	L13
 L12: // Call WriteInt
 	ldstr ""{0}""
 	ldloc.0
@@ -237,6 +245,8 @@ L12: // Call WriteInt
 // Call WriteInt
 	ldstr ""{0}""
 	ldloc.s 5
+	ldloc.1
+	ldelem int32
 	box int32
 	call void [mscorlib]System.Console::Write(string, object)
 // Call WriteLn
@@ -269,22 +279,22 @@ L12: // Call WriteInt
 // Equals (IntType, IntType) -> BoolType
 	ldsfld int32 n
 	ldc.i4.0
-	bne.un L17
+	bne.un	L17
 // Call Multiply
-	call void Multiply ()
-	br L16
+	call	void	Multiply	()
+	br	L16
 L17: // Equals (IntType, IntType) -> BoolType
 	ldsfld int32 n
 	ldc.i4.1
-	bne.un L18
+	bne.un	L18
 // Call Divide
-	call void Divide ()
-	br L16
+	call	void	Divide	()
+	br	L16
 L18: // Call BinSearch
-	call void BinSearch ()
+	call	void	BinSearch	()
 L16: 	ret
 }
-".Replace("\r\n", "\n");
+".NlFix();
 
             string proc = @"
 MODULE Samples;
@@ -375,19 +385,25 @@ BEGIN
         BinSearch 
     END
 END Samples.
-";
+".NlFix();
             var compiler = new CompilerParser();
             Module m = compiler.Calculate(proc);
             CodeGenerator cg = new CodeGenerator(m);
 
             cg.Generate();
-
+#if DUMPCODE
+            using (var f = File.CreateText(Path.GetTempFileName()))
+            {
+                cg.DumpCode(f);
+                f.Flush();
+            }
+#endif
             StringBuilder sb = new StringBuilder();
             using (StringWriter w = new StringWriter(sb))
             {
                 cg.DumpCode(w);
             }
-            Assert.AreEqual(expected, sb.ToString().Replace("\r\n", "\n"));
+            Assert.AreEqual(expected, sb.ToString().NlFix());
         }
     }
 }

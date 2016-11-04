@@ -488,7 +488,7 @@ namespace Oberon0.Compiler {
 			#if Verbose
 				Console.WriteLine($"Assignment {varName} := {e.GetType().Name}");
 			#endif
-				block.Statements.Add(new AssignmentStatement{Variable = variable, Expression = e});
+				block.Statements.Add(new AssignmentStatement{Variable = variable, Expression = e, Selector = selector});
 			}
 		];
 

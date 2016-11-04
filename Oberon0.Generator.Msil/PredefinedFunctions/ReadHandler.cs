@@ -13,13 +13,15 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         public void Generate(IStandardFunctionMetadata metadata, CodeGenerator generator, FunctionDeclaration callExpression, List<Expression> parameters,
             Block block)
         {
+            VariableReferenceExpression reference = (VariableReferenceExpression)parameters[0];
+
+            generator.StartStoreVar(block, reference.Declaration, reference.Selector);
             generator.Code.WriteLine("\tcall string [mscorlib]System.Console::ReadLine()");
             if (callExpression.Name == "ReadInt")
                 generator.Code.WriteLine("\tcall int32 [mscorlib]System.Int32::Parse(string)");
             if (callExpression.Name == "ReadBool")
                 generator.Code.WriteLine("\tcall int32 [mscorlib]System.Bool::Parse(string)");
-            VariableReferenceExpression reference = (VariableReferenceExpression)parameters[0];
-            generator.Code.StoreVar(reference.Declaration);
+            generator.StoreVar(block, reference.Declaration, reference.Selector);
         }
     }
 }

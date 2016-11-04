@@ -1591,7 +1591,7 @@ namespace Oberon0.Compiler
 			var e = RelationalExpression(block);
 			#line 491 "grammar.ecs"
 			block.Statements.Add(new AssignmentStatement { 
-				Variable = variable, Expression = e
+				Variable = variable, Expression = e, Selector = selector
 			});
 			#line default
 		}

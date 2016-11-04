@@ -29,6 +29,6 @@ namespace Oberon0.Compiler.Definitions
             IndexDefinition = index;
         }
 
-        public Expression IndexDefinition { get; set; }
+        public Expression IndexDefinition { get; }
     }
 }

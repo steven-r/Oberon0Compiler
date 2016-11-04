@@ -1,4 +1,6 @@
-﻿using Oberon0.Compiler.Definitions;
+﻿using System;
+using System.Linq;
+using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Generator.Msil
 {
@@ -44,6 +46,22 @@ namespace Oberon0.Generator.Msil
             }
             if (!isFirst)
                 Code.WriteLine(")");
+        }
+
+        private void InitComplexData(Block block)
+        {
+            foreach (Declaration declaration in block.Declarations.Where(x => x.Type.BaseType == BaseType.ComplexType))
+            {
+                var vd = declaration.Type as ArrayTypeDefinition;
+                if (vd != null)
+                {
+                    Code.PushConst(vd.Size);
+                    Code.Emit("newarr", Code.GetTypeName(vd.ArrayType.BaseType));
+                    StoreVar(block, declaration, null);
+                    continue;
+                }
+                throw new NotImplementedException();
+            }
         }
     }
 }
