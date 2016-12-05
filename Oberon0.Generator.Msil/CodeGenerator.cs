@@ -60,8 +60,10 @@ namespace Oberon0.Generator.Msil
             Code.StartAssembly(_module.Name);
             Code.EmitComment("Code compiled for module " + _module.Name);
             Code.StartModule(_module.Name);
+            Code.StartClass($"Oberon0.{_module.Name}");
             ProcessMainBlock(_module.Block);
             Code.EndMethod();
+            Code.EndClass();
         }
 
         private void ProcessMainBlock(Block block)

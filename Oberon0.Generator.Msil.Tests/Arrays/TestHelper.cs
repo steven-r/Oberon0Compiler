@@ -17,13 +17,9 @@ namespace Oberon0.Generator.Msil.Tests.Arrays
         {
 
             string filename = Path.GetTempFileName();
-            filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
+            filename = Path.Combine(Path.GetDirectoryName(filename) ?? string.Empty, Path.GetFileNameWithoutExtension(filename));
             outputData = string.Empty;
-            if (CompileCode(source, filename))
-            {
-                return RunCode(filename, inputData, out outputData);
-            }
-            return true;
+            return CompileCode(source, filename) && RunCode(filename, inputData, out outputData);
         }
 
         private static bool CompileCode(string source, string filename, bool dumpOutput = false)

@@ -1364,7 +1364,7 @@ namespace Oberon0.Compiler
 			#line 417 "grammar.ecs"
 			var pl = new List<Expression>();
 			#line default
-			// Line 420: ( TT.Id Selector (TT.LParen ParameterList ()? TT.RParen)? | TT.Num | TT.String | TT.LParen SimpleExpression TT.RParen | TT.Not Term )
+			// Line 420: ( TT.Id Selector (TT.LParen ParameterList ()? TT.RParen)? | TT.Num | TT.String | TT.LParen RelationalExpression TT.RParen | TT.Not Term )
 			switch ((TokenType) Src.LA0) {
 			case TT.Id:
 				{
@@ -1435,7 +1435,7 @@ namespace Oberon0.Compiler
 			case TT.LParen:
 				{
 					Src.Skip();
-					result = SimpleExpression(block);
+					result = RelationalExpression(block);
 					Src.Match((int) TT.RParen);
 				}
 				break;

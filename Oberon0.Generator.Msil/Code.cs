@@ -18,7 +18,7 @@ namespace Oberon0.Generator.Msil
 
         }
 
-        private string DumpConstValue(ConstantExpression constantExpression, bool isLoad = false, bool isData = false)
+        private static string DumpConstValue(ConstantExpression constantExpression, bool isLoad = false, bool isData = false)
         {
             switch (constantExpression.TargetType)
             {
@@ -37,7 +37,7 @@ namespace Oberon0.Generator.Msil
             }
         }
 
-        private string GenerateString(string str)
+        private static string GenerateString(string str)
         {
             StringBuilder sb = new StringBuilder(str.Length * 2);
             sb.Append('"');
@@ -67,7 +67,7 @@ namespace Oberon0.Generator.Msil
             return sb.ToString();
         }
 
-        private string GetDataTypeName(TypeDefinition type)
+        private static string GetDataTypeName(TypeDefinition type)
         {
             switch (type.BaseType)
             {
@@ -86,7 +86,7 @@ namespace Oberon0.Generator.Msil
         }
 
 
-        internal string DotNumOrArg(int value, int min, int max, bool isSimpleShortForm = true)
+        internal static string DotNumOrArg(int value, int min, int max, bool isSimpleShortForm = true)
         {
             if (value < min || value > max)
             {
@@ -231,7 +231,8 @@ namespace Oberon0.Generator.Msil
                 EmitNoNl("call", GetTypeName(func.ReturnType), func.Name, "(");
                 List<string> typeNames = new List<string>(func.Parameters.Count);
                 typeNames.AddRange(func.Parameters.Select(parameter => parameter.Name));
-                WriteLine($"{string.Join(", ", typeNames)})");
+                Write(string.Join(", ", typeNames));
+                WriteLine(")");
             }
         }
 
@@ -241,11 +242,6 @@ namespace Oberon0.Generator.Msil
             WriteLine($".data {constDeclaration.Name} = {GetDataTypeName(constDeclaration.Type)} ({DumpConstValue(constDeclaration.Value, false, true)})");
         }
 
-
-        public void DataField(Declaration declaration)
-        {
-            DataField(declaration, false);
-        }
 
         public void DataField(Declaration declaration, bool isStatic)
         {
@@ -379,5 +375,14 @@ namespace Oberon0.Generator.Msil
             WriteLine($".module {moduleName}.exe");
         }
 
+        public void StartClass(string className)
+        {
+            WriteLine($".class public {className} {{");
+        }
+
+        public void EndClass()
+        {
+            WriteLine("}");
+        }
     }
 }

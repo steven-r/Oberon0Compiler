@@ -441,7 +441,7 @@ namespace Oberon0.Compiler {
 			)
 			| t:=TT.Num { $result = ConstantExpression.Create(t.Value); }
 			| s:=TT.String { $result = new StringExpression(s.Value.ToString()); }
-			| "(" result:SimpleExpression(block) ")"
+			| "(" result:RelationalExpression(block) ")"
 			| "~" n:=Term(block) {$result = BinaryExpression.Create(TT.Not, n, null); }
 			| error     { $result = null; Src.Error(0, "Expected identifer, number, or (parens)"); }
 			)
