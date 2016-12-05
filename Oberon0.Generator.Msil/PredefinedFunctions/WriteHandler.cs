@@ -9,7 +9,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
     [StandardFunctionMetadata("WriteInt", "VOID", "INTEGER")]
     [StandardFunctionMetadata("WriteBool", "VOID", "INTEGER")]
     //[StandardFunctionMetadata("WriteReal", "VOID", "INTEGER")]
-    public class WriteNumberHandler: IStandardFunctionGenerator
+    public class WriteNumberHandler : IStandardFunctionGenerator
     {
         public void Generate(IStandardFunctionMetadata metadata, CodeGenerator generator, FunctionDeclaration callExpression, List<Expression> parameters,
             Block block)

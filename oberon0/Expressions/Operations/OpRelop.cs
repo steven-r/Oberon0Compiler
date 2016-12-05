@@ -34,7 +34,7 @@ namespace Oberon0.Compiler.Expressions.Operations
     [ArithmeticOperation(TokenType.Equals, BaseType.IntType, BaseType.DecimalType, BaseType.BoolType)]
     [ArithmeticOperation(TokenType.Equals, BaseType.DecimalType, BaseType.DecimalType, BaseType.BoolType)]
     [ArithmeticOperation(TokenType.Equals, BaseType.DecimalType, BaseType.IntType, BaseType.BoolType)]
-    public class OpRelop : IArithmeticOperation
+    public class OpRelOp : IArithmeticOperation
     {
         public Expression Operate(Expression e, Block block, IArithmeticOpMetadata operationParameters)
         {
