@@ -4,7 +4,6 @@ pull_requests:
   do_not_increment_build_number: true
 
 environment:
-  VSINSTALLDIR: 'C:\Program Files (x86)\Microsoft Visual Studio 14.0\'
   SonarToken:
     secure: +wTbJz9KGTWgbZs0XwkTvkyHzso0IwglDTd3d4CXC8DYT2B40D4DcjrmeEWDHSeU
 
@@ -20,14 +19,17 @@ assembly_info:
   assembly_informational_version: '{version}'
 
 before_build:
-- cmd: nuget restore
-- cmd: choco install "msbuild-sonarqube-runner" -y
-- cmd: MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% /d:sonar.cs.vscoveragexml.reportsPaths=VisualStudio.coveragexml
+- call 'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat' x86
+- nuget restore
+- choco install "msbuild-sonarqube-runner" -y
+- MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% /d:sonar.cs.vscoveragexml.reportsPaths=VisualStudio.coveragexml
 
 test_script:
-- msbuild "%VSINSTALLDIR%\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe" collect /output:VisualStudio.coverage
+- ps >-
+    '%VSINSTALLDIR%\\Team Tools\\Dynamic Code Coverage Tools\\CodeCoverage.exe' collect /output:"VisualStudio.coverage"
 - nunit3-console "%APPVEYOR_BUILD_FOLDER%\UnitTestProject1\bin\Debug\UnitTestProject1.dll" "%APPVEYOR_BUILD_FOLDER%\Oberon0.Generator.Msil.Tests\bin\Debug\Oberon0.Generator.Msil.Tests.dll" --result:TestReport.xml;format=nunit2
 
 after_test:
-- msbuild "%VSINSTALLDIR%\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe" analyze /output:VisualStudio.coveragexml VisualStudio.coverage
-- cmd: MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
+- ps >-
+    '%VSINSTALLDIR%\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe' analyze /output:"VisualStudio.coveragexml" "VisualStudio.coverage"
+- MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
