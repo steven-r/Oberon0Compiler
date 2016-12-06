@@ -18,15 +18,19 @@ assembly_info:
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
 
+build:
+  project: Oberon0.sln
+  verbosity: minimal
+
 before_build:
 - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 - nuget restore
 - choco install "msbuild-sonarqube-runner" -y
-- MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% /d:sonar.cs.vscoveragexml.reportsPaths="%CD"\VisualStudio.coveragexml"
+- MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% 
 
 test_script:
 - packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -returntargetcode "-filter:+[Oberon]* -[*Test]*" "-target:runtests_appveyor.bat"
- packages\ReportGenerator.1.9.1.0\ReportGenerator.exe "-reports:results.xml" "-targetdir:.\coverage"
+ packages\ReportGenerator.2.5.1\tools\ReportGenerator.exe "-reports:results.xml" "-targetdir:.\coverage"
 
 after_test:
 - MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
