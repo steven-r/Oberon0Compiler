@@ -26,11 +26,10 @@ before_build:
 - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 - nuget restore
 - choco install "msbuild-sonarqube-runner" -y
-- MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% 
+- MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" 
 
 test_script:
-- packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -returntargetcode "-target:runtests_appveyor.bat" "-filter:+[*]* -[*Loyc*]*"
-- packages\ReportGenerator.2.5.1\tools\ReportGenerator.exe "-reports:results.xml"
+- packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -output:"%CD%\opencover.xml" -register:user -returntargetcode "-target:runtests_appveyor.bat" "-filter:+[*]* -[*Loyc*]*"
 
 after_test:
 - MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
