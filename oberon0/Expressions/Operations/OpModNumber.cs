@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions.Operations.Internal;
 
 namespace Oberon0.Compiler.Expressions.Operations
 {
@@ -9,13 +10,10 @@ namespace Oberon0.Compiler.Expressions.Operations
     [ArithmeticOperation(TokenType.Mod, BaseType.IntType, BaseType.DecimalType, BaseType.DecimalType)]
     [ArithmeticOperation(TokenType.Mod, BaseType.DecimalType, BaseType.DecimalType, BaseType.DecimalType)]
     [ArithmeticOperation(TokenType.Mod, BaseType.DecimalType, BaseType.IntType, BaseType.DecimalType)]
-    public class OpModNumber : IArithmeticOperation
+    internal class OpModNumber : BinaryOperation
     {
-        public Expression Operate(Expression e, Block block, IArithmeticOpMetadata operationParameters)
+        protected override Expression BinaryOperate(BinaryExpression bin, Block block, IArithmeticOpMetadata operationParameters)
         {
-            if (e == null) throw new ArgumentNullException(nameof(e));
-            var bin = e as BinaryExpression;
-            if (bin == null) throw new InvalidCastException("Cannot cast expression to binary expression");
             if (bin.LeftHandSide.IsConst && bin.RightHandSide.IsConst)
             {
                 var left = (ConstantExpression)bin.LeftHandSide;
@@ -27,7 +25,7 @@ namespace Oberon0.Compiler.Expressions.Operations
                     throw new ArithmeticException("Division by 0");
                 return new ConstantDoubleExpression(res);
             }
-            return e; // expression remains the same
+            return bin; // expression remains the same
         }
     }
 }

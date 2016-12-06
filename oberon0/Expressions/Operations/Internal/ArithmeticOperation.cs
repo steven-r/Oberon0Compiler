@@ -1,4 +1,4 @@
-﻿namespace Oberon0.Compiler.Expressions.Operations
+﻿namespace Oberon0.Compiler.Expressions.Operations.Internal
 {
     internal class ArithmeticOperation
     {

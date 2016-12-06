@@ -1,6 +1,6 @@
 ﻿using Oberon0.Compiler.Definitions;
 
-namespace Oberon0.Compiler.Expressions.Operations
+namespace Oberon0.Compiler.Expressions.Operations.Internal
 {
     /// <summary>
     /// Implementations of this interface are responsible to convert data from type a to b.

@@ -1,6 +1,6 @@
-﻿using System;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions.Operations.Internal;
 
 namespace Oberon0.Compiler.Expressions.Operations
 {
@@ -11,20 +11,17 @@ namespace Oberon0.Compiler.Expressions.Operations
     /// <remarks>This function is some kind of exception as ~ usually takes one parameter. The second is handled as a dummy</remarks>
     [Export(typeof(IArithmeticOperation))]
     [ArithmeticOperation(TokenType.Not, BaseType.BoolType, BaseType.AnyType, BaseType.BoolType)]
-    public class OpNotBool : IArithmeticOperation
+    internal class OpNotBool : BinaryOperation
     {
-        public Expression Operate(Expression e, Block block, IArithmeticOpMetadata operationParameters)
+        protected override Expression BinaryOperate(BinaryExpression bin, Block block, IArithmeticOpMetadata operationParameters)
         {
-            if (e == null) throw new ArgumentNullException(nameof(e));
-            var bin = e as BinaryExpression;
-            if (bin == null) throw new InvalidCastException("Cannot cast expression to binary expression");
             if (bin.LeftHandSide.IsConst)
             {
                 var left = (ConstantBoolExpression)bin.LeftHandSide;
                 left.Value = !(bool)left.Value;
                 return left;
             }
-            return e; // expression remains the same
+            return bin; // expression remains the same
         }
     }
 }

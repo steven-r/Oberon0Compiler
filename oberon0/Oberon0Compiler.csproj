@@ -81,6 +81,7 @@
     <Compile Include="Definitions\SimpleTypeDefinition.cs" />
     <Compile Include="Definitions\TypeDefinition.cs" />
     <Compile Include="Definitions\VariableSelector.cs" />
+    <Compile Include="Expressions\Operations\Internal\BinaryOperation.cs" />
     <Compile Include="Expressions\StringExpression.cs" />
     <Compile Include="Expressions\ConstantBoolExpression.cs" />
     <Compile Include="Expressions\FunctionCallExpression.cs" />
