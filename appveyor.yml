@@ -26,10 +26,10 @@ before_build:
 
 test_script:
 - |-
-    '%VSINSTALLDIR%\\Team Tools\\Dynamic Code Coverage Tools\\CodeCoverage.exe' collect /output:"%CD%\VisualStudio.coverage"
+    "%VSINSTALLDIR%\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe" collect /output:"%CD%\VisualStudio.coverage"
 - nunit3-console "%APPVEYOR_BUILD_FOLDER%\UnitTestProject1\bin\Debug\UnitTestProject1.dll" "%APPVEYOR_BUILD_FOLDER%\Oberon0.Generator.Msil.Tests\bin\Debug\Oberon0.Generator.Msil.Tests.dll" --result:TestReport.xml;format=nunit2
 
 after_test:
 - |-
-    '%VSINSTALLDIR%\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe' analyze /output:"%CD%\VisualStudio.coveragexml" "%CD%\VisualStudio.coverage"
+    "%VSINSTALLDIR%\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe" analyze /output:"%CD%\VisualStudio.coveragexml" "%CD%\VisualStudio.coverage"
 - MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
