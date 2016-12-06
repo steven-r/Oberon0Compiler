@@ -34,5 +34,5 @@ test_script:
 - cmd: nunit3-console "%APPVEYOR_BUILD_FOLDER%\UnitTestProject1\bin\Debug\UnitTestProject1.dll" "%APPVEYOR_BUILD_FOLDER%\Oberon0.Generator.Msil.Tests\bin\Debug\Oberon0.Generator.Msil.Tests.dll" --result:TestReport.xml;format=nunit2
 
 after_test:
-- cmd: "%VSINSTALLDIR%\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe" analyze /output:"%CD%\VisualStudio.coveragexml" "%CD%\VisualStudio.coverage"
+- cmd: CodeCoverage.exe analyze /output:"%CD%\VisualStudio.coveragexml" "%CD%\VisualStudio.coverage"
 - cmd: MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
