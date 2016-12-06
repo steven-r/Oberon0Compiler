@@ -8,7 +8,7 @@ environment:
     secure: +wTbJz9KGTWgbZs0XwkTvkyHzso0IwglDTd3d4CXC8DYT2B40D4DcjrmeEWDHSeU
   image: Visual Studio 2015
   matrix:
-  - VCINSTALLDIR: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\
+  - VSINSTALLDIR: C:\Program Files (x86)\Microsoft Visual Studio 14.0\
 
 branches:
   only:
