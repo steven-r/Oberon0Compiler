@@ -35,15 +35,22 @@ namespace Oberon0.Generator.Msil
                 {TokenType.Div, "div" },
                 {TokenType.Mul, "mul" },
                 {TokenType.Sub, "sub" },
+                {TokenType.Unary, "sub" },
                 {TokenType.Mod, "rem" },
             };
 
         // "a <op> b" or "<op> a"
         private static BinaryExpression HandleSimpleOperation(CodeGenerator generator, Block block, BinaryExpression bin)
         {
+            if (bin.Operator == TokenType.Unary)
+            {
+                generator.LoadConstantExpression(ConstantIntExpression.Zero, null);
+            }
             generator.ExpressionCompiler(block, bin.LeftHandSide);
             if (!bin.IsUnary)
+            {
                 generator.ExpressionCompiler(block, bin.RightHandSide);
+            }
             generator.Code.Emit(SimpleInstructionMapping[bin.Operator]);
             return bin;
         }

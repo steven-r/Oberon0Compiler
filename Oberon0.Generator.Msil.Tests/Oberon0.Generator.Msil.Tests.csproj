@@ -91,6 +91,7 @@
     <Compile Include="Arrays\ArrayTests.cs" />
     <Compile Include="Arrays\TestHelper.cs" />
     <Compile Include="Complex\FullExample.cs" />
+    <Compile Include="Operations\OperationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
