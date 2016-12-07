@@ -37,36 +37,6 @@ namespace Oberon0.Generator.Msil
             }
         }
 
-        private static string GenerateString(string str)
-        {
-            StringBuilder sb = new StringBuilder(str.Length * 2);
-            sb.Append('"');
-            foreach (char c in str)
-                if (char.IsControl(c) || c == '"')
-                    switch (c)
-                    {
-                        case '\r':
-                            sb.Append("\\r");
-                            break;
-                        case '\t':
-                            sb.Append("\\t");
-                            break;
-                        case '\n':
-                            sb.Append("\\n");
-                            break;
-                        case '"':
-                            sb.Append("\\");
-                            break;
-                        default:
-                            sb.Append('\\' + Convert.ToByte(c).ToString("x2"));
-                            break;
-                    }
-                else
-                    sb.Append(c);
-            sb.Append('"');
-            return sb.ToString();
-        }
-
         private static string GetDataTypeName(TypeDefinition type)
         {
             switch (type.BaseType)
@@ -203,9 +173,6 @@ namespace Oberon0.Generator.Msil
                     break;
                 case TypeCode.Double:
                     Emit("ldc.r8", data);
-                    break;
-                case TypeCode.String:
-                    Emit("ldstr", GenerateString((string)data));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
