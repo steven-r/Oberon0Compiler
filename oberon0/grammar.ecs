@@ -415,8 +415,8 @@ namespace Oberon0.Compiler {
 
 		private rule List<Expression> ParameterList(Block block) @[
 			{ $result = new List<Expression>(); }
-			( r:=RelationalExpression(block) { $result.Add(r); }
-				( "," r1:RelationalExpression(block) { $result.Add(r1); }) * ) ? 
+			( r:=RelationalExpression(block) { r=ConstantSolver.Solve(r, block); $result.Add(r); }
+				( "," r1:RelationalExpression(block) { r1=ConstantSolver.Solve(r1, block); $result.Add(r1); }) * ) ? 
 		];
 
 		// Expressions
@@ -493,6 +493,7 @@ namespace Oberon0.Compiler {
 			}
 			e:=RelationalExpression(block)
 			{
+				e=ConstantSolver.Solve(e, block);
 			#if Verbose
 				Console.WriteLine($"Assignment {varName} := {e.GetType().Name}");
 			#endif

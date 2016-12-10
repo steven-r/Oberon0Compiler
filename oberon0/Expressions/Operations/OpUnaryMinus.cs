@@ -26,7 +26,7 @@ namespace Oberon0.Compiler.Expressions.Operations
                 else if (e.LeftHandSide.TargetType == BaseType.DecimalType)
                 {
                     ConstantDoubleExpression left = (ConstantDoubleExpression)e.LeftHandSide;
-                    left.Value = -(int)left.Value;
+                    left.Value = -(double)left.Value;
                     return left;
                 }
             return e; // expression remains the same
