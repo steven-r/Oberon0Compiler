@@ -23,32 +23,31 @@ namespace Oberon0.Generator.Msil
                     // skip procedure parameters
                     continue;
                 }
-
+                
                 var c = declaration as ConstDeclaration;
                 if (c != null)
                 {
                     Code.ConstField(c);
+                    continue;
+                }
+
+                declaration.GeneratorInfo = new DeclarationGeneratorInfo(id++);
+                if (isRoot)
+                {
+                    Code.DataField(declaration, true);
                 }
                 else
                 {
-                    declaration.GeneratorInfo = new DeclarationGeneratorInfo(id++);
-                    if (isRoot)
+                    if (isFirst)
                     {
-                        Code.DataField(declaration, true);
+                        Code.Write("\t.locals (");
+                        isFirst = false;
                     }
                     else
                     {
-                        if (isFirst)
-                        {
-                            Code.Write("\t.locals (");
-                            isFirst = false;
-                        }
-                        else
-                        {
-                            Code.Write(", ");
-                        }
-                        Code.LocalVarDef(declaration, false);
+                        Code.Write(", ");
                     }
+                    Code.LocalVarDef(declaration, false);
                 }
             }
             if (!isFirst)
