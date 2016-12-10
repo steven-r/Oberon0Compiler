@@ -57,9 +57,19 @@ namespace Oberon0.Compiler.Definitions
         /// Lookups a variable.
         /// </summary>
         /// <param name="name">The variable name.</param>
+        /// <returns>Declaration.</returns>
+        internal Declaration LookupVar(string name)
+        {
+            return LookupVar(name, false);
+        }
+
+        /// <summary>
+        /// Lookups a variable.
+        /// </summary>
+        /// <param name="name">The variable name.</param>
         /// <param name="lookupParents"></param>
         /// <returns>Declaration.</returns>
-        public Declaration LookupVar(string name, bool lookupParents = true)
+        internal Declaration LookupVar(string name, bool lookupParents)
         {
             Block b = this;
             while (b != null)
