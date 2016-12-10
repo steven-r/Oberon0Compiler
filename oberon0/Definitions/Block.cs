@@ -57,8 +57,9 @@ namespace Oberon0.Compiler.Definitions
         /// Lookups a variable.
         /// </summary>
         /// <param name="name">The variable name.</param>
+        /// <param name="lookupParents"></param>
         /// <returns>Declaration.</returns>
-        public Declaration LookupVar(string name)
+        public Declaration LookupVar(string name, bool lookupParents = true)
         {
             Block b = this;
             while (b != null)
@@ -66,6 +67,10 @@ namespace Oberon0.Compiler.Definitions
                 var res = b.Declarations.FirstOrDefault(x => x.Name == name);
                 if (res != null)
                     return res;
+                if (!lookupParents)
+                {
+                    return null; // nothing in local env
+                }
                 b = b.Parent;
             }
             return null;

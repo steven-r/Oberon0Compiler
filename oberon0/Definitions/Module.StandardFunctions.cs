@@ -6,12 +6,12 @@ namespace Oberon0.Compiler.Definitions
     {
         void DeclareStandardFunctions()
         {
-            Block.Procedures.Add(new FunctionDeclaration("WriteInt", Block, true, new ProcedureParameter("any", Block.LookupType("INTEGER"), false)));
-            Block.Procedures.Add(new FunctionDeclaration("WriteString", Block, true, new ProcedureParameter("any", Block.LookupType("STRING"), false)));
-            Block.Procedures.Add(new FunctionDeclaration("WriteReal", Block, true, new ProcedureParameter("any", Block.LookupType("REAL"), false)));
+            Block.Procedures.Add(new FunctionDeclaration("WriteInt", Block, true, new ProcedureParameter("any", Block, Block.LookupType("INTEGER"), false)));
+            Block.Procedures.Add(new FunctionDeclaration("WriteString", Block, true, new ProcedureParameter("any", Block, Block.LookupType("STRING"), false)));
+            Block.Procedures.Add(new FunctionDeclaration("WriteReal", Block, true, new ProcedureParameter("any", Block, Block.LookupType("REAL"), false)));
             Block.Procedures.Add(new FunctionDeclaration("WriteLn", Block, true));
-            Block.Procedures.Add(new FunctionDeclaration("ReadInt", Block, true, new ProcedureParameter("any", Block.LookupType("INTEGER"), true)));
-            Block.Procedures.Add(new FunctionDeclaration("ReadReal", Block, true, new ProcedureParameter("any", Block.LookupType("REAL"), true)));
+            Block.Procedures.Add(new FunctionDeclaration("ReadInt", Block, true, new ProcedureParameter("any", Block, Block.LookupType("INTEGER"), true)));
+            Block.Procedures.Add(new FunctionDeclaration("ReadReal", Block, true, new ProcedureParameter("any", Block, Block.LookupType("REAL"), true)));
 
             Block.Procedures.Add(new FunctionDeclaration("eot", Block, Block.LookupType("BOOLEAN"), true));
         }

@@ -34,9 +34,9 @@ END Test.");
 
             FunctionDeclaration p = m.Block.LookupFunction("Test1");
             Assert.NotNull(p);
-            Assert.AreEqual(1, p.Parameters.Count);
-            Assert.AreEqual("a", p.Parameters[0].Name);
-            Assert.AreEqual(false, p.Parameters[0].IsVar);
+            Assert.AreEqual(1, p.Block.Declarations.Count);
+            Assert.AreEqual("a", p.Block.Declarations[0].Name);
+            Assert.AreEqual(false, ((ProcedureParameter)p.Block.Declarations[0]).IsVar);
         }
 
         [Test]
@@ -52,9 +52,9 @@ END Test.");
 
             FunctionDeclaration p = m.Block.LookupFunction("Test1");
             Assert.NotNull(p);
-            Assert.AreEqual(1, p.Parameters.Count);
-            Assert.AreEqual(BaseType.IntType, p.Parameters[0].Type.BaseType);
-            Assert.AreEqual(true, p.Parameters[0].IsVar);
+            Assert.AreEqual(1, p.Block.Declarations.Count);
+            Assert.AreEqual("a", p.Block.Declarations[0].Name);
+            Assert.AreEqual(true, ((ProcedureParameter)p.Block.Declarations[0]).IsVar);
         }
     }
 }

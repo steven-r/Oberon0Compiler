@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -189,6 +190,58 @@ END Array.";
             string outputData;
             Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual("-2\n", outputData.NlFix());
+        }
+
+        [Test]
+        public void TestNegAssignmentInt()
+        {
+            const string source = @"MODULE Array;
+VAR
+  b: INTEGER;
+
+BEGIN
+  b := -2;
+  WriteInt(b)
+END Array.";
+            var compiler = new CompilerParser();
+            Module m = compiler.Calculate(source);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                cg.DumpCode(w);
+            }
+            string code = sb.ToString();
+            string outputData;
+            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.AreEqual("-2\n", outputData.NlFix());
+        }
+
+        [Test]
+        public void TestNegReal()
+        {
+            const string source = @"MODULE Array;
+BEGIN
+  WriteReal(-2.5)
+END Array.";
+            var compiler = new CompilerParser();
+            Module m = compiler.Calculate(source);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                cg.DumpCode(w);
+            }
+            string code = sb.ToString();
+            string outputData;
+            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.AreEqual($"{-2.5}\n", outputData.NlFix());
         }
 
     }

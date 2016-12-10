@@ -1,6 +1,5 @@
 ﻿using System;
 using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Expressions.Operations;
 using Oberon0.Compiler.Expressions.Operations.Internal;
 
 namespace Oberon0.Compiler.Expressions

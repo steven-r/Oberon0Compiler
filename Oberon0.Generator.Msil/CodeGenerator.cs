@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
@@ -159,7 +160,7 @@ namespace Oberon0.Generator.Msil
             }
             else
             {
-                foreach (ProcedureParameter parameter in call.FunctionDeclaration.Parameters)
+                foreach (ProcedureParameter parameter in call.FunctionDeclaration.Block.Declarations.OfType<ProcedureParameter>())
                 {
                     if (parameter.IsVar)
                     {

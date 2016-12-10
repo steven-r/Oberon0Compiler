@@ -66,12 +66,7 @@ END Array.";
             CodeGenerator cg = new CodeGenerator(m);
 
             cg.Generate();
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter w = new StringWriter(sb))
-            {
-                cg.DumpCode(w);
-            }
-            string code = sb.ToString();
+            string code = cg.DumpCode();
             string outputData;
             Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual("1024\n", outputData.NlFix());

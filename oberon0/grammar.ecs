@@ -319,8 +319,12 @@ namespace Oberon0.Compiler {
 		private rule SingleVarDeclaration(Block block) @[
 			ids:=IdList(block)
 			":" t:=VarTypeReference(block) {
-				foreach(string v in ids)
+				foreach(string v in ids) {
+					if (block.LookupVar(v, false) != null) {
+						Src.Error(0, string.Format("A nariable with the name {0} does already exist", v)); 
+					}
 					block.Declarations.Add(new Declaration(v, t, block));
+				}
 			}
 		];
 
@@ -369,7 +373,10 @@ namespace Oberon0.Compiler {
 			n:=TT.Id ":" v:=VarTypeReference(proc.Block)
 			{
 				string name = n.Value.ToString();
-				proc.Parameters.Add(new ProcedureParameter(name, v, isVar)); 
+				if (proc.Block.LookupVar(name, false) != null) {
+					Src.Error(0, "This parameter has been defined before");
+				}
+				proc.Block.Declarations.Add(new ProcedureParameter(name, proc.Block, v, isVar)); 
 			}
 		];
 
@@ -425,8 +432,9 @@ namespace Oberon0.Compiler {
 					if (f.ReturnType.BaseType == BaseType.VoidType) {
 						Src.Error(0, "You cannot call procedure '{0}' as a function", name);
 					}
-					if (f.Parameters.Count != pl.Count) {
-						Src.Error(0, "The number of parameters doesn't match (Expected {0}, found {1})", f.Parameters.Count, pl.Count);
+					var parameterCount = f.Block.Declarations.OfType<ProcedureParameter>().Count();
+					if (parameterCount != pl.Count) {
+						Src.Error(0, "The number of parameters doesn't match (Expected {0}, found {1})", parameterCount, pl.Count);
 					}
 					if (s.Count > 0) { Src.Error(0, "Using selectors for functions is not allowed"); }
 					$result = new FunctionCallExpression(f, block, pl.ToArray());
@@ -513,8 +521,9 @@ namespace Oberon0.Compiler {
 			}
 			( "(" pl1:ParameterList(block) ")" { pl.AddRange(pl1); } ) ?
 			{ 
-				if (pl.Count != p.Parameters.Count) {
-					Src.Error(0, "Wrong number of parameters to call {0}. Expected {1}, found {2}", name, p.Parameters.Count, pl.Count);
+				var parameterCount = p.Block.Declarations.OfType<ProcedureParameter>().Count();
+				if (pl.Count != parameterCount) {
+					Src.Error(0, "Wrong number of parameters to call {0}. Expected {1}, found {2}", name, parameterCount, pl.Count);
 				}
 				block.Statements.Add(new ProcedureCallStatement(p, block, pl));
 			}

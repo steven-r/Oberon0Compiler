@@ -37,7 +37,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
                     for (int j = 0; j < parameters.Length; j++)
                     {
                         TypeDefinition td = module.Block.LookupType(parameters[j], true);
-                        element.ParameterTypes[j] = new ProcedureParameter(parameters[j], td,
+                        element.ParameterTypes[j] = new ProcedureParameter(parameters[j], module.Block, td, 
                             parameters[j].StartsWith("&", StringComparison.InvariantCulture));
                     }
                     element.InstanceKey =
@@ -56,7 +56,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         public static StandardFunctionGeneratorListElement Get(FunctionDeclaration function)
         {
             string key =
-                $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Parameters.Select(GetFunctionName))}";
+                $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Block.Declarations.OfType<ProcedureParameter>().Select(GetFunctionName))}";
 
             var func = _standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
             if (func == null)

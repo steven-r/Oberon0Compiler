@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace Oberon0.Generator.Msil
 {
@@ -17,6 +18,9 @@ namespace Oberon0.Generator.Msil
         {
 
         }
+
+        internal string ModuleName { get; set; }
+        internal string ClassName { get; set; }
 
         private static string DumpConstValue(ConstantExpression constantExpression, bool isLoad = false, bool isData = false)
         {
@@ -47,7 +51,7 @@ namespace Oberon0.Generator.Msil
                 case BaseType.StringType:
                     return "string";
                 case BaseType.DecimalType:
-                    return "double";
+                    return "float64";
                 case BaseType.VoidType:
                     return "void";
                 default:
@@ -71,28 +75,22 @@ namespace Oberon0.Generator.Msil
 
         internal void Emit(string opCode, params object[] parameters)
         {
-            EmitNoNl(opCode, parameters);
+            EmitNoNewLine(opCode, parameters);
             WriteLine();
         }
-
-        /*
-                internal string GenerateBytes(byte[] data)
-                {
-                    return string.Join(" ", Array.ConvertAll(data, x => x.ToString("X2")));
-                }
-        */
 
         internal void EmitComment(string comment)
         {
             WriteLine("// " + comment);
         }
 
-        internal void EmitNoNl(string opCode, params object[] parameters)
+        private void EmitNoNewLine(string opCode, params object[] parameters)
         {
             Write("\t" + opCode);
             foreach (string parameter in parameters)
             {
-                Write("\t" + parameter);
+                if (!string.IsNullOrEmpty(parameter))
+                    Write("\t" + parameter);
             }
         }
 
@@ -111,7 +109,7 @@ namespace Oberon0.Generator.Msil
                 case BaseType.StringType:
                     return "string";
                 case BaseType.DecimalType:
-                    return "double";
+                    return "float64";
                 case BaseType.BoolType:
                     return "bool";
                 case BaseType.VoidType:
@@ -138,12 +136,9 @@ namespace Oberon0.Generator.Msil
             }
         }
 
-        internal void PushConst(object data, string label = null)
+        internal void PushConst([NotNull] object data)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data), $"{nameof(data)} is null.");
-            if (!string.IsNullOrWhiteSpace(label))
-                Write(label + ": ");
+            if (data == null) throw new ArgumentNullException(nameof(data));
             switch (Type.GetTypeCode(data.GetType()))
             {
                 case TypeCode.Boolean:
@@ -172,7 +167,7 @@ namespace Oberon0.Generator.Msil
                     Emit("ldc.r4", data);
                     break;
                 case TypeCode.Double:
-                    Emit("ldc.r8", data);
+                    Emit("ldc.r8", ((double)data).ToString(CultureInfo.InvariantCulture));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -195,10 +190,12 @@ namespace Oberon0.Generator.Msil
             }
             else
             {
-                EmitNoNl("call", GetTypeName(func.ReturnType), func.Name, "(");
-                List<string> typeNames = new List<string>(func.Parameters.Count);
-                typeNames.AddRange(func.Parameters.Select(parameter => parameter.Name));
-                Write(string.Join(", ", typeNames));
+                EmitNoNewLine("call", GetTypeName(func.ReturnType), $"{ClassName}::{func.Name}(");
+                List<string> typeNames = new List<string>();
+                typeNames.AddRange(
+                    func.Block.Declarations.OfType<ProcedureParameter>()
+                        .Select(parameter => GetTypeName(parameter.Type)));
+                Write(string.Join(",", typeNames));
                 WriteLine(")");
             }
         }
@@ -216,12 +213,7 @@ namespace Oberon0.Generator.Msil
         }
 
 
-        public string EmitLabel()
-        {
-            return EmitLabel(null);
-        }
-
-        public string EmitLabel(string label)
+        internal string EmitLabel(string label = null)
         {
             label = label ?? GetLabel();
             Write(label + ": ");
@@ -235,72 +227,77 @@ namespace Oberon0.Generator.Msil
         /// <param name="arrayTypeDefinition">The array type definition.</param>
         public void EmitLdelem(IndexSelector index, ArrayTypeDefinition arrayTypeDefinition)
         {
-            Write("\tldelem");
+            string suffix = string.Empty;
+            string param = null;
             switch (arrayTypeDefinition.BaseType)
             {
                 case BaseType.IntType:
                 case BaseType.BoolType:
-                    WriteLine(".i4");
+                    suffix = ".i4";
                     break;
                 case BaseType.DecimalType:
-                    WriteLine(".r8");
+                    suffix = ".r8";
                     break;
                 default:
-                    WriteLine(" " + GetTypeName(arrayTypeDefinition.ArrayType));
+                    param = GetTypeName(arrayTypeDefinition.ArrayType);
                     break;
             }
+            Emit("ldelem" + suffix, param);
         }
 
-        public void EmitStelem(IndexSelector indexSelector)
+        internal void EmitStelem(IndexSelector indexSelector)
         {
-            Write("\tstelem");
+            string suffix;
+            string param = null;
             switch (indexSelector.IndexDefinition.TargetType)
             {
                 case BaseType.IntType:
                 case BaseType.BoolType:
-                    WriteLine(".i4");
+                    suffix = ".i4";
                     break;
                 case BaseType.DecimalType:
-                    WriteLine(".r8");
+                    suffix = ".r8";
                     break;
                 default:
-                    WriteLine(".ref\t" + GetTypeName(indexSelector.IndexDefinition.TargetType));
+                    suffix = ".ref";
+                    param = GetTypeName(indexSelector.IndexDefinition.TargetType);
                     break;
             }
+            Emit("stelem" + suffix, param);
         }
 
-        public void EndMethod()
+        internal void EndMethod()
         {
             Emit("ret");
             WriteLine("}");
         }
 
-        public string GetLabel()
+        internal string GetLabel()
         {
             return $"L{_labelId++}";
         }
 
-        public void LoadConstRef(ConstDeclaration constDeclaration)
+        internal void LoadConstRef(ConstDeclaration constDeclaration)
         {
             Emit("ldvar", constDeclaration.Name);
         }
 
-        public void LocalVarDef(Declaration declaration, bool isPointer)
+        internal void LocalVarDef(Declaration declaration, bool isPointer)
         {
             Write($"{(isPointer ? "&" : string.Empty)}{GetTypeName(declaration.Type)} {declaration.Name}");
         }
 
-        public void Reference(string assemblyName)
+        internal void Reference(string assemblyName)
         {
             WriteLine($".assembly extern {assemblyName} {{ }}");
         }
 
-        public void StartAssembly(string moduleName)
+        internal void StartAssembly(string moduleName)
         {
             WriteLine($".assembly {moduleName} {{ }}");
         }
 
-        public void StartMainMethod()
+        internal void StartMainMethod()
         {
             Write(@"
 .method private hidebysig static bool  isEof() cil managed
@@ -323,12 +320,12 @@ namespace Oberon0.Generator.Msil
 ");
         }
 
-        public void StartMethod(FunctionDeclaration functionDeclaration)
+        internal void StartMethod(FunctionDeclaration functionDeclaration)
         {
             Write($".method private static {GetTypeName(functionDeclaration.ReturnType)} {functionDeclaration.Name}(");
-            List<string> paramList = new List<string>(functionDeclaration.Parameters.Count);
+            List<string> paramList = new List<string>();
             int id = 0;
-            foreach (ProcedureParameter parameter in functionDeclaration.Parameters)
+            foreach (ProcedureParameter parameter in functionDeclaration.Block.Declarations.OfType<ProcedureParameter>())
             {
                 parameter.GeneratorInfo = new DeclarationGeneratorInfo(id++);
                 paramList.Add($"{GetTypeName(parameter.Type)} {parameter.Name}");
@@ -337,17 +334,20 @@ namespace Oberon0.Generator.Msil
 {");
         }
 
-        public void StartModule(string moduleName)
+        internal void StartModule(string moduleName)
         {
             WriteLine($".module {moduleName}.exe");
+            ModuleName = moduleName;
         }
 
-        public void StartClass(string className)
+        internal void StartClass(string className)
         {
             WriteLine($".class public {className} {{");
+            ClassName = className;
         }
 
-        public void EndClass()
+
+        internal void EndClass()
         {
             WriteLine("}");
         }

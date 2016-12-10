@@ -17,6 +17,13 @@ namespace Oberon0.Generator.Msil
             bool isFirst = true;
             foreach (Declaration declaration in block.Declarations)
             {
+                var pp = declaration as ProcedureParameter;
+                if (pp != null)
+                {
+                    // skip procedure parameters
+                    continue;
+                }
+
                 var c = declaration as ConstDeclaration;
                 if (c != null)
                 {

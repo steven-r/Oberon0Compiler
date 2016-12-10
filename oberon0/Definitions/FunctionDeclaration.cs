@@ -9,7 +9,7 @@ namespace Oberon0.Compiler.Definitions
         {
             Name = name;
             Block = new Block { Parent = parent };
-            Parameters = new List<ProcedureParameter>(parameters);
+            Block.Declarations.AddRange(parameters);
             ReturnType = new SimpleTypeDefinition(BaseType.VoidType);
         }
 
@@ -17,7 +17,7 @@ namespace Oberon0.Compiler.Definitions
         {
             Name = name;
             Block = new Block { Parent = parent };
-            Parameters = new List<ProcedureParameter>(parameters);
+            Block.Declarations.AddRange(parameters);
             ReturnType = new SimpleTypeDefinition(returnType);
         }
 
@@ -25,7 +25,7 @@ namespace Oberon0.Compiler.Definitions
         {
             Name = name;
             Block = new Block { Parent = parent };
-            Parameters = new List<ProcedureParameter>(parameters);
+            Block.Declarations.AddRange(parameters);
             IsInternal = isInternal;
             ReturnType = returnType;
         }
@@ -34,7 +34,7 @@ namespace Oberon0.Compiler.Definitions
         {
             Name = name;
             Block = new Block { Parent = parent };
-            Parameters = new List<ProcedureParameter>(parameters);
+            Block.Declarations.AddRange(parameters);
             IsInternal = isInternal;
             ReturnType = parent.LookupType("VOID", true);
         }
@@ -45,14 +45,12 @@ namespace Oberon0.Compiler.Definitions
 
         public TypeDefinition ReturnType { get; }
 
-        public List<ProcedureParameter> Parameters { get; }
-
         public bool IsInternal { get; set; }
 
         public override string ToString()
         {
             return $"{(IsInternal?"internal ": string.Empty)}{ReturnType:G} {Name}("
-                + string.Join(", ", Parameters.Select(x => x.Type.BaseType.ToString("G"))) + ")";
+                + string.Join(", ", Block.Declarations.OfType<ProcedureParameter>().Select(x => x.Type.BaseType.ToString("G"))) + ")";
         }
     }
 }
