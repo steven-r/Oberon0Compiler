@@ -21,7 +21,7 @@ namespace Oberon0.Generator.Msil
                 {TokenType.Mul, HandleSimpleOperation},
                 {TokenType.Div, HandleSimpleOperation},
                 {TokenType.Mod, HandleSimpleOperation},
-                {TokenType.Unary, HandleUnaryOperation},
+                {TokenType.Unary, HandleSimpleOperation},
                 {TokenType.Equals, HandleRelOperation},
                 {TokenType.NotEquals, HandleRelOperation},
                 {TokenType.GT, HandleRelOperation},
@@ -66,32 +66,6 @@ namespace Oberon0.Generator.Msil
             }
             generator.Code.Emit(SimpleInstructionMapping[bin.Operator]);
             return bin;
-        }
-
-        // "<op> a"
-        private static Expression HandleUnaryOperation(CodeGenerator generator, Block block, BinaryExpression bin)
-        {
-            if (!bin.LeftHandSide.IsConst)
-            {
-                // need a standard operation
-                return HandleSimpleOperation(generator, block, bin);
-            }
-            ConstantIntExpression cie = bin.LeftHandSide as ConstantIntExpression;
-            if (cie != null)
-            {
-                cie.Value = 0 - (int) cie.Value;
-                generator.LoadConstantExpression(cie, null);
-                return cie;
-            }
-            ConstantDoubleExpression cde = bin.LeftHandSide as ConstantDoubleExpression;
-            if (cde != null)
-            {
-                cde.Value = 0 - (double) cde.Value;
-                generator.LoadConstantExpression(cde, null);
-                return cde;
-            }
-            // no mapping found -> -<var>
-            return HandleSimpleOperation(generator, block, bin);
         }
 
         // "a <rel> b" or "<rel> a" (aka ~)
