@@ -60,7 +60,7 @@ namespace Oberon0.Compiler.Definitions
         /// <returns>Declaration.</returns>
         internal Declaration LookupVar(string name)
         {
-            return LookupVar(name, false);
+            return LookupVar(name, true);
         }
 
         /// <summary>
