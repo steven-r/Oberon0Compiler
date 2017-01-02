@@ -1,5 +1,7 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Oberon0.Compiler.Definitions;
+using Oberon0.CompilerSupport;
 
 namespace Oberon0.Compiler.Tests
 {
@@ -9,7 +11,7 @@ namespace Oberon0.Compiler.Tests
         [Test]
         public void ConstConstExpr()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test;
+            Module m = TestHelper.CompileString(@"MODULE Test;
 CONST
   Test1 = 2;
   Test = 1+Test1;
@@ -36,7 +38,7 @@ CONST
         [Test]
         public void ConstSimple()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test;
+            Module m = TestHelper.CompileString(@"MODULE Test;
 CONST
   Test = 1;
 
@@ -50,6 +52,38 @@ CONST
             Assert.AreEqual(m.Block.LookupType("INTEGER"), cp.Type);
             Assert.AreEqual(1, cp.Value.ToInt32());
         }
+
+        [Test]
+        public void ConstSimpleFailDuplicate()
+        {
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test;
+CONST
+  Test = 1;
+  Test = 2;
+
+ END Test.", errors);
+
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("A variable/constant with this name has been defined already", errors[0].Message);
+        }
+
+        [Test]
+        public void ConstSimpleFailVarReference()
+        {
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test;
+VAR
+  Test : INTEGER;
+CONST
+  Test1 = 2+Test;
+
+ END Test.", errors);
+
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("A constant must resolve during compile time", errors[0].Message);
+        }
+
 
         [Test]
         public void ConstSimpleExpr()

@@ -89,7 +89,7 @@
     <Compile Include="Complex\FullExample.cs" />
     <Compile Include="ConstTests.cs" />
     <Compile Include="ProcedureTests.cs" />
-    <Compile Include="RecordTests.cs" />
+    <Compile Include="TypeTests.cs" />
     <Compile Include="SimpleExpressionTest.cs" />
     <Compile Include="SimpleStatementTests.cs" />
     <Compile Include="SimpleTests.cs" />

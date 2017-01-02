@@ -12,7 +12,7 @@ namespace Oberon0.Compiler.Tests
         [Test]
         public void ArrayOfArray()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 VAR
   id: ARRAY 5 OF ARRAY 10 OF INTEGER;
  END Test.");
@@ -35,7 +35,7 @@ VAR
         [Test]
         public void OneVar()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 VAR
   id: INTEGER;
  END Test.");
@@ -45,10 +45,9 @@ VAR
         }
 
         [Test]
-
         public void SimpleArray()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 VAR
   id: ARRAY 5 OF INTEGER;
  END Test.");
@@ -64,12 +63,26 @@ VAR
             Assert.AreEqual(intType, atd.ArrayType);
         }
 
+        [Test]
+        public void ArrayFailBooleanIndex()
+        {
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test; 
+
+VAR
+  id: ARRAY TRUE OF INTEGER;
+ END Test.", errors);
+
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("The array size must return a constant integer expression", errors[0].Message);
+        }
+
 
         [Test]
 
         public void TwoVars1()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 VAR
   id: INTEGER;
   id1: INTEGER;
@@ -86,7 +99,7 @@ VAR
         [Test]
         public void TwoVars2()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 VAR
   id, id1: INTEGER;
  END Test.");
@@ -132,6 +145,20 @@ VAR
 VAR
  END Test.", errors);
             Assert.AreEqual(3, errors.Count);
+        }
+
+
+        [Test]
+        public void VarWithoutWrongType()
+        {
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test; 
+VAR
+    id: DUMMY;
+
+ END Test.", errors);
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("Type not known", errors[0].Message);
         }
     }
 }
