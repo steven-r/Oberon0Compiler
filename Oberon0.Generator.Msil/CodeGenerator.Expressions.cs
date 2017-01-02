@@ -8,38 +8,37 @@ using JetBrains.Annotations;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil
 {
     public partial class CodeGenerator
     {
-        private static readonly Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, Expression>> OperatorMapping = 
-            new Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, Expression>>
+        private static readonly Dictionary<int, Func<CodeGenerator, Block, BinaryExpression, Expression>> OperatorMapping = 
+            new Dictionary<int, Func<CodeGenerator, Block, BinaryExpression, Expression>>
             {
-                {TokenType.Add, HandleSimpleOperation},
-                {TokenType.Sub, HandleSimpleOperation},
-                {TokenType.Mul, HandleSimpleOperation},
-                {TokenType.Div, HandleSimpleOperation},
-                {TokenType.Mod, HandleSimpleOperation},
-                {TokenType.Unary, HandleSimpleOperation},
-                {TokenType.Equals, HandleRelOperation},
-                {TokenType.NotEquals, HandleRelOperation},
-                {TokenType.GT, HandleRelOperation},
-                {TokenType.GE, HandleRelOperation},
-                {TokenType.LT, HandleRelOperation},
-                {TokenType.LE, HandleRelOperation},
-                {TokenType.Not, HandleRelOperation},
+                {OberonGrammarLexer.PLUS, HandleSimpleOperation},
+                {OberonGrammarLexer.MINUS, HandleSimpleOperation},
+                {OberonGrammarLexer.MULT, HandleSimpleOperation},
+                {OberonGrammarLexer.DIV, HandleSimpleOperation},
+                {OberonGrammarLexer.MOD, HandleSimpleOperation},
+                {OberonGrammarLexer.EQUAL, HandleRelOperation},
+                {OberonGrammarLexer.NOTEQUAL, HandleRelOperation},
+                {OberonGrammarLexer.GT, HandleRelOperation},
+                {OberonGrammarLexer.GE, HandleRelOperation},
+                {OberonGrammarLexer.LT, HandleRelOperation},
+                {OberonGrammarLexer.LE, HandleRelOperation},
+                {OberonGrammarLexer.NOT, HandleRelOperation},
             };
 
-        private static readonly Dictionary<TokenType, string> SimpleInstructionMapping = 
-            new Dictionary<TokenType, string>
+        private static readonly Dictionary<int, string> SimpleInstructionMapping = 
+            new Dictionary<int, string>
             {
-                {TokenType.Add, "add" },
-                {TokenType.Div, "div" },
-                {TokenType.Mul, "mul" },
-                {TokenType.Sub, "sub" },
-                {TokenType.Unary, "sub" },
-                {TokenType.Mod, "rem" },
+                {OberonGrammarLexer.PLUS, "add" },
+                {OberonGrammarLexer.DIV, "div" },
+                {OberonGrammarLexer.MULT, "mul" },
+                {OberonGrammarLexer.MINUS, "sub" },
+                {OberonGrammarLexer.MOD, "rem" },
             };
 
         public string DumpCode()
@@ -55,9 +54,13 @@ namespace Oberon0.Generator.Msil
         // "a <op> b" or "<op> a"
         private static BinaryExpression HandleSimpleOperation(CodeGenerator generator, Block block, BinaryExpression bin)
         {
-            if (bin.Operator == TokenType.Unary)
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.IntType)
             {
                 generator.LoadConstantExpression(ConstantIntExpression.Zero, null);
+            }
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.DecimalType)
+            {
+                generator.LoadConstantExpression(ConstantDoubleExpression.Zero, null);
             }
             generator.ExpressionCompiler(block, bin.LeftHandSide);
             if (!bin.IsUnary)
@@ -160,7 +163,7 @@ namespace Oberon0.Generator.Msil
 
         internal void Load(Block block, Declaration varDeclaration, VariableSelector selector, bool noLoad = false)
         {
-            if (varDeclaration.Block.Parent == null)
+            if (varDeclaration.Block.Parent == null && !(varDeclaration is ProcedureParameter))
             {
                 Code.Emit("ldsfld", Code.GetTypeName(varDeclaration.Type), $"{Code.ClassName}::{varDeclaration.Name}");
             }
@@ -191,9 +194,13 @@ namespace Oberon0.Generator.Msil
                         ExpressionCompiler(block, ae.IndexDefinition);
                         if (!noLoad)
                             Code.EmitLdelem(ae, ad);
+                        continue;
                     }
-                    else
-                        throw new NotImplementedException();
+                    var ie = selectorElement as IdentifierSelector;
+                    if (ie != null)
+                    {
+                        
+                    }
                 }
             }
         }
@@ -215,7 +222,7 @@ namespace Oberon0.Generator.Msil
             }
             else
             {
-                if (assignmentVariable.Block.Parent == null)
+                if (assignmentVariable.Block.Parent == null && !(assignmentVariable is ProcedureParameter))
                 {
                     Code.Emit("stsfld", Code.GetTypeName(assignmentVariable.Type), $"{Code.ClassName}::{assignmentVariable.Name}");
                 }

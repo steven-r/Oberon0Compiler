@@ -1,6 +1,7 @@
 ﻿using System;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Operations.Internal;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions
 {
@@ -19,26 +20,31 @@ namespace Oberon0.Compiler.Expressions
         /// <param name="right">The right hand side.</param>
         /// <returns>BinaryExpression.</returns>
         /// <exception cref="InvalidOperationException">Operator {tokenType}</exception>
-        public static BinaryExpression Create(TokenType tokenType, Expression left, Expression right)
+        public static BinaryExpression Create(int tokenType, Expression left, Expression right, Block block)
         {
             ArithmeticOperation op;
             BinaryExpression result;
             if (right == null)
             {
                 // unary
-                op = ExpressionRepository.Instance.Get(tokenType, left.TargetType, BaseType.AnyType);
+                op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.BaseType, BaseType.AnyType);
                 result = new UnaryExpression
                 {
                     LeftHandSide = left,
                     Operator = tokenType,
-                    TargetType = op.Metadata.TargetType
+                    TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType),
+                    Operation = op
                 };
-                result.LeftHandSide = left;
-                result.Operation = op;
                 return result;
             }
-            op = ExpressionRepository.Instance.Get(tokenType, left.TargetType, right.TargetType);
-            result = new BinaryExpression { LeftHandSide = left, RightHandSide = right, Operator = tokenType, TargetType = op.Metadata.TargetType };
+            op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.BaseType, right.TargetType.BaseType);
+            result = new BinaryExpression
+            {
+                LeftHandSide = left,
+                RightHandSide = right,
+                Operator = tokenType,
+                TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType)
+            };
             result.LeftHandSide = left;
             result.RightHandSide = right;
             result.Operation = op;

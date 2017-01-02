@@ -79,8 +79,7 @@ Div: 100/2= 50, rem 0
 Div: 100/3= 33, rem 1
 Div: 3/100= 0, rem 3
 ".NlFix();
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(proc);
+            Module m = Oberon0Compiler.CompileString(proc);
             CodeGenerator cg = new CodeGenerator(m);
 
             cg.Generate();

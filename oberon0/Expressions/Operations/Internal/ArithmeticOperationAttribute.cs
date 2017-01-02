@@ -1,26 +1,26 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
 
-namespace Oberon0.Compiler.Expressions.Operations
+namespace Oberon0.Compiler.Expressions.Operations.Internal
 {
     [MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class ArithmeticOperationAttribute: ExportAttribute, IArithmeticOpMetadata
     {
-        public ArithmeticOperationAttribute(TokenType operation, BaseType leftHandType, BaseType rightHandType, BaseType targetType)
+        public ArithmeticOperationAttribute(int operation, BaseType leftHandType, BaseType rightHandType, BaseType resultType)
         {
             Operation = operation;
             LeftHandType = leftHandType;
             RightHandType = rightHandType;
-            TargetType = targetType;
+            ResultType = resultType;
         }
 
-        public TokenType Operation { get; }
+        public int Operation { get; }
 
         public BaseType LeftHandType { get; }
 
         public BaseType RightHandType { get; }
 
-        public BaseType TargetType { get; }
+        public BaseType ResultType { get; }
     }
 }

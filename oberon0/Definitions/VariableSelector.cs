@@ -1,34 +1,56 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Antlr4.Runtime;
+using JetBrains.Annotations;
 using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
 {
     /// <summary>
     /// hold selector lists
     /// </summary>
-    /// <seealso cref="System.Collections.Generic.List{BaseSelectorElement}" />
     public class VariableSelector: List<BaseSelectorElement>
-    {}
+    {
+        public TypeDefinition SelectorResultType { get; set; }
+    }
 
-    public abstract class BaseSelectorElement {}
+    public abstract class BaseSelectorElement
+    {
+        [NotNull]
+        public IToken Token { get; }
+
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
+        protected BaseSelectorElement([NotNull] IToken tokenStart)
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
+        {
+            if (tokenStart == null) throw new ArgumentNullException(nameof(tokenStart));
+            this.Token = tokenStart;
+        }
+    }
 
     public class IdentifierSelector : BaseSelectorElement
     {
-        public IdentifierSelector(string name)
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
+        public IdentifierSelector(string name, [NotNull] IToken tokenStart)
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
+            : base(tokenStart)
         {
             Name = name;
         }
 
-        public string Name { get; set; }
+        public string Name { get; }
     }
 
     public class IndexSelector : BaseSelectorElement
     {
-        public IndexSelector(Expression index)
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
+        public IndexSelector(Expression index, [NotNull] IToken tokenStart) : base(tokenStart)
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
         {
             IndexDefinition = index;
         }
 
-        public Expression IndexDefinition { get; }
+        public Expression IndexDefinition { get; set; }
     }
 }

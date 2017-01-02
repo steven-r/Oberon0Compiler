@@ -3,13 +3,14 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil.PredefinedFunctions
 {
     [Export(typeof(IStandardFunctionGenerator))]
-    [StandardFunctionMetadata("WriteInt", "VOID", "INTEGER")]
-    [StandardFunctionMetadata("WriteBool", "VOID", "BOOLEAN")]
-    [StandardFunctionMetadata("WriteReal", "VOID", "REAL")]
+    [StandardFunctionMetadata("WriteInt", TypeDefinition.VoidTypeName, "INTEGER")]
+    [StandardFunctionMetadata("WriteBool", TypeDefinition.VoidTypeName, "BOOLEAN")]
+    [StandardFunctionMetadata("WriteReal", TypeDefinition.VoidTypeName, "REAL")]
     public class WriteNumberHandler : IStandardFunctionGenerator
     {
         public void Generate(IStandardFunctionMetadata metadata, CodeGenerator generator, FunctionDeclaration callExpression, List<Expression> parameters,
@@ -32,7 +33,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
     }
 
     [Export(typeof(IStandardFunctionGenerator))]
-    [StandardFunctionMetadata("WriteString", "VOID", "STRING")]
+    [StandardFunctionMetadata("WriteString", TypeDefinition.VoidTypeName, "STRING")]
     public class WriteStringHandler : IStandardFunctionGenerator
     {
         public void Generate(IStandardFunctionMetadata metadata, CodeGenerator generator, FunctionDeclaration callExpression, List<Expression> parameters,
@@ -44,7 +45,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
     }
 
     [Export(typeof(IStandardFunctionGenerator))]
-    [StandardFunctionMetadata("WriteLn", "VOID")]
+    [StandardFunctionMetadata("WriteLn", TypeDefinition.VoidTypeName)]
     public class WriteLnHandler : IStandardFunctionGenerator
     {
         public void Generate(IStandardFunctionMetadata metadata, CodeGenerator generator, FunctionDeclaration callExpression, List<Expression> parameters,

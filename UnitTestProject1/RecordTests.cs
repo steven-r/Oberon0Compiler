@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
 
-namespace UnitTestProject1
+namespace Oberon0.Compiler.Tests
 {
     [TestFixture]
     public class RecordTests
@@ -11,8 +11,7 @@ namespace UnitTestProject1
         [Test]
         public void LookupType()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 TYPE
   Demo = INTEGER;
 
@@ -24,8 +23,7 @@ END Test.");
         [Test]
         public void LookupTypeFail()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 TYPE
   Demo = INTEGER;
 
@@ -37,8 +35,7 @@ END Test.");
         [Test]
         public void RecordSimple()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 TYPE
   Demo = RECORD 
     a: INTEGER;
@@ -46,25 +43,32 @@ TYPE
 
 END Test.");
 
-            Assert.IsAssignableFrom(typeof(RecordTypeDefinition), m.Block.LookupType("Demo"));
-            RecordTypeDefinition rtd = (RecordTypeDefinition) m.Block.LookupType("Demo");
+            var t = m.Block.LookupType("Demo");
+            var intType = m.Block.LookupType("INTEGER");
+            Assert.NotNull(t);
+            Assert.IsInstanceOf<RecordTypeDefinition>(t);
+            RecordTypeDefinition rtd = (RecordTypeDefinition)t;
             Assert.AreEqual(1, rtd.Elements.Count);
-            Assert.AreEqual("a", rtd.Elements[0].Name);
-            Assert.AreEqual("INTEGER", rtd.Elements[0].Type.Name);
+            Declaration a = rtd.Elements.First();
+            Assert.AreEqual("a", a.Name);
+            Assert.AreEqual(intType, a.Type);
         }
 
         [Test]
         public void SimpleRecord()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 TYPE
   Demo = INTEGER;
 
 END Test.");
 
-            Assert.AreEqual(true, m.Block.Types.Any(x => x.Name == "Demo"));
-            Assert.NotNull(m.Block.LookupType("Demo"));
+            var t = m.Block.LookupType("Demo");
+            var intType = m.Block.LookupType("INTEGER");
+            Assert.NotNull(t);
+            Assert.IsInstanceOf<SimpleTypeDefinition>(t);
+            SimpleTypeDefinition std = (SimpleTypeDefinition) t;
+            Assert.AreEqual(intType.BaseType, std.BaseType);
         }
     }
 }

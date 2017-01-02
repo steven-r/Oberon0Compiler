@@ -1,12 +1,13 @@
 ﻿using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions
 {
     public class ConstantIntExpression : ConstantExpression
     {
         public ConstantIntExpression(int value)
-            : base(BaseType.IntType, value)
+            : base(SimpleTypeDefinition.IntType, value)
         {
             Value = value;
         }

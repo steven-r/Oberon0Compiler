@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Operations.Internal;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Operations
 {
@@ -10,7 +11,7 @@ namespace Oberon0.Compiler.Expressions.Operations
     /// <seealso cref="IArithmeticOperation" />
     /// <remarks>This function is some kind of exception as ~ usually takes one parameter. The second is handled as a dummy</remarks>
     [Export(typeof(IArithmeticOperation))]
-    [ArithmeticOperation(TokenType.Not, BaseType.BoolType, BaseType.AnyType, BaseType.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.NOT, BaseType.BoolType, BaseType.AnyType, BaseType.BoolType)]
     internal class OpNotBool : BinaryOperation
     {
         protected override Expression BinaryOperate(BinaryExpression bin, Block block, IArithmeticOpMetadata operationParameters)

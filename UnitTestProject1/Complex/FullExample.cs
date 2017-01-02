@@ -1,8 +1,7 @@
 ﻿using NUnit.Framework;
-using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 
-namespace UnitTestProject1.Complex
+namespace Oberon0.Compiler.Tests.Complex
 {
 
     [TestFixture]
@@ -11,7 +10,7 @@ namespace UnitTestProject1.Complex
         [Test]
         public void FullExample1()
         {
-            string proc = @"
+            string source = @"
 MODULE Samples;
 VAR 
   n: INTEGER;
@@ -57,8 +56,7 @@ BEGIN ReadInt(n);
  IF n = 0 THEN Multiply ELSIF n = 1 THEN Divide ELSE BinSearch END
 END Samples.
 ";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(proc);
+            Module m = Oberon0Compiler.CompileString(source);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Oberon0.Compiler.Expressions
 {
-    class UnaryExpression: BinaryExpression
+    internal class UnaryExpression: BinaryExpression
     {
         /// <summary>
         /// For unary expressions this value is true.

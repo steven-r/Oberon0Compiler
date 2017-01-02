@@ -1,27 +1,29 @@
-﻿using NUnit.Framework;
-using Oberon0.Compiler;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Statements;
 
-namespace UnitTestProject1
+namespace Oberon0.Compiler.Tests
 {
 
     [TestFixture]
-    public class SimpleStatements
+    public class SimpleStatementTests
     {
         [Test]
         public void SimpleAssignment()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            List<CompilerError> errors = new List<CompilerError>();
+
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 VAR
   x: INTEGER;
 
 BEGIN 
     x := 1
 END Test.
-");
+", errors);
+            Assert.AreEqual(0, errors.Count);
             Assert.AreEqual(1, m.Block.Statements.Count);
             Assert.IsAssignableFrom(typeof(AssignmentStatement), m.Block.Statements[0]);
             AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[0];
@@ -35,8 +37,7 @@ END Test.
 
         public void TwoStatements()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 VAR
   x: INTEGER;
 

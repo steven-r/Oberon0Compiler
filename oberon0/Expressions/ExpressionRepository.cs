@@ -4,14 +4,14 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Expressions.Operations;
 using Oberon0.Compiler.Expressions.Operations.Internal;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions
 {
     class ExpressionRepository
     {
-        private static ExpressionRepository _instance = null;
+        private static ExpressionRepository _instance;
 
         private ExpressionRepository()
         {
@@ -31,7 +31,7 @@ namespace Oberon0.Compiler.Expressions
                     var key = new ArithmeticOpKey(mefArithmeticOperation.Metadata.Operation[i],
                         mefArithmeticOperation.Metadata.LeftHandType[i],
                         mefArithmeticOperation.Metadata.RightHandType[i],
-                        mefArithmeticOperation.Metadata.TargetType[i]);
+                        mefArithmeticOperation.Metadata.ResultType[i]);
                     ArithmeticOperations.Add(key, new ArithmeticOperation(mefArithmeticOperation.Value, key));
                 }
         }
@@ -40,7 +40,7 @@ namespace Oberon0.Compiler.Expressions
         [ImportMany]
         // ReSharper disable once CollectionNeverUpdated.Local
         // ReSharper disable once MemberCanBePrivate.Local
-        private Lazy<IArithmeticOperation, IArithmeticOpMetadataView>[] MefArithmeticOperations { get; set; }
+        private Lazy<IArithmeticOperation, IArithmeticOpMetadataView>[] MefArithmeticOperations { get; [UsedImplicitly] set; }
 #pragma warning restore 649
 
         private Dictionary<ArithmeticOpKey, ArithmeticOperation> ArithmeticOperations { get; }
@@ -59,13 +59,13 @@ namespace Oberon0.Compiler.Expressions
         /// <param name="right">The right.</param>
         /// <returns>Lazy&lt;IArithmeticOperation, IArithmeticOpMetadata&gt;.</returns>
         [NotNull]
-        public ArithmeticOperation Get(TokenType operation, BaseType left, BaseType right)
+        public ArithmeticOperation Get(int operation, BaseType left, BaseType right)
         {
             ArithmeticOperation op;
             var key = new ArithmeticOpKey(operation, left, right);
             if (!ArithmeticOperations.TryGetValue(key, out op))
                 throw new InvalidOperationException(
-                    $"Cannot find operation {operation:G} ({left:G}, {right:G})");
+                    $"Cannot find operation {operation} ({left:G}, {right:G})");
             return op;
         }
     }

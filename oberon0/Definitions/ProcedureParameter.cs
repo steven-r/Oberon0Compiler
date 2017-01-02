@@ -1,4 +1,6 @@
-﻿namespace Oberon0.Compiler.Definitions
+﻿using Oberon0.Compiler.Types;
+
+namespace Oberon0.Compiler.Definitions
 {
     /// <summary>
     /// Define a procedure/function parameter

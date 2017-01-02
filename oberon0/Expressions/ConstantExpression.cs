@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Globalization;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions
 {
     public abstract class ConstantExpression : Expression
     {
-        protected ConstantExpression(BaseType baseType, object value)
+        protected ConstantExpression(TypeDefinition baseType, object value)
         {
             TargetType = baseType;
             Value = value;
         }
 
-        private ConstantExpression() {}
         public object Value { get; set; }
 
         /// <summary>

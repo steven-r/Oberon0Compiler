@@ -494,10 +494,13 @@ namespace Oberon0.Compiler {
 			e:=RelationalExpression(block)
 			{
 				e=ConstantSolver.Solve(e, block);
-			#if Verbose
-				Console.WriteLine($"Assignment {varName} := {e.GetType().Name}");
-			#endif
-				block.Statements.Add(new AssignmentStatement{Variable = variable, Expression = e, Selector = selector});
+				var stmt = new AssignmentStatement{Variable = variable, Expression = e, Selector = selector};
+				if (stmt.IsCompatible()) {
+					block.Statements.Add(stmt);
+				}
+				else {
+					Src.Error(0, "left and right hand side are not compatible", varName);
+				}
 			}
 		];
 

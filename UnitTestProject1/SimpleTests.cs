@@ -1,9 +1,8 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
-using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 
-namespace UnitTestProject1
+namespace Oberon0.Compiler.Tests
 {
     [TestFixture]
     public class SimpleTests
@@ -11,8 +10,7 @@ namespace UnitTestProject1
         [Test]
         public void EmptyApplication()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate("MODULE Test; END Test.");
+            Module m = Oberon0Compiler.CompileString("MODULE Test; END Test.");
 
             Assert.AreEqual("Test", m.Name);
             Assert.AreEqual(2, m.Block.Declarations.Count);
@@ -21,32 +19,33 @@ namespace UnitTestProject1
         [Test]
         public void EmptyApplication2()
         {
-            var compiler = new CompilerParser();
-            Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE Test; 
-BEGIN END Test."); });
-            Assert.AreEqual(e.Message, "Statement expected");
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test; 
+BEGIN END Test.", errors);
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("Statement expected", errors[0].Message);
         }
 
         [Test]
         public void ModuleMissingDot()
         {
-            var compiler = new CompilerParser();
-
-
-            Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE Test; 
-END Test"); });
-            Assert.AreEqual(e.Message, "\'EOF\': expected Dot");
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test; 
+END Test", errors);
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("missing '.' at '<EOF>'", errors[0].Message);
         }
 
         [Test]
         public void ModuleMissingId()
         {
-            var compiler = new CompilerParser();
-
-
-            Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE ; 
-BEGIN END Test."); });
-            Assert.AreEqual(e.Message, "\'Semicolon\': expected Id");
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE ; 
+BEGIN END Test.", errors);
+            Assert.AreEqual(3, errors.Count);
+            Assert.AreEqual("missing ID at ';'", errors[0].Message);
+            Assert.AreEqual("Statement expected", errors[1].Message);
+            Assert.AreEqual("The name of the module does not match the end node", errors[2].Message);
         }
     }
 }

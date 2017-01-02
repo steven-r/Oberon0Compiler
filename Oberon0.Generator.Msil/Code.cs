@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil
 {
@@ -20,11 +21,11 @@ namespace Oberon0.Generator.Msil
         }
 
         internal string ModuleName { get; set; }
-        internal string ClassName { get; set; }
+        internal string ClassName { get; private set; }
 
         private static string DumpConstValue(ConstantExpression constantExpression, bool isLoad = false, bool isData = false)
         {
-            switch (constantExpression.TargetType)
+            switch (constantExpression.TargetType.BaseType)
             {
                 case BaseType.IntType:
                     return constantExpression.ToInt32().ToString();
@@ -179,17 +180,17 @@ namespace Oberon0.Generator.Msil
             Emit(brType, label);
         }
 
-        public void Call(FunctionDeclaration func)
+        internal void Call(FunctionDeclaration func)
         {
             if (func.IsInternal)
             {
                 if (func.Name == "eot")
-                    Emit("call", "bool", "isEof()");
+                    Emit("call", "bool", "eot()");
                 else
                     throw new NotImplementedException();
             }
             else
-            {
+            { // local procedure
                 EmitNoNewLine("call", GetTypeName(func.ReturnType), $"{ClassName}::{func.Name}(");
                 List<string> typeNames = new List<string>();
                 typeNames.AddRange(
@@ -249,7 +250,7 @@ namespace Oberon0.Generator.Msil
         {
             string suffix;
             string param = null;
-            switch (indexSelector.IndexDefinition.TargetType)
+            switch (indexSelector.IndexDefinition.TargetType.BaseType)
             {
                 case BaseType.IntType:
                 case BaseType.BoolType:
@@ -300,21 +301,6 @@ namespace Oberon0.Generator.Msil
         internal void StartMainMethod()
         {
             Write(@"
-.method private hidebysig static bool  isEof() cil managed
-{
-  .maxstack  2
-  .locals init ([0] bool V_0)
-  IL_0000:  nop
-  IL_0001:  call       class [mscorlib]System.IO.TextReader [mscorlib]System.Console::get_In()
-  IL_0006:  callvirt   instance int32 [mscorlib]System.IO.TextReader::Peek()
-  IL_000b:  ldc.i4.0
-  IL_000c:  clt
-  IL_000e:  stloc.0
-  IL_000f:  br.s       IL_0011
-  IL_0011:  ldloc.0
-  IL_0012:  ret
-} // end of method Program::isEof
-
 .method static public void $O0$main() cil managed
 {   .entrypoint 
 ");

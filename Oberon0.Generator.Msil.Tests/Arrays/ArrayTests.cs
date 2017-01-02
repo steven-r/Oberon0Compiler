@@ -18,8 +18,7 @@ VAR
   b: ARRAY 32 OF BOOLEAN;
 
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -60,8 +59,7 @@ BEGIN
   WriteInt(s);
   WriteLn
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -87,8 +85,7 @@ BEGIN
   WriteInt(n);
   WriteLn
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 

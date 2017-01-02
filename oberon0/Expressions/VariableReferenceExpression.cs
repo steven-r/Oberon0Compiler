@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Linq;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions
 {
     public class VariableReferenceExpression : Expression
     {
-        public string Name { get; set; }
+        private string Name { get; set; }
 
-        public Declaration Declaration { get; set; }
+        public Declaration Declaration { get; private set; }
 
-        public VariableSelector Selector { get; set; }
+        public VariableSelector Selector { get; private set; }
 
         public static Expression Create(Block block, string name, VariableSelector s)
         {
@@ -30,7 +31,7 @@ namespace Oberon0.Compiler.Expressions
                 {
                     Name = name,
                     Declaration = v,
-                    TargetType = GetTargetType(v.Type, s),
+                    TargetType = s?.SelectorResultType ?? v.Type,
                     Selector = s
                 };
                 return e;

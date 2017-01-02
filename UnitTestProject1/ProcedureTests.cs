@@ -1,8 +1,7 @@
 ﻿using NUnit.Framework;
-using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 
-namespace UnitTestProject1
+namespace Oberon0.Compiler.Tests
 {
     [TestFixture]
     public class ProcedureTests
@@ -10,8 +9,7 @@ namespace UnitTestProject1
         [Test]
         public void Proc1()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 PROCEDURE Test1;
 
 END Test1;
@@ -24,8 +22,7 @@ END Test.");
         [Test]
         public void Proc2()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 PROCEDURE Test1 (a: INTEGER);
 
 END Test1;
@@ -42,8 +39,7 @@ END Test.");
         [Test]
         public void Proc3()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 PROCEDURE Test1 (VAR a: INTEGER);
 
 END Test1;

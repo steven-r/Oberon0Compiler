@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Antlr4.4.5.3\build\Antlr4.props" Condition="Exists('..\packages\Antlr4.4.5.3\build\Antlr4.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,9 +10,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Oberon0.Compiler</RootNamespace>
     <AssemblyName>Oberon0.Compiler</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,24 +41,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr4.Runtime, Version=4.5.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr4.Runtime.4.5.3\lib\net45\Antlr4.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="JetBrains.Annotations, Version=10.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.10.2.1\lib\net\JetBrains.Annotations.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Loyc.Collections, Version=1.7.6.0, Culture=neutral, PublicKeyToken=b1460dff8a28f7a7, processorArchitecture=MSIL">
-      <HintPath>..\packages\LoycCore.1.8.0\lib\net45\Loyc.Collections.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Loyc.Essentials, Version=1.7.6.0, Culture=neutral, PublicKeyToken=b1460dff8a28f7a7, processorArchitecture=MSIL">
-      <HintPath>..\packages\LoycCore.1.8.0\lib\net45\Loyc.Essentials.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Loyc.Syntax, Version=1.7.6.0, Culture=neutral, PublicKeyToken=b1460dff8a28f7a7, processorArchitecture=MSIL">
-      <HintPath>..\packages\LoycCore.1.8.0\lib\net45\Loyc.Syntax.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Loyc.Utilities, Version=1.7.6.0, Culture=neutral, PublicKeyToken=b1460dff8a28f7a7, processorArchitecture=MSIL">
-      <HintPath>..\packages\LoycCore.1.8.0\lib\net45\Loyc.Utilities.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -69,17 +61,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Definitions\ArrayTypeDefinition.cs" />
-    <Compile Include="Definitions\BaseType.cs" />
+    <Compile Include="Types\ArrayTypeDefinition.cs" />
+    <Compile Include="Types\BaseType.cs" />
     <Compile Include="Definitions\Block.cs" />
     <Compile Include="Definitions\ConstDeclaration.cs" />
     <Compile Include="Definitions\Declaration.cs" />
     <Compile Include="Definitions\Module.StandardFunctions.cs" />
     <Compile Include="Definitions\FunctionDeclaration.cs" />
     <Compile Include="Definitions\ProcedureParameter.cs" />
-    <Compile Include="Definitions\RecordTypeDefinition.cs" />
-    <Compile Include="Definitions\SimpleTypeDefinition.cs" />
-    <Compile Include="Definitions\TypeDefinition.cs" />
+    <Compile Include="Types\RecordTypeDefinition.cs" />
+    <Compile Include="Types\SimpleTypeDefinition.cs" />
+    <Compile Include="Types\TypeDefinition.cs" />
     <Compile Include="Definitions\VariableSelector.cs" />
     <Compile Include="Expressions\Operations\Internal\BinaryOperation.cs" />
     <Compile Include="Expressions\StringExpression.cs" />
@@ -108,15 +100,12 @@
     <Compile Include="Expressions\UnaryExpression.cs" />
     <Compile Include="Expressions\VariableReferenceExpression.cs" />
     <Compile Include="Generator\IGeneratorInfo.cs" />
-    <Compile Include="grammar.out.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>grammar.ecs</DependentUpon>
-    </Compile>
     <Compile Include="Definitions\Module.cs" />
+    <Compile Include="Oberon0Compiler.cs" />
+    <Compile Include="OberonGrammar.g4.lexer.cs" />
+    <Compile Include="Oberon0CompilerListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Solver\ConstantSolver.cs" />
-    <Compile Include="Solver\ICalculatable.cs" />
     <Compile Include="Statements\AssignmentStatement.cs" />
     <Compile Include="Statements\BasicStatement.cs" />
     <Compile Include="Statements\IfStatement.cs" />
@@ -125,14 +114,29 @@
     <Compile Include="Statements\WhileStatement.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="grammar.ecs">
-      <Generator>LLLPG</Generator>
-      <LastGenOutput>grammar.out.cs</LastGenOutput>
-    </None>
+    <None Include="grammar.ecs" />
+    <Antlr4 Include="OberonGrammar.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>Oberon0.Compiler</CustomToolNamespace>
+      <Visitor>False</Visitor>
+    </Antlr4>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Oberon0.System\Oberon0.System.csproj">
+      <Project>{c2be2ee3-1ca6-49e9-9cb0-a23429ebb027}</Project>
+      <Name>Oberon0.System</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Antlr4.4.5.3\build\Antlr4.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.4.5.3\build\Antlr4.props'))" />
+    <Error Condition="!Exists('..\packages\Antlr4.4.5.3\build\Antlr4.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4.4.5.3\build\Antlr4.targets'))" />
+  </Target>
+  <Import Project="..\packages\Antlr4.4.5.3\build\Antlr4.targets" Condition="Exists('..\packages\Antlr4.4.5.3\build\Antlr4.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

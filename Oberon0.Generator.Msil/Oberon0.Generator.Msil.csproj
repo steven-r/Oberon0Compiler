@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Oberon0.Generator.Msil</RootNamespace>
     <AssemblyName>Oberon0.Generator.Msil</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,6 +56,7 @@
     <Compile Include="PredefinedFunctions\IStandardFunctionGenerator.cs" />
     <Compile Include="PredefinedFunctions\IStandardFunctionMetadata.cs" />
     <Compile Include="PredefinedFunctions\IStandardFunctionMetadataView.cs" />
+    <Compile Include="PredefinedFunctions\LibraryCodeGenerator.cs" />
     <Compile Include="PredefinedFunctions\ReadHandler.cs" />
     <Compile Include="PredefinedFunctions\StandardFunctionGeneratorListElement.cs" />
     <Compile Include="PredefinedFunctions\StandardFunctionMetadataAttribute.cs" />
@@ -70,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeGenerator.Declarations.cs" />
+    <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

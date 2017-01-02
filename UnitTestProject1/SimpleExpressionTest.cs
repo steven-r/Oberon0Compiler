@@ -1,108 +1,116 @@
 ﻿using System;
 using NUnit.Framework;
-using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Solver;
 
-namespace UnitTestProject1
+namespace Oberon0.Compiler.Tests
 {
     [TestFixture]
     public class SimpleExpressionTest
     {
         [Test]
-        public void Add1()
+        public void ExpressionAdd1()
         {
-            var e = BinaryExpression.Create(TokenType.Add,
+            var b = new Block();
+            var e = BinaryExpression.Create(OberonGrammarLexer.PLUS,
                         ConstantExpression.Create(1),
-                        ConstantExpression.Create(1));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantIntExpression;
+                        ConstantExpression.Create(1), b);
+            var result = ConstantSolver.Solve(e, b) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.ToInt32());
         }
 
         [Test]
-        public void Add2()
+        public void ExpressionAdd2()
         {
-            var e = BinaryExpression.Create(TokenType.Add,
+            var b = new Block();
+            var e = BinaryExpression.Create(OberonGrammarLexer.PLUS,
                         ConstantExpression.Create(1),
-                        ConstantExpression.Create(1.42));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantDoubleExpression;
+                        ConstantExpression.Create(1.42), b);
+            var result = ConstantSolver.Solve(e, b) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(2.42, result.ToDouble());
         }
 
         [Test]
-        public void Div0()
+        public void ExpressionDiv0()
         {
-            var e = BinaryExpression.Create(TokenType.Div,
+            var b = new Block();
+            var e = BinaryExpression.Create(OberonGrammarLexer.DIV,
                         ConstantExpression.Create("10.0"),
-                        ConstantExpression.Create(0));
-            Assert.Throws<ArithmeticException>(() => { ConstantSolver.Solve(e, new Block()); });
+                        ConstantExpression.Create(0), b);
+            Assert.Throws<ArithmeticException>(() => { ConstantSolver.Solve(e, b); });
         }
 
         [Test]
-        public void Div1()
+        public void ExpressionDiv1()
         {
-            var e = BinaryExpression.Create(TokenType.Div,
+            var b = new Block();
+            var e = BinaryExpression.Create(OberonGrammarLexer.DIV,
                         ConstantExpression.Create(10),
-                        ConstantExpression.Create(2));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantIntExpression;
+                        ConstantExpression.Create(2), b);
+            var result = ConstantSolver.Solve(e, b) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(5, result.ToInt32());
         }
 
         [Test]
-        public void Div2()
+        public void ExpressionDiv2()
         {
-            var e = BinaryExpression.Create(TokenType.Div,
+            var b = new Block();
+            var e = BinaryExpression.Create(OberonGrammarLexer.DIV,
                         ConstantExpression.Create(10),
-                        ConstantExpression.Create(4));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantIntExpression;
+                        ConstantExpression.Create(4), b);
+            var result = ConstantSolver.Solve(e, b) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.ToInt32());
         }
 
         [Test]
-        public void Div3()
+        public void ExpressionDiv3()
         {
-            var e = BinaryExpression.Create(TokenType.Div,
+            var b = new Block();
+            var e = BinaryExpression.Create(OberonGrammarLexer.DIV,
                         ConstantExpression.Create("10.0"),
-                        ConstantExpression.Create(4));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantDoubleExpression;
+                        ConstantExpression.Create(4), b);
+            var result = ConstantSolver.Solve(e, b) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(2.5, result.ToDouble());
         }
 
         [Test]
-        public void Mult1()
+        public void ExpressionMult1()
         {
-            var e = BinaryExpression.Create(TokenType.Mul,
+            var b = new Block();
+            var e = BinaryExpression.Create(OberonGrammarLexer.MULT,
                         ConstantExpression.Create(6),
-                        ConstantExpression.Create(7));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantIntExpression;
+                        ConstantExpression.Create(7), b);
+            var result = ConstantSolver.Solve(e, b) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(42, result.ToInt32());
         }
 
         [Test]
-        public void Sub1()
+        public void ExpressionSub1()
         {
-            var e = BinaryExpression.Create(TokenType.Sub,
+            var b = new Block();
+            var e = BinaryExpression.Create(OberonGrammarLexer.MINUS,
                         ConstantExpression.Create(1),
-                        ConstantExpression.Create(1));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantIntExpression;
+                        ConstantExpression.Create(1), b);
+            var result = ConstantSolver.Solve(e, b) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.ToInt32());
         }
 
         [Test]
-        public void Sub2()
+        public void ExpressionSub2()
         {
-            var e = BinaryExpression.Create(TokenType.Sub,
+            var b = new Block();
+            var e = BinaryExpression.Create(OberonGrammarLexer.MINUS,
                         ConstantExpression.Create(1.5),
-                        ConstantExpression.Create(1));
-            var result = ConstantSolver.Solve(e, new Block()) as ConstantDoubleExpression;
+                        ConstantExpression.Create(1), b);
+            var result = ConstantSolver.Solve(e, b) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(0.5, result.ToDouble());
         }

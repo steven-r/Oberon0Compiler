@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		antlr-runtime-4.5.3.jar = antlr-runtime-4.5.3.jar
 		appveyor.yml = appveyor.yml
 		LICENSE.md = LICENSE.md
 		README.md = README.md
@@ -20,6 +21,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.Generator.Msil", "Oberon0.Generator.Msil\Oberon0.Generator.Msil.csproj", "{595E6037-EE61-48F6-88CA-64FC56EC368D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.Generator.Msil.Tests", "Oberon0.Generator.Msil.Tests\Oberon0.Generator.Msil.Tests.csproj", "{B6EED4F1-9799-4111-9170-E71E0F7066A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{6485043F-55F6-48B1-AC01-C178B0F2C167}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.System", "Oberon0.System\Oberon0.System.csproj", "{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,8 +102,27 @@ Global
 		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|x64.Build.0 = Release|Any CPU
 		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|x86.ActiveCfg = Release|Any CPU
 		{B6EED4F1-9799-4111-9170-E71E0F7066A7}.Release|x86.Build.0 = Release|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Debug|ARM.Build.0 = Debug|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Debug|x64.Build.0 = Debug|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Debug|x86.Build.0 = Debug|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Release|ARM.ActiveCfg = Release|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Release|ARM.Build.0 = Release|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Release|x64.ActiveCfg = Release|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Release|x64.Build.0 = Release|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Release|x86.ActiveCfg = Release|Any CPU
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027} = {6485043F-55F6-48B1-AC01-C178B0F2C167}
 	EndGlobalSection
 EndGlobal

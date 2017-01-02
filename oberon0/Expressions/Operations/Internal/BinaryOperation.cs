@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Compiler.Expressions.Operations.Internal
@@ -13,7 +14,7 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
             return BinaryOperate(bin, block, operationParameters);
         }
 
-        protected abstract Expression BinaryOperate(BinaryExpression e, Block block,
+        protected abstract Expression BinaryOperate(BinaryExpression e, [UsedImplicitly] Block block,
             IArithmeticOpMetadata operationParameters);
     }
 }

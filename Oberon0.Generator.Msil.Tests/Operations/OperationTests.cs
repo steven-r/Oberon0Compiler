@@ -23,8 +23,7 @@ BEGIN
   WriteInt(1+2);
   WriteLn
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -52,8 +51,7 @@ BEGIN
   WriteInt(a+2);
   WriteLn
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -81,8 +79,7 @@ BEGIN
   WriteInt(2+a);
   WriteLn
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -113,8 +110,7 @@ BEGIN
   WriteInt(b+a);
   WriteLn
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -144,8 +140,7 @@ BEGIN
   WriteInt(b+a);
   WriteLn
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -175,8 +170,7 @@ BEGIN
   WriteInt(b*a);
   WriteLn
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -203,8 +197,7 @@ BEGIN
   b := -2;
   WriteInt(b)
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -227,8 +220,7 @@ END Array.";
 BEGIN
   WriteReal(-2.5)
 END Array.";
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(source);
+            Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 

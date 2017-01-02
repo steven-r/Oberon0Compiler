@@ -1,9 +1,9 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
-using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
 
-namespace UnitTestProject1
+namespace Oberon0.Compiler.Tests
 {
     [TestFixture]
     public class VarDeclarationTests
@@ -11,52 +11,56 @@ namespace UnitTestProject1
         [Test]
         public void ArrayOfArray()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 VAR
   id: ARRAY 5 OF ARRAY 10 OF INTEGER;
  END Test.");
 
-            Assert.AreEqual(3, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.ComplexType, m.Block.Declarations[2].Type.BaseType);
-            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), m.Block.Declarations[2].Type);
-            ArrayTypeDefinition atd = (ArrayTypeDefinition) m.Block.Declarations[2].Type;
+            var id = m.Block.LookupVar("id");
+            var intType = m.Block.LookupType("INTEGER");
+            Assert.NotNull(id);
+            Assert.IsInstanceOf<ArrayTypeDefinition>(id.Type);
+
+            ArrayTypeDefinition atd = (ArrayTypeDefinition)id.Type;
+
             Assert.AreEqual(5, atd.Size);
-            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), atd.ArrayType);
-            atd = (ArrayTypeDefinition)atd.ArrayType;
-            Assert.AreEqual(10, atd.Size);
-            Assert.AreEqual("INTEGER", atd.ArrayType.Name);
+            Assert.IsInstanceOf<ArrayTypeDefinition>(atd.ArrayType);
+
+            ArrayTypeDefinition atd1 = (ArrayTypeDefinition)atd.ArrayType;
+            Assert.AreEqual(10, atd1.Size);
+            Assert.AreEqual(intType, atd1.ArrayType);
         }
 
         [Test]
         public void OneVar()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 VAR
   id: INTEGER;
  END Test.");
 
-            Assert.AreEqual(3, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[2].Type.BaseType);
+            Assert.AreNotEqual(null, m.Block.LookupVar("id"));
+            Assert.AreEqual(BaseType.IntType, m.Block.LookupVar("id").Type.BaseType);
         }
 
         [Test]
 
         public void SimpleArray()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 VAR
   id: ARRAY 5 OF INTEGER;
  END Test.");
 
-            Assert.AreEqual(3, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.ComplexType, m.Block.Declarations[2].Type.BaseType);
-            Assert.IsAssignableFrom(typeof(ArrayTypeDefinition), m.Block.Declarations[2].Type);
-            ArrayTypeDefinition atd = (ArrayTypeDefinition)m.Block.Declarations[2].Type;
+            var id = m.Block.LookupVar("id");
+            var intType = m.Block.LookupType("INTEGER");
+            Assert.NotNull(id);
+            Assert.IsInstanceOf<ArrayTypeDefinition>(id.Type);
+
+            ArrayTypeDefinition atd = (ArrayTypeDefinition)id.Type;
+
             Assert.AreEqual(5, atd.Size);
-            Assert.AreEqual("INTEGER", atd.ArrayType.Name);
+            Assert.AreEqual(intType, atd.ArrayType);
         }
 
 
@@ -64,65 +68,69 @@ VAR
 
         public void TwoVars1()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 VAR
   id: INTEGER;
   id1: INTEGER;
  END Test.");
 
-            Assert.AreEqual(4, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[2].Type.BaseType);
-            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[3].Type.BaseType);
+            var id = m.Block.LookupVar("id");
+            Assert.AreNotEqual(null, id);
+            Assert.AreEqual(BaseType.IntType, id.Type.BaseType);
+            var id1 = m.Block.LookupVar("id1");
+            Assert.AreNotEqual(null, id1);
+            Assert.AreEqual(BaseType.IntType, id1.Type.BaseType);
         }
 
         [Test]
         public void TwoVars2()
         {
-            var compiler = new CompilerParser();
-            Module m = compiler.Calculate(@"MODULE Test; 
+            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
 VAR
   id, id1: INTEGER;
  END Test.");
 
-            Assert.AreEqual(4, m.Block.Declarations.Count);
-            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[2].Type.BaseType);
-            Assert.AreEqual(BaseType.IntType, m.Block.Declarations[3].Type.BaseType);
+            var id = m.Block.LookupVar("id");
+            var id1 = m.Block.LookupVar("id1");
+            Assert.AreNotEqual(null, id);
+            Assert.AreEqual(BaseType.IntType, id.Type.BaseType);
+            Assert.AreNotEqual(null, id1);
+            Assert.AreEqual(BaseType.IntType, id1.Type.BaseType);
         }
 
         [Test]
         public void TwoVarsFail1()
         {
-            var compiler = new CompilerParser();
-            Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE Test; 
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 VAR
   id: INTEGER;
   id: INTEGER;
- END Test."); });
-            Assert.AreEqual(e.Message, "The identifier id has been defined already");
+ END Test.", errors);
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("Variable declared twice", errors[0].Message);
         }
 
         [Test]
         public void TwoVarsFail2()
         {
-            var compiler = new CompilerParser();
-            Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE Test; 
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 VAR
   id, id: INTEGER;
- END Test."); });
-            Assert.AreEqual(e.Message, "The identifier id has been defined already");
+ END Test.", errors);
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("Variable declared twice", errors[0].Message);
         }
 
         [Test]
         public void VarWithoutId()
         {
-            var compiler = new CompilerParser();
-
-
-            Exception e = Assert.Throws<Loyc.LogException>(() => { Module m = compiler.Calculate(@"MODULE Test; 
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 VAR
- END Test."); });
-            Assert.AreEqual(e.Message, "An identifier is expected here");
+ END Test.", errors);
+            Assert.AreEqual(3, errors.Count);
         }
     }
 }

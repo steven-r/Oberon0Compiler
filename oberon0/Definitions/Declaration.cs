@@ -1,4 +1,5 @@
 using Oberon0.Compiler.Generator;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
 {
