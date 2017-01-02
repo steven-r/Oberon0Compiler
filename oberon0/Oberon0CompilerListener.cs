@@ -360,7 +360,12 @@ namespace Oberon0.Compiler
                 }
                 if (procParameters[i].Type.BaseType != parameters[i].TargetType.BaseType)
                 {
-                    _parser.NotifyErrorListeners(context.id, $"Parameter {procParameters[i].Name} mismatch", null);
+                    _parser.NotifyErrorListeners(context.id, $"Parameter {procParameters[i].Name} mismatch. Expected {procParameters[i].Type}, found {parameters[i].TargetType}", null);
+                    return;
+                }
+                if (procParameters[i].IsVar && !(parameters[i] is VariableReferenceExpression))
+                {
+                    _parser.NotifyErrorListeners(context.id, $"Parameter {procParameters[i].Name} requires a variable reference, not an expression", null);
                     return;
                 }
             }

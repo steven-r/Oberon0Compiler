@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Antlr4.Runtime;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
@@ -60,6 +61,18 @@ namespace Oberon0.CompilerSupport
             errors.AddRange(CompilerErrors);
             return context.modres;
         }
+
+        public static Module CompileString(string source)
+        {
+            List<CompilerError> errors = new List<CompilerError>(0);
+            Module m = CompileString(source, errors);
+            if (errors.Any())
+            {
+                throw new InvalidOperationException("There have been errors, please fix them");
+            }
+            return m;
+        }
+
 
     }
 }
