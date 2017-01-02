@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions
 {
@@ -37,43 +35,6 @@ namespace Oberon0.Compiler.Expressions
                 return e;
             }
             return null;
-        }
-
-        private static BaseType GetTargetType(TypeDefinition var, VariableSelector selectors)
-        {
-            if (selectors.Count == 0)
-                return var.BaseType;
-            foreach (var selector in selectors)
-            {
-                if (var == null)
-                    throw new InvalidCastException("No element for selector");
-                if (var.BaseType != BaseType.ComplexType)
-                    throw new InvalidCastException("You cannot use {var.GetType()} on a reference of {var.Type.BaseType}");
-                var arr = var as ArrayTypeDefinition;
-                if (arr != null)
-                {
-                    var offsetSel = selector as IndexSelector;
-                    if (offsetSel == null)
-                        throw new InvalidCastException("Offset required");
-                    var = arr.ArrayType;
-
-                }
-                else
-                {
-                    var rec = var as RecordTypeDefinition;
-                    if (rec != null)
-                    {
-                        var rSel = selector as IdentifierSelector;
-                        if (rSel == null)
-                            throw new InvalidCastException("Identifier for record expected, found " + selector.GetType().Name);
-                        var elem = rec.Elements.FirstOrDefault(x => x.Name == rSel.Name);
-                        if (elem == null)
-                            throw new InvalidCastException($"There's no element {rSel.Name} in record");
-                        var = elem.Type;
-                    }
-                }
-            }
-            return var.BaseType;
         }
 
         public override string ToString()
