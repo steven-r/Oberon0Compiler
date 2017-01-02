@@ -9,11 +9,6 @@ namespace Oberon0.Compiler.Types
     public enum BaseType
     {
         /// <summary>
-        /// If set, the given instance is failing
-        /// </summary>
-        ErrorType,
-
-        /// <summary>
         /// Standard integer
         /// </summary>
         IntType = SimpleType + 1,
