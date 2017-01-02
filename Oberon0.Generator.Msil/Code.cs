@@ -29,8 +29,6 @@ namespace Oberon0.Generator.Msil
             {
                 case BaseType.IntType:
                     return constantExpression.ToInt32().ToString();
-                //case BaseType.StringType:
-                //    return constantExpression.ToStringValue();
                 case BaseType.DecimalType:
                     return constantExpression.ToDouble().ToString("G");
                 case BaseType.BoolType:
