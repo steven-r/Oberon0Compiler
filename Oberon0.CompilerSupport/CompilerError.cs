@@ -2,7 +2,7 @@
 
 namespace Oberon0.Compiler.Tests
 {
-    internal class CompilerError
+    public class CompilerError
     {
         public int Line { get; set; }
 

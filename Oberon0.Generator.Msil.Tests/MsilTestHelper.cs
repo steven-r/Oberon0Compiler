@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Oberon0.Generator.Msil.Tests.Arrays
+namespace Oberon0.Generator.Msil.Tests
 {
-    public static class TestHelper
+    public static class MsilTestHelper
     {
         public static string NlFix(this string data)
         {
@@ -18,7 +17,7 @@ namespace Oberon0.Generator.Msil.Tests.Arrays
         {
 
             string filename = Path.GetTempFileName();
-            filename = Path.Combine(Path.GetDirectoryName(filename) ?? string.Empty, Path.GetFileNameWithoutExtension(filename));
+            filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
             outputData = string.Empty;
             return CompileCode(source, filename) && RunCode(filename, inputData, out outputData);
         }

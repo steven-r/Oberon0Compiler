@@ -85,7 +85,7 @@ Div: 3/100= 0, rem 3
             cg.Generate();
             string code = cg.DumpCode();
             string outputData;
-            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual(expected, outputData.NlFix());
         }
     }

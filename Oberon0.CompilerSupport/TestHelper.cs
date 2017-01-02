@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using Antlr4.Runtime;
+using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Tests;
 
-namespace Oberon0.Compiler.Tests
+namespace Oberon0.CompilerSupport
 {
-    internal static class TestHelper
+    public static class TestHelper
     {
         private static readonly List<CompilerError> CompilerErrors = new List<CompilerError>();
 
 
-        internal class TestErrorListener: BaseErrorListener, IAntlrErrorListener<int>
+        internal class TestErrorListener : BaseErrorListener, IAntlrErrorListener<int>
         {
             public static readonly TestErrorListener Instance = new TestErrorListener();
 

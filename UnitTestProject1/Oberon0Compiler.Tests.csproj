@@ -86,7 +86,6 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="CompilerError.cs" />
     <Compile Include="Complex\FullExample.cs" />
     <Compile Include="ConstTests.cs" />
     <Compile Include="ProcedureTests.cs" />
@@ -95,10 +94,13 @@
     <Compile Include="SimpleStatementTests.cs" />
     <Compile Include="SimpleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestHelper.cs" />
     <Compile Include="VarDeclarationTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Oberon0.CompilerSupport\Oberon0.CompilerSupport.csproj">
+      <Project>{1e57aa6c-efb8-4485-ab7f-020c41959378}</Project>
+      <Name>Oberon0.CompilerSupport</Name>
+    </ProjectReference>
     <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj">
       <Project>{fe7e3848-f08b-45ea-8083-353bda6bcc92}</Project>
       <Name>Oberon0Compiler</Name>

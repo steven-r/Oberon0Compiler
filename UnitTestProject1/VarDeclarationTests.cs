@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Types;
+using Oberon0.CompilerSupport;
 
 namespace Oberon0.Compiler.Tests
 {

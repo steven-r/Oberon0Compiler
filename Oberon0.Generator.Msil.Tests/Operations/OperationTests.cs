@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Tests;
+using Oberon0.CompilerSupport;
 using Oberon0.Generator.Msil.Tests.Arrays;
 
 namespace Oberon0.Generator.Msil.Tests.Operations
@@ -35,7 +37,7 @@ END Array.";
             }
             string code = sb.ToString();
             string outputData;
-            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual("3\n", outputData.NlFix());
         }
 
@@ -63,7 +65,7 @@ END Array.";
             }
             string code = sb.ToString();
             string outputData;
-            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual("3\n", outputData.NlFix());
         }
 
@@ -91,7 +93,7 @@ END Array.";
             }
             string code = sb.ToString();
             string outputData;
-            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual("3\n", outputData.NlFix());
         }
 
@@ -122,7 +124,7 @@ END Array.";
             }
             string code = sb.ToString();
             string outputData;
-            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual("3\n", outputData.NlFix());
         }
 
@@ -152,7 +154,7 @@ END Array.";
             }
             string code = sb.ToString();
             string outputData;
-            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual("-1\n", outputData.NlFix());
         }
 
@@ -182,7 +184,7 @@ END Array.";
             }
             string code = sb.ToString();
             string outputData;
-            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual("-2\n", outputData.NlFix());
         }
 
@@ -209,7 +211,7 @@ END Array.";
             }
             string code = sb.ToString();
             string outputData;
-            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual("-2\n", outputData.NlFix());
         }
 
@@ -232,8 +234,73 @@ END Array.";
             }
             string code = sb.ToString();
             string outputData;
-            Assert.IsTrue(TestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
             Assert.AreEqual($"{-2.5}\n", outputData.NlFix());
+        }
+
+        [Test]
+        public void TestNegIntVar()
+        {
+            const string source = @"MODULE Array;
+VAR
+  a: INTEGER;
+
+BEGIN
+  a := 1;
+  a := -a;
+  WriteInt(a);
+  WriteLn;
+  WriteInt(-a);
+  WriteLn;
+END Array.";
+            Module m = Oberon0Compiler.CompileString(source);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                cg.DumpCode(w);
+            }
+            string code = sb.ToString();
+            string outputData;
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            Assert.AreEqual("-1\n1\n", outputData.NlFix());
+        }
+
+
+        [Test]
+        public void TestNegRealVar()
+        {
+            const string source = @"MODULE Array;
+VAR
+  a: REAL;
+
+BEGIN
+  a := 1.5;
+  a := -a;
+  WriteReal(a);
+  WriteLn;
+  WriteReal(-a);
+  WriteLn
+END Array.";
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(source, errors);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                cg.DumpCode(w);
+            }
+            string code = sb.ToString();
+            string outputData;
+            Assert.AreEqual(0, errors.Count());
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            Assert.AreEqual($"{-1.5}\n{1.5}\n", outputData.NlFix());
         }
 
     }
