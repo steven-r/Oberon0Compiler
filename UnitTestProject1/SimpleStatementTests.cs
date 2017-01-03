@@ -38,7 +38,7 @@ END Test.
 
         public void TwoStatements()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 VAR
   x: INTEGER;
 
@@ -61,6 +61,19 @@ END Test.
             Assert.IsAssignableFrom(typeof(ConstantIntExpression), ast.Expression);
             cie = (ConstantIntExpression)ast.Expression;
             Assert.AreEqual(2, cie.Value);
+        }
+
+        [Test]
+        public void InvalidParameterCount()
+        {
+            List<CompilerError> errors = new List<CompilerError>();
+            TestHelper.CompileString(@"MODULE Test; 
+BEGIN 
+    WriteInt
+END Test.
+", errors);
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("Number of parameters expected: 1", errors[0].Message);
         }
     }
 }

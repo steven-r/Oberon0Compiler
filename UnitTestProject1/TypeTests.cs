@@ -106,6 +106,42 @@ END Test.");
         }
 
         [Test]
+        public void RecordSelector()
+        {
+            Module m = TestHelper.CompileString(@"MODULE Test; 
+TYPE
+  Embedded = RECORD
+     emb: INTEGER;
+     arr: ARRAY 6 OF INTEGER
+  END;
+  Demo = RECORD 
+    a: INTEGER;
+    b: STRING;
+    c: REAL;
+    d: Embedded
+  END;
+VAR 
+  test: Demo;
+
+BEGIN
+  WriteInt(test.d.arr[3])
+END Test.");
+
+            var intType = m.Block.LookupType("INTEGER");
+            var s = m.Block.Statements[0];
+            Assert.NotNull(s);
+            Assert.IsInstanceOf<ProcedureCallStatement>(s);
+            var pcs = (ProcedureCallStatement) s;
+            Assert.AreEqual(1, pcs.Parameters.Count);
+            Assert.IsInstanceOf<VariableReferenceExpression>(pcs.Parameters[0]);
+            VariableReferenceExpression vre = (VariableReferenceExpression) pcs.Parameters[0];
+            Assert.NotNull(vre.Selector);
+            Assert.AreEqual(3, vre.Selector.Count);
+            Assert.AreEqual(intType, vre.Selector.SelectorResultType);
+        }
+
+
+        [Test]
         public void SimpleType()
         {
             Module m = TestHelper.CompileString(@"MODULE Test; 
