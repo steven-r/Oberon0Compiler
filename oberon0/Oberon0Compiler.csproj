@@ -114,7 +114,6 @@
     <Compile Include="Statements\WhileStatement.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="grammar.ecs" />
     <Antlr4 Include="OberonGrammar.g4">
       <Generator>MSBuild:Compile</Generator>
       <CustomToolNamespace>Oberon0.Compiler</CustomToolNamespace>

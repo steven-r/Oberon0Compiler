@@ -62,7 +62,7 @@ END Test.");
         public void RecordFail1()
         {
             List<CompilerError> errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            TestHelper.CompileString(@"MODULE Test; 
 TYPE
   Demo = RECORD 
     a: INTEGER;
@@ -101,6 +101,7 @@ END Test.");
             RecordTypeDefinition rtd = (RecordTypeDefinition)t;
             Assert.AreEqual(4, rtd.Elements.Count);
             Declaration d = rtd.Elements.SingleOrDefault(x => x.Name == "d");
+            Assert.NotNull(d);
             Assert.AreEqual(embType, d.Type);
         }
 
@@ -125,7 +126,7 @@ END Test.");
         public void TypeDefinedTwiceError()
         {
             List<CompilerError> errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            TestHelper.CompileString(@"MODULE Test; 
 TYPE
   Demo = INTEGER;
   Demo = INTEGER;

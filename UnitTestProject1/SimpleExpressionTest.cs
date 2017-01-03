@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 using NUnit.Framework;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
@@ -174,6 +173,212 @@ namespace Oberon0.Compiler.Tests
                         null, m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as BinaryExpression;
             Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void ExpressionRelLt()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.LT,
+                        ConstantExpression.Create(10),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(false, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelLt1()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.LT,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(false, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelLt2()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.LT,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(10), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(true, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelLe()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.LE,
+                        ConstantExpression.Create(10),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(false, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelLe1()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.LE,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(true, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelLe2()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.LT,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(10), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(true, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelGt()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.GT,
+                        ConstantExpression.Create(10),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(true, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelGt1()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.GT,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(false, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelGt2()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.GT,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(10), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(false, result.ToBool());
+        }
+
+
+        [Test]
+        public void ExpressionRelGe()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.GE,
+                        ConstantExpression.Create(10),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(true, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelGe1()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.GE,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(true, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelGe2()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.GE,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(10), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(false, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelEquals()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.EQUAL,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(true, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelEquals2()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.EQUAL,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(10), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(false, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelNotEquals()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.NOTEQUAL,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(false, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelNotEquals2()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.NOTEQUAL,
+                        ConstantExpression.Create(4),
+                        ConstantExpression.Create(10), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(true, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionRelVar()
+        {
+            var m = new Module();
+            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("INTEGER")));
+            var e = BinaryExpression.Create(OberonGrammarLexer.NOTEQUAL,
+                        VariableReferenceExpression.Create(m.Block, "a", null),
+                        ConstantExpression.Create(10), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as BinaryExpression;
+            Assert.IsNotNull(result);
+            Assert.IsFalse(result.IsConst);
         }
     }
 }
