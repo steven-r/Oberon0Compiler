@@ -6,14 +6,14 @@ namespace Oberon0.Compiler.Expressions
 {
     public class ConstantDoubleExpression : ConstantExpression
     {
-        public ConstantDoubleExpression(double value)
+        public ConstantDoubleExpression(decimal value)
             : base(SimpleTypeDefinition.RealType, value)
         {
         }
 
         public override string ToString()
         {
-            return ((double)Value).ToString("G");
+            return ((decimal)Value).ToString("G");
         }
 
 

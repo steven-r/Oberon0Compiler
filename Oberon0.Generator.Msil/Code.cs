@@ -165,8 +165,8 @@ namespace Oberon0.Generator.Msil
                 case TypeCode.Single:
                     Emit("ldc.r4", data);
                     break;
-                case TypeCode.Double:
-                    Emit("ldc.r8", ((double)data).ToString(CultureInfo.InvariantCulture));
+                case TypeCode.Decimal:
+                    Emit("ldc.r8", ((decimal)data).ToString(CultureInfo.InvariantCulture));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

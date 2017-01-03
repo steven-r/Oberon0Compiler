@@ -24,17 +24,17 @@ namespace Oberon0.Compiler.Expressions
         internal static Expression Create(object value)
         {
             string sVal = value as string;
-            double dValue;
+            decimal dValue;
             bool isFloat;
             if (sVal != null)
             { // from string
-                dValue = double.Parse(sVal, CultureInfo.InvariantCulture);
+                dValue = decimal.Parse(sVal, CultureInfo.InvariantCulture);
                 isFloat = sVal.IndexOf('.') >= 0;
             }
             else
             {
                 isFloat = value is double || value is float || value is decimal;
-                dValue = Convert.ToDouble(value);
+                dValue = Convert.ToDecimal(value);
             }
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
@@ -52,7 +52,7 @@ namespace Oberon0.Compiler.Expressions
             return (int)Value;
         }
 
-        public double ToDouble()
+        public decimal ToDouble()
         {
             var dconst = this as ConstantDoubleExpression;
             if (dconst == null)
@@ -61,7 +61,7 @@ namespace Oberon0.Compiler.Expressions
                     return ToInt32();
                 throw new InvalidOperationException("Value is not of type int32");
             }
-            return (double)Value;
+            return (decimal)Value;
         }
 
         public bool ToBool()

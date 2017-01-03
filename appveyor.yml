@@ -1,4 +1,4 @@
-version: 0.1.1.{build}
+version: 0.1.2.{build}
 
 pull_requests:
   do_not_increment_build_number: true
@@ -29,7 +29,7 @@ before_build:
 - MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" 
 
 test_script:
-- packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -output:"%CD%\opencover.xml" -register:user -returntargetcode "-target:runtests_appveyor.bat" "-filter:+[*]* -[*Loyc*]*"
+- packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -output:"%CD%\opencover.xml" -register:user -returntargetcode "-target:runtests_appveyor.bat" "-filter:+[*]*"
 
 after_test:
 - MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%

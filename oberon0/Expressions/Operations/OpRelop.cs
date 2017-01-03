@@ -60,10 +60,10 @@ namespace Oberon0.Compiler.Expressions.Operations
                         res = left.ToDouble() <= right.ToDouble();
                         break;
                     case OberonGrammarLexer.NOTEQUAL:
-                        res = Math.Abs(left.ToDouble() - right.ToDouble()) > double.Epsilon;
+                        res = left.ToDouble() != right.ToDouble();
                         break;
                     case OberonGrammarLexer.EQUAL:
-                        res = Math.Abs(left.ToDouble() - right.ToDouble()) <= double.Epsilon;
+                        res = left.ToDouble() == right.ToDouble();
                         break;
                     default:
                         throw new InvalidOperationException("Unknown comparison");

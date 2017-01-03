@@ -21,9 +21,7 @@ namespace Oberon0.Compiler.Expressions.Operations
                 var right = (ConstantExpression)bin.RightHandSide;
                 if (bin.LeftHandSide.TargetType.BaseType == BaseType.IntType && bin.RightHandSide.TargetType.BaseType == BaseType.IntType)
                     return new ConstantIntExpression(left.ToInt32() / right.ToInt32());
-                double res = left.ToDouble()/right.ToDouble();
-                if (double.IsInfinity(res))
-                    throw new ArithmeticException("Division by 0");
+                decimal res = left.ToDouble()/right.ToDouble();
                 return new ConstantDoubleExpression(res);
             }
             return bin; // expression remains the same
