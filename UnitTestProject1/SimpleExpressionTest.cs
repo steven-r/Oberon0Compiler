@@ -141,6 +141,18 @@ namespace Oberon0.Compiler.Tests
         }
 
         [Test]
+        public void ExpressionMod2()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(OberonGrammarLexer.MOD,
+                        ConstantExpression.Create(10.5),
+                        ConstantExpression.Create(4), m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(2.5m, result.ToDouble());
+        }
+
+        [Test]
         public void ExpressionNot()
         {
             var m = new Module();

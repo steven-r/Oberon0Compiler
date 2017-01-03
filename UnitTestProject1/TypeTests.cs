@@ -59,7 +59,53 @@ END Test.");
         }
 
         [Test]
-        public void SimpleRecord()
+        public void RecordFail1()
+        {
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test; 
+TYPE
+  Demo = RECORD 
+    a: INTEGER;
+    a: REAL
+  END;
+
+END Test.", errors);
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("Element a defined more than once", errors[0].Message);
+        }
+
+        [Test]
+        public void RecordMany()
+        {
+            Module m = TestHelper.CompileString(@"MODULE Test; 
+TYPE
+  Embedded = RECORD
+     emb: INTEGER;
+     arr: ARRAY 6 OF INTEGER
+  END;
+  Demo = RECORD 
+    a: INTEGER;
+    b: STRING;
+    c: REAL;
+    d: Embedded
+  END;
+
+END Test.");
+
+            var t = m.Block.LookupType("Demo");
+            var embType = m.Block.LookupType("Embedded");
+            Assert.NotNull(t);
+            Assert.NotNull(embType);
+            Assert.IsInstanceOf<RecordTypeDefinition>(t);
+            Assert.IsInstanceOf<RecordTypeDefinition>(embType);
+            RecordTypeDefinition rtd = (RecordTypeDefinition)t;
+            Assert.AreEqual(4, rtd.Elements.Count);
+            Declaration d = rtd.Elements.SingleOrDefault(x => x.Name == "d");
+            Assert.AreEqual(embType, d.Type);
+        }
+
+        [Test]
+        public void SimpleType()
         {
             Module m = TestHelper.CompileString(@"MODULE Test; 
 TYPE

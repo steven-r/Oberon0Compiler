@@ -17,8 +17,9 @@ namespace Oberon0.Compiler.Definitions
 
     public abstract class BaseSelectorElement
     {
-        [NotNull]
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
         public IToken Token { get; }
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
 
 #pragma warning disable CS3001 // Argument type is not CLS-compliant
         protected BaseSelectorElement([NotNull] IToken tokenStart)

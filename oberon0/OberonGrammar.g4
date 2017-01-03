@@ -68,7 +68,7 @@ typeName[Block bParam]
 recordTypeNameElements[Block bParam]
 	returns [TypeDefinition returnType]
 	locals [RecordTypeDefinition record = new RecordTypeDefinition()]
-		: recordElement[bParam, $record]+ 
+		: recordElement[bParam, $record] (';' recordElement[bParam, $record])*
 		;
 
 recordElement[Block bParam, RecordTypeDefinition record]
