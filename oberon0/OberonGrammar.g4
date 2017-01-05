@@ -124,7 +124,7 @@ statement[Block bParam, Block container]
 		| while_statement[bParam, container]
 		| repeat_statement[bParam, container]
 		| if_statement[bParam, container]
-		| { NotifyErrorListeners("Statement expected"); }
+		| 
 		;
 
 procCall_statement[Block bParam, Block container]
