@@ -1,5 +1,7 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Oberon0.Compiler.Definitions;
+using Oberon0.CompilerSupport;
 
 namespace Oberon0.Compiler.Tests
 {
@@ -9,7 +11,7 @@ namespace Oberon0.Compiler.Tests
         [Test]
         public void Proc1()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 PROCEDURE Test1;
 
 END Test1;
@@ -22,7 +24,7 @@ END Test.");
         [Test]
         public void Proc2()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 PROCEDURE Test1 (a: INTEGER);
 
 END Test1;
@@ -39,7 +41,7 @@ END Test.");
         [Test]
         public void Proc3()
         {
-            Module m = Oberon0Compiler.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(@"MODULE Test; 
 PROCEDURE Test1 (VAR a: INTEGER);
 
 END Test1;
@@ -51,6 +53,22 @@ END Test.");
             Assert.AreEqual(1, p.Block.Declarations.Count);
             Assert.AreEqual("a", p.Block.Declarations[0].Name);
             Assert.AreEqual(true, ((ProcedureParameter)p.Block.Declarations[0]).IsVar);
+        }
+
+        [Test]
+        public void Proc4()
+        {
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(@"MODULE Test; 
+PROCEDURE Test1 (VAR a: INTEGER; a: INTEGER);
+
+END Test1;
+
+END Test.", errors);
+
+            Assert.AreEqual(2, errors.Count);
+            Assert.AreEqual("Duplicate parameter", errors[0].Message);
+            Assert.AreEqual("Duplicate parameter", errors[1].Message);
         }
     }
 }
