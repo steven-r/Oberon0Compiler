@@ -20,11 +20,9 @@ namespace Oberon0.Compiler.Tests
         [Test]
         public void EmptyApplication2()
         {
-            List<CompilerError> errors = new List<CompilerError>();
             Module m = TestHelper.CompileString(@"MODULE Test; 
-BEGIN END Test.", errors);
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("Statement expected", errors[0].Message);
+BEGIN END Test.");
+            Assert.AreEqual(0, m.Block.Statements.Count);
         }
 
         [Test]
@@ -43,10 +41,9 @@ END Test", errors);
             List<CompilerError> errors = new List<CompilerError>();
             Module m = TestHelper.CompileString(@"MODULE ; 
 BEGIN END Test.", errors);
-            Assert.AreEqual(3, errors.Count);
+            Assert.AreEqual(2, errors.Count);
             Assert.AreEqual("missing ID at ';'", errors[0].Message);
-            Assert.AreEqual("Statement expected", errors[1].Message);
-            Assert.AreEqual("The name of the module does not match the end node", errors[2].Message);
+            Assert.AreEqual("The name of the module does not match the end node", errors[1].Message);
         }
     }
 }
