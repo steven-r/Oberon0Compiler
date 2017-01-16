@@ -219,6 +219,7 @@ namespace Oberon0.Compiler
                 var selector = v as IdentifierSelector;
                 if (selector != null)
                 {
+                    selector.Type = type;
                     type = CheckRecordSelector(selector, type);
                 }
                 else if (v is IndexSelector)
@@ -242,6 +243,7 @@ namespace Oberon0.Compiler
             {
                 if (declaration.Name == identifierSelector.Name)
                 {
+                    identifierSelector.Element = declaration;
                     // found
                     return declaration.Type;
                 }

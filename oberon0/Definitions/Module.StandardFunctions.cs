@@ -71,7 +71,8 @@ namespace Oberon0.Compiler.Definitions
                 }
                 var fd = new FunctionDeclaration(attr.Name, Block, rt, procParameters)
                 {
-                    Prototype = $"Oberon0.{type.Name}::{attr.Name}"
+                    Prototype = $"Oberon0.{type.Name}::{attr.Name}",
+                    IsExternal = true,
                 };
                 Block.Procedures.Add(fd);
             }

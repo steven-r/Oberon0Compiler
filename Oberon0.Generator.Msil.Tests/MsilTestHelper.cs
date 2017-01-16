@@ -18,6 +18,7 @@ namespace Oberon0.Generator.Msil.Tests
 
             string filename = Path.GetTempFileName();
             filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
+            Trace.WriteLine($"Filename is {filename}(.il|.exe|.pdb)");
             outputData = string.Empty;
             return CompileCode(source, filename) && RunCode(filename, inputData, out outputData);
         }

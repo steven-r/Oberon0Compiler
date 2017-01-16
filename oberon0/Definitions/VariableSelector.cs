@@ -41,6 +41,10 @@ namespace Oberon0.Compiler.Definitions
         }
 
         public string Name { get; }
+
+        public TypeDefinition Type { get; set; }
+
+        public Declaration Element { get; set; }
     }
 
     public class IndexSelector : BaseSelectorElement

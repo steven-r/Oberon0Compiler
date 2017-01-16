@@ -161,7 +161,14 @@ namespace Oberon0.Generator.Msil
             return v;
         }
 
-        internal void Load(Block block, Declaration varDeclaration, VariableSelector selector, bool noLoad = false)
+        /// <summary>
+        /// Load a variable
+        /// </summary>
+        /// <param name="block">The block this load is executed in</param>
+        /// <param name="varDeclaration">The variable</param>
+        /// <param name="selector">The selector provided</param>
+        /// <param name="isStore"><c>true</c>, of this operation is part of a store operation (i.e. assignment)</param>
+        internal void Load(Block block, Declaration varDeclaration, VariableSelector selector, bool isStore = false)
         {
             if (varDeclaration.Block.Parent == null && !(varDeclaration is ProcedureParameter))
             {
@@ -192,15 +199,13 @@ namespace Oberon0.Generator.Msil
                     {
                         var ad = (ArrayTypeDefinition)varDeclaration.Type;
                         ExpressionCompiler(block, ae.IndexDefinition);
-                        if (!noLoad)
+                        if (!isStore)
                             Code.EmitLdelem(ae, ad);
                         continue;
                     }
                     var ie = selectorElement as IdentifierSelector;
-                    if (ie != null)
-                    {
-                        
-                    }
+                    if (ie != null && !isStore)
+                        Code.Emit("ldfld", Code.GetTypeName(ie.Element.Type), $"{Code.GetTypeName(ie.Type)}::{ie.Name}");
                 }
             }
         }
@@ -225,6 +230,10 @@ namespace Oberon0.Generator.Msil
                 if (assignmentVariable.Block.Parent == null && !(assignmentVariable is ProcedureParameter))
                 {
                     Code.Emit("stsfld", Code.GetTypeName(assignmentVariable.Type), $"{Code.ClassName}::{assignmentVariable.Name}");
+                }
+                else if (assignmentVariable.Type is RecordTypeDefinition && selector == null)
+                {
+                    Code.Emit("stobj", "valuetype", $"{Code.ClassName}::{assignmentVariable.Name}");
                 }
                 else
                 {

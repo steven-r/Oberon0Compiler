@@ -73,7 +73,8 @@ namespace Oberon0.Generator.Msil
             ProcessDeclarations(block, true);
             foreach (var functionDeclaration in block.Procedures)
             {
-                if (functionDeclaration.IsInternal)
+                // ignore system and external libraries
+                if (functionDeclaration.IsInternal || functionDeclaration.IsExternal)
                     continue;
                 Code.StartMethod(functionDeclaration);
                 ProcessDeclarations(functionDeclaration.Block);

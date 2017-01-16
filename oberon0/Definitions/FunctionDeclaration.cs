@@ -55,9 +55,19 @@ namespace Oberon0.Compiler.Definitions
 
         public TypeDefinition ReturnType { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is internal (e.g. <c>WriteInt()</c>
+        /// </summary>
+        /// <value><c>true</c> if this instance is internal; otherwise, <c>false</c>.</value>
         public bool IsInternal { get; private set; }
 
         public string Prototype { [UsedImplicitly] get; internal set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is external.
+        /// </summary>
+        /// <value><c>true</c> if this instance is external; otherwise, <c>false</c>.</value>
+        public bool IsExternal { get; set; }
 
         public override string ToString()
         {

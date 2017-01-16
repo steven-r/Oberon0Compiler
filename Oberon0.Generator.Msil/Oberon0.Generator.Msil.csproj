@@ -52,6 +52,7 @@
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="DeclarationGeneratorInfo.cs" />
     <Compile Include="ExpressionGeneratorInfo.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="PredefinedFunctions\IStandardFunctionExportMetadata.cs" />
     <Compile Include="PredefinedFunctions\IStandardFunctionGenerator.cs" />
     <Compile Include="PredefinedFunctions\IStandardFunctionMetadata.cs" />
@@ -72,7 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeGenerator.Declarations.cs" />
-    <None Include="packages.config" />
+    <None Include="app.config" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

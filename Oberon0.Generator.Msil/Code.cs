@@ -21,6 +21,7 @@ namespace Oberon0.Generator.Msil
         }
 
         internal string ModuleName { get; set; }
+
         internal string ClassName { get; private set; }
 
         private static string DumpConstValue(ConstantExpression constantExpression, bool isLoad = false, bool isData = false)
@@ -95,8 +96,7 @@ namespace Oberon0.Generator.Msil
 
         internal void EmitStfld(IdentifierSelector identSelector)
         {
-            //TODO: Get type information from identSelector
-            Emit("stelem");
+            Emit("stfld", GetTypeName(identSelector.Element.Type), GetTypeName(identSelector.Type)+"::"+identSelector.Name);
         }
 
         internal static string GetTypeName(BaseType type)
@@ -118,7 +118,7 @@ namespace Oberon0.Generator.Msil
             }
         }
 
-        internal static string GetTypeName(TypeDefinition type)
+        internal string GetTypeName(TypeDefinition type)
         {
             // ReSharper disable once SwitchStatementMissingSomeCases
             switch (type.BaseType)
@@ -129,7 +129,12 @@ namespace Oberon0.Generator.Msil
                     {
                         return $"{GetTypeName(arrayTypeDefinition.ArrayType)}[]";
                     }
-                    return type.Name;
+                    var recordTypeDefinition = type as RecordTypeDefinition;
+                    if (recordTypeDefinition != null)
+                    {
+                        return $"class {ClassName}/{type.Name}";
+                    }
+                    throw new NotImplementedException();
                 default:
                     return GetTypeName(type.BaseType);
             }
