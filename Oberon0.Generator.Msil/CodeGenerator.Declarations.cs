@@ -72,7 +72,7 @@ namespace Oberon0.Generator.Msil
                 Code.WriteLine($".class nested private {recordType.Name} {{");
                 foreach (Declaration declaration in recordType.Elements)
                 {
-                    Code.Write($"\t.field public ");
+                    Code.Write("\t.field public ");
                     Code.LocalVarDef(declaration, false);
                     Code.WriteLine();
                 }
