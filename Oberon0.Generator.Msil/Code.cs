@@ -11,7 +11,7 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil
 {
-    public partial class Code : StringWriter
+    public class Code : StringWriter
     {
         private int _labelId;
 
@@ -188,8 +188,13 @@ namespace Oberon0.Generator.Msil
             {
                 throw new NotImplementedException();
             }
+            string prototype = func.Prototype;
+            if (!func.IsExternal)
+            {
+                prototype = $"Oberon0.{ModuleName}::{func.Name}";
+            }
             // local procedure
-            EmitNoNewLine("call", GetTypeName(func.ReturnType), $"{func.Prototype}(");
+            EmitNoNewLine("call", GetTypeName(func.ReturnType), $"{prototype}(");
             List<string> typeNames = new List<string>();
             typeNames.AddRange(
                 func.Block.Declarations.OfType<ProcedureParameter>()
