@@ -1,7 +1,8 @@
 
 -
   branches:
-    except: pr
+    except:
+      - pr
   environment:
     SonarToken:
       secure: +wTbJz9KGTWgbZs0XwkTvkyHzso0IwglDTd3d4CXC8DYT2B40D4DcjrmeEWDHSeU
