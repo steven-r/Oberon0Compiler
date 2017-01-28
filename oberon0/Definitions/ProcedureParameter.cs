@@ -1,4 +1,6 @@
-﻿namespace Oberon0.Compiler.Definitions
+﻿using Oberon0.Compiler.Types;
+
+namespace Oberon0.Compiler.Definitions
 {
     /// <summary>
     /// Define a procedure/function parameter
@@ -10,10 +12,11 @@
         /// Initializes a new instance of the <see cref="ProcedureParameter"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
+        /// <param name="block"></param>
         /// <param name="type">The type.</param>
         /// <param name="isVar">if set to <c>true</c> [is variable].</param>
-        public ProcedureParameter(string name, TypeDefinition type, bool isVar)
-            :base (name, type)
+        public ProcedureParameter(string name, Block block, TypeDefinition type, bool isVar)
+            :base (name, type, block)
         {
             IsVar = isVar;
         }

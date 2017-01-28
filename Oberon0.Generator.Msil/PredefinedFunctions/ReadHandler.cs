@@ -2,12 +2,13 @@
 using System.ComponentModel.Composition;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil.PredefinedFunctions
 {
     [Export(typeof(IStandardFunctionGenerator))]
-    [StandardFunctionMetadata("ReadInt", "VOID", "&INTEGER")]
-    [StandardFunctionMetadata("ReadBool", "VOID", "&BOOL")]
+    [StandardFunctionMetadata("ReadInt", TypeDefinition.VoidTypeName, "&INTEGER")]
+    [StandardFunctionMetadata("ReadBool", TypeDefinition.VoidTypeName, "&BOOL")]
     public class ReadNumHandler : IStandardFunctionGenerator
     {
         public void Generate(IStandardFunctionMetadata metadata, CodeGenerator generator, FunctionDeclaration callExpression, List<Expression> parameters,

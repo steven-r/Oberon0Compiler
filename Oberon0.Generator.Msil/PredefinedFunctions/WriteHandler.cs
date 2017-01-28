@@ -1,21 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil.PredefinedFunctions
 {
     [Export(typeof(IStandardFunctionGenerator))]
-    [StandardFunctionMetadata("WriteInt", "VOID", "INTEGER")]
-    [StandardFunctionMetadata("WriteBool", "VOID", "INTEGER")]
-    //[StandardFunctionMetadata("WriteReal", "VOID", "INTEGER")]
-    public class WriteNumberHandler: IStandardFunctionGenerator
+    [StandardFunctionMetadata("WriteInt", TypeDefinition.VoidTypeName, "INTEGER")]
+    [StandardFunctionMetadata("WriteBool", TypeDefinition.VoidTypeName, "BOOLEAN")]
+    [StandardFunctionMetadata("WriteReal", TypeDefinition.VoidTypeName, "REAL")]
+    public class WriteNumberHandler : IStandardFunctionGenerator
     {
         public void Generate(IStandardFunctionMetadata metadata, CodeGenerator generator, FunctionDeclaration callExpression, List<Expression> parameters,
             Block block)
         {
-            ProcedureParameter parameter = callExpression.Parameters[0];
-            generator.Code.WriteLine("\tldstr \"{0}\"");
+            ProcedureParameter parameter = callExpression.Block.Declarations.OfType<ProcedureParameter>().First();
+            generator.Code.Emit("ldstr", "\"{0}\"");
             if (parameter.IsVar)
             {
                 VariableReferenceExpression reference = (VariableReferenceExpression)parameters[0];
@@ -25,33 +27,31 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
             {
                 generator.ExpressionCompiler(callExpression.Block.Parent, parameters[0]);
             }
-            generator.Code.WriteLine(callExpression.Parameters[0].Type.BaseType == BaseType.BoolType
-                ? "\tbox bool"
-                : "\tbox int32");
-            generator.Code.WriteLine("\tcall void [mscorlib]System.Console::Write(string, object)");
+            generator.Code.Emit("box", Code.GetTypeName(parameter.Type.BaseType));
+            generator.Code.Emit("call", "void", "[mscorlib]System.Console::Write(string, object)");
         }
     }
 
     [Export(typeof(IStandardFunctionGenerator))]
-    [StandardFunctionMetadata("WriteString", "VOID", "STRING")]
+    [StandardFunctionMetadata("WriteString", TypeDefinition.VoidTypeName, "STRING")]
     public class WriteStringHandler : IStandardFunctionGenerator
     {
         public void Generate(IStandardFunctionMetadata metadata, CodeGenerator generator, FunctionDeclaration callExpression, List<Expression> parameters,
             Block block)
         {
             generator.ExpressionCompiler(block, parameters[0]);
-            generator.Code.WriteLine("\tcall void [mscorlib]System.Console::Write(string)");
+            generator.Code.Emit("call", "void", "[mscorlib]System.Console::Write(string)");
         }
     }
 
     [Export(typeof(IStandardFunctionGenerator))]
-    [StandardFunctionMetadata("WriteLn", "VOID")]
+    [StandardFunctionMetadata("WriteLn", TypeDefinition.VoidTypeName)]
     public class WriteLnHandler : IStandardFunctionGenerator
     {
         public void Generate(IStandardFunctionMetadata metadata, CodeGenerator generator, FunctionDeclaration callExpression, List<Expression> parameters,
             Block block)
         {
-            generator.Code.WriteLine("\tcall void [mscorlib]System.Console::WriteLine()");
+            generator.Code.Emit("call", "void", "[mscorlib]System.Console::WriteLine()");
         }
     }
 }

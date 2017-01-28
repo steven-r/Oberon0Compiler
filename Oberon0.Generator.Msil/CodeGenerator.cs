@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
@@ -19,16 +20,16 @@ namespace Oberon0.Generator.Msil
         /// </summary>
         public const string DefaultNamespace = "$DEFAULT";
 
-        private static readonly Dictionary<TokenType, string> RelRevJumpMapping =
-            new Dictionary<TokenType, string>
+        private static readonly Dictionary<int, string> RelRevJumpMapping =
+            new Dictionary<int, string>
             {
-                {TokenType.Equals, "bne.un"},
-                {TokenType.LT, "bge.un"},
-                {TokenType.LE, "bgt.un"},
-                {TokenType.GT, "ble.un"},
-                {TokenType.GE, "blt.un"},
-                {TokenType.NotEquals, "beq.un"},
-                {TokenType.Not, "brfalse"},
+                {OberonGrammarLexer.EQUAL, "bne.un"},
+                {OberonGrammarLexer.LT, "bge.un"},
+                {OberonGrammarLexer.LE, "bgt.un"},
+                {OberonGrammarLexer.GT, "ble.un"},
+                {OberonGrammarLexer.GE, "blt.un"},
+                {OberonGrammarLexer.NOTEQUAL, "beq.un"},
+                {OberonGrammarLexer.NOT, "brfalse"},
             };
 
         private readonly Module _module;
@@ -57,11 +58,14 @@ namespace Oberon0.Generator.Msil
         {
             StandardFunctionRepository.Initialize(_module);
             Code.Reference("mscorlib");
+            Code.Reference("Oberon0.System");
             Code.StartAssembly(_module.Name);
             Code.EmitComment("Code compiled for module " + _module.Name);
             Code.StartModule(_module.Name);
+            Code.StartClass($"Oberon0.{_module.Name}");
             ProcessMainBlock(_module.Block);
             Code.EndMethod();
+            Code.EndClass();
         }
 
         private void ProcessMainBlock(Block block)
@@ -69,7 +73,8 @@ namespace Oberon0.Generator.Msil
             ProcessDeclarations(block, true);
             foreach (var functionDeclaration in block.Procedures)
             {
-                if (functionDeclaration.IsInternal)
+                // ignore system and external libraries
+                if (functionDeclaration.IsInternal || functionDeclaration.IsExternal)
                     continue;
                 Code.StartMethod(functionDeclaration);
                 ProcessDeclarations(functionDeclaration.Block);
@@ -157,7 +162,7 @@ namespace Oberon0.Generator.Msil
             }
             else
             {
-                foreach (ProcedureParameter parameter in call.FunctionDeclaration.Parameters)
+                foreach (ProcedureParameter parameter in call.FunctionDeclaration.Block.Declarations.OfType<ProcedureParameter>())
                 {
                     if (parameter.IsVar)
                     {

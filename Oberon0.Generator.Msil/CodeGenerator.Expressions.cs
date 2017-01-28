@@ -1,52 +1,95 @@
-﻿using System;
+﻿#region copyright
+// ***********************************************************************
+// Assembly         : Oberon0.Generator.Msil
+// Author           : Stephen Reindl
+// Created          : 2017-01-28
+// 
+// ***********************************************************************
+// <copyright file="CodeGenerator.Expressions.cs" company="Reindl IT">
+//      Copyright ©  2017
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+#endregion
+
+#region usings
+
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text;
 using JetBrains.Annotations;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Types;
+
+#endregion
 
 namespace Oberon0.Generator.Msil
 {
     public partial class CodeGenerator
     {
-        private static readonly Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, BinaryExpression>> OperatorMapping = 
-            new Dictionary<TokenType, Func<CodeGenerator, Block, BinaryExpression, BinaryExpression>>
+        private static readonly Dictionary<int, Func<CodeGenerator, Block, BinaryExpression, Expression>> OperatorMapping = 
+            new Dictionary<int, Func<CodeGenerator, Block, BinaryExpression, Expression>>
             {
-                {TokenType.Add, HandleSimpleOperation},
-                {TokenType.Sub, HandleSimpleOperation},
-                {TokenType.Mul, HandleSimpleOperation},
-                {TokenType.Div, HandleSimpleOperation},
-                {TokenType.Mod, HandleSimpleOperation},
-                {TokenType.Unary, HandleSimpleOperation},
-                {TokenType.Equals, HandleRelOperation},
-                {TokenType.NotEquals, HandleRelOperation},
-                {TokenType.GT, HandleRelOperation},
-                {TokenType.GE, HandleRelOperation},
-                {TokenType.LT, HandleRelOperation},
-                {TokenType.LE, HandleRelOperation},
-                {TokenType.Not, HandleRelOperation},
+                {OberonGrammarLexer.PLUS, HandleSimpleOperation},
+                {OberonGrammarLexer.MINUS, HandleSimpleOperation},
+                {OberonGrammarLexer.MULT, HandleSimpleOperation},
+                {OberonGrammarLexer.DIV, HandleSimpleOperation},
+                {OberonGrammarLexer.MOD, HandleSimpleOperation},
+                {OberonGrammarLexer.EQUAL, HandleRelOperation},
+                {OberonGrammarLexer.NOTEQUAL, HandleRelOperation},
+                {OberonGrammarLexer.GT, HandleRelOperation},
+                {OberonGrammarLexer.GE, HandleRelOperation},
+                {OberonGrammarLexer.LT, HandleRelOperation},
+                {OberonGrammarLexer.LE, HandleRelOperation},
+                {OberonGrammarLexer.NOT, HandleRelOperation},
             };
 
-        private static readonly Dictionary<TokenType, string> SimpleInstructionMapping = 
-            new Dictionary<TokenType, string>
+        private static readonly Dictionary<int, string> SimpleInstructionMapping = 
+            new Dictionary<int, string>
             {
-                {TokenType.Add, "add" },
-                {TokenType.Div, "div" },
-                {TokenType.Mul, "mul" },
-                {TokenType.Sub, "sub" },
-                {TokenType.Mod, "rem" },
+                {OberonGrammarLexer.PLUS, "add" },
+                {OberonGrammarLexer.DIV, "div" },
+                {OberonGrammarLexer.MULT, "mul" },
+                {OberonGrammarLexer.MINUS, "sub" },
+                {OberonGrammarLexer.MOD, "rem" },
             };
 
+        public string DumpCode()
+        {
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                DumpCode(w);
+            }
+            return sb.ToString();
+        }
+
+        // "a <op> b" or "<op> a"
         private static BinaryExpression HandleSimpleOperation(CodeGenerator generator, Block block, BinaryExpression bin)
         {
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.IntType)
+            {
+                generator.LoadConstantExpression(ConstantIntExpression.Zero, null);
+            }
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.DecimalType)
+            {
+                generator.LoadConstantExpression(ConstantDoubleExpression.Zero, null);
+            }
             generator.ExpressionCompiler(block, bin.LeftHandSide);
             if (!bin.IsUnary)
+            {
                 generator.ExpressionCompiler(block, bin.RightHandSide);
-            generator.Code.WriteLine($"\t{SimpleInstructionMapping[bin.Operator]}");
+            }
+            generator.Code.Emit(SimpleInstructionMapping[bin.Operator]);
             return bin;
         }
 
+        // "a <rel> b" or "<rel> a" (aka ~)
         private static BinaryExpression HandleRelOperation(CodeGenerator generator, Block block, BinaryExpression bin)
         {
             generator.ExpressionCompiler(block, bin.LeftHandSide);
@@ -62,7 +105,7 @@ namespace Oberon0.Generator.Msil
         /// <param name="expression">The expression.</param>
         /// <returns>The register</returns>
         [NotNull]
-        public Expression ExpressionCompiler(Block block, Expression expression)
+        internal Expression ExpressionCompiler([NotNull] Block block, [NotNull] Expression expression)
         {
             var eInfo = new ExpressionGeneratorInfo();
             expression.GeneratorInfo = eInfo;
@@ -72,7 +115,11 @@ namespace Oberon0.Generator.Msil
             var s = expression as StringExpression;
             if (s != null)
             {
-                Code.WriteLine($"\tldstr \"{s.Value}\"");
+
+                string str = s.Value.Remove(0,1);
+                str = str.Remove(str.Length - 1);
+                str = str.Replace("''", "'");
+                Code.Emit("ldstr", $"\"{str}\"");
                 return s;
             }
             var bin = expression as BinaryExpression;
@@ -92,7 +139,7 @@ namespace Oberon0.Generator.Msil
             {
                 Code.EmitComment(fc.FunctionDeclaration.ToString());
                 int i = 0;
-                foreach (ProcedureParameter parameter in fc.FunctionDeclaration.Parameters)
+                foreach (ProcedureParameter parameter in fc.FunctionDeclaration.Block.Declarations.OfType<ProcedureParameter>())
                 {
                     if (parameter.IsVar)
                     {
@@ -132,12 +179,18 @@ namespace Oberon0.Generator.Msil
             return v;
         }
 
-        public void Load(Block block, Declaration varDeclaration, VariableSelector selector, bool noLoad = false)
+        /// <summary>
+        /// Load a variable
+        /// </summary>
+        /// <param name="block">The block this load is executed in</param>
+        /// <param name="varDeclaration">The variable</param>
+        /// <param name="selector">The selector provided</param>
+        /// <param name="isStore"><c>true</c>, of this operation is part of a store operation (i.e. assignment)</param>
+        internal void Load(Block block, Declaration varDeclaration, VariableSelector selector, bool isStore = false)
         {
-            if (varDeclaration.Block.Parent == null)
+            if (varDeclaration.Block.Parent == null && !(varDeclaration is ProcedureParameter))
             {
-                // global
-                Code.WriteLine($"\tldsfld {Code.GetTypeName(varDeclaration.Type)} " + varDeclaration.Name);
+                Code.Emit("ldsfld", Code.GetTypeName(varDeclaration.Type), $"{Code.ClassName}::{varDeclaration.Name}");
             }
             else
             {
@@ -146,13 +199,13 @@ namespace Oberon0.Generator.Msil
                 if (pp != null)
                 {
                     if (pp.IsVar)
-                        Code.WriteLine("\tldarg" + Code.DotNumOrArg(dgi.Offset, 0, 3, false));
+                        Code.Emit("ldarga" + Code.DotNumOrArg(dgi.Offset, 0, 3, false));
                     else
-                        Code.WriteLine("\tldarga " + dgi.Offset);
+                        Code.Emit("ldarg", dgi.Offset.ToString(CultureInfo.InvariantCulture));
                 }
                 else
                 {
-                    Code.WriteLine("\tldloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
+                    Code.Emit("ldloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
                 }
             }
             if (varDeclaration.Type.BaseType == BaseType.ComplexType && selector != null)
@@ -164,16 +217,18 @@ namespace Oberon0.Generator.Msil
                     {
                         var ad = (ArrayTypeDefinition)varDeclaration.Type;
                         ExpressionCompiler(block, ae.IndexDefinition);
-                        if (!noLoad)
+                        if (!isStore)
                             Code.EmitLdelem(ae, ad);
+                        continue;
                     }
-                    else
-                        throw new NotImplementedException();
+                    var ie = selectorElement as IdentifierSelector;
+                    if (ie != null && !isStore)
+                        Code.Emit("ldfld", Code.GetTypeName(ie.Element.Type), $"{Code.GetTypeName(ie.Type)}::{ie.Name}");
                 }
             }
         }
 
-        public void StoreVar(Block block, Declaration assignmentVariable, VariableSelector selector)
+        internal void StoreVar(Block block, Declaration assignmentVariable, VariableSelector selector)
         {
             BaseSelectorElement last = selector?.LastOrDefault();
 
@@ -190,37 +245,33 @@ namespace Oberon0.Generator.Msil
             }
             else
             {
-            if (assignmentVariable.Block.Parent == null)
-            {
-                Code.WriteLine($"\tstsfld {Code.GetTypeName(assignmentVariable.Type)} {assignmentVariable.Name}");
-            }
-            else
-            {
-                var pp = assignmentVariable as ProcedureParameter;
-                var dgi = (DeclarationGeneratorInfo)assignmentVariable.GeneratorInfo;
-                if (pp != null)
-                    Code.WriteLine("\tstarg" + Code.DotNumOrArg(dgi.Offset, 0, 3));
+                if (assignmentVariable.Block.Parent == null && !(assignmentVariable is ProcedureParameter))
+                {
+                    Code.Emit("stsfld", Code.GetTypeName(assignmentVariable.Type), $"{Code.ClassName}::{assignmentVariable.Name}");
+                }
+                else if (assignmentVariable.Type is RecordTypeDefinition && selector == null)
+                {
+                    Code.Emit("stobj", "valuetype", $"{Code.ClassName}::{assignmentVariable.Name}");
+                }
                 else
-                    Code.WriteLine("\tstloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
+                {
+                    var pp = assignmentVariable as ProcedureParameter;
+                    var dgi = (DeclarationGeneratorInfo) assignmentVariable.GeneratorInfo;
+                    // pp != null --> parameter otherwise local var
+                    if (pp != null)
+                    {
+                        Code.Emit("starg", dgi.Offset.ToString(CultureInfo.InvariantCulture));
+                    }
+                    else
+                    {
+                        Code.Emit("stloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
+                    }
+                }
             }
-            }
-        }
-
-        class x
-        {
-            internal int a;
         }
 
         internal void StartStoreVar(Block block, Declaration assignmentVariable, VariableSelector selector)
         {
-            int n = 3;
-            int[] a = new int[5];
-            x[]b = new x[5];
-            x c = new x();
-            c.a = 42;
-            b[4] = c;
-            b[4].a = 1;
-            a[3] = n;
             if (selector != null && selector.Any())
                 Load(block, assignmentVariable, selector, true);
         }

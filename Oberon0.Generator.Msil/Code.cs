@@ -1,31 +1,151 @@
-﻿using System;
+﻿using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Expressions;
+using JetBrains.Annotations;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil
 {
-    public class Code: StringWriter
+    public class Code : StringWriter
     {
         private int _labelId;
 
-        public Code(StringBuilder sb): base(sb)
+        public Code(StringBuilder sb) : base(sb)
+        { }
+
+        // ReSharper disable once MemberCanBePrivate.Global
+        internal string ModuleName { [UsedImplicitly] get; set; }
+
+        internal string ClassName { get; private set; }
+
+        private static string DumpConstValue(ConstantExpression constantExpression, bool isLoad = false, bool isData = false)
         {
-            
+            switch (constantExpression.TargetType.BaseType)
+            {
+                case BaseType.IntType:
+                    return constantExpression.ToInt32().ToString();
+                case BaseType.DecimalType:
+                    return constantExpression.ToDouble().ToString("G");
+                case BaseType.BoolType:
+                    if (isLoad || isData)
+                        return constantExpression.ToBool() ? "1" : "0";
+                    return constantExpression.ToBool().ToString().ToLower(CultureInfo.InvariantCulture);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
-        internal void PushConst(object data, string label = null)
+        private static string GetDataTypeName(TypeDefinition type)
         {
-            if (!string.IsNullOrWhiteSpace(label))
-                Write(label + ": ");
+            switch (type.BaseType)
+            {
+                case BaseType.BoolType:
+                case BaseType.IntType:
+                    return "int32";
+                case BaseType.StringType:
+                    return "string";
+                case BaseType.DecimalType:
+                    return "float64";
+                case BaseType.VoidType:
+                    return "void";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+
+        internal static string DotNumOrArg(int value, int min, int max, bool isSimpleShortForm = true)
+        {
+            if (value < min || value > max)
+            {
+                if (value <= 255 && isSimpleShortForm)
+                    return $".s {value}";
+                return $" {value}";
+            }
+            if (value < 0)
+                return $".m{-value}";
+            return $".{value}";
+        }
+
+        internal void Emit(string opCode, params object[] parameters)
+        {
+            EmitNoNewLine(opCode, parameters);
+            WriteLine();
+        }
+
+        internal void EmitComment(string comment)
+        {
+            WriteLine("// " + comment);
+        }
+
+        private void EmitNoNewLine(string opCode, params object[] parameters)
+        {
+            Write("\t" + opCode);
+            foreach (string parameter in parameters)
+            {
+                if (!string.IsNullOrEmpty(parameter))
+                    Write("\t" + parameter);
+            }
+        }
+
+        internal void EmitStfld(IdentifierSelector identSelector)
+        {
+            Emit("stfld", GetTypeName(identSelector.Element.Type), GetTypeName(identSelector.Type)+"::"+identSelector.Name);
+        }
+
+        internal static string GetTypeName(BaseType type)
+        {
+            switch (type)
+            {
+                case BaseType.IntType:
+                    return "int32";
+                case BaseType.StringType:
+                    return "string";
+                case BaseType.DecimalType:
+                    return "float64";
+                case BaseType.BoolType:
+                    return "bool";
+                case BaseType.VoidType:
+                    return "void";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        internal string GetTypeName(TypeDefinition type)
+        {
+            // ReSharper disable once SwitchStatementMissingSomeCases
+            switch (type.BaseType)
+            {
+                case BaseType.ComplexType:
+                    var arrayTypeDefinition = type as ArrayTypeDefinition;
+                    if (arrayTypeDefinition != null)
+                    {
+                        return $"{GetTypeName(arrayTypeDefinition.ArrayType)}[]";
+                    }
+                    var recordTypeDefinition = type as RecordTypeDefinition;
+                    if (recordTypeDefinition != null)
+                    {
+                        return $"class {ClassName}/{type.Name}";
+                    }
+                    throw new NotImplementedException();
+                default:
+                    return GetTypeName(type.BaseType);
+            }
+        }
+
+        internal void PushConst([NotNull] object data)
+        {
+            if (data == null) throw new ArgumentNullException(nameof(data));
             switch (Type.GetTypeCode(data.GetType()))
             {
                 case TypeCode.Boolean:
-                    Emit("ldc.i4." + ((bool)data? "1": "0"));
+                    Emit("ldc.i4." + ((bool)data ? "1" : "0"));
                     break;
                 case TypeCode.Char:
                     Emit("ldc.i4.s ", Convert.ToByte((char)data).ToString("x2"));
@@ -49,204 +169,12 @@ namespace Oberon0.Generator.Msil
                 case TypeCode.Single:
                     Emit("ldc.r4", data);
                     break;
-                case TypeCode.Double:
-                    Emit("ldc.r8", data);
-                    break;
-                case TypeCode.String:
-                    Emit("ldstr", GenerateString((string)data));
+                case TypeCode.Decimal:
+                    Emit("ldc.r8", ((decimal)data).ToString(CultureInfo.InvariantCulture));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        private string GenerateString(string str)
-        {
-            StringBuilder sb = new StringBuilder(str.Length*2);
-            sb.Append('"');
-            foreach (char c in str)
-                if (char.IsControl(c) || c == '"')
-                    switch (c)
-                    {
-                        case '\r':
-                            sb.Append("\\r");
-                            break;
-                        case '\t':
-                            sb.Append("\\t");
-                            break;
-                        case '\n':
-                            sb.Append("\\n");
-                            break;
-                        case '"':
-                            sb.Append("\\");
-                            break;
-                        default:
-                            sb.Append('\\' + Convert.ToByte(c).ToString("x2"));
-                            break;
-                    }
-                else
-                    sb.Append(c);
-            sb.Append('"');
-            return sb.ToString();
-        }
-
-/*
-        internal string GenerateBytes(byte[] data)
-        {
-            return string.Join(" ", Array.ConvertAll(data, x => x.ToString("X2")));
-        }
-*/
-
-        internal void EmitComment(string comment)
-        {
-            WriteLine("// " + comment);
-        }
-
-        public void Reference(string assemblyName)
-        {
-            WriteLine($".assembly extern {assemblyName} {{ }}");
-        }
-
-        public void StartAssembly(string moduleName)
-        {
-            WriteLine($".assembly {moduleName} {{ }}");
-        }
-
-
-        public void ConstField(ConstDeclaration constDeclaration)
-        {
-            WriteLine($".data {constDeclaration.Name} = {GetDataTypeName(constDeclaration.Type)} ({DumpConstValue(constDeclaration.Value, false, true)})");
-        }
-
-        private string DumpConstValue(ConstantExpression constantExpression, bool isLoad = false, bool isData = false)
-        {
-            switch (constantExpression.TargetType)
-            {
-                case BaseType.IntType:
-                    return constantExpression.ToInt32().ToString();
-                //case BaseType.StringType:
-                //    return constantExpression.ToStringValue();
-                case BaseType.DecimalType:
-                    return constantExpression.ToDouble().ToString("G");
-                case BaseType.BoolType:
-                    if (isLoad || isData)
-                        return constantExpression.ToBool() ? "1" : "0";
-                    return constantExpression.ToBool().ToString().ToLower(CultureInfo.InvariantCulture);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        internal static string GetTypeName(BaseType type)
-        {
-            switch (type)
-            {
-                case BaseType.IntType:
-                    return "int32";
-                case BaseType.StringType:
-                    return "string";
-                case BaseType.DecimalType:
-                    return "double";
-                case BaseType.BoolType:
-                    return "bool";
-                case BaseType.VoidType:
-                    return "void";
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        internal static string GetTypeName(TypeDefinition type)
-        {
-            // ReSharper disable once SwitchStatementMissingSomeCases
-            switch (type.BaseType)
-            {
-                case BaseType.ComplexType:
-                    var arrayTypeDefinition = type as ArrayTypeDefinition;
-                    if (arrayTypeDefinition != null)
-                    {
-                        return $"{GetTypeName(arrayTypeDefinition.ArrayType)}[]";
-                    }
-                    return type.Name;
-                default:
-                    return GetTypeName(type.BaseType);
-            }
-        }
-
-        private string GetDataTypeName(TypeDefinition type)
-        {
-            switch (type.BaseType)
-            {
-                case BaseType.BoolType:
-                case BaseType.IntType:
-                    return "int32";
-                case BaseType.StringType:
-                    return "string";
-                case BaseType.DecimalType:
-                    return "double";
-                case BaseType.VoidType:
-                    return "void";
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-
-        public void DataField(Declaration declaration)
-        {
-            DataField(declaration, false);
-        }
-
-        public void DataField(Declaration declaration, bool isStatic)
-        {
-            WriteLine($".field {(isStatic ? "static " : string.Empty)}{GetTypeName(declaration.Type)} {declaration.Name}");
-        }
-
-
-        public string EmitLabel()
-        {
-            return EmitLabel(null);
-        }
-
-        public string EmitLabel(string label)
-        {
-            label = label ?? GetLabel();
-            Write(label + ": ");
-            return label;
-        }
-
-        public string GetLabel()
-        {
-            return $"L{_labelId++}";
-        }
-
-        public void LoadConstRef(ConstDeclaration constDeclaration)
-        {
-            Emit("ldvar", constDeclaration.Name);
-        }
-
-        public void StartModule(string moduleName)
-        {
-            WriteLine($".module {moduleName}.exe");
-        }
-
-
-        internal string DotNumOrArg(int value, int min, int max, bool isSimpleShortForm = true)
-        {
-            if (value < min || value > max)
-            {
-                if (value <= 255 && isSimpleShortForm)
-                    return $".s {value}";
-                return $" {value}";
-            }
-            if (value < 0)
-                return $".m{-value}";
-            return $".{value}";
-        }
-
-        public void LocalVarDef(Declaration declaration, bool isPointer)
-        {
-            Write($"{(isPointer ? "&" : string.Empty)}{GetTypeName(declaration.Type)} {declaration.Name}");
         }
 
         public void Branch(string brType, string label)
@@ -254,65 +182,44 @@ namespace Oberon0.Generator.Msil
             Emit(brType, label);
         }
 
-        public void StartMethod(FunctionDeclaration functionDeclaration)
-        {
-            Write($".method private static {GetTypeName(functionDeclaration.ReturnType)} {functionDeclaration.Name}(");
-            List<string> paramList = new List<string>(functionDeclaration.Parameters.Count);
-            int id = 0;
-            foreach (ProcedureParameter parameter in functionDeclaration.Parameters)
-            {
-                parameter.GeneratorInfo = new DeclarationGeneratorInfo(id++);
-                paramList.Add($"{GetTypeName(parameter.Type)} {parameter.Name}");
-            }
-            WriteLine(string.Join(", ", paramList) + @")
-{");
-        }
-
-        public void EndMethod()
-        {
-            Emit("ret");
-            WriteLine("}");
-        }
-
-        public void StartMainMethod()
-        {
-            Write(@"
-.method private hidebysig static bool  isEof() cil managed
-{
-  .maxstack  2
-  .locals init ([0] bool V_0)
-  IL_0000:  nop
-  IL_0001:  call       class [mscorlib]System.IO.TextReader [mscorlib]System.Console::get_In()
-  IL_0006:  callvirt   instance int32 [mscorlib]System.IO.TextReader::Peek()
-  IL_000b:  ldc.i4.0
-  IL_000c:  clt
-  IL_000e:  stloc.0
-  IL_000f:  br.s       IL_0011
-  IL_0011:  ldloc.0
-  IL_0012:  ret
-} // end of method Program::isEof
-
-.method static public void $O0$main() cil managed
-{   .entrypoint 
-");
-        }
-
-        public void Call(FunctionDeclaration func)
+        internal void Call(FunctionDeclaration func)
         {
             if (func.IsInternal)
             {
-                if (func.Name == "eot")
-                    Emit("call", "bool" ,"isEof()");
-                else
-                    throw new NotImplementedException();
+                throw new NotImplementedException();
             }
-            else
+            string prototype = func.Prototype;
+            if (!func.IsExternal)
             {
-                EmitNoNl("call", GetTypeName(func.ReturnType), func.Name, "(");
-                List<string> typeNames = new List<string>(func.Parameters.Count);
-                typeNames.AddRange(func.Parameters.Select(parameter => parameter.Name));
-                WriteLine($"{string.Join(", ", typeNames)})");
+                prototype = $"Oberon0.{ModuleName}::{func.Name}";
             }
+            // local procedure
+            EmitNoNewLine("call", GetTypeName(func.ReturnType), $"{prototype}(");
+            List<string> typeNames = new List<string>();
+            typeNames.AddRange(
+                func.Block.Declarations.OfType<ProcedureParameter>()
+                    .Select(parameter => GetTypeName(parameter.Type)));
+            Write(string.Join(",", typeNames));
+            WriteLine(")");
+        }
+
+        public void ConstField(ConstDeclaration constDeclaration)
+        {
+            WriteLine($".data {constDeclaration.Name} = {GetDataTypeName(constDeclaration.Type)} ({DumpConstValue(constDeclaration.Value, false, true)})");
+        }
+
+
+        public void DataField(Declaration declaration, bool isStatic)
+        {
+            WriteLine($".field {(isStatic ? "static " : string.Empty)}{GetTypeName(declaration.Type)} {declaration.Name}");
+        }
+
+
+        internal string EmitLabel(string label = null)
+        {
+            label = label ?? GetLabel();
+            Write(label + ": ");
+            return label;
         }
 
         /// <summary>
@@ -322,60 +229,114 @@ namespace Oberon0.Generator.Msil
         /// <param name="arrayTypeDefinition">The array type definition.</param>
         public void EmitLdelem(IndexSelector index, ArrayTypeDefinition arrayTypeDefinition)
         {
-            Write("\tldelem");
+            string suffix = string.Empty;
+            string param = null;
             switch (arrayTypeDefinition.BaseType)
             {
                 case BaseType.IntType:
                 case BaseType.BoolType:
-                    WriteLine(".i4");
+                    suffix = ".i4";
                     break;
                 case BaseType.DecimalType:
-                    WriteLine(".r8");
+                    suffix = ".r8";
                     break;
                 default:
-                    WriteLine(" " + GetTypeName(arrayTypeDefinition.ArrayType));
+                    param = GetTypeName(arrayTypeDefinition.ArrayType);
                     break;
             }
+            Emit("ldelem" + suffix, param);
         }
 
-        public void EmitStelem(IndexSelector indexSelector)
+        internal void EmitStelem(IndexSelector indexSelector)
         {
-            Write("\tstelem");
-            switch (indexSelector.IndexDefinition.TargetType)
+            string suffix;
+            string param = null;
+            switch (indexSelector.IndexDefinition.TargetType.BaseType)
             {
                 case BaseType.IntType:
                 case BaseType.BoolType:
-                    WriteLine(".i4");
+                    suffix = ".i4";
                     break;
                 case BaseType.DecimalType:
-                    WriteLine(".r8");
+                    suffix = ".r8";
                     break;
                 default:
-                    WriteLine(".ref\t" + GetTypeName(indexSelector.IndexDefinition.TargetType));
+                    suffix = ".ref";
+                    param = GetTypeName(indexSelector.IndexDefinition.TargetType);
                     break;
             }
+            Emit("stelem" + suffix, param);
         }
 
-        internal void EmitStfld(IdentifierSelector identSelector)
+        internal void EndMethod()
         {
-            //TODO: Get type information from identSelector
-            Emit("stelem");
+            Emit("ret");
+            WriteLine("}");
         }
 
-        internal void Emit(string opCode, params object[] parameters)
+        internal string GetLabel()
         {
-            EmitNoNl(opCode, parameters);
-            WriteLine();
+            return $"L{_labelId++}";
         }
 
-        internal void EmitNoNl(string opCode, params object[] parameters)
+        internal void LoadConstRef(ConstDeclaration constDeclaration)
         {
-            Write("\t" + opCode);
-            foreach (string parameter in parameters)
+            Emit("ldvar", constDeclaration.Name);
+        }
+
+        internal void LocalVarDef(Declaration declaration, bool isPointer)
+        {
+            Write($"{(isPointer ? "&" : string.Empty)}{GetTypeName(declaration.Type)} {declaration.Name}");
+        }
+
+        internal void Reference(string assemblyName)
+        {
+            WriteLine($".assembly extern {assemblyName} {{ }}");
+        }
+
+        internal void StartAssembly(string moduleName)
+        {
+            WriteLine($".assembly {moduleName} {{ }}");
+        }
+
+        internal void StartMainMethod()
+        {
+            Write($@"
+.method static public void $O0$main() cil managed
+{{   .entrypoint 
+");
+        }
+
+        internal void StartMethod(FunctionDeclaration functionDeclaration)
+        {
+            Write($".method private static {GetTypeName(functionDeclaration.ReturnType)} {functionDeclaration.Name}(");
+            List<string> paramList = new List<string>();
+            int id = 0;
+            foreach (ProcedureParameter parameter in functionDeclaration.Block.Declarations.OfType<ProcedureParameter>())
             {
-                Write("\t" + parameter);
+                parameter.GeneratorInfo = new DeclarationGeneratorInfo(id++);
+                paramList.Add($"{GetTypeName(parameter.Type)} {parameter.Name}");
             }
+            WriteLine(string.Join(", ", paramList) + @")
+{");
         }
 
+        internal void StartModule(string moduleName)
+        {
+            WriteLine($".module {moduleName}.exe");
+            ModuleName = moduleName;
+        }
+
+        internal void StartClass(string className)
+        {
+            WriteLine($".class public {className} {{");
+            ClassName = className;
+        }
+
+
+        internal void EndClass()
+        {
+            WriteLine("}");
+        }
     }
 }

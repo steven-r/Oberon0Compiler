@@ -1,15 +1,17 @@
-﻿using Oberon0.Compiler.Definitions;
+﻿using JetBrains.Annotations;
+using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Generator;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions
 {
     public abstract class Expression
     {
-        public TokenType Operator { get; set; }
+        public int Operator { get; set; }
 
-        public BaseType TargetType { get; set; }
+        public TypeDefinition TargetType { get; set; }
 
-        public IGeneratorInfo GeneratorInfo { get; set; }
+        public IGeneratorInfo GeneratorInfo { [UsedImplicitly] get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this expression is constant.

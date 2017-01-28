@@ -24,6 +24,6 @@ namespace Oberon0.Compiler.Statements
         /// Gets or sets the block.
         /// </summary>
         /// <value>The block.</value>
-        public Block Block { get; set; }
+        public Block Block { get; }
     }
 }

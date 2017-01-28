@@ -1,4 +1,5 @@
 ﻿using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil.PredefinedFunctions
 {
@@ -27,5 +28,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
 
         /// <inheritdoc />
         public ProcedureParameter[] ParameterTypes { get; set; }
+
+        public string AdditionalInfo { get; set; }
     }
 }

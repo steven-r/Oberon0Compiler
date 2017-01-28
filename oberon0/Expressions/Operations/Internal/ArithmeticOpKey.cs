@@ -1,8 +1,7 @@
 ﻿using System;
-using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Expressions.Operations;
+using Oberon0.Compiler.Types;
 
-namespace Oberon0.Compiler.Expressions
+namespace Oberon0.Compiler.Expressions.Operations.Internal
 {
     /// <summary>
     /// Helper class to create a dictionary of operations and it's left and right parameters
@@ -11,20 +10,20 @@ namespace Oberon0.Compiler.Expressions
     {
         #region Constructors
 
-        public ArithmeticOpKey(TokenType operation, BaseType leftHandType, BaseType rightHandType, BaseType targetType = BaseType.AnyType)
+        public ArithmeticOpKey(int operation, BaseType leftHandType, BaseType rightHandType, BaseType targetType = BaseType.AnyType)
         {
             Operation = operation;
             LeftHandType = leftHandType;
             RightHandType = rightHandType;
-            TargetType = targetType;
+            ResultType = targetType;
         }
 
         #endregion
 
-        public TokenType Operation { get; }
+        public int Operation { get; }
         public BaseType LeftHandType { get; }
         public BaseType RightHandType { get; }
-        public BaseType TargetType { get; }
+        public BaseType ResultType { get; }
 
         #region IEquatable
 

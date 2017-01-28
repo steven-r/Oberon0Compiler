@@ -1,4 +1,5 @@
-﻿using Oberon0.Compiler.Generator;
+﻿using JetBrains.Annotations;
+using Oberon0.Compiler.Generator;
 
 namespace Oberon0.Compiler.Statements
 {
@@ -8,6 +9,7 @@ namespace Oberon0.Compiler.Statements
         /// Additional information used by the generator engine
         /// </summary>
         /// <value>Generator information.</value>
+        [UsedImplicitly]
         public IGeneratorInfo GeneratorInfo { get; set; }
     }
 }

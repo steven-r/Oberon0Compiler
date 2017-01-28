@@ -10,7 +10,7 @@ namespace Oberon0.Compiler.Expressions
             FunctionDeclaration = functionDeclaration;
             Block = block;
             Parameters = new List<Expression>(parameters);
-            TargetType = functionDeclaration.ReturnType.BaseType;
+            TargetType = block.LookupTypeByBaseType(functionDeclaration.ReturnType.BaseType);
         }
 
         public FunctionDeclaration FunctionDeclaration { get; set; }

@@ -24,14 +24,16 @@ namespace Oberon0.Compiler.Solver
             {
                 if (!bin.LeftHandSide.IsConst)
                     bin.LeftHandSide = Calculate(bin.LeftHandSide, block);
-                if (!bin.RightHandSide.IsConst)
+                if (!bin.RightHandSide?.IsConst ?? false)
                     bin.RightHandSide = Calculate(bin.RightHandSide, block);
                 return bin.Operation.Operation.Operate(bin, block, bin.Operation.Metadata);
             }
             var c = expression as ConstantExpression;
             if (c != null) return c;
-
-            throw new InvalidOperationException($"Calculate does not support operation on {expression.GetType()}");
+            // ignore string expressions
+            if (expression is StringExpression) return expression;
+            if (expression is FunctionCallExpression) return expression;
+            throw new InvalidOperationException($"Calculate does not support operation on {expression.GetType().Name}");
         }
     }
 }

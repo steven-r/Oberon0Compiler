@@ -4,6 +4,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil.PredefinedFunctions
 {
@@ -30,14 +31,14 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
                     {
                         Instance = mefFunction.Value,
                         Name = mefFunction.Metadata.Name[i],
-                        ReturnType = module.Block.LookupType(mefFunction.Metadata.ReturnType[i], true)
+                        ReturnType = module.Block.LookupType(mefFunction.Metadata.ReturnType[i])
                     };
                     string[] parameters = mefFunction.Metadata.ParameterTypes[i]?.Split(',') ?? new string[0];
                     element.ParameterTypes = new ProcedureParameter[parameters.Length];
                     for (int j = 0; j < parameters.Length; j++)
                     {
-                        TypeDefinition td = module.Block.LookupType(parameters[j], true);
-                        element.ParameterTypes[j] = new ProcedureParameter(parameters[j], td,
+                        TypeDefinition td = module.Block.LookupType(parameters[j]);
+                        element.ParameterTypes[j] = new ProcedureParameter(parameters[j], module.Block, td, 
                             parameters[j].StartsWith("&", StringComparison.InvariantCulture));
                     }
                     element.InstanceKey =
@@ -46,6 +47,26 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
                 }
         }
 
+        public static void RegisterLibraryFunction([NotNull] string name, [NotNull] TypeDefinition returnType, params ProcedureParameter[] parameters)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (returnType == null) throw new ArgumentNullException(nameof(returnType));
+
+            string[] names = name.Split('.');
+            if (names.Length != 2) throw new ArgumentException("name must contain Library", nameof(name));
+
+            StandardFunctionGeneratorListElement element = new StandardFunctionGeneratorListElement
+            {
+                Instance = LibraryCodeGenerator.Instance,
+                Name = names[1],
+                ReturnType = returnType,
+                AdditionalInfo = names[0],
+                ParameterTypes = parameters
+            };
+            element.InstanceKey =
+                $"{element.Name}/{element.ReturnType.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.Name))}";
+            _standardFunctionList.Add(element);
+        }
 
         /// <summary>
         /// Gets the specified operation.
@@ -56,7 +77,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         public static StandardFunctionGeneratorListElement Get(FunctionDeclaration function)
         {
             string key =
-                $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Parameters.Select(GetFunctionName))}";
+                $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Block.Declarations.OfType<ProcedureParameter>().Select(GetFunctionName))}";
 
             var func = _standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
             if (func == null)
