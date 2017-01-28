@@ -34,6 +34,7 @@ namespace Oberon0.Compiler.Definitions
         /// <param name="type">The type.</param>
         private void LoadLibraryMembers(Type type)
         {
+            AssemblyName name = new AssemblyName(type.Assembly.FullName);
             foreach (MethodInfo method in type.GetMethods(BindingFlags.Public|BindingFlags.Static))
             {
                 var attr = method.GetCustomAttribute<Oberon0ExportAttribute>();
@@ -71,11 +72,13 @@ namespace Oberon0.Compiler.Definitions
                 }
                 var fd = new FunctionDeclaration(attr.Name, Block, rt, procParameters)
                 {
-                    Prototype = $"Oberon0.{type.Name}::{attr.Name}",
+                    Prototype = $"[{name.Name}]Oberon0.{type.Name}::{method.Name}",
                     IsExternal = true,
                 };
                 Block.Procedures.Add(fd);
             }
+            this.ExternalReferences.Add(type.Assembly);
+
         }
 
         private void DeclareStandardTypes()

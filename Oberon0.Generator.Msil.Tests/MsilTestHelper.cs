@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Generator.Msil.Tests
 {
@@ -13,21 +14,24 @@ namespace Oberon0.Generator.Msil.Tests
             return data.Replace("\r\n", "\n");
         }
 
-        public static bool CompileRunTest(string source, List<string> inputData, out string outputData)
+        public static bool CompileRunTest(string source, List<string> inputData, out string outputData, Module m = null)
         {
-
             string filename = Path.GetTempFileName();
             filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
             Trace.WriteLine($"Filename is {filename}(.il|.exe|.pdb)");
             outputData = string.Empty;
-            return CompileCode(source, filename) && RunCode(filename, inputData, out outputData);
+            return CompileCode(source, filename, false, m) && RunCode(filename, inputData, out outputData);
         }
 
-        private static bool CompileCode(string source, string filename, bool dumpOutput = false)
+        private static bool CompileCode(string source, string filename, bool dumpOutput = false, Module m = null)
         {
             using (TextWriter w = File.CreateText(filename + ".il"))
             {
                 w.Write(source);
+            }
+            if (m != null)
+            {
+                CopyReferencedAssemblies(m);
             }
             string runtimePath = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
             StringBuilder output = new StringBuilder();
@@ -76,6 +80,19 @@ namespace Oberon0.Generator.Msil.Tests
             }
 
             return true;
+        }
+
+        private static void CopyReferencedAssemblies(Module module)
+        {
+            foreach (var reference in module.ExternalReferences)
+            {
+                if (reference.GlobalAssemblyCache)
+                {
+                    continue; // ignored
+                }
+                File.Copy(reference.Location, 
+                    Path.Combine(Environment.GetEnvironmentVariable("TEMP"), Path.GetFileName(reference.Location)), true);
+            }
         }
 
         private static bool RunCode(string filename, List<string> inputData, out string outputData)

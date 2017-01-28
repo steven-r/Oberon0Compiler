@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Generator;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
@@ -129,6 +130,38 @@ namespace Oberon0.Compiler.Definitions
             }
             var res = b.Types.FirstOrDefault(x => x.BaseType == baseType && x.IsInternal);
             return res;
+        }
+
+        internal FunctionDeclaration LookupFunction(string procedureName, IList<Expression> parameters)
+        {
+            Block b = this;
+            while (b != null)
+            {
+                var res = b.Procedures.Where(x => x.Name == procedureName);
+                foreach (FunctionDeclaration func in res)
+                {
+                    var paramList = func.Block.GetParameters();
+                    if (paramList.Count != parameters.Count) continue;
+                    bool found = true;
+                    for (int i = 0; i < parameters.Count; i++)
+                    {
+                        if (paramList[i].Type.BaseType != parameters[i].TargetType.BaseType)
+                        {
+                            found = false;
+                            break;
+                        }
+                    }
+                    if (found)
+                        return func;
+                }
+                b = b.Parent;
+            }
+            return null;
+        }
+
+        private IList<ProcedureParameter> GetParameters()
+        {
+            return Declarations.OfType<ProcedureParameter>().ToList();
         }
     }
 }

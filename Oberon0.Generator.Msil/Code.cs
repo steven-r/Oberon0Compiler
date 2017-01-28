@@ -11,16 +11,15 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil
 {
-    public class Code : StringWriter
+    public partial class Code : StringWriter
     {
         private int _labelId;
 
         public Code(StringBuilder sb) : base(sb)
-        {
+        { }
 
-        }
-
-        internal string ModuleName { get; set; }
+        // ReSharper disable once MemberCanBePrivate.Global
+        internal string ModuleName { [UsedImplicitly] get; set; }
 
         internal string ClassName { get; private set; }
 
@@ -187,23 +186,17 @@ namespace Oberon0.Generator.Msil
         {
             if (func.IsInternal)
             {
-                if (func.Name == "eot")
-                    Emit("call", "bool", "eot()");
-                else
-                    throw new NotImplementedException();
+                throw new NotImplementedException();
             }
-            else
-            { // local procedure
-                EmitNoNewLine("call", GetTypeName(func.ReturnType), $"{ClassName}::{func.Name}(");
-                List<string> typeNames = new List<string>();
-                typeNames.AddRange(
-                    func.Block.Declarations.OfType<ProcedureParameter>()
-                        .Select(parameter => GetTypeName(parameter.Type)));
-                Write(string.Join(",", typeNames));
-                WriteLine(")");
-            }
+            // local procedure
+            EmitNoNewLine("call", GetTypeName(func.ReturnType), $"{func.Prototype}(");
+            List<string> typeNames = new List<string>();
+            typeNames.AddRange(
+                func.Block.Declarations.OfType<ProcedureParameter>()
+                    .Select(parameter => GetTypeName(parameter.Type)));
+            Write(string.Join(",", typeNames));
+            WriteLine(")");
         }
-
 
         public void ConstField(ConstDeclaration constDeclaration)
         {
@@ -303,9 +296,9 @@ namespace Oberon0.Generator.Msil
 
         internal void StartMainMethod()
         {
-            Write(@"
+            Write($@"
 .method static public void $O0$main() cil managed
-{   .entrypoint 
+{{   .entrypoint 
 ");
         }
 

@@ -170,7 +170,7 @@ namespace Oberon0.Compiler
 
         public override void ExitTermFuncCall(OberonGrammarParser.TermFuncCallContext context)
         {
-            var fp = context.bParam.LookupFunction(context.id.Text);
+            var fp = context.bParam.LookupFunction(context.id.Text,  context.cp._p.Select(x => x.expReturn).ToList());
             if (fp == null)
             {
                 _parser.NotifyErrorListeners(context.id, "Function not known", null);

@@ -11,7 +11,6 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
-using System;
 using System.Linq;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Types;
@@ -63,7 +62,6 @@ namespace Oberon0.Generator.Msil
             if (!isFirst)
                 Code.WriteLine(")");
         }
-
         private void GenerateTypeDeclarations(Block block)
         {
             foreach (var typeDefinition in block.Types.Where(x => x is RecordTypeDefinition))
@@ -108,9 +106,8 @@ namespace Oberon0.Generator.Msil
                 {
                     Code.Emit("newobj", "instance void", $"{Code.ClassName}/{rd.Name}::.ctor()");
                     StoreVar(block, declaration, null);
-                    continue;
                 }
-                throw new NotImplementedException();
+                //throw new NotImplementedException();
             }
         }
     }

@@ -1,4 +1,20 @@
-﻿using System;
+﻿#region copyright
+// ***********************************************************************
+// Assembly         : Oberon0.Generator.Msil
+// Author           : Stephen Reindl
+// Created          : 2017-01-28
+// 
+// ***********************************************************************
+// <copyright file="CodeGenerator.Expressions.cs" company="Reindl IT">
+//      Copyright ©  2017
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+#endregion
+
+#region usings
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -9,6 +25,8 @@ using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Types;
+
+#endregion
 
 namespace Oberon0.Generator.Msil
 {

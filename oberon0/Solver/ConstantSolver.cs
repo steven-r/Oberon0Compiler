@@ -32,7 +32,8 @@ namespace Oberon0.Compiler.Solver
             if (c != null) return c;
             // ignore string expressions
             if (expression is StringExpression) return expression;
-            throw new InvalidOperationException($"Calculate does not support operation on {expression.GetType()}");
+            if (expression is FunctionCallExpression) return expression;
+            throw new InvalidOperationException($"Calculate does not support operation on {expression.GetType().Name}");
         }
     }
 }

@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arrays\ArrayTests.cs" />
+    <Compile Include="Libraries\SystemTests.cs" />
     <Compile Include="MsilTestHelper.cs" />
     <Compile Include="Complex\FullExample.cs" />
     <Compile Include="Operations\OperationTests.cs" />
