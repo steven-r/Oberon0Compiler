@@ -16,11 +16,11 @@
     project: Oberon0.sln
     verbosity: minimal
   install:
-  - choco install "msbuild-sonarqube-runner" -y
   - choco install gitversion.portable -pre -y
   before_build:
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
   - nuget restore
+  - choco install "msbuild-sonarqube-runner" -y
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
   - MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml"
   test_script:
