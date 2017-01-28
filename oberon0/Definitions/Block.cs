@@ -137,24 +137,34 @@ namespace Oberon0.Compiler.Definitions
             Block b = this;
             while (b != null)
             {
-                var res = b.Procedures.Where(x => x.Name == procedureName);
-                foreach (FunctionDeclaration func in res)
+                var functionDeclaration = CheckForFunction(procedureName, parameters, b);
+                if (functionDeclaration != null)
                 {
-                    var paramList = func.Block.GetParameters();
-                    if (paramList.Count != parameters.Count) continue;
-                    bool found = true;
-                    for (int i = 0; i < parameters.Count; i++)
-                    {
-                        if (paramList[i].Type.BaseType != parameters[i].TargetType.BaseType)
-                        {
-                            found = false;
-                            break;
-                        }
-                    }
-                    if (found)
-                        return func;
+                    return functionDeclaration;
                 }
                 b = b.Parent;
+            }
+            return null;
+        }
+
+        private static FunctionDeclaration CheckForFunction(string procedureName, IList<Expression> parameters, Block b)
+        {
+            var res = b.Procedures.Where(x => x.Name == procedureName);
+            foreach (FunctionDeclaration func in res)
+            {
+                var paramList = func.Block.GetParameters();
+                if (paramList.Count != parameters.Count) continue;
+                bool found = true;
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    if (paramList[i].Type.BaseType != parameters[i].TargetType.BaseType)
+                    {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found)
+                    return func;
             }
             return null;
         }

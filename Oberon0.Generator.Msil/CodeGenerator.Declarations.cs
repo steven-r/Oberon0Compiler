@@ -107,7 +107,6 @@ namespace Oberon0.Generator.Msil
                     Code.Emit("newobj", "instance void", $"{Code.ClassName}/{rd.Name}::.ctor()");
                     StoreVar(block, declaration, null);
                 }
-                //throw new NotImplementedException();
             }
         }
     }
