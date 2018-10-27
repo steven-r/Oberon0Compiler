@@ -9,6 +9,8 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler
 {
+    using Oberon0.Compiler.Expressions.Constant;
+
     internal class Oberon0CompilerListener : OberonGrammarBaseListener
     {
         private readonly OberonGrammarParser _parser;

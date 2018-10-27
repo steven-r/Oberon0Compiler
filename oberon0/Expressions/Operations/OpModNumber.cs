@@ -13,6 +13,7 @@
 namespace Oberon0.Compiler.Expressions.Operations
 {
     using Oberon0.Compiler.Definitions;
+    using Oberon0.Compiler.Expressions.Constant;
     using Oberon0.Compiler.Expressions.Operations.Internal;
     using Oberon0.Compiler.Types;
 

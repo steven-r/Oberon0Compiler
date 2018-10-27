@@ -9,6 +9,8 @@ using Oberon0.CompilerSupport;
 
 namespace Oberon0.Compiler.Tests
 {
+    using Oberon0.Compiler.Expressions.Constant;
+
     [TestFixture]
     public class TypeTests
     {

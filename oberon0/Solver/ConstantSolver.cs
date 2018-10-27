@@ -4,6 +4,8 @@ using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Solver
 {
+    using Oberon0.Compiler.Expressions.Constant;
+
     /// <summary>
     /// Solve constant expressions
     /// </summary>

@@ -30,6 +30,8 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil
 {
+    using Oberon0.Compiler.Expressions.Constant;
+
     public partial class CodeGenerator
     {
         private static readonly Dictionary<int, Func<CodeGenerator, Block, BinaryExpression, Expression>> OperatorMapping = 

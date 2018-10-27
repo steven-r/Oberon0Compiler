@@ -1,5 +1,4 @@
 ﻿using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,6 +10,8 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.Msil
 {
+    using Oberon0.Compiler.Expressions.Constant;
+
     public class Code : StringWriter
     {
         private int _labelId;

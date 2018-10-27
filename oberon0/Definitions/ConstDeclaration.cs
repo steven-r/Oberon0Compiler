@@ -3,7 +3,9 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
 {
-    public class ConstDeclaration: Declaration
+    using Oberon0.Compiler.Expressions.Constant;
+
+    public class ConstDeclaration : Declaration
     {
         public ConstDeclaration(string name, TypeDefinition type) 
             : this(name, type, null, null)
