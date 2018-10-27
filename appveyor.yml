@@ -2,8 +2,6 @@ branches:
   except:
     - pr
   
-version: '0.0.1.{build}'
-  
 image: Visual Studio 2017
   
 pull_requests:
@@ -13,13 +11,6 @@ environment:
   SonarToken:
     secure: Yqq5NPe3TMsALEVm/5AQZIi47F1OOwB+cmzLvYHF5qfbQUdyFaZ/E1ZjtTC5qEgO
   
-assembly_info:
-  patch: true
-  file: '**\AssemblyInfo.*'
-  assembly_version: '{version}'
-  assembly_file_version: '{version}'
-  assembly_informational_version: '{version}'
-
 build:
   project: Oberon0.sln
   verbosity: minimal
@@ -33,7 +24,7 @@ before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
-  - SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml"
+  - SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /d:sonar.projectVersion=%version%
   
 test_script:
   - OpenCover.Console.exe -output:"%CD%\opencover.xml" -register:user -returntargetcode "-target:runtests_appveyor.bat" "-filter:+[*]* -[Oberon0.CompilerSupport]*"
