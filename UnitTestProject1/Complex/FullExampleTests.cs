@@ -1,11 +1,21 @@
-﻿using NUnit.Framework;
-using Oberon0.Compiler.Definitions;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="FullExampleTests.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0Compiler.Tests/FullExampleTests.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Compiler.Tests.Complex
 {
+    using NUnit.Framework;
 
     [TestFixture]
-    public class FullExample
+    public class FullExampleTests
     {
         [Test]
         public void FullExample1()
@@ -56,7 +66,7 @@ BEGIN ReadInt(n);
  IF n = 0 THEN Multiply ELSIF n = 1 THEN Divide ELSE BinSearch END
 END Samples.
 ";
-            Module m = Oberon0Compiler.CompileString(source);
+            Oberon0Compiler.CompileString(source);
         }
     }
 }

@@ -37,6 +37,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
-[assembly: InternalsVisibleTo("UnitTestProject1")]
-[assembly: InternalsVisibleTo("Oberon0.Generator.ORisc.Tests")]
+[assembly: InternalsVisibleTo("Oberon0.Compiler.Tests")]
+[assembly: InternalsVisibleTo("Oberon0.Generator.Msil.Tests")]
 [assembly: InternalsVisibleTo("Oberon0.CompilerSupport")]

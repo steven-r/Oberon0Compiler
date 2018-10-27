@@ -1,72 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using JetBrains.Annotations;
-using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Types;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="StandardFunctionRepository.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0.Generator.Msil/StandardFunctionRepository.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Generator.Msil.PredefinedFunctions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Composition;
+    using System.Composition.Hosting;
+    using System.Linq;
+
+    using JetBrains.Annotations;
+
+    using Oberon0.Compiler.Definitions;
+    using Oberon0.Compiler.Types;
+
     internal static class StandardFunctionRepository
     {
-        private static List<StandardFunctionGeneratorListElement> _standardFunctionList = new List<StandardFunctionGeneratorListElement>();
-
-        internal static void Initialize(Module module)
-        {
-            var catalog = new AggregateCatalog();
-            catalog.Catalogs.Add(new AssemblyCatalog(typeof(IStandardFunctionGenerator).Assembly));
-
-            var container = new CompositionContainer(catalog,
-                CompositionOptions.DisableSilentRejection |
-                CompositionOptions.IsThreadSafe);
-
-            _standardFunctionList = new List<StandardFunctionGeneratorListElement>();
-            var exports = container.GetExports<IStandardFunctionGenerator, IStandardFunctionMetadataView>();
-
-            foreach (Lazy<IStandardFunctionGenerator, IStandardFunctionMetadataView> mefFunction in exports)
-                for (int i = 0; i < mefFunction.Metadata.Name.Length; i++)
-                {
-                    StandardFunctionGeneratorListElement element = new StandardFunctionGeneratorListElement
-                    {
-                        Instance = mefFunction.Value,
-                        Name = mefFunction.Metadata.Name[i],
-                        ReturnType = module.Block.LookupType(mefFunction.Metadata.ReturnType[i])
-                    };
-                    string[] parameters = mefFunction.Metadata.ParameterTypes[i]?.Split(',') ?? new string[0];
-                    element.ParameterTypes = new ProcedureParameter[parameters.Length];
-                    for (int j = 0; j < parameters.Length; j++)
-                    {
-                        TypeDefinition td = module.Block.LookupType(parameters[j]);
-                        element.ParameterTypes[j] = new ProcedureParameter(parameters[j], module.Block, td, 
-                            parameters[j].StartsWith("&", StringComparison.InvariantCulture));
-                    }
-                    element.InstanceKey =
-                        $"{element.Name}/{element.ReturnType.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.Name))}";
-                    _standardFunctionList.Add(element);
-                }
-        }
-
-        public static void RegisterLibraryFunction([NotNull] string name, [NotNull] TypeDefinition returnType, params ProcedureParameter[] parameters)
-        {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            if (returnType == null) throw new ArgumentNullException(nameof(returnType));
-
-            string[] names = name.Split('.');
-            if (names.Length != 2) throw new ArgumentException("name must contain Library", nameof(name));
-
-            StandardFunctionGeneratorListElement element = new StandardFunctionGeneratorListElement
-            {
-                Instance = LibraryCodeGenerator.Instance,
-                Name = names[1],
-                ReturnType = returnType,
-                AdditionalInfo = names[0],
-                ParameterTypes = parameters
-            };
-            element.InstanceKey =
-                $"{element.Name}/{element.ReturnType.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.Name))}";
-            _standardFunctionList.Add(element);
-        }
+        private static List<StandardFunctionGeneratorListElement> standardFunctionList =
+            new List<StandardFunctionGeneratorListElement>();
 
         /// <summary>
         /// Gets the specified operation.
@@ -79,10 +39,72 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
             string key =
                 $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Block.Declarations.OfType<ProcedureParameter>().Select(GetFunctionName))}";
 
-            var func = _standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
+            var func = standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
             if (func == null)
                 throw new InvalidOperationException("Cannot find function " + function);
             return func;
+        }
+
+        public static void RegisterLibraryFunction(
+            [NotNull] string name,
+            [NotNull] TypeDefinition returnType,
+            params ProcedureParameter[] parameters)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (returnType == null) throw new ArgumentNullException(nameof(returnType));
+
+            var names = name.Split('.');
+            if (names.Length != 2) throw new ArgumentException("name must contain Library", nameof(name));
+
+            StandardFunctionGeneratorListElement element = new StandardFunctionGeneratorListElement
+                                                               {
+                                                                   Instance = LibraryCodeGenerator.Instance,
+                                                                   Name = names[1],
+                                                                   ReturnType = returnType,
+                                                                   AdditionalInfo = names[0],
+                                                                   ParameterTypes = parameters
+                                                               };
+            element.InstanceKey =
+                $"{element.Name}/{element.ReturnType.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.Name))}";
+            standardFunctionList.Add(element);
+        }
+
+        internal static void Initialize(Module module)
+        {
+            var configuration = new ContainerConfiguration().WithAssembly(typeof(IStandardFunctionGenerator).Assembly);
+            var container = configuration.CreateContainer();
+            var exports =
+                container.GetExports<ExportFactory<IStandardFunctionGenerator, StandardFunctionMetadataView>>();
+
+            standardFunctionList = new List<StandardFunctionGeneratorListElement>();
+
+            foreach (var mefFunction in exports)
+            {
+                StandardFunctionGeneratorListElement element = new StandardFunctionGeneratorListElement
+                                                                   {
+                                                                       Instance = mefFunction.CreateExport().Value,
+                                                                       Name = mefFunction.Metadata.Name,
+                                                                       ReturnType = module.Block.LookupType(
+                                                                           mefFunction.Metadata.ReturnType)
+                                                                   };
+
+                var parameters = mefFunction.Metadata.ParameterTypes?.Split(',') ?? new string[0];
+                element.ParameterTypes = new ProcedureParameter[parameters.Length];
+
+                for (int j = 0; j < parameters.Length; j++)
+                {
+                    TypeDefinition td = module.Block.LookupType(parameters[j]);
+                    element.ParameterTypes[j] = new ProcedureParameter(
+                        parameters[j],
+                        module.Block,
+                        td,
+                        parameters[j].StartsWith("&", StringComparison.InvariantCulture));
+                }
+
+                element.InstanceKey =
+                    $"{element.Name}/{element.ReturnType.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.Name))}";
+                standardFunctionList.Add(element);
+            }
         }
 
         private static object GetFunctionName(ProcedureParameter parameter)

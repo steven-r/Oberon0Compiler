@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel.Composition;
-
-namespace Oberon0.Generator.Msil.PredefinedFunctions
+﻿namespace Oberon0.Generator.Msil.PredefinedFunctions
 {
+    using System;
+    using System.Composition;
+
     [MetadataAttribute]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class StandardFunctionMetadataAttribute : ExportAttribute, IStandardFunctionExportMetadata
@@ -14,6 +14,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         /// <param name="returnType">Type of the return.</param>
         /// <param name="parameterTypes">The parameter types.</param>
         public StandardFunctionMetadataAttribute(string name, string returnType, string parameterTypes)
+            : base(typeof(IStandardFunctionGenerator))
         {
             Name = name;
             ReturnType = returnType;
@@ -27,6 +28,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         /// <param name="name">The name.</param>
         /// <param name="returnType">Type of the return.</param>
         public StandardFunctionMetadataAttribute(string name, string returnType)
+            : base(typeof(IStandardFunctionGenerator))
         {
             Name = name;
             ReturnType = returnType;
@@ -34,15 +36,15 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         }
 
         /// <inheritdoc />
-        public string Namespace { get; }
+        public string Namespace { get; set; }
 
         /// <inheritdoc />
-        public string Name { get; }
+        public string Name { get; set; }
 
         /// <inheritdoc />
-        public string ReturnType { get; }
+        public string ReturnType { get; set; }
 
         /// <inheritdoc />
-        public string ParameterTypes { get; }
+        public string ParameterTypes { get; set; }
     }
 }
