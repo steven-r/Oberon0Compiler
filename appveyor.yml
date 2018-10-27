@@ -27,6 +27,7 @@ build:
 install:
   - choco install gitversion.portable -pre -y
   - choco install msbuild-sonarqube-runner -y
+  - choco install opencover.portable -y
   
 before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
@@ -35,7 +36,7 @@ before_build:
   - MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml"
   
 test_script:
-  - packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -output:"%CD%\opencover.xml" -register:user -returntargetcode "-target:runtests_appveyor.bat" "-filter:+[*]* -[Oberon0.CompilerSupport]*"
+  - OpenCover.Console.exe -output:"%CD%\opencover.xml" -register:user -returntargetcode "-target:runtests_appveyor.bat" "-filter:+[*]* -[Oberon0.CompilerSupport]*"
   
 after_test:
   - MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
