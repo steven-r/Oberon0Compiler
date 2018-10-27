@@ -1,41 +1,41 @@
-  branches:
-    except:
-      - pr
+branches:
+  except:
+    - pr
   
-  version: '0.0.1.{build}'
+version: '0.0.1.{build}'
   
-  image: Visual Studio 2017
+image: Visual Studio 2017
   
-  pull_requests:
-    do_not_increment_build_number: true
+pull_requests:
+  do_not_increment_build_number: true
   
-  environment:
-    SonarToken:
-      secure: +wTbJz9KGTWgbZs0XwkTvkyHzso0IwglDTd3d4CXC8DYT2B40D4DcjrmeEWDHSeU
+environment:
+  SonarToken:
+    secure: +wTbJz9KGTWgbZs0XwkTvkyHzso0IwglDTd3d4CXC8DYT2B40D4DcjrmeEWDHSeU
   
-  assembly_info:
-    patch: true
-    file: '**\AssemblyInfo.*'
-    assembly_version: '{version}'
-    assembly_file_version: '{version}'
-    assembly_informational_version: '{version}'
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+
+build:
+  project: Oberon0.sln
+  verbosity: minimal
   
-  build:
-    project: Oberon0.sln
-    verbosity: minimal
-  
-  install:
+install:
   - choco install gitversion.portable -pre -y
   
-  before_build:
+before_build:
   - call "C:\Program Files (x86)\Microsoft Visual Studio 15.0\VC\vcvarsall.bat" x86
   - nuget restore
   - choco install "msbuild-sonarqube-runner" -y
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
   - MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml"
   
-  test_script:
+test_script:
   - packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -output:"%CD%\opencover.xml" -register:user -returntargetcode "-target:runtests_appveyor.bat" "-filter:+[*]* -[Oberon0.CompilerSupport]*"
   
-  after_test:
+after_test:
   - MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
