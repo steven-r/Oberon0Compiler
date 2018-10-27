@@ -26,11 +26,11 @@ build:
   
 install:
   - choco install gitversion.portable -pre -y
+  - choco install msbuild-sonarqube-runner -y
   
 before_build:
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 15.0\VC\vcvarsall.bat" x86
+  - call call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
-  - choco install "msbuild-sonarqube-runner" -y
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
   - MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml"
   
