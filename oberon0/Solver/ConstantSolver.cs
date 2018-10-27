@@ -52,7 +52,7 @@ namespace Oberon0.Compiler.Solver
             {
                 if (!bin.LeftHandSide.IsConst)
                     bin.LeftHandSide = Calculate(bin.LeftHandSide, block);
-                if (!(bin.RightHandSide?.IsConst ?? false))
+                if (bin.RightHandSide != null && !bin.IsConst)
                     bin.RightHandSide = Calculate(bin.RightHandSide, block);
                 return bin.Operation.Operation.Operate(bin, block, bin.Operation.Metadata);
             }
