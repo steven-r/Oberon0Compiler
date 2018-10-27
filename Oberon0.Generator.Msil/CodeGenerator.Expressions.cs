@@ -32,6 +32,9 @@ namespace Oberon0.Generator.Msil
 {
     using Oberon0.Compiler.Expressions.Constant;
 
+    /// <summary>
+    /// The code generator.
+    /// </summary>
     public partial class CodeGenerator
     {
         private static readonly Dictionary<int, Func<CodeGenerator, Block, BinaryExpression, Expression>>
@@ -68,39 +71,8 @@ namespace Oberon0.Generator.Msil
             {
                 DumpCode(w);
             }
+
             return sb.ToString();
-        }
-
-        // "a <op> b" or "<op> a"
-        private static BinaryExpression HandleSimpleOperation(CodeGenerator generator, Block block, BinaryExpression bin)
-        {
-            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.IntType)
-            {
-                generator.LoadConstantExpression(ConstantIntExpression.Zero, null);
-            }
-
-            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.DecimalType)
-            {
-                generator.LoadConstantExpression(ConstantDoubleExpression.Zero, null);
-            }
-
-            generator.ExpressionCompiler(block, bin.LeftHandSide);
-            if (!bin.IsUnary)
-            {
-                generator.ExpressionCompiler(block, bin.RightHandSide);
-            }
-
-            generator.Code.Emit(SimpleInstructionMapping[bin.Operator]);
-            return bin;
-        }
-
-        // "a <rel> b" or "<rel> a" (aka ~)
-        private static BinaryExpression HandleRelOperation(CodeGenerator generator, Block block, BinaryExpression bin)
-        {
-            generator.ExpressionCompiler(block, bin.LeftHandSide);
-            if (!bin.IsUnary)
-                generator.ExpressionCompiler(block, bin.RightHandSide);
-            return bin;
         }
 
         /// <summary>
@@ -121,12 +93,13 @@ namespace Oberon0.Generator.Msil
                     return this.HandleVariableReferenceExpression(block, v);
                 case StringExpression s:
                     {
-                        string str = s.Value.Remove(0,1);
+                        string str = s.Value.Remove(0, 1);
                         str = str.Remove(str.Length - 1);
                         str = str.Replace("''", "'");
                         Code.Emit("ldstr", $"\"{str}\"");
                         return s;
                     }
+
                 case BinaryExpression bin:
                     Code.EmitComment(bin.ToString());
                     return OperatorMapping[bin.Operator](this, block, bin);
@@ -159,28 +132,6 @@ namespace Oberon0.Generator.Msil
                 default:
                     throw new NotImplementedException();
             }
-        }
-
-        private void LoadConstantExpression(ConstantExpression cons, ConstDeclaration declaration)
-        {
-            if (declaration != null)
-                Code.LoadConstRef(declaration);
-            else
-                Code.PushConst(cons.Value);
-        }
-
-        private Expression HandleVariableReferenceExpression(Block block, VariableReferenceExpression v)
-        {
-            if (v.IsConst)
-            {
-                LoadConstantExpression(((ConstDeclaration) v.Declaration).Value, (ConstDeclaration) v.Declaration);
-            }
-            else
-            {
-                Load(block, v.Declaration, v.Selector);
-            }
-
-            return v;
         }
 
         /// <summary>
@@ -218,6 +169,89 @@ namespace Oberon0.Generator.Msil
             }
         }
 
+        internal void StoreVar(Block block, Declaration assignmentVariable, VariableSelector selector)
+        {
+            BaseSelectorElement last = selector?.LastOrDefault();
+
+            if (last != null)
+            {
+                if (last is IndexSelector indexSelector)
+                    Code.EmitStelem(indexSelector);
+                if (last is IdentifierSelector identSelector)
+                {
+                    Code.EmitStfld(identSelector);
+                }
+            }
+            else
+            {
+                this.StoreSingletonVar(assignmentVariable, selector);
+            }
+        }
+
+        internal void StartStoreVar(Block block, Declaration assignmentVariable, VariableSelector selector)
+        {
+            if (selector != null && selector.Any())
+                Load(block, assignmentVariable, selector, true);
+        }
+
+        // "a <op> b" or "<op> a"
+        private static BinaryExpression HandleSimpleOperation(CodeGenerator generator, Block block, BinaryExpression bin)
+        {
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.IntType)
+            {
+                generator.LoadConstantExpression(ConstantIntExpression.Zero, null);
+            }
+
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.DecimalType)
+            {
+                generator.LoadConstantExpression(ConstantDoubleExpression.Zero, null);
+            }
+
+            generator.ExpressionCompiler(block, bin.LeftHandSide);
+            if (!bin.IsUnary)
+            {
+                generator.ExpressionCompiler(block, bin.RightHandSide);
+            }
+
+            generator.Code.Emit(SimpleInstructionMapping[bin.Operator]);
+            return bin;
+        }
+
+        // "a <rel> b" or "<rel> a" (aka ~)
+        private static BinaryExpression HandleRelOperation(CodeGenerator generator, Block block, BinaryExpression bin)
+        {
+            generator.ExpressionCompiler(block, bin.LeftHandSide);
+            if (!bin.IsUnary)
+                generator.ExpressionCompiler(block, bin.RightHandSide);
+            return bin;
+        }
+
+        private void StoreSingletonVar(Declaration assignmentVariable, VariableSelector selector)
+        {
+            if (assignmentVariable.Block.Parent == null && !(assignmentVariable is ProcedureParameter))
+            {
+                this.Code.Emit("stsfld", this.Code.GetTypeName(assignmentVariable.Type), $"{this.Code.ClassName}::{assignmentVariable.Name}");
+            }
+            else if (assignmentVariable.Type is RecordTypeDefinition && selector == null)
+            {
+                this.Code.Emit("stobj", "valuetype", $"{this.Code.ClassName}::{assignmentVariable.Name}");
+            }
+            else
+            {
+                var dgi = (DeclarationGeneratorInfo)assignmentVariable.GeneratorInfo;
+
+                // pp != null --> parameter otherwise local var
+                if (assignmentVariable is ProcedureParameter)
+                {
+                    this.Code.Emit("starg", dgi.Offset.ToString(CultureInfo.InvariantCulture));
+                }
+                else
+                {
+                    this.Code.Emit("stloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
+                }
+            }
+        }
+
         private void LoadComplexType(Block block, Declaration varDeclaration, VariableSelector selector, bool isStore)
         {
             foreach (BaseSelectorElement selectorElement in selector)
@@ -236,52 +270,26 @@ namespace Oberon0.Generator.Msil
             }
         }
 
-        internal void StoreVar(Block block, Declaration assignmentVariable, VariableSelector selector)
+        private Expression HandleVariableReferenceExpression(Block block, VariableReferenceExpression v)
         {
-            BaseSelectorElement last = selector?.LastOrDefault();
-
-            if (last != null)
+            if (v.IsConst)
             {
-                IndexSelector indexSelector = last as IndexSelector;
-                if (indexSelector != null)
-                    Code.EmitStelem(indexSelector);
-                IdentifierSelector identSelector = last as IdentifierSelector;
-                if (identSelector != null)
-                {
-                    Code.EmitStfld(identSelector);
-                }
+                LoadConstantExpression(((ConstDeclaration)v.Declaration).Value, (ConstDeclaration)v.Declaration);
             }
             else
             {
-                if (assignmentVariable.Block.Parent == null && !(assignmentVariable is ProcedureParameter))
-                {
-                    Code.Emit("stsfld", Code.GetTypeName(assignmentVariable.Type), $"{Code.ClassName}::{assignmentVariable.Name}");
-                }
-                else if (assignmentVariable.Type is RecordTypeDefinition && selector == null)
-                {
-                    Code.Emit("stobj", "valuetype", $"{Code.ClassName}::{assignmentVariable.Name}");
-                }
-                else
-                {
-                    var pp = assignmentVariable as ProcedureParameter;
-                    var dgi = (DeclarationGeneratorInfo) assignmentVariable.GeneratorInfo;
-                    // pp != null --> parameter otherwise local var
-                    if (pp != null)
-                    {
-                        Code.Emit("starg", dgi.Offset.ToString(CultureInfo.InvariantCulture));
-                    }
-                    else
-                    {
-                        Code.Emit("stloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
-                    }
-                }
+                Load(block, v.Declaration, v.Selector);
             }
+
+            return v;
         }
 
-        internal void StartStoreVar(Block block, Declaration assignmentVariable, VariableSelector selector)
+        private void LoadConstantExpression(ConstantExpression cons, ConstDeclaration declaration)
         {
-            if (selector != null && selector.Any())
-                Load(block, assignmentVariable, selector, true);
+            if (declaration != null)
+                Code.LoadConstRef(declaration);
+            else
+                Code.PushConst(cons.Value);
         }
     }
 }

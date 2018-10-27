@@ -268,7 +268,7 @@ namespace Oberon0.Generator.Msil
                     Emit("ldc.r8", ((decimal)data).ToString(CultureInfo.InvariantCulture));
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new IndexOutOfRangeException("Unknown data type");
             }
         }
 
@@ -335,9 +335,7 @@ namespace Oberon0.Generator.Msil
                         return constantExpression.ToBool() ? "1" : "0";
                     return constantExpression.ToBool().ToString().ToLower(CultureInfo.InvariantCulture);
                 default:
-                    throw new ArgumentOutOfRangeException(
-                        nameof(constantExpression.TargetType.BaseType),
-                        "Invalid type");
+                    throw new ArgumentOutOfRangeException(nameof(constantExpression), "Invalid type");
             }
         }
 
@@ -355,7 +353,7 @@ namespace Oberon0.Generator.Msil
                 case BaseType.VoidType:
                     return "void";
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(type.BaseType), "Invalid type");
+                    throw new ArgumentOutOfRangeException(nameof(type), "Invalid type");
             }
         }
 
