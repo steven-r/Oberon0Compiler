@@ -11,7 +11,7 @@ pull_requests:
   
 environment:
   SonarToken:
-    secure: +wTbJz9KGTWgbZs0XwkTvkyHzso0IwglDTd3d4CXC8DYT2B40D4DcjrmeEWDHSeU
+    secure: Yqq5NPe3TMsALEVm/5AQZIi47F1OOwB+cmzLvYHF5qfbQUdyFaZ/E1ZjtTC5qEgO
   
 assembly_info:
   patch: true
@@ -33,10 +33,10 @@ before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
-  - MSBuild.SonarQube.Runner.exe begin /k:"steven-r:Oberon0Compiler" /n:"Oberon 0 Compiler" /v:"%APPVEYOR_BUILD_VERSION%" /d:sonar.host.url=https://sonarqube.com /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml"
+  - SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml"
   
 test_script:
   - OpenCover.Console.exe -output:"%CD%\opencover.xml" -register:user -returntargetcode "-target:runtests_appveyor.bat" "-filter:+[*]* -[Oberon0.CompilerSupport]*"
   
 after_test:
-  - MSBuild.SonarQube.Runner.exe end /d:sonar.login=%SonarToken%
+  - SonarScanner.MSBuild.exe end /d:sonar.login=%SonarToken%
