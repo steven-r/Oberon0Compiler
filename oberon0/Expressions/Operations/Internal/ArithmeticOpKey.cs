@@ -41,6 +41,12 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
 
         public BaseType RightHandType { get; }
 
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            return Equals((ArithmeticOpKey)obj);
+        }
+
         public bool Equals(ArithmeticOpKey other)
         {
             if (other == null) return false;
