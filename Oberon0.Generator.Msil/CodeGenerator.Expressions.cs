@@ -34,32 +34,32 @@ namespace Oberon0.Generator.Msil
 
     public partial class CodeGenerator
     {
-        private static readonly Dictionary<int, Func<CodeGenerator, Block, BinaryExpression, Expression>> OperatorMapping = 
-            new Dictionary<int, Func<CodeGenerator, Block, BinaryExpression, Expression>>
-            {
-                {OberonGrammarLexer.PLUS, HandleSimpleOperation},
-                {OberonGrammarLexer.MINUS, HandleSimpleOperation},
-                {OberonGrammarLexer.MULT, HandleSimpleOperation},
-                {OberonGrammarLexer.DIV, HandleSimpleOperation},
-                {OberonGrammarLexer.MOD, HandleSimpleOperation},
-                {OberonGrammarLexer.EQUAL, HandleRelOperation},
-                {OberonGrammarLexer.NOTEQUAL, HandleRelOperation},
-                {OberonGrammarLexer.GT, HandleRelOperation},
-                {OberonGrammarLexer.GE, HandleRelOperation},
-                {OberonGrammarLexer.LT, HandleRelOperation},
-                {OberonGrammarLexer.LE, HandleRelOperation},
-                {OberonGrammarLexer.NOT, HandleRelOperation},
-            };
+        private static readonly Dictionary<int, Func<CodeGenerator, Block, BinaryExpression, Expression>>
+            OperatorMapping = new Dictionary<int, Func<CodeGenerator, Block, BinaryExpression, Expression>>
+                                  {
+                                      { OberonGrammarLexer.PLUS, HandleSimpleOperation },
+                                      { OberonGrammarLexer.MINUS, HandleSimpleOperation },
+                                      { OberonGrammarLexer.MULT, HandleSimpleOperation },
+                                      { OberonGrammarLexer.DIV, HandleSimpleOperation },
+                                      { OberonGrammarLexer.MOD, HandleSimpleOperation },
+                                      { OberonGrammarLexer.EQUAL, HandleRelOperation },
+                                      { OberonGrammarLexer.NOTEQUAL, HandleRelOperation },
+                                      { OberonGrammarLexer.GT, HandleRelOperation },
+                                      { OberonGrammarLexer.GE, HandleRelOperation },
+                                      { OberonGrammarLexer.LT, HandleRelOperation },
+                                      { OberonGrammarLexer.LE, HandleRelOperation },
+                                      { OberonGrammarLexer.NOT, HandleRelOperation },
+                                  };
 
-        private static readonly Dictionary<int, string> SimpleInstructionMapping = 
+        private static readonly Dictionary<int, string> SimpleInstructionMapping =
             new Dictionary<int, string>
-            {
-                {OberonGrammarLexer.PLUS, "add" },
-                {OberonGrammarLexer.DIV, "div" },
-                {OberonGrammarLexer.MULT, "mul" },
-                {OberonGrammarLexer.MINUS, "sub" },
-                {OberonGrammarLexer.MOD, "rem" },
-            };
+                {
+                    { OberonGrammarLexer.PLUS, "add" },
+                    { OberonGrammarLexer.DIV, "div" },
+                    { OberonGrammarLexer.MULT, "mul" },
+                    { OberonGrammarLexer.MINUS, "sub" },
+                    { OberonGrammarLexer.MOD, "rem" },
+                };
 
         public string DumpCode()
         {
@@ -78,15 +78,18 @@ namespace Oberon0.Generator.Msil
             {
                 generator.LoadConstantExpression(ConstantIntExpression.Zero, null);
             }
+
             if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.DecimalType)
             {
                 generator.LoadConstantExpression(ConstantDoubleExpression.Zero, null);
             }
+
             generator.ExpressionCompiler(block, bin.LeftHandSide);
             if (!bin.IsUnary)
             {
                 generator.ExpressionCompiler(block, bin.RightHandSide);
             }
+
             generator.Code.Emit(SimpleInstructionMapping[bin.Operator]);
             return bin;
         }
@@ -109,55 +112,53 @@ namespace Oberon0.Generator.Msil
         [NotNull]
         internal Expression ExpressionCompiler([NotNull] Block block, [NotNull] Expression expression)
         {
-            var eInfo = new ExpressionGeneratorInfo();
-            expression.GeneratorInfo = eInfo;
-            var v = expression as VariableReferenceExpression;
-            if (v != null)
-                return HandleVariableReferenceExpression(block, v);
-            var s = expression as StringExpression;
-            if (s != null)
-            {
+            var expressionGeneratorInfo = new ExpressionGeneratorInfo();
+            expression.GeneratorInfo = expressionGeneratorInfo;
 
-                string str = s.Value.Remove(0,1);
-                str = str.Remove(str.Length - 1);
-                str = str.Replace("''", "'");
-                Code.Emit("ldstr", $"\"{str}\"");
-                return s;
-            }
-            var bin = expression as BinaryExpression;
-            if (bin != null)
+            switch (expression)
             {
-                Code.EmitComment(bin.ToString());
-                return OperatorMapping[bin.Operator](this, block, bin);
-            }
-            var cons = expression as ConstantExpression;
-            if (cons != null)
-            {
-                LoadConstantExpression(cons, null);
-                return cons;
-            }
-            var fc = expression as FunctionCallExpression;
-            if (fc != null)
-            {
-                Code.EmitComment(fc.FunctionDeclaration.ToString());
-                int i = 0;
-                foreach (ProcedureParameter parameter in fc.FunctionDeclaration.Block.Declarations.OfType<ProcedureParameter>())
-                {
-                    if (parameter.IsVar)
+                case VariableReferenceExpression v:
+                    return this.HandleVariableReferenceExpression(block, v);
+                case StringExpression s:
                     {
-                        VariableReferenceExpression reference = (VariableReferenceExpression)fc.Parameters[i];
-                        Load(block, reference.Declaration, reference.Selector);
+                        string str = s.Value.Remove(0,1);
+                        str = str.Remove(str.Length - 1);
+                        str = str.Replace("''", "'");
+                        Code.Emit("ldstr", $"\"{str}\"");
+                        return s;
                     }
-                    else
+                case BinaryExpression bin:
+                    Code.EmitComment(bin.ToString());
+                    return OperatorMapping[bin.Operator](this, block, bin);
+                case ConstantExpression cons:
+                    LoadConstantExpression(cons, null);
+                    return cons;
+                case FunctionCallExpression fc:
                     {
-                        ExpressionCompiler(block, fc.Parameters[i]);
+                        this.Code.EmitComment(fc.FunctionDeclaration.ToString());
+                        int i = 0;
+                        foreach (ProcedureParameter parameter in fc.FunctionDeclaration.Block.Declarations.OfType<ProcedureParameter>())
+                        {
+                            if (parameter.IsVar)
+                            {
+                                VariableReferenceExpression reference = (VariableReferenceExpression)fc.Parameters[i];
+                                Load(block, reference.Declaration, reference.Selector);
+                            }
+                            else
+                            {
+                                ExpressionCompiler(block, fc.Parameters[i]);
+                            }
+
+                            i++;
+                        }
+
+                        Code.Call(fc.FunctionDeclaration);
+                        return fc;
                     }
-                    i++;
-                }
-                Code.Call(fc.FunctionDeclaration);
-                return fc;
+
+                default:
+                    throw new NotImplementedException();
             }
-            throw new NotImplementedException();
         }
 
         private void LoadConstantExpression(ConstantExpression cons, ConstDeclaration declaration)
@@ -178,6 +179,7 @@ namespace Oberon0.Generator.Msil
             {
                 Load(block, v.Declaration, v.Selector);
             }
+
             return v;
         }
 
@@ -197,8 +199,7 @@ namespace Oberon0.Generator.Msil
             else
             {
                 DeclarationGeneratorInfo dgi = (DeclarationGeneratorInfo)varDeclaration.GeneratorInfo;
-                ProcedureParameter pp = varDeclaration as ProcedureParameter;
-                if (pp != null)
+                if (varDeclaration is ProcedureParameter pp)
                 {
                     if (pp.IsVar)
                         Code.Emit("ldarga" + Code.DotNumOrArg(dgi.Offset, 0, 3, false));
@@ -210,23 +211,28 @@ namespace Oberon0.Generator.Msil
                     Code.Emit("ldloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
                 }
             }
+
             if (varDeclaration.Type.BaseType == BaseType.ComplexType && selector != null)
             {
-                foreach (BaseSelectorElement selectorElement in selector)
+                this.LoadComplexType(block, varDeclaration, selector, isStore);
+            }
+        }
+
+        private void LoadComplexType(Block block, Declaration varDeclaration, VariableSelector selector, bool isStore)
+        {
+            foreach (BaseSelectorElement selectorElement in selector)
+            {
+                if (selectorElement is IndexSelector ae)
                 {
-                    var ae = selectorElement as IndexSelector;
-                    if (ae != null)
-                    {
-                        var ad = (ArrayTypeDefinition)varDeclaration.Type;
-                        ExpressionCompiler(block, ae.IndexDefinition);
-                        if (!isStore)
-                            Code.EmitLdelem(ae, ad);
-                        continue;
-                    }
-                    var ie = selectorElement as IdentifierSelector;
-                    if (ie != null && !isStore)
-                        Code.Emit("ldfld", Code.GetTypeName(ie.Element.Type), $"{Code.GetTypeName(ie.Type)}::{ie.Name}");
+                    var ad = (ArrayTypeDefinition)varDeclaration.Type;
+                    this.ExpressionCompiler(block, ae.IndexDefinition);
+                    if (!isStore)
+                        this.Code.EmitLdelem(ae, ad);
+                    continue;
                 }
+
+                if (selectorElement is IdentifierSelector ie && !isStore)
+                    this.Code.Emit("ldfld", this.Code.GetTypeName(ie.Element.Type), $"{this.Code.GetTypeName(ie.Type)}::{ie.Name}");
             }
         }
 
