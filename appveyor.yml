@@ -33,5 +33,5 @@ after_test:
   - SonarScanner.MSBuild.exe end /d:sonar.login=%SonarToken%
 
 artifacts:
-- path: '%CD%\opencover.xml'
+- path: opencover.xml
   name: opencover
