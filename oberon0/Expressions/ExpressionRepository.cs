@@ -63,7 +63,7 @@ namespace Oberon0.Compiler.Expressions
         /// <param name="right">The right.</param>
         /// <returns>Lazy&lt;IArithmeticOperation, IArithmeticOpMetadata&gt;.</returns>
         [NotNull]
-        public ArithmeticOperation Get(int operation, BaseType left, BaseType right)
+        public ArithmeticOperation Get(int operation, BaseTypes left, BaseTypes right)
         {
             var key = new ArithmeticOpKey(operation, left, right);
             if (!ArithmeticOperations.TryGetValue(key, out var op))

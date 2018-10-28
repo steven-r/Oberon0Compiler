@@ -46,7 +46,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
                 generator.ExpressionCompiler(functionDeclaration.Block.Parent, parameters[0]);
             }
 
-            generator.Code.Emit("box", Code.GetTypeName(parameter.Type.BaseType));
+            generator.Code.Emit("box", Code.GetTypeName(parameter.Type.BaseTypes));
             generator.Code.Emit("call", "void", "[mscorlib]System.Console::Write(string, object)");
         }
     }

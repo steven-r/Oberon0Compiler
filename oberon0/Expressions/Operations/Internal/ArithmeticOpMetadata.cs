@@ -16,12 +16,12 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
 
     public class ArithmeticOpMetadata
     {
-        public BaseType LeftHandType { get; set; }
+        public BaseTypes LeftHandType { get; set; }
 
         public int Operation { get; set; }
 
-        public BaseType ResultType { get; set; }
+        public BaseTypes ResultType { get; set; }
 
-        public BaseType RightHandType { get; set; }
+        public BaseTypes RightHandType { get; set; }
     }
 }

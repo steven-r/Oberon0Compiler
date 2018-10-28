@@ -5,6 +5,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AssemblyName>Oberon0.Compiler.Tests</AssemblyName>
     <RootNamespace>Oberon0.Compiler.Tests</RootNamespace>
+    <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />

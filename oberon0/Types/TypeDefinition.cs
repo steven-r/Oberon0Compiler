@@ -21,18 +21,18 @@ namespace Oberon0.Compiler.Types
         /// </summary>
         public const string VoidTypeName = "$$VOID";
 
-        protected TypeDefinition(BaseType baseType)
+        protected TypeDefinition(BaseTypes baseTypes)
         {
-            this.BaseType = baseType;
+            this.BaseTypes = baseTypes;
         }
 
-        protected TypeDefinition(BaseType baseType, bool isInternal)
+        protected TypeDefinition(BaseTypes baseTypes, bool isInternal)
         {
-            this.BaseType = baseType;
+            this.BaseTypes = baseTypes;
             this.IsInternal = isInternal;
         }
 
-        public BaseType BaseType { get; }
+        public BaseTypes BaseTypes { get; }
 
         /// <summary>
         /// Gets or sets additional information used by the generator engine

@@ -85,11 +85,11 @@ namespace Oberon0.Compiler.Definitions
 
         private void DeclareStandardTypes()
         {
-            SimpleTypeDefinition.IntType = new SimpleTypeDefinition(BaseType.IntType, "INTEGER", true);
-            SimpleTypeDefinition.BoolType = new SimpleTypeDefinition(BaseType.BoolType, "BOOLEAN", true);
-            SimpleTypeDefinition.RealType = new SimpleTypeDefinition(BaseType.DecimalType, "REAL", true);
-            SimpleTypeDefinition.StringType = new SimpleTypeDefinition(BaseType.StringType, "STRING", true);
-            SimpleTypeDefinition.VoidType = new SimpleTypeDefinition(BaseType.VoidType, TypeDefinition.VoidTypeName,
+            SimpleTypeDefinition.IntType = new SimpleTypeDefinition(BaseTypes.IntType, "INTEGER", true);
+            SimpleTypeDefinition.BoolType = new SimpleTypeDefinition(BaseTypes.BoolType, "BOOLEAN", true);
+            SimpleTypeDefinition.RealType = new SimpleTypeDefinition(BaseTypes.DecimalType, "REAL", true);
+            SimpleTypeDefinition.StringType = new SimpleTypeDefinition(BaseTypes.StringType, "STRING", true);
+            SimpleTypeDefinition.VoidType = new SimpleTypeDefinition(BaseTypes.VoidType, TypeDefinition.VoidTypeName,
                 true);
             Block.Types.Add(SimpleTypeDefinition.IntType);
             Block.Types.Add(SimpleTypeDefinition.BoolType);

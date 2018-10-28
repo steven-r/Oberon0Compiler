@@ -7,6 +7,6 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
     {
         int Operation { get; }
 
-        BaseType ResultType { get; }
+        BaseTypes ResultType { get; }
     }
 }

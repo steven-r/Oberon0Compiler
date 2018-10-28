@@ -23,23 +23,23 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
     {
         public ArithmeticOpKey(
             int operation,
-            BaseType leftHandType,
-            BaseType rightHandType,
-            BaseType targetType = BaseType.AnyType)
+            BaseTypes leftHandType,
+            BaseTypes rightHandType,
+            BaseTypes targetTypes = BaseTypes.AnyType)
         {
             Operation = operation;
             LeftHandType = leftHandType;
             RightHandType = rightHandType;
-            ResultType = targetType;
+            ResultType = targetTypes;
         }
 
-        public BaseType LeftHandType { get; }
+        public BaseTypes LeftHandType { get; }
 
         public int Operation { get; }
 
-        public BaseType ResultType { get; }
+        public BaseTypes ResultType { get; }
 
-        public BaseType RightHandType { get; }
+        public BaseTypes RightHandType { get; }
 
         public override bool Equals(object obj)
         {

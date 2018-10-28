@@ -22,9 +22,9 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
     {
         public ArithmeticOperationAttribute(
             int operation,
-            BaseType leftHandType,
-            BaseType rightHandType,
-            BaseType resultType)
+            BaseTypes leftHandType,
+            BaseTypes rightHandType,
+            BaseTypes resultType)
             : base(typeof(IArithmeticOperation))
         {
             Operation = operation;
@@ -33,12 +33,12 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
             ResultType = resultType;
         }
 
-        public BaseType LeftHandType { get; set; }
+        public BaseTypes LeftHandType { get; set; }
 
         public int Operation { get; set; }
 
-        public BaseType ResultType { get; set; }
+        public BaseTypes ResultType { get; set; }
 
-        public BaseType RightHandType { get; set; }
+        public BaseTypes RightHandType { get; set; }
     }
 }

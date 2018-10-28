@@ -1,21 +1,24 @@
 #region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BaseType.cs" company="Stephen Reindl">
+// <copyright file="BaseTypes.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 // </copyright>
 // <summary>
-//     Part of oberon0 - Oberon0Compiler/BaseType.cs
+//     Part of oberon0 - Oberon0Compiler/BaseTypes.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
 namespace Oberon0.Compiler.Types
 {
+    using System;
+
     /// <summary>
     /// Standard types 
     /// </summary>
-    public enum BaseType
+    [Flags]
+    public enum BaseTypes
     {
         /// <summary>
         /// Standard integer

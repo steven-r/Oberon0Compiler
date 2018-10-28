@@ -163,7 +163,7 @@ namespace Oberon0.Generator.Msil
                 }
             }
 
-            if (varDeclaration.Type.BaseType == BaseType.ComplexType && selector != null)
+            if (varDeclaration.Type.BaseTypes == BaseTypes.ComplexType && selector != null)
             {
                 this.LoadComplexType(block, varDeclaration, selector, isStore);
             }
@@ -197,12 +197,12 @@ namespace Oberon0.Generator.Msil
         // "a <op> b" or "<op> a"
         private static BinaryExpression HandleSimpleOperation(CodeGenerator generator, Block block, BinaryExpression bin)
         {
-            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.IntType)
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseTypes == BaseTypes.IntType)
             {
                 generator.LoadConstantExpression(ConstantIntExpression.Zero, null);
             }
 
-            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseType == BaseType.DecimalType)
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseTypes == BaseTypes.DecimalType)
             {
                 generator.LoadConstantExpression(ConstantDoubleExpression.Zero, null);
             }

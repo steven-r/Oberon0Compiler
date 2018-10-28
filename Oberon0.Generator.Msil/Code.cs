@@ -65,13 +65,13 @@ namespace Oberon0.Generator.Msil
         {
             string suffix = string.Empty;
             string param = null;
-            switch (arrayTypeDefinition.BaseType)
+            switch (arrayTypeDefinition.BaseTypes)
             {
-                case BaseType.IntType:
-                case BaseType.BoolType:
+                case BaseTypes.IntType:
+                case BaseTypes.BoolType:
                     suffix = ".i4";
                     break;
-                case BaseType.DecimalType:
+                case BaseTypes.DecimalType:
                     suffix = ".r8";
                     break;
                 default:
@@ -96,19 +96,19 @@ namespace Oberon0.Generator.Msil
             return $".{value}";
         }
 
-        internal static string GetTypeName(BaseType type)
+        internal static string GetTypeName(BaseTypes type)
         {
             switch (type)
             {
-                case BaseType.IntType:
+                case BaseTypes.IntType:
                     return "int32";
-                case BaseType.StringType:
+                case BaseTypes.StringType:
                     return "string";
-                case BaseType.DecimalType:
+                case BaseTypes.DecimalType:
                     return "float64";
-                case BaseType.BoolType:
+                case BaseTypes.BoolType:
                     return "bool";
-                case BaseType.VoidType:
+                case BaseTypes.VoidType:
                     return "void";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), "Unsupported type");
@@ -159,13 +159,13 @@ namespace Oberon0.Generator.Msil
         {
             string suffix;
             string param = null;
-            switch (indexSelector.IndexDefinition.TargetType.BaseType)
+            switch (indexSelector.IndexDefinition.TargetType.BaseTypes)
             {
-                case BaseType.IntType:
-                case BaseType.BoolType:
+                case BaseTypes.IntType:
+                case BaseTypes.BoolType:
                     suffix = ".i4";
                     break;
-                case BaseType.DecimalType:
+                case BaseTypes.DecimalType:
                     suffix = ".r8";
                     break;
                 default:
@@ -204,9 +204,9 @@ namespace Oberon0.Generator.Msil
         internal string GetTypeName(TypeDefinition type)
         {
             // ReSharper disable once SwitchStatementMissingSomeCases
-            switch (type.BaseType)
+            switch (type.BaseTypes)
             {
-                case BaseType.ComplexType:
+                case BaseTypes.ComplexType:
                     if (type is ArrayTypeDefinition arrayTypeDefinition)
                     {
                         return $"{GetTypeName(arrayTypeDefinition.ArrayType)}[]";
@@ -219,7 +219,7 @@ namespace Oberon0.Generator.Msil
 
                     throw new ArgumentException("Array or record type is required", nameof(type));
                 default:
-                    return GetTypeName(type.BaseType);
+                    return GetTypeName(type.BaseTypes);
             }
         }
 
@@ -324,13 +324,13 @@ namespace Oberon0.Generator.Msil
             bool isLoad = false,
             bool isData = false)
         {
-            switch (constantExpression.TargetType.BaseType)
+            switch (constantExpression.TargetType.BaseTypes)
             {
-                case BaseType.IntType:
+                case BaseTypes.IntType:
                     return constantExpression.ToInt32().ToString();
-                case BaseType.DecimalType:
+                case BaseTypes.DecimalType:
                     return constantExpression.ToDouble().ToString("G");
-                case BaseType.BoolType:
+                case BaseTypes.BoolType:
                     if (isLoad || isData)
                         return constantExpression.ToBool() ? "1" : "0";
                     return constantExpression.ToBool().ToString().ToLower(CultureInfo.InvariantCulture);
@@ -341,16 +341,16 @@ namespace Oberon0.Generator.Msil
 
         private static string GetDataTypeName(TypeDefinition type)
         {
-            switch (type.BaseType)
+            switch (type.BaseTypes)
             {
-                case BaseType.BoolType:
-                case BaseType.IntType:
+                case BaseTypes.BoolType:
+                case BaseTypes.IntType:
                     return "int32";
-                case BaseType.StringType:
+                case BaseTypes.StringType:
                     return "string";
-                case BaseType.DecimalType:
+                case BaseTypes.DecimalType:
                     return "float64";
-                case BaseType.VoidType:
+                case BaseTypes.VoidType:
                     return "void";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), "Invalid type");

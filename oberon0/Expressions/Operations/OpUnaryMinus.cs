@@ -24,8 +24,8 @@ namespace Oberon0.Compiler.Expressions.Operations
     /// </summary>
     /// <seealso cref="IArithmeticOperation" />
     /// <remarks>This function is some kind of exception as - usually takes one parameter. The second is handled as a dummy</remarks>
-    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseType.IntType, BaseType.AnyType, BaseType.IntType)]
-    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseType.DecimalType, BaseType.AnyType, BaseType.DecimalType)]
+    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.IntType, BaseTypes.AnyType, BaseTypes.IntType)]
+    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.DecimalType, BaseTypes.AnyType, BaseTypes.DecimalType)]
     [UsedImplicitly]
     internal class OpUnaryMinus : BinaryOperation
     {
@@ -36,14 +36,14 @@ namespace Oberon0.Compiler.Expressions.Operations
         {
             if (bin.LeftHandSide.IsConst)
             {
-                switch (bin.LeftHandSide.TargetType.BaseType)
+                switch (bin.LeftHandSide.TargetType.BaseTypes)
                 {
-                    case BaseType.IntType:
+                    case BaseTypes.IntType:
                         ConstantIntExpression leftInt = (ConstantIntExpression)bin.LeftHandSide;
                         leftInt.Value = -(int)leftInt.Value;
                         return leftInt;
 
-                    case BaseType.DecimalType:
+                    case BaseTypes.DecimalType:
                         ConstantDoubleExpression leftDouble = (ConstantDoubleExpression)bin.LeftHandSide;
                         leftDouble.Value = -(decimal)leftDouble.Value;
                         return leftDouble;
