@@ -18,7 +18,7 @@ build:
 install:
   - choco install gitversion.portable -pre -y
   - choco install msbuild-sonarqube-runner -y
-  - "C:\Program Files\dotnet\dotnet.exe" tool install coverlet.console --tool-path tools
+  - dotnet tool install coverlet.console --tool-path tools
 
 before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
