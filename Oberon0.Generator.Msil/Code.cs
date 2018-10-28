@@ -268,7 +268,7 @@ namespace Oberon0.Generator.Msil
                     Emit("ldc.r8", ((decimal)data).ToString(CultureInfo.InvariantCulture));
                     break;
                 default:
-                    throw new IndexOutOfRangeException("Unknown data type");
+                    throw new ArgumentOutOfRangeException(nameof(data), "Unknown data type");
             }
         }
 
