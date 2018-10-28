@@ -30,27 +30,27 @@ namespace Oberon0.Compiler.Expressions.Operations
     internal class OpUnaryMinus : BinaryOperation
     {
         protected override Expression BinaryOperate(
-            BinaryExpression e,
+            BinaryExpression bin,
             Block block,
             IArithmeticOpMetadata operationParameters)
         {
-            if (e.LeftHandSide.IsConst)
+            if (bin.LeftHandSide.IsConst)
             {
-                switch (e.LeftHandSide.TargetType.BaseType)
+                switch (bin.LeftHandSide.TargetType.BaseType)
                 {
                     case BaseType.IntType:
-                        ConstantIntExpression leftInt = (ConstantIntExpression)e.LeftHandSide;
+                        ConstantIntExpression leftInt = (ConstantIntExpression)bin.LeftHandSide;
                         leftInt.Value = -(int)leftInt.Value;
                         return leftInt;
 
                     case BaseType.DecimalType:
-                        ConstantDoubleExpression leftDouble = (ConstantDoubleExpression)e.LeftHandSide;
+                        ConstantDoubleExpression leftDouble = (ConstantDoubleExpression)bin.LeftHandSide;
                         leftDouble.Value = -(decimal)leftDouble.Value;
                         return leftDouble;
                 }
             }
 
-            return e; // expression remains the same
+            return bin; // expression remains the same
         }
     }
 }
