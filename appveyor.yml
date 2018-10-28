@@ -25,6 +25,7 @@ install:
   - choco install gitversion.portable -pre -y
   - choco install msbuild-sonarqube-runner -y
   - dotnet tool install coverlet.console --tool-path tools
+  - choco install codecov -y
 
 before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
@@ -34,8 +35,8 @@ before_build:
   
 test_script:
   - tools\coverlet .\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll " --format json --output .\msil-tests.json --exclude "[NUnit3*]*"
-  - tools\coverlet .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll " --format opencover --output .\opencover.xml --exclude "[NUnit3*]*" --merge-with .\msil-tests.json
+  - tools\coverlet .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll " --format opencover --output "%CD%\opencover.xml" --exclude "[NUnit3*]*" --merge-with .\msil-tests.json
 
 after_test:
   - SonarScanner.MSBuild.exe end /d:sonar.login=%SonarToken%
-
+  - codecov -f "%CD%\opencover.xml" -t "07e9dbc6-d0d9-4b46-8fc8-7d0ec4bf46f3"
