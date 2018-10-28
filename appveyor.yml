@@ -18,8 +18,8 @@ build:
 install:
   - choco install gitversion.portable -pre -y
   - choco install msbuild-sonarqube-runner -y
-  - choco install opencover.portable -y
-  
+  - "C:\Program Files\dotnet\dotnet.exe" tool install coverlet.console --tool-path tools
+
 before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
@@ -27,11 +27,9 @@ before_build:
   - SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%"
   
 test_script:
-  - OpenCover.Console.exe -output:"%CD%\opencover.xml" -register:user -returntargetcode "-target:runtests_appveyor.bat" 
+  - tools\coverlet .\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.Tests.dll --target "dotnet" --targetargs "test Oberon0.Generator.Msil.Tests\Oberon0.Generator.Msil.Tests.csproj --no-build" --format json --output .\msil-tests.json --exclude "[NUnit3*]*"
+  - tools\coverlet .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll --target "dotnet" --targetargs "test UnitTestProject1\Oberon0Compiler.Tests.csproj --no-build" --format opencover --output "%CD%\opencover.xml" --exclude "[NUnit3*]*"
   
 after_test:
   - SonarScanner.MSBuild.exe end /d:sonar.login=%SonarToken%
 
-artifacts:
-- path: opencover.xml
-  name: opencover
