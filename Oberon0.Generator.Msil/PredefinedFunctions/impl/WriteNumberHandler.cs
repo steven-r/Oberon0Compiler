@@ -30,11 +30,11 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
         public void Generate(
             IStandardFunctionMetadata metadata,
             CodeGenerator generator,
-            FunctionDeclaration callExpression,
+            FunctionDeclaration functionDeclaration,
             List<Expression> parameters,
             Block block)
         {
-            ProcedureParameter parameter = callExpression.Block.Declarations.OfType<ProcedureParameter>().First();
+            ProcedureParameter parameter = functionDeclaration.Block.Declarations.OfType<ProcedureParameter>().First();
             generator.Code.Emit("ldstr", "\"{0}\"");
             if (parameter.IsVar)
             {
@@ -43,7 +43,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
             }
             else
             {
-                generator.ExpressionCompiler(callExpression.Block.Parent, parameters[0]);
+                generator.ExpressionCompiler(functionDeclaration.Block.Parent, parameters[0]);
             }
 
             generator.Code.Emit("box", Code.GetTypeName(parameter.Type.BaseType));

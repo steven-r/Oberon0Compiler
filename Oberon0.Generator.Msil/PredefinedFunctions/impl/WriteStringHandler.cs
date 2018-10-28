@@ -27,7 +27,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
         public void Generate(
             IStandardFunctionMetadata metadata,
             CodeGenerator generator,
-            FunctionDeclaration callExpression,
+            FunctionDeclaration functionDeclaration,
             List<Expression> parameters,
             Block block)
         {

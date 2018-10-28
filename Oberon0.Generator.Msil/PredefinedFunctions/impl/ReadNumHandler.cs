@@ -28,7 +28,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
         public void Generate(
             IStandardFunctionMetadata metadata,
             CodeGenerator generator,
-            FunctionDeclaration callExpression,
+            FunctionDeclaration functionDeclaration,
             List<Expression> parameters,
             Block block)
         {
@@ -36,7 +36,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
 
             generator.StartStoreVar(block, reference.Declaration, reference.Selector);
             generator.Code.WriteLine("\tcall string [mscorlib]System.Console::ReadLine()");
-            switch (callExpression.Name)
+            switch (functionDeclaration.Name)
             {
                 case "ReadInt":
                     generator.Code.WriteLine("\tcall int32 [mscorlib]System.Int32::Parse(string)");
