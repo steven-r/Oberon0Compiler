@@ -41,7 +41,7 @@ VAR
  END Test.");
 
             Assert.AreNotEqual(null, m.Block.LookupVar("id"));
-            Assert.AreEqual(BaseType.IntType, m.Block.LookupVar("id").Type.BaseType);
+            Assert.AreEqual(BaseTypes.IntType, m.Block.LookupVar("id").Type.BaseTypes);
         }
 
         [Test]
@@ -90,10 +90,10 @@ VAR
 
             var id = m.Block.LookupVar("id");
             Assert.AreNotEqual(null, id);
-            Assert.AreEqual(BaseType.IntType, id.Type.BaseType);
+            Assert.AreEqual(BaseTypes.IntType, id.Type.BaseTypes);
             var id1 = m.Block.LookupVar("id1");
             Assert.AreNotEqual(null, id1);
-            Assert.AreEqual(BaseType.IntType, id1.Type.BaseType);
+            Assert.AreEqual(BaseTypes.IntType, id1.Type.BaseTypes);
         }
 
         [Test]
@@ -107,9 +107,9 @@ VAR
             var id = m.Block.LookupVar("id");
             var id1 = m.Block.LookupVar("id1");
             Assert.AreNotEqual(null, id);
-            Assert.AreEqual(BaseType.IntType, id.Type.BaseType);
+            Assert.AreEqual(BaseTypes.IntType, id.Type.BaseTypes);
             Assert.AreNotEqual(null, id1);
-            Assert.AreEqual(BaseType.IntType, id1.Type.BaseType);
+            Assert.AreEqual(BaseTypes.IntType, id1.Type.BaseTypes);
         }
 
         [Test]

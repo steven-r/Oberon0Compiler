@@ -6,13 +6,13 @@ namespace Oberon0.Compiler.Types
     public class RecordTypeDefinition : TypeDefinition
     {
         public RecordTypeDefinition()
-            : base(BaseType.ComplexType)
+            : base(BaseTypes.ComplexType)
         {
             Elements = new List<Declaration>();
         }
 
         public RecordTypeDefinition(string name)
-            :base(BaseType.ComplexType)
+            :base(BaseTypes.ComplexType)
         {
             Name = name;
             Elements = new List<Declaration>();

@@ -6,7 +6,7 @@ using Oberon0.CompilerSupport;
 namespace Oberon0.Compiler.Tests
 {
     [TestFixture]
-    class ConstTests
+    public class ConstTests
     {
         [Test]
         public void ConstConstExpr()

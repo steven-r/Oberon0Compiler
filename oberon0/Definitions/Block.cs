@@ -116,11 +116,11 @@ namespace Oberon0.Compiler.Definitions
         }
 
         /// <summary>
-        /// Lookups the type based on <see cref="BaseType"/>.
+        /// Lookups the type based on <see cref="BaseTypes"/>.
         /// </summary>
-        /// <param name="baseType">Type.</param>
+        /// <param name="baseTypes">The base type.</param>
         /// <returns>TypeDefinition.</returns>
-        public TypeDefinition LookupTypeByBaseType(BaseType baseType)
+        public TypeDefinition LookupTypeByBaseType(BaseTypes baseTypes)
         {
             Block b = this;
             // internal types are only available on level 0
@@ -128,7 +128,7 @@ namespace Oberon0.Compiler.Definitions
             {
                 b = b.Parent;
             }
-            var res = b.Types.FirstOrDefault(x => x.BaseType == baseType && x.IsInternal);
+            var res = b.Types.FirstOrDefault(x => x.BaseTypes == baseTypes && x.IsInternal);
             return res;
         }
 
@@ -157,7 +157,7 @@ namespace Oberon0.Compiler.Definitions
                 bool found = true;
                 for (int i = 0; i < parameters.Count; i++)
                 {
-                    if (paramList[i].Type.BaseType != parameters[i].TargetType.BaseType)
+                    if (paramList[i].Type.BaseTypes != parameters[i].TargetType.BaseTypes)
                     {
                         found = false;
                         break;

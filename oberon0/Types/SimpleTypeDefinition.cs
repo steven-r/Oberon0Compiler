@@ -31,29 +31,29 @@ namespace Oberon0.Compiler.Types
         /// </summary>
         public static TypeDefinition VoidType { get; set; }
 
-        public SimpleTypeDefinition(BaseType baseType)
-            : base(baseType)
+        public SimpleTypeDefinition(BaseTypes baseTypes)
+            : base(baseTypes)
         {
-            if ((baseType & BaseType.SimpleType) == 0)
+            if ((baseTypes & BaseTypes.SimpleType) == 0)
             {
                 throw new InvalidCastException("Cannot create a nonsimple type with SimpleTypeDefinition");
             }
         }
 
-        public SimpleTypeDefinition(BaseType baseType, string name)
-            : base(baseType)
+        public SimpleTypeDefinition(BaseTypes baseTypes, string name)
+            : base(baseTypes)
         {
             Name = name;
-            if ((baseType & BaseType.SimpleType) == 0)
+            if ((baseTypes & BaseTypes.SimpleType) == 0)
             {
                 throw new InvalidCastException("Cannot create a nonsimple type with SimpleTypeDefinition");
             }
         }
 
-        public SimpleTypeDefinition(BaseType baseType, string name, bool isInternal)
-            : base(baseType, isInternal)
+        public SimpleTypeDefinition(BaseTypes baseTypes, string name, bool isInternal)
+            : base(baseTypes, isInternal)
         {
-            if ((baseType & BaseType.SimpleType) == 0)
+            if ((baseTypes & BaseTypes.SimpleType) == 0)
             {
                 throw new InvalidCastException("Cannot create a nonsimple type with SimpleTypeDefinition");
             }
@@ -68,7 +68,7 @@ namespace Oberon0.Compiler.Types
 
         public override TypeDefinition Clone(string name)
         {
-            return new SimpleTypeDefinition(BaseType, name);
+            return new SimpleTypeDefinition(this.BaseTypes, name);
         }
     }
 }

@@ -50,22 +50,4 @@ END Test.";
             Assert.AreEqual("1\n", outputData.NlFix());
         }
     }
-
-
-    static class Test1
-    {
-        class NEstedClass
-        {
-            public int a;
-            public int b;
-        }
-
-        private static NEstedClass s;
-
-        static void Test1Demo()
-        {
-            s = new NEstedClass();
-            s.a = 1;
-        }
-    }
 }

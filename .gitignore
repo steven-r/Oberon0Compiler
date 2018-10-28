@@ -244,3 +244,5 @@ ModelManifest.xml
 .fake/
 /.cr/Settings.xml
 /lib/$RANDOM_SEED$
+opencover.xml
+/tools

@@ -1,44 +1,57 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Expressions.Operations.Internal;
-using Oberon0.Compiler.Types;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="OpRelop.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0Compiler/OpRelop.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Compiler.Expressions.Operations
 {
-    [Export(typeof(IArithmeticOperation))]
-    [ArithmeticOperation(OberonGrammarLexer.GT, BaseType.IntType, BaseType.IntType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.GT, BaseType.IntType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.GT, BaseType.DecimalType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.GT, BaseType.DecimalType, BaseType.IntType, BaseType.BoolType)]
+    using System;
 
-    [ArithmeticOperation(OberonGrammarLexer.GE, BaseType.IntType, BaseType.IntType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.GE, BaseType.IntType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.GE, BaseType.DecimalType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.GE, BaseType.DecimalType, BaseType.IntType, BaseType.BoolType)]
+    using JetBrains.Annotations;
 
-    [ArithmeticOperation(OberonGrammarLexer.LT, BaseType.IntType, BaseType.IntType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.LT, BaseType.IntType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.LT, BaseType.DecimalType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.LT, BaseType.DecimalType, BaseType.IntType, BaseType.BoolType)]
+    using Oberon0.Compiler.Definitions;
+    using Oberon0.Compiler.Expressions.Constant;
+    using Oberon0.Compiler.Expressions.Operations.Internal;
+    using Oberon0.Compiler.Types;
 
-    [ArithmeticOperation(OberonGrammarLexer.LE, BaseType.IntType, BaseType.IntType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.LE, BaseType.IntType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.LE, BaseType.DecimalType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.LE, BaseType.DecimalType, BaseType.IntType, BaseType.BoolType)]
-
-    [ArithmeticOperation(OberonGrammarLexer.NOTEQUAL, BaseType.IntType, BaseType.IntType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.NOTEQUAL, BaseType.IntType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.NOTEQUAL, BaseType.DecimalType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.NOTEQUAL, BaseType.DecimalType, BaseType.IntType, BaseType.BoolType)]
-
-    [ArithmeticOperation(OberonGrammarLexer.EQUAL, BaseType.IntType, BaseType.IntType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.EQUAL, BaseType.IntType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.EQUAL, BaseType.DecimalType, BaseType.DecimalType, BaseType.BoolType)]
-    [ArithmeticOperation(OberonGrammarLexer.EQUAL, BaseType.DecimalType, BaseType.IntType, BaseType.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.GT, BaseTypes.IntType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.GT, BaseTypes.IntType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.GT, BaseTypes.DecimalType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.GT, BaseTypes.DecimalType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.GE, BaseTypes.IntType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.GE, BaseTypes.IntType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.GE, BaseTypes.DecimalType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.GE, BaseTypes.DecimalType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.LT, BaseTypes.IntType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.LT, BaseTypes.IntType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.LT, BaseTypes.DecimalType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.LT, BaseTypes.DecimalType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.LE, BaseTypes.IntType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.LE, BaseTypes.IntType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.LE, BaseTypes.DecimalType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.LE, BaseTypes.DecimalType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.NOTEQUAL, BaseTypes.IntType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.NOTEQUAL, BaseTypes.IntType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.NOTEQUAL, BaseTypes.DecimalType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.NOTEQUAL, BaseTypes.DecimalType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.EQUAL, BaseTypes.IntType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.EQUAL, BaseTypes.IntType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.EQUAL, BaseTypes.DecimalType, BaseTypes.DecimalType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.EQUAL, BaseTypes.DecimalType, BaseTypes.IntType, BaseTypes.BoolType)]
+    [UsedImplicitly]
     internal class OpRelOp : BinaryOperation
     {
-        protected override Expression BinaryOperate(BinaryExpression bin, Block block, IArithmeticOpMetadata operationParameters)
+        protected override Expression BinaryOperate(
+            BinaryExpression bin,
+            Block block,
+            IArithmeticOpMetadata operationParameters)
         {
             if (bin.LeftHandSide.IsConst && bin.RightHandSide.IsConst)
             {
@@ -68,8 +81,10 @@ namespace Oberon0.Compiler.Expressions.Operations
                     default:
                         throw new InvalidOperationException("Unknown comparison");
                 }
+
                 return new ConstantBoolExpression(res);
             }
+
             return bin; // expression remains the same
         }
     }

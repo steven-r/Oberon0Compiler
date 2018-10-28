@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0Compiler", "oberon0\Oberon0Compiler.csproj", "{FE7E3848-F08B-45EA-8083-353BDA6BCC92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oberon0Compiler", "oberon0\Oberon0Compiler.csproj", "{FE7E3848-F08B-45EA-8083-353BDA6BCC92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0Compiler.Tests", "UnitTestProject1\Oberon0Compiler.Tests.csproj", "{A73899C5-E473-4C83-B844-557F70D89AE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oberon0Compiler.Tests", "UnitTestProject1\Oberon0Compiler.Tests.csproj", "{A73899C5-E473-4C83-B844-557F70D89AE2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BD26F1AC-2AAF-4F42-851B-69FCAD750DD7}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,17 +16,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE.md = LICENSE.md
 		README.md = README.md
 		runtests_appveyor.bat = runtests_appveyor.bat
+		stylecop.json = stylecop.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.Generator.Msil", "Oberon0.Generator.Msil\Oberon0.Generator.Msil.csproj", "{595E6037-EE61-48F6-88CA-64FC56EC368D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oberon0.Generator.Msil", "Oberon0.Generator.Msil\Oberon0.Generator.Msil.csproj", "{595E6037-EE61-48F6-88CA-64FC56EC368D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.Generator.Msil.Tests", "Oberon0.Generator.Msil.Tests\Oberon0.Generator.Msil.Tests.csproj", "{B6EED4F1-9799-4111-9170-E71E0F7066A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oberon0.Generator.Msil.Tests", "Oberon0.Generator.Msil.Tests\Oberon0.Generator.Msil.Tests.csproj", "{B6EED4F1-9799-4111-9170-E71E0F7066A7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{6485043F-55F6-48B1-AC01-C178B0F2C167}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.System", "Oberon0.System\Oberon0.System.csproj", "{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.CompilerSupport", "Oberon0.CompilerSupport\Oberon0.CompilerSupport.csproj", "{1E57AA6C-EFB8-4485-AB7F-020C41959378}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oberon0.CompilerSupport", "Oberon0.CompilerSupport\Oberon0.CompilerSupport.csproj", "{1E57AA6C-EFB8-4485-AB7F-020C41959378}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -143,5 +144,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027} = {6485043F-55F6-48B1-AC01-C178B0F2C167}
 		{1E57AA6C-EFB8-4485-AB7F-020C41959378} = {6485043F-55F6-48B1-AC01-C178B0F2C167}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {20CCD7D0-3C73-44E1-9D01-3D6487B302B1}
 	EndGlobalSection
 EndGlobal

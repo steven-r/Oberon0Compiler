@@ -1,18 +1,22 @@
-﻿using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Types;
-
+﻿
 namespace Oberon0.Generator.Msil.PredefinedFunctions
 {
-    internal class StandardFunctionGeneratorListElement: IStandardFunctionMetadata
+    using System.Diagnostics;
+
+    using Oberon0.Compiler.Definitions;
+    using Oberon0.Compiler.Types;
+
+    [DebuggerDisplay("Function {" + nameof(InstanceKey) + "}")]
+    internal class StandardFunctionGeneratorListElement : IStandardFunctionMetadata
     {
         /// <summary>
-        /// The instance handling the standard function
+        /// Gets or sets the instance handling the standard function
         /// </summary>
         /// <value>The instance.</value>
         public IStandardFunctionGenerator Instance { get; set; }
 
         /// <summary>
-        /// The lookup key to find the appropriate function
+        /// Gets or sets the lookup key to find the appropriate function
         /// </summary>
         /// <value>The instance key.</value>
         public string InstanceKey { get; set; }

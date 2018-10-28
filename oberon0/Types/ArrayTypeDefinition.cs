@@ -3,14 +3,14 @@ namespace Oberon0.Compiler.Types
     public class ArrayTypeDefinition : TypeDefinition
     {
         public ArrayTypeDefinition(int size, TypeDefinition baseType)
-            :base(BaseType.ComplexType)
+            :base(BaseTypes.ComplexType)
         {
             Size = size;
             ArrayType = baseType;
         }
 
         public ArrayTypeDefinition(int size, TypeDefinition baseType, string name)
-            :base(BaseType.ComplexType)
+            :base(BaseTypes.ComplexType)
         {
             Size = size;
             ArrayType = baseType;

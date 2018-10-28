@@ -6,8 +6,10 @@ using Oberon0.Compiler.Solver;
 
 namespace Oberon0.Compiler.Tests
 {
+    using Oberon0.Compiler.Expressions.Constant;
+
     [TestFixture]
-    public class SimpleExpressionTest
+    public class SimpleExpressionTests
     {
         [Test]
         public void ExpressionAdd1()

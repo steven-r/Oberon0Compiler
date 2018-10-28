@@ -1,24 +1,38 @@
-﻿using System.IO;
-using System.Text;
-using NUnit.Framework;
-using Oberon0.Compiler;
-using Oberon0.Compiler.Definitions;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ArrayTests.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0.Generator.Msil.Tests/ArrayTests.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Generator.Msil.Tests.Arrays
 {
+    using System.IO;
+    using System.Text;
+
+    using NUnit.Framework;
+
+    using Oberon0.Compiler;
+    using Oberon0.Compiler.Definitions;
+
     [TestFixture]
     public class ArrayTests
     {
         [Test]
         public void SimpleArrayDefinition()
         {
-            const string source = @"MODULE Array;
+            const string Source = @"MODULE Array;
 VAR 
   a: ARRAY 32 OF INTEGER;
   b: ARRAY 32 OF BOOLEAN;
 
 END Array.";
-            Module m = Oberon0Compiler.CompileString(source);
+            Module m = Oberon0Compiler.CompileString(Source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -29,15 +43,15 @@ END Array.";
             {
                 cg.DumpCode(w);
             }
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(sb.ToString(), null, out outputData));
+
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(sb.ToString(), null, out var outputData));
             Assert.IsTrue(string.IsNullOrEmpty(outputData));
         }
 
         [Test]
         public void SimpleArrayDefinitionLocal()
         {
-            const string source = @"MODULE Array;
+            const string Source = @"MODULE Array;
 VAR 
   a: ARRAY 32 OF INTEGER;
   b: ARRAY 32 OF INTEGER;
@@ -59,22 +73,21 @@ BEGIN
   WriteInt(s);
   WriteLn
 END Array.";
-            Module m = Oberon0Compiler.CompileString(source);
+            Module m = Oberon0Compiler.CompileString(Source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
             cg.Generate();
-            string code = cg.DumpCode();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            var code = cg.DumpCode();
+
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual("1024\n", outputData.NlFix());
         }
-
 
         [Test]
         public void SimpleArraySetAndGetValueGlobal()
         {
-            const string source = @"MODULE Array;
+            const string Source = @"MODULE Array;
 VAR 
   a: ARRAY 32 OF INTEGER;
   n: INTEGER;
@@ -85,7 +98,7 @@ BEGIN
   WriteInt(n);
   WriteLn
 END Array.";
-            Module m = Oberon0Compiler.CompileString(source);
+            Module m = Oberon0Compiler.CompileString(Source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -96,9 +109,9 @@ END Array.";
             {
                 cg.DumpCode(w);
             }
-            string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+
+            var code = sb.ToString();
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual("1\n", outputData.NlFix());
         }
     }

@@ -20,7 +20,7 @@ namespace Oberon0.Compiler.Definitions
             {
                 Block.Declarations.AddRange(parameters);
             }
-            ReturnType = new SimpleTypeDefinition(BaseType.VoidType);
+            ReturnType = new SimpleTypeDefinition(BaseTypes.VoidType);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Oberon0.Compiler.Definitions
         public override string ToString()
         {
             return $"{(IsInternal?"internal ": string.Empty)}{ReturnType:G} {Name}("
-                + string.Join(", ", Block.Declarations.OfType<ProcedureParameter>().Select(x => x.Type.BaseType.ToString("G"))) + ")";
+                + string.Join(", ", Block.Declarations.OfType<ProcedureParameter>().Select(x => x.Type.BaseTypes.ToString("G"))) + ")";
         }
     }
 }
