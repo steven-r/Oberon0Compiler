@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <AssemblyName>Oberon0.Compiler.Tests</AssemblyName>
     <RootNamespace>Oberon0.Compiler.Tests</RootNamespace>
   </PropertyGroup>
