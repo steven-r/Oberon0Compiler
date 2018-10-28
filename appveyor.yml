@@ -30,4 +30,8 @@ test_script:
   - OpenCover.Console.exe -output:"%CD%\opencover.xml" -register:user -returntargetcode "-target:runtests_appveyor.bat" 
   
 after_test:
-  - SonarScanner.MSBuild.exe end /d:sonar.login=%SonarToken%
+  - SonarScanner.MSBuild.exe end 
+
+artifacts:
+- path: '%CD%\opencover.xml'
+  name: opencover
