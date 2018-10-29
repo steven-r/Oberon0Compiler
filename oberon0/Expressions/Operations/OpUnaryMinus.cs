@@ -12,6 +12,8 @@
 
 namespace Oberon0.Compiler.Expressions.Operations
 {
+    using System;
+
     using JetBrains.Annotations;
 
     using Oberon0.Compiler.Definitions;
@@ -47,6 +49,9 @@ namespace Oberon0.Compiler.Expressions.Operations
                         ConstantDoubleExpression leftDouble = (ConstantDoubleExpression)bin.LeftHandSide;
                         leftDouble.Value = -(decimal)leftDouble.Value;
                         return leftDouble;
+
+                    default:
+                        throw new ArgumentException($"Cannot perform unary minus on {bin.LeftHandSide.TargetType.BaseTypes}");
                 }
             }
 
