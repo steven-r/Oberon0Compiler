@@ -1,26 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using Oberon0.Compiler;
-using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Tests;
-using Oberon0.CompilerSupport;
-using Oberon0.Generator.Msil.Tests.Arrays;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="OperationTests.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0.Generator.Msil.Tests/OperationTests.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Generator.Msil.Tests.Operations
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+
+    using NUnit.Framework;
+
+    using Oberon0.Compiler;
+    using Oberon0.Compiler.Definitions;
+    using Oberon0.Compiler.Tests;
+    using Oberon0.CompilerSupport;
+
     [TestFixture]
     public class OperationTests
     {
         [Test]
         public void TestAddConstConst()
         {
-            const string source = @"MODULE Array;
+            string source = @"MODULE Array;
 BEGIN
   WriteInt(1+2);
   WriteLn
@@ -35,44 +45,16 @@ END Array.";
             {
                 cg.DumpCode(w);
             }
-            string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
-            Assert.AreEqual("3\n", outputData.NlFix());
-        }
 
-        [Test]
-        public void TestAddVarConst()
-        {
-            const string source = @"MODULE Array;
-VAR
-  a: INTEGER;
-
-BEGIN
-  a := 1;
-  WriteInt(a+2);
-  WriteLn
-END Array.";
-            Module m = Oberon0Compiler.CompileString(source);
-
-            CodeGenerator cg = new CodeGenerator(m);
-
-            cg.Generate();
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter w = new StringWriter(sb))
-            {
-                cg.DumpCode(w);
-            }
-            string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            var code = sb.ToString();
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual("3\n", outputData.NlFix());
         }
 
         [Test]
         public void TestAddConstVar()
         {
-            const string source = @"MODULE Array;
+            string source = @"MODULE Array;
 VAR
   a: INTEGER;
 
@@ -91,17 +73,74 @@ END Array.";
             {
                 cg.DumpCode(w);
             }
+
             string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual("3\n", outputData.NlFix());
         }
 
+        [Test]
+        public void TestAddVarConst()
+        {
+            string source = @"MODULE Array;
+VAR
+  a: INTEGER;
+
+BEGIN
+  a := 1;
+  WriteInt(a+2);
+  WriteLn
+END Array.";
+            Module m = Oberon0Compiler.CompileString(source);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                cg.DumpCode(w);
+            }
+
+            string code = sb.ToString();
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.AreEqual("3\n", outputData.NlFix());
+        }
+
+        [Test]
+        public void TestAddVarNegConstVar()
+        {
+            string source = @"MODULE Array;
+VAR
+  a: INTEGER;
+  b: INTEGER;
+
+BEGIN
+  a := 1;
+  b := -2;
+  WriteInt(b+a);
+  WriteLn
+END Array.";
+            Module m = Oberon0Compiler.CompileString(source);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                cg.DumpCode(w);
+            }
+
+            string code = sb.ToString();
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.AreEqual("-1\n", outputData.NlFix());
+        }
 
         [Test]
         public void TestAddVarVar()
         {
-            const string source = @"MODULE Array;
+            string source = @"MODULE Array;
 VAR
   a: INTEGER;
   b: INTEGER;
@@ -122,46 +161,16 @@ END Array.";
             {
                 cg.DumpCode(w);
             }
+
             string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual("3\n", outputData.NlFix());
-        }
-
-        [Test]
-        public void TestAddVarNegConstVar()
-        {
-            const string source = @"MODULE Array;
-VAR
-  a: INTEGER;
-  b: INTEGER;
-
-BEGIN
-  a := 1;
-  b := -2;
-  WriteInt(b+a);
-  WriteLn
-END Array.";
-            Module m = Oberon0Compiler.CompileString(source);
-
-            CodeGenerator cg = new CodeGenerator(m);
-
-            cg.Generate();
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter w = new StringWriter(sb))
-            {
-                cg.DumpCode(w);
-            }
-            string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
-            Assert.AreEqual("-1\n", outputData.NlFix());
         }
 
         [Test]
         public void TestMulVarNegConstVar()
         {
-            const string source = @"MODULE Array;
+            string source = @"MODULE Array;
 VAR
   a: INTEGER;
   b: INTEGER;
@@ -182,16 +191,16 @@ END Array.";
             {
                 cg.DumpCode(w);
             }
+
             string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual("-2\n", outputData.NlFix());
         }
 
         [Test]
         public void TestNegAssignmentInt()
         {
-            const string source = @"MODULE Array;
+            string source = @"MODULE Array;
 VAR
   b: INTEGER;
 
@@ -209,39 +218,16 @@ END Array.";
             {
                 cg.DumpCode(w);
             }
+
             string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual("-2\n", outputData.NlFix());
-        }
-
-        [Test]
-        public void TestNegReal()
-        {
-            const string source = @"MODULE Array;
-BEGIN
-  WriteReal(-2.5)
-END Array.";
-            Module m = Oberon0Compiler.CompileString(source);
-
-            CodeGenerator cg = new CodeGenerator(m);
-
-            cg.Generate();
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter w = new StringWriter(sb))
-            {
-                cg.DumpCode(w);
-            }
-            string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
-            Assert.AreEqual($"{-2.5}\n", outputData.NlFix());
         }
 
         [Test]
         public void TestNegIntVar()
         {
-            const string source = @"MODULE Array;
+            string source = @"MODULE Array;
 VAR
   a: INTEGER;
 
@@ -263,17 +249,39 @@ END Array.";
             {
                 cg.DumpCode(w);
             }
+
             string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual("-1\n1\n", outputData.NlFix());
         }
 
+        [Test]
+        public void TestNegReal()
+        {
+            string source = @"MODULE Array;
+BEGIN
+  WriteReal(-2.5)
+END Array.";
+            Module m = Oberon0Compiler.CompileString(source);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                cg.DumpCode(w);
+            }
+
+            string code = sb.ToString();
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.AreEqual($"{-2.5}\n", outputData.NlFix());
+        }
 
         [Test]
         public void TestNegRealVar()
         {
-            const string source = @"MODULE Array;
+            string source = @"MODULE Array;
 VAR
   a: REAL;
 
@@ -296,12 +304,11 @@ END Array.";
             {
                 cg.DumpCode(w);
             }
+
             string code = sb.ToString();
-            string outputData;
             Assert.AreEqual(0, errors.Count());
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual($"{-1.5}\n{1.5}\n", outputData.NlFix());
         }
-
     }
 }
