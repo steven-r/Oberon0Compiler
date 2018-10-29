@@ -1,8 +1,11 @@
 # Oberon-0 Compiler
 
-[![Build status-dev](https://ci.appveyor.com/api/projects/status/pcc7f0s3bq7m6sfh/branch/develop?svg=true)](https://ci.appveyor.com/project/steven-r/oberon0compiler/branch/develop)
-[![Build status-main](https://ci.appveyor.com/api/projects/status/pcc7f0s3bq7m6sfh/branch/main?svg=true)](https://ci.appveyor.com/project/steven-r/oberon0compiler/branch/main)
-[![QUality](https://sonarqube.com/api/badges/gate?key=steven-r:Oberon0Compiler)](https://sonarqube.com/api/badges/gate?key=steven-r:Oberon0Compiler)
+[![Build status](https://ci.appveyor.com/api/projects/status/pcc7f0s3bq7m6sfh?svg=true)](https://ci.appveyor.com/project/steven-r/oberon0compiler)
+[![QUality](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=alert_status)](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=alert_status)
+[![codecov](https://codecov.io/gh/steven-r/Oberon0Compiler/branch/master/graph/badge.svg)](https://codecov.io/gh/steven-r/Oberon0Compiler)
+[![GitHub license](https://img.shields.io/github/license/steven-r/Oberon0Compiler.svg)](https://github.com/steven-r/Oberon0Compiler/blob/master/LICENSE.md)
+![GitHub release](https://img.shields.io/github/release/steven-r/Oberon0Compiler.svg)
+
 
 An implementation of N. Wirths Oberon 0 language implemented with C# and ANTLR.
 
