@@ -1,18 +1,49 @@
-﻿using System.Collections.Generic;
-using NUnit.Framework;
-using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Types;
-using Oberon0.CompilerSupport;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="VarDeclarationTests.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0Compiler.Tests/VarDeclarationTests.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Compiler.Tests
 {
+    using System.Collections.Generic;
+
+    using NUnit.Framework;
+
+    using Oberon0.Compiler.Definitions;
+    using Oberon0.Compiler.Types;
+    using Oberon0.CompilerSupport;
+
     [TestFixture]
     public class VarDeclarationTests
     {
         [Test]
+        public void ArrayFailBooleanIndex()
+        {
+            List<CompilerError> errors = new List<CompilerError>();
+            TestHelper.CompileString(
+                @"MODULE Test; 
+
+VAR
+  id: ARRAY TRUE OF INTEGER;
+ END Test.",
+                errors);
+
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("The array size must return a constant integer expression", errors[0].Message);
+        }
+
+        [Test]
         public void ArrayOfArray()
         {
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   id: ARRAY 5 OF ARRAY 10 OF INTEGER;
  END Test.");
@@ -35,7 +66,8 @@ VAR
         [Test]
         public void OneVar()
         {
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   id: INTEGER;
  END Test.");
@@ -47,7 +79,8 @@ VAR
         [Test]
         public void SimpleArray()
         {
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   id: ARRAY 5 OF INTEGER;
  END Test.");
@@ -64,25 +97,10 @@ VAR
         }
 
         [Test]
-        public void ArrayFailBooleanIndex()
-        {
-            List<CompilerError> errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(@"MODULE Test; 
-
-VAR
-  id: ARRAY TRUE OF INTEGER;
- END Test.", errors);
-
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("The array size must return a constant integer expression", errors[0].Message);
-        }
-
-
-        [Test]
-
         public void TwoVars1()
         {
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   id: INTEGER;
   id1: INTEGER;
@@ -99,7 +117,8 @@ VAR
         [Test]
         public void TwoVars2()
         {
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   id, id1: INTEGER;
  END Test.");
@@ -116,11 +135,13 @@ VAR
         public void TwoVarsFail1()
         {
             List<CompilerError> errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   id: INTEGER;
   id: INTEGER;
- END Test.", errors);
+ END Test.",
+                errors);
             Assert.AreEqual(1, errors.Count);
             Assert.AreEqual("Variable declared twice", errors[0].Message);
         }
@@ -129,34 +150,55 @@ VAR
         public void TwoVarsFail2()
         {
             List<CompilerError> errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   id, id: INTEGER;
- END Test.", errors);
+ END Test.",
+                errors);
             Assert.AreEqual(1, errors.Count);
             Assert.AreEqual("Variable declared twice", errors[0].Message);
+        }
+
+        [Test]
+        public void VarArrayNotConst()
+        {
+            var errors = new List<CompilerError>();
+            TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+    id: INTEGER;
+    arr: ARRAY id OF INTEGER;
+
+ END Test.",
+                errors);
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("The array size must return a constant integer expression", errors[0].Message);
         }
 
         [Test]
         public void VarWithoutId()
         {
             List<CompilerError> errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
- END Test.", errors);
+ END Test.",
+                errors);
             Assert.AreEqual(3, errors.Count);
         }
-
 
         [Test]
         public void VarWithoutWrongType()
         {
             List<CompilerError> errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
     id: DUMMY;
 
- END Test.", errors);
+ END Test.",
+                errors);
             Assert.AreEqual(1, errors.Count);
             Assert.AreEqual("Type not known", errors[0].Message);
         }
