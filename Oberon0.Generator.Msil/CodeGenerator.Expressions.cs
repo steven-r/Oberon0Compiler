@@ -143,12 +143,9 @@ namespace Oberon0.Generator.Msil
                     throw new NotImplementedException();
             }
 
-            if (targetType != null && targetType.Type.HasFlag(BaseTypes.Simple))
+            if (targetType != null && targetType.Type.HasFlag(BaseTypes.Simple) && targetType.Type != expression.TargetType.Type)
             {
-                if (targetType.Type != expression.TargetType.Type)
-                {
-                    Code.Emit("call", Code.GetTypeName(targetType), BuildConvertString(targetType.Type, expression.TargetType.Type));
-                }
+                Code.Emit("call", Code.GetTypeName(targetType), BuildConvertString(targetType.Type, expression.TargetType.Type));
             }
 
             return result;
@@ -158,10 +155,6 @@ namespace Oberon0.Generator.Msil
         {
             switch (target)
             {
-                case BaseTypes.Int:
-                    return $"[mscorlib]System.Convert::ToInt32({Code.GetTypeName(source)})";
-                case BaseTypes.String:
-                    return $"{Code.GetTypeName(source)}::ToString()";
                 case BaseTypes.Decimal:
                     return $"[mscorlib]System.Convert::ToDouble({Code.GetTypeName(source)})";
                 case BaseTypes.Bool:
