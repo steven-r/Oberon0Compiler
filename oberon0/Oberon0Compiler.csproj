@@ -7,6 +7,9 @@
     <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="OberonGrammar.g4~RF2f655433.TMP" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Antlr4" Version="4.6.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
