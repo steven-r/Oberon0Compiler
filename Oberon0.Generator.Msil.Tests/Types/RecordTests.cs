@@ -1,24 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using Oberon0.Compiler;
-using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Tests;
-using Oberon0.CompilerSupport;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="RecordTests.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0.Generator.Msil.Tests/RecordTests.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Generator.Msil.Tests.Types
 {
+    using System.IO;
+    using System.Text;
+
+    using NUnit.Framework;
+
+    using Oberon0.Compiler;
+    using Oberon0.Compiler.Definitions;
+
     [TestFixture]
     public class RecordTests
     {
         [Test]
         public void Test1()
         {
-            const string source = @"MODULE Test; 
+            string source = @"MODULE Test; 
 TYPE 
   rType = RECORD
     a: INTEGER;
@@ -44,9 +52,9 @@ END Test.";
             {
                 cg.DumpCode(w);
             }
+
             string code = sb.ToString();
-            string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual("1\n", outputData.NlFix());
         }
     }
