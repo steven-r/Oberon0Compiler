@@ -76,12 +76,9 @@ namespace Oberon0.Compiler
             }
 
             Expression e = ConstantSolver.Solve(context.r.expReturn, context.bParam);
-            if ((targetType.BaseTypes == BaseTypes.ComplexType && e.TargetType.BaseTypes != BaseTypes.ComplexType)
-                || (targetType.BaseTypes == BaseTypes.ComplexType && e.TargetType.BaseTypes == BaseTypes.ComplexType
-                                                                && targetType != e.TargetType)
-                || (targetType.BaseTypes != e.TargetType.BaseTypes))
+            if (!targetType.IsAssignable(e.TargetType))
             {
-                this.parser.NotifyErrorListeners(context.id, $"Left & right side do not match types", null);
+                this.parser.NotifyErrorListeners(context.id, "Left & right side do not match types", null);
                 return;
             }
 
@@ -129,7 +126,7 @@ namespace Oberon0.Compiler
         {
             foreach (OberonGrammarParser.RelationalExpressionContext expressionContext in context._c)
             {
-                if (expressionContext.expReturn.TargetType.BaseTypes != BaseTypes.BoolType)
+                if (expressionContext.expReturn.TargetType.Type != BaseTypes.Bool)
                 {
                     this.parser.NotifyErrorListeners(
                         expressionContext.start,
@@ -158,7 +155,7 @@ namespace Oberon0.Compiler
                 return;
             }
 
-            if (fp.ReturnType.BaseTypes != BaseTypes.VoidType)
+            if (fp.ReturnType.Type != BaseTypes.Void)
             {
                 this.parser.NotifyErrorListeners(
                     context.id,
@@ -181,12 +178,12 @@ namespace Oberon0.Compiler
             for (int i = 0; i < parameters.Length; i++)
             {
                 parameters[i] = ConstantSolver.Solve(parameters[i], context.bParam);
-                if (procParameters[i].Type.BaseTypes == BaseTypes.AnyType)
+                if (procParameters[i].Type.Type == BaseTypes.Any)
                 {
                     continue;
                 }
 
-                if (procParameters[i].Type.BaseTypes != parameters[i].TargetType.BaseTypes)
+                if (procParameters[i].Type.Type != parameters[i].TargetType.Type)
                 {
                     this.parser.NotifyErrorListeners(
                         context.id,
@@ -313,9 +310,9 @@ namespace Oberon0.Compiler
             vs.AddRange(context._i.Select(selElement => selElement.selRet));
             if (!vs.Any()) return;
 
-            if (context.type.Type.BaseTypes != BaseTypes.ComplexType)
+            if (context.type.Type.Type.HasFlag(BaseTypes.Simple))
             {
-                this.parser.NotifyErrorListeners(context.start, "Simple variables do not allow any selector", null);
+                parser.NotifyErrorListeners(context.start, "Simple variables do not allow any selector", null);
                 return;
             }
 
@@ -485,7 +482,7 @@ namespace Oberon0.Compiler
             }
 
             indexSelector.IndexDefinition = ConstantSolver.Solve(indexSelector.IndexDefinition, context.bParam);
-            if (indexSelector.IndexDefinition.TargetType.BaseTypes != BaseTypes.IntType)
+            if (indexSelector.IndexDefinition.TargetType.Type != BaseTypes.Int)
             {
                 this.parser.NotifyErrorListeners(indexSelector.Token, "Array reference must be INTEGER", null);
                 return null;

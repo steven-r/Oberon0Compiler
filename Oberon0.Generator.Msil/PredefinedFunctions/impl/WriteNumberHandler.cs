@@ -36,7 +36,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
             Block block)
         {
             ProcedureParameter parameter = functionDeclaration.Block.Declarations.OfType<ProcedureParameter>().First();
-            if ((parameter.Type.BaseTypes & BaseTypes.SimpleType) == 0)
+            if ((parameter.Type.Type & BaseTypes.Simple) == 0)
             {
                 throw new ArgumentException("Argument must be simple type", nameof(parameters));
             }
@@ -51,7 +51,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
                 generator.ExpressionCompiler(functionDeclaration.Block.Parent, parameters[0]);
             }
 
-            generator.Code.Emit("call", "void", $"[mscorlib]System.Console::Write({Code.GetTypeName(parameter.Type.BaseTypes)})");
+            generator.Code.Emit("call", "void", $"[mscorlib]System.Console::Write({Code.GetTypeName(parameter.Type.Type)})");
         }
     }
 }

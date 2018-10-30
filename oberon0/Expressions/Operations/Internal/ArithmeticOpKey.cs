@@ -25,7 +25,7 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
             int operation,
             BaseTypes leftHandType,
             BaseTypes rightHandType,
-            BaseTypes targetTypes = BaseTypes.AnyType)
+            BaseTypes targetTypes = BaseTypes.Any)
         {
             Operation = operation;
             LeftHandType = leftHandType;

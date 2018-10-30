@@ -26,7 +26,7 @@ namespace Oberon0.Compiler.Expressions.Operations
     /// </summary>
     /// <seealso cref="IArithmeticOperation" />
     /// <remarks>This function is some kind of exception as ~ usually takes one parameter. The second is handled as a dummy</remarks>
-    [ArithmeticOperation(OberonGrammarLexer.NOT, BaseTypes.BoolType, BaseTypes.AnyType, BaseTypes.BoolType)]
+    [ArithmeticOperation(OberonGrammarLexer.NOT, BaseTypes.Bool, BaseTypes.Any, BaseTypes.Bool)]
     [UsedImplicitly]
     internal class OpNotBool : BinaryOperation
     {

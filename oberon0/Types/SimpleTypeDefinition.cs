@@ -1,42 +1,27 @@
-using System;
-using Oberon0.Compiler.Definitions;
+#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SimpleTypeDefinition.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0Compiler/SimpleTypeDefinition.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Compiler.Types
 {
-    public class SimpleTypeDefinition: TypeDefinition
+    using System;
+
+    public class SimpleTypeDefinition : TypeDefinition
     {
-        /// <summary>
-        /// Global reference to "INTEGER".
-        /// </summary>
-        public static TypeDefinition IntType { get; set; }
-
-
-        /// <summary>
-        /// Global reference to "BOOLEAN".
-        /// </summary>
-        public static TypeDefinition BoolType { get; set; }
-
-        /// <summary>
-        /// Global reference to "REAL".
-        /// </summary>
-        public static TypeDefinition RealType { get; set; }
-
-        /// <summary>
-        /// Global reference to "STRING".
-        /// </summary>
-        public static TypeDefinition StringType { get; set; }
-
-        /// <summary>
-        /// Global reference to "VOID".
-        /// </summary>
-        public static TypeDefinition VoidType { get; set; }
-
         public SimpleTypeDefinition(BaseTypes baseTypes)
             : base(baseTypes)
         {
-            if ((baseTypes & BaseTypes.SimpleType) == 0)
+            if ((baseTypes & BaseTypes.Simple) == 0)
             {
-                throw new InvalidCastException("Cannot create a nonsimple type with SimpleTypeDefinition");
+                throw new InvalidCastException("Cannot create a non-simple type with SimpleTypeDefinition");
             }
         }
 
@@ -44,31 +29,62 @@ namespace Oberon0.Compiler.Types
             : base(baseTypes)
         {
             Name = name;
-            if ((baseTypes & BaseTypes.SimpleType) == 0)
+            if ((baseTypes & BaseTypes.Simple) == 0)
             {
-                throw new InvalidCastException("Cannot create a nonsimple type with SimpleTypeDefinition");
+                throw new InvalidCastException("Cannot create a non-simple type with SimpleTypeDefinition");
             }
         }
 
         public SimpleTypeDefinition(BaseTypes baseTypes, string name, bool isInternal)
             : base(baseTypes, isInternal)
         {
-            if ((baseTypes & BaseTypes.SimpleType) == 0)
-            {
-                throw new InvalidCastException("Cannot create a nonsimple type with SimpleTypeDefinition");
-            }
             Name = name;
+            if ((baseTypes & BaseTypes.Simple) == 0)
+            {
+                throw new InvalidCastException("Cannot create a non-simple type with SimpleTypeDefinition");
+            }
         }
 
+        /// <summary>
+        /// Gets or sets the global reference to "BOOLEAN".
+        /// </summary>
+        public static TypeDefinition BoolType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the global reference to "INTEGER".
+        /// </summary>
+        public static TypeDefinition IntType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the global reference to "REAL".
+        /// </summary>
+        public static TypeDefinition RealType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the global reference to "STRING".
+        /// </summary>
+        public static TypeDefinition StringType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the global reference to "VOID".
+        /// </summary>
+        public static TypeDefinition VoidType { get; set; }
+
+        public override TypeDefinition Clone(string name)
+        {
+            return new SimpleTypeDefinition(this.Type, name);
+        }
+
+        public override bool IsAssignable(TypeDefinition sourceType)
+        {
+            return sourceType.Type == this.Type // same simple type
+                   || (sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Decimal)
+                   || (sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Bool);
+        }
 
         public override string ToString()
         {
             return Name;
-        }
-
-        public override TypeDefinition Clone(string name)
-        {
-            return new SimpleTypeDefinition(this.BaseTypes, name);
         }
     }
 }

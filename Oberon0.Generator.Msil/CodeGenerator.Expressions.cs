@@ -80,32 +80,41 @@ namespace Oberon0.Generator.Msil
         /// </summary>
         /// <param name="block">The block.</param>
         /// <param name="expression">The expression.</param>
-        /// <returns>The register</returns>
+        /// <param name="targetType">The target type to assign to (if needed)</param>
+        /// <returns>The expression generated</returns>
         [NotNull]
-        internal Expression ExpressionCompiler([NotNull] Block block, [NotNull] Expression expression)
+        internal Expression ExpressionCompiler([NotNull] Block block, [NotNull] Expression expression, TypeDefinition targetType = null)
         {
             var expressionGeneratorInfo = new ExpressionGeneratorInfo();
             expression.GeneratorInfo = expressionGeneratorInfo;
+            Expression result;
 
             switch (expression)
             {
                 case VariableReferenceExpression v:
-                    return this.HandleVariableReferenceExpression(block, v);
+                    result = HandleVariableReferenceExpression(block, v);
+                    break;
+
                 case StringExpression s:
                     {
                         string str = s.Value.Remove(0, 1);
                         str = str.Remove(str.Length - 1);
                         str = str.Replace("''", "'");
                         Code.Emit("ldstr", $"\"{str}\"");
-                        return s;
+                        result = s;
                     }
+                    break;
 
                 case BinaryExpression bin:
                     Code.EmitComment(bin.ToString());
-                    return OperatorMapping[bin.Operator](this, block, bin);
+                    result = OperatorMapping[bin.Operator](this, block, bin);
+                    break;
+
                 case ConstantExpression cons:
                     LoadConstantExpression(cons, null);
-                    return cons;
+                    result = cons;
+                    break;
+
                 case FunctionCallExpression fc:
                     {
                         this.Code.EmitComment(fc.FunctionDeclaration.ToString());
@@ -126,11 +135,39 @@ namespace Oberon0.Generator.Msil
                         }
 
                         Code.Call(fc.FunctionDeclaration);
-                        return fc;
+                        result = fc;
                     }
+                    break;
 
                 default:
                     throw new NotImplementedException();
+            }
+
+            if (targetType != null && targetType.Type.HasFlag(BaseTypes.Simple))
+            {
+                if (targetType.Type != expression.TargetType.Type)
+                {
+                    Code.Emit("call", Code.GetTypeName(targetType), BuildConvertString(targetType.Type, expression.TargetType.Type));
+                }
+            }
+
+            return result;
+        }
+
+        private string BuildConvertString(BaseTypes target, BaseTypes source)
+        {
+            switch (target)
+            {
+                case BaseTypes.Int:
+                    return $"[mscorlib]System.Convert::ToInt32({Code.GetTypeName(source)})";
+                case BaseTypes.String:
+                    return $"{Code.GetTypeName(source)}::ToString()";
+                case BaseTypes.Decimal:
+                    return $"[mscorlib]System.Convert::ToDouble({Code.GetTypeName(source)})";
+                case BaseTypes.Bool:
+                    return $"[mscorlib]System.Convert::ToBoolean({Code.GetTypeName(source)})";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(target), target.ToString("F"), null);
             }
         }
 
@@ -163,7 +200,7 @@ namespace Oberon0.Generator.Msil
                 }
             }
 
-            if (varDeclaration.Type.BaseTypes == BaseTypes.ComplexType && selector != null)
+            if (varDeclaration.Type.Type.HasFlag(BaseTypes.Complex) && selector != null)
             {
                 this.LoadComplexType(block, varDeclaration, selector, isStore);
             }
@@ -176,7 +213,10 @@ namespace Oberon0.Generator.Msil
             if (last != null)
             {
                 if (last is IndexSelector indexSelector)
+                {
                     Code.EmitStelem(indexSelector);
+                }
+
                 if (last is IdentifierSelector identSelector)
                 {
                     Code.EmitStfld(identSelector);
@@ -184,7 +224,7 @@ namespace Oberon0.Generator.Msil
             }
             else
             {
-                this.StoreSingletonVar(assignmentVariable, selector);
+                StoreSingletonVar(assignmentVariable, selector);
             }
         }
 
@@ -197,12 +237,12 @@ namespace Oberon0.Generator.Msil
         // "a <op> b" or "<op> a"
         private static BinaryExpression HandleSimpleOperation(CodeGenerator generator, Block block, BinaryExpression bin)
         {
-            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseTypes == BaseTypes.IntType)
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.Type == BaseTypes.Int)
             {
                 generator.LoadConstantExpression(ConstantIntExpression.Zero, null);
             }
 
-            if (bin.IsUnary && bin.LeftHandSide.TargetType.BaseTypes == BaseTypes.DecimalType)
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.Type == BaseTypes.Decimal)
             {
                 generator.LoadConstantExpression(ConstantDoubleExpression.Zero, null);
             }

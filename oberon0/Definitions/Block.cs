@@ -128,7 +128,7 @@ namespace Oberon0.Compiler.Definitions
             {
                 b = b.Parent;
             }
-            var res = b.Types.FirstOrDefault(x => x.BaseTypes == baseTypes && x.IsInternal);
+            var res = b.Types.FirstOrDefault(x => x.Type == baseTypes && x.IsInternal);
             return res;
         }
 
@@ -157,7 +157,7 @@ namespace Oberon0.Compiler.Definitions
                 bool found = true;
                 for (int i = 0; i < parameters.Count; i++)
                 {
-                    if (paramList[i].Type.BaseTypes != parameters[i].TargetType.BaseTypes)
+                    if (paramList[i].Type.Type != parameters[i].TargetType.Type)
                     {
                         found = false;
                         break;

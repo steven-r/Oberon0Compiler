@@ -26,8 +26,8 @@ namespace Oberon0.Compiler.Expressions.Operations
     /// </summary>
     /// <seealso cref="IArithmeticOperation" />
     /// <remarks>This function is some kind of exception as - usually takes one parameter. The second is handled as a dummy</remarks>
-    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.IntType, BaseTypes.AnyType, BaseTypes.IntType)]
-    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.DecimalType, BaseTypes.AnyType, BaseTypes.DecimalType)]
+    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.Int, BaseTypes.Any, BaseTypes.Int)]
+    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.Decimal, BaseTypes.Any, BaseTypes.Decimal)]
     [UsedImplicitly]
     internal class OpUnaryMinus : BinaryOperation
     {
@@ -38,20 +38,20 @@ namespace Oberon0.Compiler.Expressions.Operations
         {
             if (bin.LeftHandSide.IsConst)
             {
-                switch (bin.LeftHandSide.TargetType.BaseTypes)
+                switch (bin.LeftHandSide.TargetType.Type)
                 {
-                    case BaseTypes.IntType:
+                    case BaseTypes.Int:
                         ConstantIntExpression leftInt = (ConstantIntExpression)bin.LeftHandSide;
                         leftInt.Value = -(int)leftInt.Value;
                         return leftInt;
 
-                    case BaseTypes.DecimalType:
+                    case BaseTypes.Decimal:
                         ConstantDoubleExpression leftDouble = (ConstantDoubleExpression)bin.LeftHandSide;
                         leftDouble.Value = -(decimal)leftDouble.Value;
                         return leftDouble;
 
                     default:
-                        throw new ArgumentException($"Cannot perform unary minus on {bin.LeftHandSide.TargetType.BaseTypes}");
+                        throw new ArgumentException($"Cannot perform unary minus on {bin.LeftHandSide.TargetType.Type}");
                 }
             }
 
