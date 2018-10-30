@@ -33,11 +33,6 @@ namespace Oberon0.Compiler
             this.parser = parser;
         }
 
-        public override void EnterTermConstant(OberonGrammarParser.TermConstantContext context)
-        {
-            context.expReturn = ConstantExpression.Create(context.c.Text);
-        }
-
         public override void ExitArraySelector(OberonGrammarParser.ArraySelectorContext context)
         {
             context.selRet = new IndexSelector(context.e.expReturn, context.start);
