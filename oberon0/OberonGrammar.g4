@@ -201,7 +201,8 @@ expressionPrefix[Block bParam]
 
 expressionTerm[Block bParam]
 	returns[Expression expReturn]
-	: {isVar(CurrentToken.Text, $bParam)}? id=ID s=selector[bParam, $bParam.LookupVar($id.text)]				#termSingleId
+	: b=BooleanConstant							#termBoolConst
+	| {isVar(CurrentToken.Text, $bParam)}? id=ID s=selector[bParam, $bParam.LookupVar($id.text)]				#termSingleId
 	| {!isVar(CurrentToken.Text, $bParam)}? 
 		id=ID '(' cp=callParameters[bParam]? ')'	#termFuncCall
 	| c=Constant								#termConstant
@@ -234,6 +235,8 @@ Constant
 	;
 
 IntegerConstant: DigitSequence;
+
+BooleanConstant: 'true' | 'false';
 
 fragment
 FloatingConstant

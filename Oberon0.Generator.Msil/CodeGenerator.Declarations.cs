@@ -1,17 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : Oberon0.Generator.Msil
-// Author           : stephen@stephenreindl.net
-// Created          : 10-23-2016
-//
-// Last Modified By : stephen@stephenreindl.net
-// Last Modified On : 01-08-2017
-// ***********************************************************************
-// <copyright file="CodeGenerator.Declarations.cs" company="Reindl IT">
-//     Copyright ©  2016
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-using System.Linq;
+﻿using System.Linq;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Types;
 
@@ -26,15 +13,13 @@ namespace Oberon0.Generator.Msil
             bool isFirst = true;
             foreach (Declaration declaration in block.Declarations)
             {
-                var pp = declaration as ProcedureParameter;
-                if (pp != null)
+                if (declaration is ProcedureParameter pp)
                 {
                     // skip procedure parameters
                     continue;
                 }
 
-                var c = declaration as ConstDeclaration;
-                if (c != null)
+                if (declaration is ConstDeclaration c)
                 {
                     Code.ConstField(c);
                     continue;
@@ -62,6 +47,7 @@ namespace Oberon0.Generator.Msil
             if (!isFirst)
                 Code.WriteLine(")");
         }
+
         private void GenerateTypeDeclarations(Block block)
         {
             foreach (var typeDefinition in block.Types.Where(x => x is RecordTypeDefinition))
@@ -93,16 +79,15 @@ namespace Oberon0.Generator.Msil
         {
             foreach (Declaration declaration in block.Declarations.Where(x => x.Type.BaseTypes == BaseTypes.ComplexType))
             {
-                var vd = declaration.Type as ArrayTypeDefinition;
-                if (vd != null)
+                if (declaration.Type is ArrayTypeDefinition vd)
                 {
                     Code.PushConst(vd.Size);
                     Code.Emit("newarr", Code.GetTypeName(vd.ArrayType.BaseTypes));
                     StoreVar(block, declaration, null);
                     continue;
                 }
-                var rd = declaration.Type as RecordTypeDefinition;
-                if (rd != null)
+
+                if (declaration.Type is RecordTypeDefinition rd)
                 {
                     Code.Emit("newobj", "instance void", $"{Code.ClassName}/{rd.Name}::.ctor()");
                     StoreVar(block, declaration, null);

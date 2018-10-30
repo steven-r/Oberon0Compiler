@@ -45,30 +45,6 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
             return func;
         }
 
-        public static void RegisterLibraryFunction(
-            [NotNull] string name,
-            [NotNull] TypeDefinition returnType,
-            params ProcedureParameter[] parameters)
-        {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            if (returnType == null) throw new ArgumentNullException(nameof(returnType));
-
-            var names = name.Split('.');
-            if (names.Length != 2) throw new ArgumentException("name must contain Library", nameof(name));
-
-            StandardFunctionGeneratorListElement element = new StandardFunctionGeneratorListElement
-                                                               {
-                                                                   Instance = LibraryCodeGenerator.Instance,
-                                                                   Name = names[1],
-                                                                   ReturnType = returnType,
-                                                                   AdditionalInfo = names[0],
-                                                                   ParameterTypes = parameters
-                                                               };
-            element.InstanceKey =
-                $"{element.Name}/{element.ReturnType.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.Name))}";
-            standardFunctionList.Add(element);
-        }
-
         internal static void Initialize(Module module)
         {
             var configuration = new ContainerConfiguration().WithAssembly(typeof(IStandardFunctionGenerator).Assembly);

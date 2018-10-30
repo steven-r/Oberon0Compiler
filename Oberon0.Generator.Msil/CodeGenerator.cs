@@ -90,24 +90,23 @@ namespace Oberon0.Generator.Msil
             InitComplexData(block);
             foreach (var statement in block.Statements)
             {
-                var assignment = statement as AssignmentStatement;
-                if (assignment != null)
+                if (statement is AssignmentStatement assignment)
                 {
                     StartStoreVar(block, assignment.Variable, assignment.Selector);
                     ExpressionCompiler(block, assignment.Expression);
                     StoreVar(block, assignment.Variable, assignment.Selector);
                 }
-                var ifStmt = statement as IfStatement;
-                if (ifStmt != null)
+
+                if (statement is IfStatement ifStmt)
                     GenerateIfStatement(ifStmt, block);
-                var whileStmt = statement as WhileStatement;
-                if (whileStmt != null)
+
+                if (statement is WhileStatement whileStmt)
                     GenerateWhileStatement(whileStmt, block);
-                var repeatStmt = statement as RepeatStatement;
-                if (repeatStmt != null)
+
+                if (statement is RepeatStatement repeatStmt)
                     GenerateRepeatStatement(repeatStmt, block);
-                var callStmt = statement as ProcedureCallStatement;
-                if (callStmt != null)
+
+                if (statement is ProcedureCallStatement callStmt)
                     CallProcedure(callStmt, block);
             }
         }

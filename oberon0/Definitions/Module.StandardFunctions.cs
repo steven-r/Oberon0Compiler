@@ -67,6 +67,11 @@ namespace Oberon0.Compiler.Definitions
                     new ProcedureParameter("any", this.Block, this.Block.LookupType("INTEGER"), false)));
             this.Block.Procedures.Add(
                 FunctionDeclaration.AddHardwiredFunction(
+                    "WriteBool",
+                    this,
+                    new ProcedureParameter("any", this.Block, this.Block.LookupType("BOOLEAN"), false)));
+            this.Block.Procedures.Add(
+                FunctionDeclaration.AddHardwiredFunction(
                     "WriteString",
                     this,
                     new ProcedureParameter("any", this.Block, this.Block.LookupType("STRING"), false)));
@@ -81,6 +86,11 @@ namespace Oberon0.Compiler.Definitions
                     "ReadInt",
                     this,
                     new ProcedureParameter("any", this.Block, this.Block.LookupType("INTEGER"), true)));
+            this.Block.Procedures.Add(
+                FunctionDeclaration.AddHardwiredFunction(
+                    "ReadBool",
+                    this,
+                    new ProcedureParameter("any", this.Block, this.Block.LookupType("BOOLEAN"), true)));
             this.Block.Procedures.Add(
                 FunctionDeclaration.AddHardwiredFunction(
                     "ReadReal",
