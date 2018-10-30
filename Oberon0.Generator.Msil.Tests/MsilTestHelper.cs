@@ -124,6 +124,7 @@ namespace Oberon0.Generator.Msil.Tests
                     outputData = string.Empty;
                     return false;
                 }
+
                 // Start the asynchronous read of the sort output stream.
                 codeProc.BeginOutputReadLine();
                 codeProc.BeginErrorReadLine();
@@ -132,7 +133,7 @@ namespace Oberon0.Generator.Msil.Tests
                 {
                     // Use a stream writer to synchronously write the sort input.
                     StreamWriter inputWriter = codeProc.StandardInput;
-                    foreach (string s in inputData)
+                    foreach (var s in inputData)
                     {
                         inputWriter.WriteLine(s);
                     }
@@ -146,6 +147,7 @@ namespace Oberon0.Generator.Msil.Tests
                     Console.Error.WriteLine("ERROR output:");
                     Console.Error.WriteLine(error.ToString());
                 }
+
                 if (codeProc.ExitCode != 0)
                 {
                     return false; // fail

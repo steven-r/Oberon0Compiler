@@ -74,6 +74,12 @@ namespace Oberon0.Compiler
                 targetType = context.s.vsRet.SelectorResultType;
             }
 
+            if (context.r.expReturn == null)
+            {
+                this.parser.NotifyErrorListeners(context.id, $"Cannot parse right side of assignment", null);
+                return;
+            }
+
             Expression e = ConstantSolver.Solve(context.r.expReturn, context.bParam);
             if ((targetType.BaseTypes == BaseTypes.ComplexType && e.TargetType.BaseTypes != BaseTypes.ComplexType)
                 || (targetType.BaseTypes == BaseTypes.ComplexType && e.TargetType.BaseTypes == BaseTypes.ComplexType
@@ -153,7 +159,7 @@ namespace Oberon0.Compiler
             FunctionDeclaration fp = context.bParam.LookupFunction(context.id.Text);
             if (fp == null)
             {
-                this.parser.NotifyErrorListeners(context.id, "Function not known", null);
+                this.parser.NotifyErrorListeners(context.id, $"Function '{context.id.Text}' not known", null);
                 return;
             }
 
@@ -416,7 +422,7 @@ namespace Oberon0.Compiler
                 context.cp?._p?.Select(x => x.expReturn).ToList() ?? new List<Expression>());
             if (fp == null)
             {
-                this.parser.NotifyErrorListeners(context.id, "Function not known", null);
+                this.parser.NotifyErrorListeners(context.id, $"Function '{context.id.Text}' not known", null);
                 return;
             }
 
@@ -434,6 +440,11 @@ namespace Oberon0.Compiler
         public override void ExitTermSingleId(OberonGrammarParser.TermSingleIdContext context)
         {
             context.expReturn = VariableReferenceExpression.Create(context.bParam, context.id.Text, context.s.vsRet);
+        }
+
+        public override void ExitTermBoolConst(OberonGrammarParser.TermBoolConstContext context)
+        {
+            context.expReturn = ConstantExpression.Create(context.b.Text);
         }
 
         public override void ExitTermStringLiteral(OberonGrammarParser.TermStringLiteralContext context)

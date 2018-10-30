@@ -37,24 +37,32 @@ namespace Oberon0.Compiler.Expressions.Constant
 
         internal static Expression Create(object value)
         {
-            var stringVal = value as string;
-            decimal decimalVal;
-            bool isFloat;
-            if (stringVal != null)
+            if (value is string stringVal)
             { // from string
-                decimalVal = decimal.Parse(stringVal, CultureInfo.InvariantCulture);
-                isFloat = stringVal.IndexOf('.') >= 0;
-            }
-            else
-            {
-                isFloat = value is double || value is float || value is decimal;
-                decimalVal = Convert.ToDecimal(value);
+                if (int.TryParse(stringVal, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out int intVal))
+                {
+                    return new ConstantIntExpression(intVal);
+                }
+
+                if (decimal.TryParse(stringVal, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out decimal decimalVal))
+                {
+                    return new ConstantDoubleExpression(decimalVal);
+                }
+
+                if (bool.TryParse(stringVal, out bool boolVal))
+                {
+                    return new ConstantBoolExpression(boolVal);
+                }
+
+                throw new InvalidOperationException($"Unknown constant '{stringVal}'");
             }
 
-            // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (!isFloat)
-                return new ConstantIntExpression(Convert.ToInt32(value));
-            return new ConstantDoubleExpression(decimalVal);
+            if (value is float || value is double || value is decimal)
+            {
+                return new ConstantDoubleExpression(Convert.ToDecimal(value));
+            }
+
+            return new ConstantIntExpression(Convert.ToInt32(value));
         }
     }
 }

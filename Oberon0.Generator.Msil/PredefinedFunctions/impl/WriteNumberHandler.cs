@@ -12,6 +12,7 @@
 
 namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -35,7 +36,11 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
             Block block)
         {
             ProcedureParameter parameter = functionDeclaration.Block.Declarations.OfType<ProcedureParameter>().First();
-            generator.Code.Emit("ldstr", "\"{0}\"");
+            if ((parameter.Type.BaseTypes & BaseTypes.SimpleType) == 0)
+            {
+                generator.Code.Emit("ldstr", "\"{0}\"");
+            }
+
             if (parameter.IsVar)
             {
                 VariableReferenceExpression reference = (VariableReferenceExpression)parameters[0];
@@ -46,8 +51,23 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
                 generator.ExpressionCompiler(functionDeclaration.Block.Parent, parameters[0]);
             }
 
-            generator.Code.Emit("box", Code.GetTypeName(parameter.Type.BaseTypes));
-            generator.Code.Emit("call", "void", "[mscorlib]System.Console::Write(string, object)");
+            if ((parameter.Type.BaseTypes & BaseTypes.SimpleType) != 0)
+            {
+                generator.Code.Emit("call", "void", $"[mscorlib]System.Console::Write({Code.GetTypeName(parameter.Type.BaseTypes)})");
+            }
+            else
+            {
+                generator.Code.Emit("box", Code.GetTypeName(parameter.Type.BaseTypes));
+                generator.Code.Emit("call", "void", "[mscorlib]System.Console::Write(string, object)");
+            }
+        }
+
+        static bool b;
+
+        private void test()
+        {
+            b = false;
+            Console.Write(b);
         }
     }
 }

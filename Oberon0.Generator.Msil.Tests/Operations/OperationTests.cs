@@ -310,5 +310,102 @@ END Array.";
             Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual($"{-1.5}\n{1.5}\n", outputData.NlFix());
         }
+
+        [Test]
+        public void TestReadIntVar()
+        {
+            string source = @"MODULE Array;
+VAR
+  a: INTEGER;
+
+BEGIN
+  ReadInt(a);
+  WriteInt(a);
+  WriteLn;
+END Array.";
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(source, errors);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                cg.DumpCode(w);
+            }
+
+            string code = sb.ToString();
+            Assert.AreEqual(0, errors.Count());
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, new List<string> { "12" }, out var outputData));
+            Assert.AreEqual($"{12}\n", outputData.NlFix());
+        }
+
+        [Test]
+        public void TestReadBoolVar()
+        {
+            string source = @"MODULE Array;
+VAR
+  a,b: BOOLEAN;
+
+BEGIN
+  ReadBool(a);
+  ReadBool(b);
+  WriteBool(a);
+  WriteLn;
+  WriteBool(b);
+  WriteLn;
+END Array.";
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(source, errors);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                cg.DumpCode(w);
+            }
+
+            string code = sb.ToString();
+            Assert.AreEqual(0, errors.Count());
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, new List<string> { "true", "false" }, out var outputData));
+            Assert.AreEqual($"{true}\n{false}\n", outputData.NlFix());
+        }
+
+        [Test]
+        public void TestEotFalse()
+        {
+            string source = @"MODULE Array;
+VAR
+  a, b,c: BOOLEAN;
+
+BEGIN
+  a := false;
+  b := eot();
+  ReadBool(c);
+  WriteBool(a);
+  WriteBool(b);
+  WriteBool(c);
+  WriteLn;
+END Array.";
+            List<CompilerError> errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(source, errors);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter w = new StringWriter(sb))
+            {
+                cg.DumpCode(w);
+            }
+
+            string code = sb.ToString();
+            Assert.AreEqual(0, errors.Count());
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, new List<string> { "true" }, out var outputData));
+            Assert.AreEqual($"{false}{false}{true}\n", outputData.NlFix());
+        }
     }
 }
