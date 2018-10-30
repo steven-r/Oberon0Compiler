@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="StatementTests.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0.Generator.Msil.Tests/StatementTests.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Generator.Msil.Tests.Statements
 {
     using System.IO;
+    using System.Text;
 
     using NUnit.Framework;
 
@@ -42,10 +49,10 @@ END Test.";
             {
                 cg.DumpCode(w);
             }
+
             var code = sb.ToString();
             Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
             Assert.AreEqual("1\n2\n3\n4\n5\n", outputData.NlFix());
-
         }
     }
 }
