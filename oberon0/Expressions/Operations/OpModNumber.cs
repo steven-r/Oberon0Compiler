@@ -17,10 +17,10 @@ namespace Oberon0.Compiler.Expressions.Operations
     using Oberon0.Compiler.Expressions.Operations.Internal;
     using Oberon0.Compiler.Types;
 
-    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.IntType, BaseTypes.IntType, BaseTypes.IntType)]
-    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.IntType, BaseTypes.DecimalType, BaseTypes.DecimalType)]
-    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.DecimalType, BaseTypes.DecimalType, BaseTypes.DecimalType)]
-    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.DecimalType, BaseTypes.IntType, BaseTypes.DecimalType)]
+    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Int, BaseTypes.Int, BaseTypes.Int)]
+    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Int, BaseTypes.Decimal, BaseTypes.Decimal)]
+    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Decimal, BaseTypes.Decimal, BaseTypes.Decimal)]
+    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Decimal, BaseTypes.Int, BaseTypes.Decimal)]
     internal class OpModNumber : BinaryOperation
     {
         protected override Expression BinaryOperate(
@@ -32,8 +32,8 @@ namespace Oberon0.Compiler.Expressions.Operations
             {
                 var left = (ConstantExpression)bin.LeftHandSide;
                 var right = (ConstantExpression)bin.RightHandSide;
-                if (bin.LeftHandSide.TargetType.BaseTypes == BaseTypes.IntType
-                    && bin.RightHandSide.TargetType.BaseTypes == BaseTypes.IntType)
+                if (bin.LeftHandSide.TargetType.Type == BaseTypes.Int
+                    && bin.RightHandSide.TargetType.Type == BaseTypes.Int)
                 {
                     return new ConstantIntExpression(left.ToInt32() % right.ToInt32());
                 }

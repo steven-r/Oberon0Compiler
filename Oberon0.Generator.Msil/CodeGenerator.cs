@@ -10,6 +10,8 @@ using Oberon0.Generator.Msil.PredefinedFunctions;
 
 namespace Oberon0.Generator.Msil
 {
+    using Oberon0.Compiler.Types;
+
     /// <summary>
     /// The code generator to generate RISC code
     /// </summary>
@@ -93,7 +95,7 @@ namespace Oberon0.Generator.Msil
                 if (statement is AssignmentStatement assignment)
                 {
                     StartStoreVar(block, assignment.Variable, assignment.Selector);
-                    ExpressionCompiler(block, assignment.Expression);
+                    ExpressionCompiler(block, assignment.Expression, GetTargetType(assignment.Variable.Type, assignment.Selector));
                     StoreVar(block, assignment.Variable, assignment.Selector);
                 }
 
@@ -109,6 +111,16 @@ namespace Oberon0.Generator.Msil
                 if (statement is ProcedureCallStatement callStmt)
                     CallProcedure(callStmt, block);
             }
+        }
+
+        private TypeDefinition GetTargetType(TypeDefinition baseType, VariableSelector selector)
+        {
+            if (baseType.Type.HasFlag(BaseTypes.Simple))
+            {
+                return baseType;
+            }
+
+            return selector.SelectorResultType;
         }
 
         private void GenerateIfStatement(IfStatement stmt, Block block)

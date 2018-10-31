@@ -77,17 +77,15 @@ namespace Oberon0.Generator.Msil
 
         private void InitComplexData(Block block)
         {
-            foreach (Declaration declaration in block.Declarations.Where(x => x.Type.BaseTypes == BaseTypes.ComplexType))
+            foreach (Declaration declaration in block.Declarations.Where(x => x.Type.Type.HasFlag(BaseTypes.Complex)))
             {
                 if (declaration.Type is ArrayTypeDefinition vd)
                 {
                     Code.PushConst(vd.Size);
-                    Code.Emit("newarr", Code.GetTypeName(vd.ArrayType.BaseTypes));
+                    Code.Emit("newarr", Code.GetTypeName(vd.ArrayType.Type));
                     StoreVar(block, declaration, null);
-                    continue;
                 }
-
-                if (declaration.Type is RecordTypeDefinition rd)
+                else if (declaration.Type is RecordTypeDefinition rd)
                 {
                     Code.Emit("newobj", "instance void", $"{Code.ClassName}/{rd.Name}::.ctor()");
                     StoreVar(block, declaration, null);

@@ -23,16 +23,16 @@ namespace Oberon0.Compiler.Types
 
         protected TypeDefinition(BaseTypes baseTypes)
         {
-            this.BaseTypes = baseTypes;
+            this.Type = baseTypes;
         }
 
         protected TypeDefinition(BaseTypes baseTypes, bool isInternal)
         {
-            this.BaseTypes = baseTypes;
+            this.Type = baseTypes;
             this.IsInternal = isInternal;
         }
 
-        public BaseTypes BaseTypes { get; }
+        public BaseTypes Type { get; }
 
         /// <summary>
         /// Gets or sets additional information used by the generator engine
@@ -50,5 +50,7 @@ namespace Oberon0.Compiler.Types
         /// <param name="name">The name.</param>
         /// <returns>The <see cref="TypeDefinition"/>.</returns>
         public abstract TypeDefinition Clone(string name);
+
+        public abstract bool IsAssignable(TypeDefinition sourceType);
     }
 }

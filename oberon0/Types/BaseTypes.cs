@@ -23,41 +23,51 @@ namespace Oberon0.Compiler.Types
         /// <summary>
         /// Standard integer
         /// </summary>
-        IntType = SimpleType + 1,
+        Int = Simple + 1,
 
         /// <summary>
         /// The string type - Not in use
         /// </summary>
-        StringType = SimpleType + 2,
+        String = Simple + 2,
 
         /// <summary>
         /// The decimal type
         /// </summary>
-        DecimalType = SimpleType + 3,
+        Decimal = Simple + 3,
 
         /// <summary>
         /// The bool type
         /// </summary>
-        BoolType = SimpleType + 4,
+        Bool = Simple + 4,
 
         /// <summary>
         /// a "non" type. This means no value (like an empty return value for a function)
         /// </summary>
-        VoidType = SimpleType + 5,
+        Void = Simple + 5,
+
+        /// <summary>
+        /// record type
+        /// </summary>
+        Record = Complex + 1,
+
+        /// <summary>
+        /// array type
+        /// </summary>
+        Array = Complex + 2,
 
         /// <summary>
         /// Any type - used for internal functions (like WRITELN)
         /// </summary>
-        AnyType = 0x20000,
+        Any = 0x20000,
 
         /// <summary>
-        /// A non-base type (array or record)
+        /// Complex types
         /// </summary>
-        ComplexType = 0x40000,
+        Complex = 0x40000,
 
         /// <summary>
         /// Representing a type not array or complex
         /// </summary>
-        SimpleType = 0x10000
+        Simple = 0x10000
     }
 }

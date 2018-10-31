@@ -41,7 +41,7 @@ namespace Oberon0.Compiler.Expressions
             if (right == null)
             {
                 // unary
-                op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.BaseTypes, BaseTypes.AnyType);
+                op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.Type, BaseTypes.Any);
                 result = new UnaryExpression
                              {
                                  LeftHandSide = left,
@@ -52,7 +52,7 @@ namespace Oberon0.Compiler.Expressions
                 return result;
             }
 
-            op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.BaseTypes, right.TargetType.BaseTypes);
+            op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.Type, right.TargetType.Type);
             result = new BinaryExpression
                          {
                              LeftHandSide = left,

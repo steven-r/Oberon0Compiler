@@ -157,7 +157,7 @@ END Test.");
             Assert.NotNull(t);
             Assert.IsInstanceOf<SimpleTypeDefinition>(t);
             SimpleTypeDefinition std = (SimpleTypeDefinition)t;
-            Assert.AreEqual(intType.BaseTypes, std.BaseTypes);
+            Assert.AreEqual(intType.Type, std.Type);
         }
 
         [Test]
@@ -206,7 +206,7 @@ END Test.");
             Assert.IsInstanceOf<BinaryExpression>(as2.Expression);
             Assert.AreEqual(as1.Expression.TargetType, as2.Expression.TargetType);
             Assert.AreNotEqual(as1.Expression.TargetType, j.Type);
-            Assert.AreEqual(as1.Expression.TargetType.BaseTypes, j.Type.BaseTypes);
+            Assert.AreEqual(as1.Expression.TargetType.Type, j.Type.Type);
         }
 
 

@@ -1,16 +1,16 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RecordTests.cs" company="Stephen Reindl">
+// <copyright file="StatementTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 // </copyright>
 // <summary>
-//     Part of oberon0 - Oberon0.Generator.Msil.Tests/RecordTests.cs
+//     Part of oberon0 - Oberon0.Generator.Msil.Tests/StatementTests.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-namespace Oberon0.Generator.Msil.Tests.Types
+namespace Oberon0.Generator.Msil.Tests.Statements
 {
     using System.IO;
     using System.Text;
@@ -21,25 +21,22 @@ namespace Oberon0.Generator.Msil.Tests.Types
     using Oberon0.Compiler.Definitions;
 
     [TestFixture]
-    public class RecordTests
+    public class StatementTests
     {
         [Test]
-        public void Test1()
+        public void RepeatTest()
         {
             string source = @"MODULE Test; 
-TYPE 
-  rType = RECORD
-    a: INTEGER;
-    b: STRING
-  END;
-
 VAR 
-  demo: rType;
+  i: INTEGER;
 
 BEGIN
-  demo.a := 1;
-  WriteInt(demo.a);
-  WriteLn
+  i := 1;
+  REPEAT
+      WriteInt(i);
+      WriteLn;
+      i := i+1;
+  UNTIL i > 5
 END Test.";
 
             Module m = Oberon0Compiler.CompileString(source);
@@ -53,9 +50,9 @@ END Test.";
                 cg.DumpCode(w);
             }
 
-            string code = sb.ToString();
+            var code = sb.ToString();
             Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
-            Assert.AreEqual("1\n", outputData.NlFix());
+            Assert.AreEqual("1\n2\n3\n4\n5\n", outputData.NlFix());
         }
     }
 }

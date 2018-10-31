@@ -1,21 +1,54 @@
-﻿using System.Collections.Generic;
-using NUnit.Framework;
-using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Expressions;
-using Oberon0.Compiler.Statements;
-using Oberon0.CompilerSupport;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SimpleStatementTests.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0Compiler.Tests/SimpleStatementTests.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Compiler.Tests
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Antlr4.Runtime.Atn;
+
+    using NUnit.Framework;
+
+    using Oberon0.Compiler.Definitions;
+    using Oberon0.Compiler.Expressions;
     using Oberon0.Compiler.Expressions.Constant;
+    using Oberon0.Compiler.Statements;
+    using Oberon0.Compiler.Types;
+    using Oberon0.CompilerSupport;
 
     [TestFixture]
     public class SimpleStatementTests
     {
         [Test]
+        public void InvalidParameterCount()
+        {
+            var errors = new List<CompilerError>();
+            TestHelper.CompileString(
+                @"MODULE Test; 
+BEGIN 
+    WriteInt
+END Test.
+",
+                errors);
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("Number of parameters expected: 1", errors[0].Message);
+        }
+
+        [Test]
         public void SimpleAssignment()
         {
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   x: INTEGER;
 
@@ -35,7 +68,8 @@ END Test.
         [Test]
         public void SimpleRepeat()
         {
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   x: INTEGER;
 
@@ -62,8 +96,9 @@ END Test.
         [Test]
         public void SimpleRepeatFailCondition()
         {
-            List<CompilerError> errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            var errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   x: INTEGER;
 
@@ -73,16 +108,20 @@ BEGIN
         
     UNTIL 0
 END Test.
-", errors);
+",
+                errors);
             Assert.AreEqual(1, errors.Count);
             Assert.AreEqual("The condition needs to return a logical condition", errors[0].Message);
         }
 
+        /// <summary>
+        /// The two statements.
+        /// </summary>
         [Test]
-
         public void TwoStatements()
         {
-            Module m = TestHelper.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
 VAR
   x: INTEGER;
 
@@ -108,16 +147,71 @@ END Test.
         }
 
         [Test]
-        public void InvalidParameterCount()
+        public void TestAssignableBoolInt()
         {
-            List<CompilerError> errors = new List<CompilerError>();
-            TestHelper.CompileString(@"MODULE Test; 
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  x: BOOLEAN;
+
 BEGIN 
-    WriteInt
+    x := 1;
 END Test.
-", errors);
+");
+            Assert.AreEqual(1, m.Block.Statements.Count);
+            Assert.IsAssignableFrom(typeof(AssignmentStatement), m.Block.Statements[0]);
+            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[0];
+            Assert.AreEqual("x", ast.Variable.Name);
+            Assert.IsAssignableFrom(typeof(ConstantIntExpression), ast.Expression);
+            ConstantIntExpression cie = (ConstantIntExpression)ast.Expression;
+            Assert.AreEqual(1, cie.Value);
+        }
+
+        [Test]
+        public void TestAssignArray()
+        {
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  x: ARRAY 5 OF INTEGER;
+  y: ARRAY 5 OF INTEGER;
+
+BEGIN 
+    x := y;
+END Test.
+");
+            var decl = m.Block.Declarations.Single(x => x.Name == "y");
+            Assert.AreEqual(1, m.Block.Statements.Count);
+            Assert.IsAssignableFrom(typeof(AssignmentStatement), m.Block.Statements[0]);
+            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[0];
+            Assert.AreEqual("x", ast.Variable.Name);
+            Expression exp = ast.Expression;
+            Assert.IsAssignableFrom<ArrayTypeDefinition>(exp.TargetType);
+            var array = (ArrayTypeDefinition)exp.TargetType;
+            Assert.IsAssignableFrom<ArrayTypeDefinition>(decl.Type);
+            var type = (ArrayTypeDefinition)decl.Type;
+            Assert.AreEqual(array.Size, type.Size);
+            Assert.AreEqual(array.ArrayType.Type, type.ArrayType.Type);
+            Assert.AreEqual("ARRAY 5 OF INTEGER", array.ToString());
+            Assert.AreEqual("ARRAY 5 OF INTEGER", type.ToString());
+        }
+
+        [Test]
+        public void TestAssignableBoolReal()
+        {
+            var errors = new List<CompilerError>();
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  x: BOOLEAN;
+
+BEGIN 
+    x := 1.234;
+END Test.
+",
+                errors);
             Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("Number of parameters expected: 1", errors[0].Message);
+            Assert.AreEqual("Left & right side do not match types", errors.First().Message);
         }
     }
 }
