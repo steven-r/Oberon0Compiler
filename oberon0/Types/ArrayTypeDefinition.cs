@@ -69,7 +69,7 @@ namespace Oberon0.Compiler.Types
         {
             if (sourceType is ArrayTypeDefinition array)
             {
-                return array.Size == Size && ArrayType.IsAssignable(array);
+                return array.Size == Size && ArrayType.IsAssignable(array.ArrayType);
             }
 
             return false;

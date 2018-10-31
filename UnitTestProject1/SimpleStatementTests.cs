@@ -15,12 +15,15 @@ namespace Oberon0.Compiler.Tests
     using System.Collections.Generic;
     using System.Linq;
 
+    using Antlr4.Runtime.Atn;
+
     using NUnit.Framework;
 
     using Oberon0.Compiler.Definitions;
     using Oberon0.Compiler.Expressions;
     using Oberon0.Compiler.Expressions.Constant;
     using Oberon0.Compiler.Statements;
+    using Oberon0.Compiler.Types;
     using Oberon0.CompilerSupport;
 
     [TestFixture]
@@ -163,6 +166,36 @@ END Test.
             ConstantIntExpression cie = (ConstantIntExpression)ast.Expression;
             Assert.AreEqual(1, cie.Value);
         }
+
+        [Test]
+        public void TestAssignArray()
+        {
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  x: ARRAY 5 OF INTEGER;
+  y: ARRAY 5 OF INTEGER;
+
+BEGIN 
+    x := y;
+END Test.
+");
+            var decl = m.Block.Declarations.Single(x => x.Name == "y");
+            Assert.AreEqual(1, m.Block.Statements.Count);
+            Assert.IsAssignableFrom(typeof(AssignmentStatement), m.Block.Statements[0]);
+            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[0];
+            Assert.AreEqual("x", ast.Variable.Name);
+            Expression exp = ast.Expression;
+            Assert.IsAssignableFrom<ArrayTypeDefinition>(exp.TargetType);
+            var array = (ArrayTypeDefinition)exp.TargetType;
+            Assert.IsAssignableFrom<ArrayTypeDefinition>(decl.Type);
+            var type = (ArrayTypeDefinition)decl.Type;
+            Assert.AreEqual(array.Size, type.Size);
+            Assert.AreEqual(array.ArrayType.Type, type.ArrayType.Type);
+            Assert.AreEqual("ARRAY 5 OF INTEGER", array.ToString());
+            Assert.AreEqual("ARRAY 5 OF INTEGER", type.ToString());
+        }
+
         [Test]
         public void TestAssignableBoolReal()
         {
