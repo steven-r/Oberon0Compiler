@@ -19,6 +19,7 @@ namespace Oberon0.Compiler.Tests
     using Oberon0.Compiler.Definitions;
     using Oberon0.Compiler.Types;
     using Oberon0.CompilerSupport;
+    using Oberon0.TestSupport;
 
     [TestFixture]
     public class VarDeclarationTests

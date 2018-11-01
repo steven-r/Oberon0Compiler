@@ -39,4 +39,4 @@ using System.Runtime.InteropServices;
 
 [assembly: InternalsVisibleTo("Oberon0.Compiler.Tests")]
 [assembly: InternalsVisibleTo("Oberon0.Generator.Msil.Tests")]
-[assembly: InternalsVisibleTo("Oberon0.CompilerSupport")]
+[assembly: InternalsVisibleTo("Oberon0.TestSupport")]

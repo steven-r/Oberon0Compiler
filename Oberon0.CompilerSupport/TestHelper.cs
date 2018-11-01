@@ -14,13 +14,16 @@ namespace Oberon0.CompilerSupport
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
     using Antlr4.Runtime;
 
+    using NUnit.Framework;
+
     using Oberon0.Compiler;
     using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Tests;
+    using Oberon0.TestSupport;
 
     public static class TestHelper
     {
@@ -44,13 +47,24 @@ namespace Oberon0.CompilerSupport
             return context.modres;
         }
 
-        public static Module CompileString(string source)
+        [ExcludeFromCodeCoverage]
+        public static Module CompileString(string source, params string[] expectedErrors)
         {
-            List<CompilerError> errors = new List<CompilerError>(0);
+            List<CompilerError> errors = new List<CompilerError>();
             Module m = CompileString(source, errors);
-            if (errors.Any())
+            if (expectedErrors.Length == 0 && errors.Count > 0)
             {
-                throw new InvalidOperationException("There have been errors, please fix them");
+                Assert.Fail($"Expected no errors, actually found {errors.Count}");
+            }
+
+            if (expectedErrors.Length != errors.Count)
+            {
+                Assert.Fail($"Expected {expectedErrors.Length} errors, actually found {errors.Count}");
+            }
+
+            for (int i = 0; i < expectedErrors.Length; i++)
+            {
+                Assert.AreEqual(expectedErrors[i], errors[i].Message);    
             }
 
             return m;

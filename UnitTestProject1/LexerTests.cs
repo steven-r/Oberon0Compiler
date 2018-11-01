@@ -17,6 +17,7 @@ namespace Oberon0.Compiler.Tests
     using NUnit.Framework;
 
     using Oberon0.CompilerSupport;
+    using Oberon0.TestSupport;
 
     [TestFixture]
     public class LexerTests

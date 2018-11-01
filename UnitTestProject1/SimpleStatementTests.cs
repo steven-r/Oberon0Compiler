@@ -25,6 +25,7 @@ namespace Oberon0.Compiler.Tests
     using Oberon0.Compiler.Statements;
     using Oberon0.Compiler.Types;
     using Oberon0.CompilerSupport;
+    using Oberon0.TestSupport;
 
     [TestFixture]
     public class SimpleStatementTests
@@ -170,7 +171,8 @@ END Test.
         [Test]
         public void TestAssignArray()
         {
-            Module m = TestHelper.CompileString(
+            var errors = new List<CompilerError>();
+            TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   x: ARRAY 5 OF INTEGER;
@@ -179,28 +181,17 @@ VAR
 BEGIN 
     x := y;
 END Test.
-");
-            var decl = m.Block.Declarations.Single(x => x.Name == "y");
-            Assert.AreEqual(1, m.Block.Statements.Count);
-            Assert.IsAssignableFrom(typeof(AssignmentStatement), m.Block.Statements[0]);
-            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[0];
-            Assert.AreEqual("x", ast.Variable.Name);
-            Expression exp = ast.Expression;
-            Assert.IsAssignableFrom<ArrayTypeDefinition>(exp.TargetType);
-            var array = (ArrayTypeDefinition)exp.TargetType;
-            Assert.IsAssignableFrom<ArrayTypeDefinition>(decl.Type);
-            var type = (ArrayTypeDefinition)decl.Type;
-            Assert.AreEqual(array.Size, type.Size);
-            Assert.AreEqual(array.ArrayType.Type, type.ArrayType.Type);
-            Assert.AreEqual("ARRAY 5 OF INTEGER", array.ToString());
-            Assert.AreEqual("ARRAY 5 OF INTEGER", type.ToString());
+", 
+                errors);
+            Assert.AreEqual(1, errors.Count);
+            Assert.AreEqual("Left & right side do not match types", errors.First().Message);
         }
 
         [Test]
         public void TestAssignableBoolReal()
         {
             var errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(
+            TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   x: BOOLEAN;

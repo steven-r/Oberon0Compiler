@@ -13,6 +13,7 @@
 namespace Oberon0.Compiler.Types
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using Oberon0.Compiler.Definitions;
 
@@ -42,7 +43,23 @@ namespace Oberon0.Compiler.Types
 
         public override bool IsAssignable(TypeDefinition sourceType)
         {
-            throw new System.NotImplementedException();
+            if (!(sourceType is RecordTypeDefinition rt))
+            {
+                return false;
+            }
+
+            if ((Name == null || sourceType.Name == null) 
+                || (Elements.Count != rt.Elements.Count))
+            {
+                return false;
+            }
+
+            if (Elements.Where((t, i) => !t.Type.IsAssignable(rt.Elements[i].Type)).Any())
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
