@@ -279,7 +279,7 @@ namespace Oberon0.Generator.Msil
                     generator.Code.Emit("or");
                     break;
                 case OberonGrammarLexer.GE:
-                    generator.Code.Emit("clt");
+                    generator.Code.Emit("cgt");
                     generator.Code.PushConst(0);
                     generator.Code.Emit("ceq");
                     break;
