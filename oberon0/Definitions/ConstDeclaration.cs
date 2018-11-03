@@ -1,39 +1,39 @@
-﻿using Oberon0.Compiler.Expressions;
-using Oberon0.Compiler.Types;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ConstDeclaration.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0Compiler/ConstDeclaration.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
 
 namespace Oberon0.Compiler.Definitions
 {
     using Oberon0.Compiler.Expressions.Constant;
+    using Oberon0.Compiler.Types;
 
     public class ConstDeclaration : Declaration
     {
-        public ConstDeclaration(string name, TypeDefinition type) 
-            : this(name, type, null, null)
-        {
-        }
-
-        public ConstDeclaration(string name, TypeDefinition type, Block block) 
-            : this(name, type, null, block)
-        {
-        }
-
         public ConstDeclaration(string name, TypeDefinition type, ConstantExpression value)
             : base(name, type)
         {
-            Value = value;
+            this.Value = value;
         }
 
-        public ConstDeclaration(string name, TypeDefinition type, ConstantExpression value, Block block) 
+        public ConstDeclaration(string name, TypeDefinition type, ConstantExpression value, Block block)
             : base(name, type, block)
         {
-            Value = value;
+            this.Value = value;
         }
 
         public ConstantExpression Value { get; }
 
         public override string ToString()
         {
-            return $"Const {Name} = {Value}";
+            return $"Const {this.Name} = {this.Value}";
         }
     }
 }

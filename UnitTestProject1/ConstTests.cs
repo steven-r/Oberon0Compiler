@@ -46,6 +46,7 @@ CONST
             Assert.AreEqual("Test1", tp1.Name);
             Assert.AreEqual(m.Block.LookupType("INTEGER"), tp1.Type);
             Assert.AreEqual(2, tp1.Value.ToInt32());
+            Assert.AreEqual("Const Test1 = 2", t1.ToString());
         }
 
         [Test]
