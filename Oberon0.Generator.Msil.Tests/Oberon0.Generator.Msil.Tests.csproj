@@ -7,11 +7,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
-    <PackageReference Include="nunit" Version="3.11.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Oberon0.CompilerSupport\Oberon0.CompilerSupport.csproj" />
+    <ProjectReference Include="..\Oberon0.CompilerSupport\Oberon0.TestSupport.csproj" />
     <ProjectReference Include="..\Oberon0.Generator.Msil\Oberon0.Generator.Msil.csproj" />
     <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj" />
   </ItemGroup>

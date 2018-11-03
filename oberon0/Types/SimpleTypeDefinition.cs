@@ -19,30 +19,18 @@ namespace Oberon0.Compiler.Types
         public SimpleTypeDefinition(BaseTypes baseTypes)
             : base(baseTypes)
         {
-            if ((baseTypes & BaseTypes.Simple) == 0)
-            {
-                throw new InvalidCastException("Cannot create a non-simple type with SimpleTypeDefinition");
-            }
         }
 
         public SimpleTypeDefinition(BaseTypes baseTypes, string name)
             : base(baseTypes)
         {
             Name = name;
-            if ((baseTypes & BaseTypes.Simple) == 0)
-            {
-                throw new InvalidCastException("Cannot create a non-simple type with SimpleTypeDefinition");
-            }
         }
 
         public SimpleTypeDefinition(BaseTypes baseTypes, string name, bool isInternal)
             : base(baseTypes, isInternal)
         {
             Name = name;
-            if ((baseTypes & BaseTypes.Simple) == 0)
-            {
-                throw new InvalidCastException("Cannot create a non-simple type with SimpleTypeDefinition");
-            }
         }
 
         /// <summary>

@@ -62,6 +62,11 @@ namespace Oberon0.Compiler.Expressions.Constant
                 return new ConstantDoubleExpression(Convert.ToDecimal(value));
             }
 
+            if (value is bool)
+            {
+                return new ConstantBoolExpression(Convert.ToBoolean(value));
+            }
+
             return new ConstantIntExpression(Convert.ToInt32(value));
         }
     }

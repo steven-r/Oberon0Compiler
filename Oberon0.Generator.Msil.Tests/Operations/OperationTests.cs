@@ -21,8 +21,7 @@ namespace Oberon0.Generator.Msil.Tests.Operations
 
     using Oberon0.Compiler;
     using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Tests;
-    using Oberon0.CompilerSupport;
+    using Oberon0.TestSupport;
 
     [TestFixture]
     public class OperationTests
@@ -47,7 +46,7 @@ END Array.";
             }
 
             var code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("3\n", outputData.NlFix());
         }
 
@@ -75,7 +74,7 @@ END Array.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("3\n", outputData.NlFix());
         }
 
@@ -103,7 +102,7 @@ END Array.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("3\n", outputData.NlFix());
         }
 
@@ -133,7 +132,7 @@ END Array.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("-1\n", outputData.NlFix());
         }
 
@@ -163,7 +162,7 @@ END Array.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("3\n", outputData.NlFix());
         }
 
@@ -193,7 +192,7 @@ END Array.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("-2\n", outputData.NlFix());
         }
 
@@ -220,7 +219,7 @@ END Array.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("-2\n", outputData.NlFix());
         }
 
@@ -251,7 +250,7 @@ END Array.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("-1\n1\n", outputData.NlFix());
         }
 
@@ -274,7 +273,7 @@ END Array.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual($"{-2.5}\n", outputData.NlFix());
         }
 
@@ -307,7 +306,7 @@ END Array.";
 
             string code = sb.ToString();
             Assert.AreEqual(0, errors.Count());
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual($"{-1.5}\n{1.5}\n", outputData.NlFix());
         }
 
@@ -337,7 +336,7 @@ END Array.";
 
             string code = sb.ToString();
             Assert.AreEqual(0, errors.Count());
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, new List<string> { "12" }, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, new List<string> { "12" }, out var outputData, m));
             Assert.AreEqual($"{12}\n", outputData.NlFix());
         }
 
@@ -370,7 +369,7 @@ END Array.";
 
             string code = sb.ToString();
             Assert.AreEqual(0, errors.Count());
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, new List<string> { "true", "false" }, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, new List<string> { "true", "false" }, out var outputData, m));
             Assert.AreEqual($"{true}\n{false}\n", outputData.NlFix());
         }
 
@@ -382,16 +381,11 @@ VAR
   a, b,c: BOOLEAN;
 
 BEGIN
-  a := false;
   b := eot();
-  ReadBool(c);
-  WriteBool(a);
   WriteBool(b);
-  WriteBool(c);
   WriteLn;
 END Array.";
-            List<CompilerError> errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(source, errors);
+            Module m = TestHelper.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
@@ -403,9 +397,8 @@ END Array.";
             }
 
             string code = sb.ToString();
-            Assert.AreEqual(0, errors.Count());
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, new List<string> { "true" }, out var outputData));
-            Assert.AreEqual($"{false}{false}{true}\n", outputData.NlFix());
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, new List<string> { "true" }, out var outputData, m));
+            Assert.AreEqual($"{false}\n", outputData.NlFix());
         }
     }
 }

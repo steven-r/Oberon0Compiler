@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="BinaryExpression.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,12 +9,11 @@
 //     Part of oberon0 - Oberon0Compiler/BinaryExpression.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 namespace Oberon0.Compiler.Expressions
 {
-    using System;
-
     using Oberon0.Compiler.Definitions;
     using Oberon0.Compiler.Expressions.Operations.Internal;
     using Oberon0.Compiler.Types;
@@ -43,23 +43,23 @@ namespace Oberon0.Compiler.Expressions
                 // unary
                 op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.Type, BaseTypes.Any);
                 result = new UnaryExpression
-                             {
-                                 LeftHandSide = left,
-                                 Operator = tokenType,
-                                 TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType),
-                                 Operation = op
-                             };
+                    {
+                        LeftHandSide = left,
+                        Operator = tokenType,
+                        TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType),
+                        Operation = op
+                    };
                 return result;
             }
 
             op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.Type, right.TargetType.Type);
             result = new BinaryExpression
-                         {
-                             LeftHandSide = left,
-                             RightHandSide = right,
-                             Operator = tokenType,
-                             TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType)
-                         };
+                {
+                    LeftHandSide = left,
+                    RightHandSide = right,
+                    Operator = tokenType,
+                    TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType)
+                };
             result.LeftHandSide = left;
             result.RightHandSide = right;
             result.Operation = op;
@@ -68,13 +68,15 @@ namespace Oberon0.Compiler.Expressions
 
         public override string ToString()
         {
-            if (RightHandSide == null)
+            if (this.RightHandSide == null)
             {
                 // unary
-                return $"{Operator:G} ({LeftHandSide.TargetType:G}) -> {TargetType}";
+                return
+                    $"{OberonGrammarLexer.DefaultVocabulary.GetSymbolicName(this.Operator)} ({this.LeftHandSide.TargetType:G}) -> {this.TargetType}";
             }
 
-            return $"{Operator:G} ({LeftHandSide.TargetType:G}, {RightHandSide.TargetType:G}) -> {TargetType}";
+            return
+                $"{OberonGrammarLexer.DefaultVocabulary.GetSymbolicName(this.Operator)} ({this.LeftHandSide.TargetType:G}, {this.RightHandSide.TargetType:G}) -> {this.TargetType}";
         }
     }
 }

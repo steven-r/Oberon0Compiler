@@ -7,7 +7,7 @@ namespace Oberon0.Compiler.Statements
     {
         public RepeatStatement(Block parent)
         {
-            Block = new Block {Parent = parent};
+            Block = new Block(parent);
         }
 
         public Expression Condition { get; set; }

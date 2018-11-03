@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oberon0.System", "Oberon0.System\Oberon0.System.csproj", "{C2BE2EE3-1CA6-49E9-9CB0-A23429EBB027}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oberon0.CompilerSupport", "Oberon0.CompilerSupport\Oberon0.CompilerSupport.csproj", "{1E57AA6C-EFB8-4485-AB7F-020C41959378}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oberon0.TestSupport", "Oberon0.CompilerSupport\Oberon0.TestSupport.csproj", "{1E57AA6C-EFB8-4485-AB7F-020C41959378}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

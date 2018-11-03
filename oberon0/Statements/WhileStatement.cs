@@ -11,7 +11,7 @@ namespace Oberon0.Compiler.Statements
     {
         public WhileStatement(Block parent)
         {
-            Block = new Block {Parent = parent};
+            Block = new Block(parent);
         }
 
         /// <summary>

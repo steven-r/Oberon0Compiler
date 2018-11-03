@@ -9,18 +9,39 @@ namespace Oberon0.Generator.Msil.Tests
 {
     public static class MsilTestHelper
     {
+        private static string tempPath;
+
+        private static int tempFileCount;
+
         public static string NlFix(this string data)
         {
             return data.Replace("\r\n", "\n");
         }
 
-        public static bool CompileRunTest(string source, List<string> inputData, out string outputData, Module m = null)
+        public static bool CompileRunTest(string source, List<string> inputData, out string outputData, Module m)
         {
-            string filename = Path.GetTempFileName();
-            filename = Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename));
-            Trace.WriteLine($"Filename is {filename}(.il|.exe|.pdb)");
             outputData = string.Empty;
+            if (m == null || m.HasError)
+            {
+                return false;
+            }
+
+            var filename = GetTempFile();
             return CompileCode(source, filename, false, m) && RunCode(filename, inputData, out outputData);
+        }
+
+        private static string GetTempFile()
+        {
+            if (tempPath == null)
+            {
+                tempPath = Path.GetTempFileName();
+                var file = Path.GetFileNameWithoutExtension(tempPath);
+                tempPath = Path.Combine(Path.GetTempPath(), file);
+                Directory.CreateDirectory(tempPath);
+            }
+
+            tempFileCount++;
+            return Path.Combine(tempPath, "Test" + tempFileCount.ToString("0000"));
         }
 
         private static bool CompileCode(string source, string filename, bool dumpOutput = false, Module m = null)
@@ -29,11 +50,10 @@ namespace Oberon0.Generator.Msil.Tests
             {
                 w.Write(source);
             }
-            if (m != null)
-            {
-                CopyReferencedAssemblies(m);
-            }
-            string runtimePath = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+
+            CopyReferencedAssemblies(m);
+
+            var runtimePath = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
             StringBuilder output = new StringBuilder();
             StringBuilder error = new StringBuilder();
             using (Process ilasm = new Process())
@@ -59,6 +79,7 @@ namespace Oberon0.Generator.Msil.Tests
                 {
                     return false;
                 }
+
                 // Start the asynchronous read of the sort output stream.
                 ilasm.BeginOutputReadLine();
                 ilasm.BeginErrorReadLine();
@@ -70,11 +91,13 @@ namespace Oberon0.Generator.Msil.Tests
                     Console.Error.WriteLine("ERROR output:");
                     Console.Error.WriteLine(error.ToString());
                 }
+
                 if (ilasm.ExitCode != 0 || dumpOutput)
                 {
                     Console.WriteLine("Output");
                     Console.Write(output.ToString());
                 }
+
                 if (ilasm.ExitCode != 0)
                     return false; // fail
             }
@@ -90,8 +113,8 @@ namespace Oberon0.Generator.Msil.Tests
                 {
                     continue; // ignored
                 }
-                File.Copy(reference.Location, 
-                    Path.Combine(Environment.GetEnvironmentVariable("TEMP"), Path.GetFileName(reference.Location)), true);
+
+                File.Copy(reference.Location, Path.Combine(tempPath, Path.GetFileName(reference.Location)), true);
             }
         }
 

@@ -51,7 +51,7 @@ END Test.";
             }
 
             var code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("1\n2\n3\n4\n5\n", outputData.NlFix());
         }
     }

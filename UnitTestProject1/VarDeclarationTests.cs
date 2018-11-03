@@ -18,7 +18,7 @@ namespace Oberon0.Compiler.Tests
 
     using Oberon0.Compiler.Definitions;
     using Oberon0.Compiler.Types;
-    using Oberon0.CompilerSupport;
+    using Oberon0.TestSupport;
 
     [TestFixture]
     public class VarDeclarationTests
@@ -26,17 +26,13 @@ namespace Oberon0.Compiler.Tests
         [Test]
         public void ArrayFailBooleanIndex()
         {
-            List<CompilerError> errors = new List<CompilerError>();
             TestHelper.CompileString(
                 @"MODULE Test; 
 
 VAR
   id: ARRAY TRUE OF INTEGER;
  END Test.",
-                errors);
-
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("The array size must return a constant integer expression", errors[0].Message);
+                "The array size must return a constant integer expression");
         }
 
         [Test]
@@ -134,36 +130,29 @@ VAR
         [Test]
         public void TwoVarsFail1()
         {
-            List<CompilerError> errors = new List<CompilerError>();
             TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   id: INTEGER;
   id: INTEGER;
  END Test.",
-                errors);
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("Variable declared twice", errors[0].Message);
+                "Variable declared twice");
         }
 
         [Test]
         public void TwoVarsFail2()
         {
-            List<CompilerError> errors = new List<CompilerError>();
             TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   id, id: INTEGER;
  END Test.",
-                errors);
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("Variable declared twice", errors[0].Message);
+                "Variable declared twice");
         }
 
         [Test]
         public void VarArrayNotConst()
         {
-            var errors = new List<CompilerError>();
             TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
@@ -171,9 +160,7 @@ VAR
     arr: ARRAY id OF INTEGER;
 
  END Test.",
-                errors);
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("The array size must return a constant integer expression", errors[0].Message);
+                "The array size must return a constant integer expression");
         }
 
         [Test]
@@ -191,16 +178,13 @@ VAR
         [Test]
         public void VarWithoutWrongType()
         {
-            List<CompilerError> errors = new List<CompilerError>();
             TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
     id: DUMMY;
 
  END Test.",
-                errors);
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("Type not known", errors[0].Message);
+                "Type not known");
         }
     }
 }

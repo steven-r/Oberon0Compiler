@@ -40,26 +40,28 @@ namespace Oberon0.Compiler
 
         public override void ExitArrayType(OberonGrammarParser.ArrayTypeContext context)
         {
-            ConstantIntExpression constexp =
-                ConstantSolver.Solve(context.e.expReturn, context.bParam) as ConstantIntExpression;
-            if (constexp == null)
+            var constExpression =
+                ConstantSolver.Solve(context.e.expReturn, parser.currentBlock);
+            if (constExpression is ConstantIntExpression cie)
+            {
+                context.returnType = new ArrayTypeDefinition(cie.ToInt32(), context.t.returnType);
+            }
+            else
             {
                 this.parser.NotifyErrorListeners(
                     context.Start,
                     "The array size must return a constant integer expression",
                     null);
-                constexp = (ConstantIntExpression)ConstantExpression.Create(0);
+                context.returnType = new ArrayTypeDefinition(0, context.t.returnType); 
             }
-
-            context.returnType = new ArrayTypeDefinition(constexp.ToInt32(), context.t.returnType);
         }
 
         public override void ExitAssign_statement(OberonGrammarParser.Assign_statementContext context)
         {
-            var v = context.bParam.LookupVar(context.id.Text);
+            var v = parser.currentBlock.LookupVar(context.id.Text);
             if (v == null)
             {
-                this.parser.NotifyErrorListeners(context.id, $"Variable {context.id.Text} not known", null);
+                parser.NotifyErrorListeners(context.id, $"Variable {context.id.Text} not known", null);
                 return;
             }
 
@@ -71,24 +73,24 @@ namespace Oberon0.Compiler
 
             if (context.r.expReturn == null)
             {
-                this.parser.NotifyErrorListeners(context.id, $"Cannot parse right side of assignment", null);
+                parser.NotifyErrorListeners(context.id, "Cannot parse right side of assignment", null);
                 return;
             }
 
-            Expression e = ConstantSolver.Solve(context.r.expReturn, context.bParam);
+            Expression e = ConstantSolver.Solve(context.r.expReturn, this.parser.currentBlock);
             if (!targetType.IsAssignable(e.TargetType))
             {
                 this.parser.NotifyErrorListeners(context.id, "Left & right side do not match types", null);
                 return;
             }
 
-            context.container.Statements.Add(
+            parser.currentBlock.Statements.Add(
                 new AssignmentStatement { Variable = v, Selector = context.s.vsRet, Expression = e });
         }
 
         public override void ExitConstDeclarationElement(OberonGrammarParser.ConstDeclarationElementContext context)
         {
-            if (context.bParam.LookupVar(context.c.Text, false) != null)
+            if (this.parser.currentBlock.LookupVar(context.c.Text, false) != null)
             {
                 this.parser.NotifyErrorListeners(
                     context.c,
@@ -97,34 +99,115 @@ namespace Oberon0.Compiler
                 return;
             }
 
-            ConstantExpression constexp =
-                ConstantSolver.Solve(context.e.expReturn, context.bParam) as ConstantExpression;
-            if (constexp == null)
+            ConstantExpression constantExpression =
+                ConstantSolver.Solve(context.e.expReturn, this.parser.currentBlock) as ConstantExpression;
+            if (constantExpression == null)
             {
-                this.parser.NotifyErrorListeners(context.e.start, "A constant must resolve during compile time", null);
+                parser.NotifyErrorListeners(context.e.start, "A constant must resolve during compile time", null);
                 return;
             }
 
-            context.bParam.Declarations.Add(
-                new ConstDeclaration(context.c.Text, constexp.TargetType, constexp, context.bParam));
+            parser.currentBlock.Declarations.Add(
+                new ConstDeclaration(context.c.Text, constantExpression.TargetType, constantExpression, parser.currentBlock));
         }
 
-        public override void ExitFactorExpression(OberonGrammarParser.FactorExpressionContext context)
+        /* expressions */
+
+        public override void ExitExprBoolConst(OberonGrammarParser.ExprBoolConstContext context)
         {
-            context.expReturn = context._s[0].expReturn;
-            for (int i = 1; i < context._s.Count; i++)
+            context.expReturn = ConstantExpression.Create(context.b.Text);
+        }
+
+        public override void ExitExprConstant(OberonGrammarParser.ExprConstantContext context)
+        {
+            context.expReturn = ConstantExpression.Create(context.c.Text);
+        }
+
+        public override void ExitExprNotExpression(OberonGrammarParser.ExprNotExpressionContext context)
+        {
+            switch (context.op.Type)
             {
-                context.expReturn = BinaryExpression.Create(
-                    context._op[i - 1].Type,
-                    context.expReturn,
-                    context._s[i].expReturn,
-                    context.bParam);
+                case OberonGrammarLexer.MINUS:
+                    context.expReturn = BinaryExpression.Create(
+                        OberonGrammarLexer.MINUS,
+                        context.e.expReturn,
+                        null,
+                        this.parser.currentBlock);
+                    break;
+                case OberonGrammarLexer.NOT:
+                    context.expReturn = BinaryExpression.Create(
+                        OberonGrammarLexer.NOT,
+                        context.e.expReturn,
+                        null,
+                        this.parser.currentBlock);
+                    break;
             }
+        }
+
+        public override void ExitExprEmbeddedExpression(OberonGrammarParser.ExprEmbeddedExpressionContext context)
+        {
+            context.expReturn = context.e.expReturn;
+        }
+
+        public override void ExitExprSingleId(OberonGrammarParser.ExprSingleIdContext context)
+        {
+            context.expReturn = VariableReferenceExpression.Create(this.parser.currentBlock, context.id.Text, context.s.vsRet);
+        }
+
+        public override void ExitExprStringLiteral(OberonGrammarParser.ExprStringLiteralContext context)
+        {
+            context.expReturn = new StringExpression(context.s.Text);
+        }
+
+        public override void ExitExprFactPrecedence(OberonGrammarParser.ExprFactPrecedenceContext context)
+        {
+            context.expReturn = BinaryExpression.Create(
+                context.op.Type,
+                context.l.expReturn,
+                context.r.expReturn,
+                this.parser.currentBlock);
+        }
+
+        public override void ExitExprMultPrecedence(OberonGrammarParser.ExprMultPrecedenceContext context)
+        {
+            context.expReturn = BinaryExpression.Create(
+                context.op.Type,
+                context.l.expReturn,
+                context.r.expReturn,
+                this.parser.currentBlock);
+        }
+
+        public override void ExitExprRelPrecedence(OberonGrammarParser.ExprRelPrecedenceContext context)
+        {
+            context.expReturn = BinaryExpression.Create(
+                context.op.Type,
+                context.l.expReturn,
+                context.r.expReturn,
+                this.parser.currentBlock);
+        }
+
+        public override void ExitExprFuncCall(OberonGrammarParser.ExprFuncCallContext context)
+        {
+            var parameters = context.cp?._p?.Select(x => x.expReturn).ToArray() ?? new Expression[0];
+            var fp = parser.currentBlock.LookupFunction(
+                context.id.Text,
+                parameters);
+
+            if (fp == null)
+            {
+                parser.NotifyErrorListeners(context.id, $"Function '{context.id.Text}' not known", null);
+                return;
+            }
+
+            context.expReturn = new FunctionCallExpression(
+                fp,
+                parser.currentBlock,
+                parameters);
         }
 
         public override void ExitIf_statement(OberonGrammarParser.If_statementContext context)
         {
-            foreach (OberonGrammarParser.RelationalExpressionContext expressionContext in context._c)
+            foreach (OberonGrammarParser.ExpressionContext expressionContext in context._c)
             {
                 if (expressionContext.expReturn.TargetType.Type != BaseTypes.Bool)
                 {
@@ -135,20 +218,24 @@ namespace Oberon0.Compiler
                     return;
                 }
 
+                if (expressionContext.expReturn is VariableReferenceExpression var)
+                {
+                    expressionContext.expReturn = BinaryExpression.Create(
+                        OberonGrammarLexer.EQUAL,
+                        var,
+                        ConstantExpression.Create(true),
+                        this.parser.currentBlock);
+                }
+
                 context.ifs.Conditions.Add(expressionContext.expReturn);
             }
 
-            context.container.Statements.Add(context.ifs);
-        }
-
-        public override void ExitNonUnaryExpressionPrefix(OberonGrammarParser.NonUnaryExpressionPrefixContext context)
-        {
-            context.expReturn = context.t.expReturn;
+            this.parser.currentBlock.Statements.Add(context.ifs);
         }
 
         public override void ExitProcCall_statement(OberonGrammarParser.ProcCall_statementContext context)
         {
-            FunctionDeclaration fp = context.bParam.LookupFunction(context.id.Text);
+            FunctionDeclaration fp = this.parser.currentBlock.LookupFunction(context.id.Text);
             if (fp == null)
             {
                 this.parser.NotifyErrorListeners(context.id, $"Function '{context.id.Text}' not known", null);
@@ -177,7 +264,7 @@ namespace Oberon0.Compiler
 
             for (int i = 0; i < parameters.Length; i++)
             {
-                parameters[i] = ConstantSolver.Solve(parameters[i], context.bParam);
+                parameters[i] = ConstantSolver.Solve(parameters[i], this.parser.currentBlock);
                 if (procParameters[i].Type.Type == BaseTypes.Any)
                 {
                     continue;
@@ -202,24 +289,33 @@ namespace Oberon0.Compiler
                 }
             }
 
-            context.container.Statements.Add(new ProcedureCallStatement(fp, context.bParam, parameters.ToList()));
+            this.parser.currentBlock.Statements.Add(new ProcedureCallStatement(fp, this.parser.currentBlock, parameters.ToList()));
         }
 
         public override void ExitProcedureDeclaration(OberonGrammarParser.ProcedureDeclarationContext context)
         {
-            context.bParam.Procedures.Add(context.p.proc);
+            if (context.endname._ID.Text != context.p.proc.Name)
+            {
+                this.parser.NotifyErrorListeners(
+                    context.endname._ID,
+                    "The name of the procedure does not match the name after END",
+                    null);
+            }
+            this.parser.PopBlock();
+            this.parser.currentBlock.Procedures.Add(context.p.proc);
         }
 
         public override void ExitProcedureHeader(OberonGrammarParser.ProcedureHeaderContext context)
         {
-            context.proc = new FunctionDeclaration(context.name.Text, context.bParam, context.r?.@params);
+            context.proc = new FunctionDeclaration(context.name.Text, this.parser.currentBlock, context.r?.@params);
+            this.parser.PushBlock(context.proc.Block);
         }
 
         public override void ExitProcedureParameter(OberonGrammarParser.ProcedureParameterContext context)
         {
             context.param = new ProcedureParameter(
                 context.name.Text,
-                context.bParam,
+                this.parser.currentBlock,
                 context.t.returnType,
                 context.isVar);
         }
@@ -275,19 +371,6 @@ namespace Oberon0.Compiler
             context.returnType = context.record;
         }
 
-        public override void ExitRelationalExpression(OberonGrammarParser.RelationalExpressionContext context)
-        {
-            context.expReturn = context._s[0].expReturn;
-            for (int i = 1; i < context._s.Count; i++)
-            {
-                context.expReturn = BinaryExpression.Create(
-                    context._op[i - 1].Type,
-                    context.expReturn,
-                    context._s[i].expReturn,
-                    context.bParam);
-            }
-        }
-
         public override void ExitRepeat_statement(OberonGrammarParser.Repeat_statementContext context)
         {
             var r = context.r.expReturn;
@@ -301,7 +384,7 @@ namespace Oberon0.Compiler
             }
 
             context.rs.Condition = r;
-            context.container.Statements.Add(context.rs);
+            this.parser.currentBlock.Statements.Add(context.rs);
         }
 
         public override void ExitSelector(OberonGrammarParser.SelectorContext context)
@@ -340,26 +423,13 @@ namespace Oberon0.Compiler
             context.vsRet = vs;
         }
 
-        public override void ExitSimpleExpression(OberonGrammarParser.SimpleExpressionContext context)
-        {
-            context.expReturn = context._f[0].expReturn;
-            for (int i = 1; i < context._f.Count; i++)
-            {
-                context.expReturn = BinaryExpression.Create(
-                    context._op[i - 1].Type,
-                    context.expReturn,
-                    context._f[i].expReturn,
-                    context.bParam);
-            }
-        }
-
         public override void ExitSimpleTypeName(OberonGrammarParser.SimpleTypeNameContext context)
         {
-            var type = context.bParam.LookupType(context.ID().GetText());
+            var type = this.parser.currentBlock.LookupType(context.ID().GetText());
             if (type == null)
             {
                 this.parser.NotifyErrorListeners(context.ID().Symbol, "Type not known", null);
-                context.returnType = context.bParam.LookupType(TypeDefinition.VoidTypeName);
+                context.returnType = this.parser.currentBlock.LookupType(TypeDefinition.VoidTypeName);
             }
             else
             {
@@ -370,7 +440,7 @@ namespace Oberon0.Compiler
         public override void ExitSingleTypeDeclaration(OberonGrammarParser.SingleTypeDeclarationContext context)
         {
             string name = context.id.Text;
-            TypeDefinition t = context.bParam.LookupType(name);
+            TypeDefinition t = this.parser.currentBlock.LookupType(name);
             if (t != null)
             {
                 this.parser.NotifyErrorListeners(context.id, $"Type {name} declared twice", null);
@@ -379,79 +449,24 @@ namespace Oberon0.Compiler
 
             // create the final type
             t = context.t.returnType.Clone(name);
-            context.bParam.Types.Add(t);
+            this.parser.currentBlock.Types.Add(t);
         }
 
         public override void ExitSingleVariableDeclaration(OberonGrammarParser.SingleVariableDeclarationContext context)
         {
             foreach (var token in context._v)
             {
-                if (context.bParam.LookupVar(token.Text, false) != null)
+                if (this.parser.currentBlock.LookupVar(token.Text, false) != null)
                 {
                     this.parser.NotifyErrorListeners(token, "Variable declared twice", null);
                 }
                 else
                 {
-                    context.bParam.Declarations.Add(new Declaration(token.Text, context.t.returnType, context.bParam));
+                    this.parser.currentBlock.Declarations.Add(new Declaration(token.Text, context.t.returnType, this.parser.currentBlock));
                 }
             }
         }
 
-        public override void ExitTermConstant(OberonGrammarParser.TermConstantContext context)
-        {
-            context.expReturn = ConstantExpression.Create(context.c.Text);
-        }
-
-        public override void ExitTermEmbeddedExpression(OberonGrammarParser.TermEmbeddedExpressionContext context)
-        {
-            context.expReturn = context.e.expReturn;
-        }
-
-        public override void ExitTermFuncCall(OberonGrammarParser.TermFuncCallContext context)
-        {
-            var fp = context.bParam.LookupFunction(
-                context.id.Text,
-                context.cp?._p?.Select(x => x.expReturn).ToList() ?? new List<Expression>());
-            if (fp == null)
-            {
-                this.parser.NotifyErrorListeners(context.id, $"Function '{context.id.Text}' not known", null);
-                return;
-            }
-
-            context.expReturn = new FunctionCallExpression(
-                fp,
-                context.bParam,
-                context.cp?._p?.Select(x => x.expReturn).ToArray() ?? new Expression[0]);
-        }
-
-        public override void ExitTermNotExpression(OberonGrammarParser.TermNotExpressionContext context)
-        {
-            context.expReturn = context.e.expReturn;
-        }
-
-        public override void ExitTermSingleId(OberonGrammarParser.TermSingleIdContext context)
-        {
-            context.expReturn = VariableReferenceExpression.Create(context.bParam, context.id.Text, context.s.vsRet);
-        }
-
-        public override void ExitTermBoolConst(OberonGrammarParser.TermBoolConstContext context)
-        {
-            context.expReturn = ConstantExpression.Create(context.b.Text);
-        }
-
-        public override void ExitTermStringLiteral(OberonGrammarParser.TermStringLiteralContext context)
-        {
-            context.expReturn = new StringExpression(context.s.Text);
-        }
-
-        public override void ExitUnaryExpressionPrefix(OberonGrammarParser.UnaryExpressionPrefixContext context)
-        {
-            context.expReturn = BinaryExpression.Create(
-                OberonGrammarLexer.MINUS,
-                context.t.expReturn,
-                null,
-                context.bParam);
-        }
 
         public override void ExitWhile_statement(OberonGrammarParser.While_statementContext context)
         {
@@ -466,7 +481,7 @@ namespace Oberon0.Compiler
             }
 
             context.ws.Condition = r;
-            context.container.Statements.Add(context.ws);
+            this.parser.currentBlock.Statements.Add(context.ws);
         }
 
         private TypeDefinition CheckArrayIndexSelector(
@@ -481,7 +496,7 @@ namespace Oberon0.Compiler
                 return null;
             }
 
-            indexSelector.IndexDefinition = ConstantSolver.Solve(indexSelector.IndexDefinition, context.bParam);
+            indexSelector.IndexDefinition = ConstantSolver.Solve(indexSelector.IndexDefinition, this.parser.currentBlock);
             if (indexSelector.IndexDefinition.TargetType.Type != BaseTypes.Int)
             {
                 this.parser.NotifyErrorListeners(indexSelector.Token, "Array reference must be INTEGER", null);

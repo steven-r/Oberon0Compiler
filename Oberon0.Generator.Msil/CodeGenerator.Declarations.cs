@@ -1,66 +1,44 @@
-﻿using System.Linq;
-using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Types;
+﻿#region copyright
+
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CodeGenerator.Declarations.cs" company="Stephen Reindl">
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+// <summary>
+//     Part of oberon0 - Oberon0.Generator.Msil/CodeGenerator.Declarations.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+#endregion
 
 namespace Oberon0.Generator.Msil
 {
+    using System.Linq;
+
+    using Oberon0.Compiler.Definitions;
+    using Oberon0.Compiler.Types;
+
+    /// <summary>
+    /// The code generator.
+    /// </summary>
     public partial class CodeGenerator
     {
-        private void ProcessDeclarations(Block block, bool isRoot = false)
-        {
-            GenerateTypeDeclarations(block);
-            int id = 0;
-            bool isFirst = true;
-            foreach (Declaration declaration in block.Declarations)
-            {
-                if (declaration is ProcedureParameter pp)
-                {
-                    // skip procedure parameters
-                    continue;
-                }
-
-                if (declaration is ConstDeclaration c)
-                {
-                    Code.ConstField(c);
-                    continue;
-                }
-
-                declaration.GeneratorInfo = new DeclarationGeneratorInfo(id++);
-                if (isRoot)
-                {
-                    Code.DataField(declaration, true);
-                }
-                else
-                {
-                    if (isFirst)
-                    {
-                        Code.Write("\t.locals (");
-                        isFirst = false;
-                    }
-                    else
-                    {
-                        Code.Write(", ");
-                    }
-                    Code.LocalVarDef(declaration, false);
-                }
-            }
-            if (!isFirst)
-                Code.WriteLine(")");
-        }
-
         private void GenerateTypeDeclarations(Block block)
         {
             foreach (var typeDefinition in block.Types.Where(x => x is RecordTypeDefinition))
             {
                 var recordType = (RecordTypeDefinition)typeDefinition;
-                Code.WriteLine($".class nested private {recordType.Name} {{");
+                this.Code.WriteLine($".class nested private {recordType.Name} {{");
                 foreach (Declaration declaration in recordType.Elements)
                 {
-                    Code.Write("\t.field public ");
-                    Code.LocalVarDef(declaration, false);
-                    Code.WriteLine();
+                    this.Code.Write("\t.field public ");
+                    this.Code.LocalVarDef(declaration, false);
+                    this.Code.WriteLine();
                 }
-                Code.Write(@"	.method public hidebysig specialname rtspecialname instance void 
+
+                this.Code.Write(
+                    @"	.method public hidebysig specialname rtspecialname instance void 
       .ctor() cil managed 
     {
       .maxstack 8
@@ -68,10 +46,10 @@ namespace Oberon0.Generator.Msil
 		ldarg.0      // this
 		call         instance void [mscorlib]System.Object::.ctor()
 ");
-                Code.Emit("nop");
-                Code.Emit("ret");
-                Code.WriteLine("}");
-                Code.WriteLine("}");
+                this.Code.Emit("nop");
+                this.Code.Emit("ret");
+                this.Code.WriteLine("}");
+                this.Code.WriteLine("}");
             }
         }
 
@@ -81,16 +59,59 @@ namespace Oberon0.Generator.Msil
             {
                 if (declaration.Type is ArrayTypeDefinition vd)
                 {
-                    Code.PushConst(vd.Size);
-                    Code.Emit("newarr", Code.GetTypeName(vd.ArrayType.Type));
-                    StoreVar(block, declaration, null);
+                    this.Code.PushConst(vd.Size);
+                    this.Code.Emit("newarr", Code.GetTypeName(vd.ArrayType.Type));
+                    this.StoreVar(block, declaration, null);
                 }
                 else if (declaration.Type is RecordTypeDefinition rd)
                 {
-                    Code.Emit("newobj", "instance void", $"{Code.ClassName}/{rd.Name}::.ctor()");
-                    StoreVar(block, declaration, null);
+                    this.Code.Emit("newobj", "instance void", $"{this.Code.ClassName}/{rd.Name}::.ctor()");
+                    this.StoreVar(block, declaration, null);
                 }
             }
+        }
+
+        private void ProcessDeclarations(Block block, bool isRoot = false)
+        {
+            this.GenerateTypeDeclarations(block);
+            int id = 0;
+            bool isFirst = true;
+            foreach (Declaration declaration in block.Declarations)
+            {
+                if (declaration is ProcedureParameter)
+                {
+                    // skip procedure parameters
+                    continue;
+                }
+
+                if (declaration is ConstDeclaration c)
+                {
+                    this.Code.ConstField(c);
+                    continue;
+                }
+
+                declaration.GeneratorInfo = new DeclarationGeneratorInfo(id++);
+                if (isRoot)
+                {
+                    this.Code.DataField(declaration, true);
+                }
+                else
+                {
+                    if (isFirst)
+                    {
+                        this.Code.Write("\t.locals (");
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        this.Code.Write(", ");
+                    }
+
+                    this.Code.LocalVarDef(declaration, false);
+                }
+            }
+
+            if (!isFirst) this.Code.WriteLine(")");
         }
     }
 }

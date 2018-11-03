@@ -51,7 +51,7 @@ END Test.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual($"{1.2}\n", outputData.NlFix());
         }
 
@@ -80,7 +80,7 @@ END Test.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("1\n", outputData.NlFix());
         }
 
@@ -112,7 +112,7 @@ END Test.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("42\n", outputData.NlFix());
         }
 
@@ -141,7 +141,7 @@ END Test.";
             }
 
             string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual($"{1.2}\n", outputData.NlFix());
         }
     }
