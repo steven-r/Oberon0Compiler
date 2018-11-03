@@ -28,15 +28,19 @@ install:
   - choco install codecov -y
 
 before_build:
+  - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
+        https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `
+        Where-Object pullRequestId -eq $env:APPVEYOR_PULL_REQUEST_NUMBER)[0].buildNumber) { `
+          throw "There are newer queued builds for this pull request, failing early." }
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
-  - cmd: >-
-      IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
-        SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%"
-      ) ELSE (
-        SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" 
-      )
+  - ps: >-
+    IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
+    SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%"
+    ) ELSE (
+    SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" 
+    )
   
 test_script:
   - tools\coverlet .\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll " --format json --output .\msil-tests.json --exclude "[NUnit3*]*"
