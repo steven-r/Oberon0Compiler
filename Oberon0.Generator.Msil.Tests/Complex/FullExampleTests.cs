@@ -7,7 +7,7 @@ namespace Oberon0.Generator.Msil.Tests.Complex
 {
 
     [TestFixture]
-    public class FullExample
+    public class FullExampleTests
     {
         [Test]
         public void FullExample1()
@@ -85,7 +85,7 @@ Div: 3/100= 0, rem 3
             cg.Generate();
             string code = cg.DumpCode();
             string outputData;
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out outputData, m));
             Assert.AreEqual(expected, outputData.NlFix());
         }
     }

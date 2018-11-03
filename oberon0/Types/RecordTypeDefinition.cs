@@ -54,12 +54,7 @@ namespace Oberon0.Compiler.Types
                 return false;
             }
 
-            if (Elements.Where((t, i) => !t.Type.IsAssignable(rt.Elements[i].Type)).Any())
-            {
-                return false;
-            }
-
-            return true;
+            return Name == sourceType.Name;
         }
     }
 }

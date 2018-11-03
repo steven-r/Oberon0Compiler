@@ -11,7 +11,7 @@ namespace Oberon0.Attributes
     /// </summary>
     /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Class)]
-    public class Oberon0LibraryAttribute: Attribute
+    public class Oberon0LibraryAttribute : Attribute
     {
     }
 }

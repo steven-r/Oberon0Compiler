@@ -29,7 +29,7 @@ namespace Oberon0.Compiler.Definitions
         public FunctionDeclaration(string name, Block parent, params ProcedureParameter[] parameters)
         {
             this.Name = name;
-            this.Block = new Block { Parent = parent };
+            this.Block = new Block(parent);
             if (parameters != null)
             {
                 this.Block.Declarations.AddRange(parameters);
@@ -52,7 +52,7 @@ namespace Oberon0.Compiler.Definitions
             params ProcedureParameter[] parameters)
         {
             this.Name = name;
-            this.Block = new Block { Parent = parent };
+            this.Block = new Block(parent);
             this.Block.Declarations.AddRange(parameters);
             this.ReturnType = returnType;
         }

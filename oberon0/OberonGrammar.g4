@@ -1,6 +1,7 @@
 grammar OberonGrammar;
 
 @header {
+using System.Collections.Generic;
 using System.Linq;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Types;
@@ -12,6 +13,26 @@ using Oberon0.Compiler.Statements;
 	private bool isVar(string id, Block block) {
 		return block.LookupVar(id, true) != null;
 	}
+
+	public Stack<Block> blockStack = new Stack<Block>();
+	public Block currentBlock;
+
+	internal Block PushBlock() {
+		var block = new Block(currentBlock);
+		blockStack.Push(currentBlock);
+		currentBlock = block;
+		return block;
+	}
+
+	internal Block PushBlock(Block block) {
+		blockStack.Push(currentBlock);
+		currentBlock = block;
+		return block;
+	}
+
+	internal void PopBlock() {
+		currentBlock = blockStack.Pop();
+	}
 }
 
 module returns [Module modres]: 
@@ -19,9 +40,10 @@ module returns [Module modres]:
 		{ 
 			$modres = new Module(); 
 			$modres.Name = $n.text; 
+			currentBlock = $modres.Block;
 		}
-		declarations[$modres.Block]
-		rId=block[$modres.Block]
+		declarations
+		rId=block
 		{
 			if ($rId.ret != $n.text) {
 				NotifyErrorListeners(_localctx.n, "The name of the module does not match the end node", null);
@@ -30,197 +52,184 @@ module returns [Module modres]:
 		'.'
 		;
 
-declarations[Block bParam]:
-		( procedureDeclaration[bParam] | localDeclaration[bParam] ) *
+declarations:
+		( procedureDeclaration | localDeclaration ) *
 		;
 
-procedureDeclaration[Block bParam]:
-		p=procedureHeader[bParam]
-		localDeclaration[$p.proc.Block]*
-		block[$p.proc.Block]
+procedureDeclaration:
+		p=procedureHeader 
+		localDeclaration*
+		endname=block
 		';'
 		;
 
-procedureHeader[Block bParam] returns[FunctionDeclaration proc]:
-		PROCEDURE name=ID (r=procedureParameters[bParam])? ';'
+procedureHeader returns[FunctionDeclaration proc]:
+		PROCEDURE name=ID (r=procedureParameters)? ';'
 		;
 
-procedureParameters[Block bParam] returns [ProcedureParameter[] params]:
-		'(' (p+=procedureParameter[bParam] ';') * p+=procedureParameter[bParam] ')'
+procedureParameters returns [ProcedureParameter[] params]:
+		'(' (p+=procedureParameter ';') * p+=procedureParameter ')'
 		;
 
-procedureParameter[Block bParam] returns[ProcedureParameter param] locals[bool isVar]
+procedureParameter returns[ProcedureParameter param] locals[bool isVar]
 @init{
 	$isVar = false;
 }
 		:
-		( VAR {$isVar = true;} )? name=ID ':' t=typeName[bParam]
+		( VAR {$isVar = true;} )? name=ID ':' t=typeName
 		;
 
-typeName[Block bParam] 
+typeName
 	returns [TypeDefinition returnType]
 	locals [RecordTypeDefinition recordType = new RecordTypeDefinition()]
 		: ID															# simpleTypeName
-		| ARRAY e=simpleExpression[bParam] OF t=typeName[bParam]		# arrayType
-		| RECORD r=recordTypeNameElements[bParam] END						# recordTypeName
+		| ARRAY e=expression OF t=typeName		# arrayType
+		| RECORD r=recordTypeNameElements END						# recordTypeName
 		;
 
-recordTypeNameElements[Block bParam]
+recordTypeNameElements
 	returns [TypeDefinition returnType]
 	locals [RecordTypeDefinition record = new RecordTypeDefinition()]
-		: recordElement[bParam, $record] (';' recordElement[bParam, $record])*
+		: recordElement[$record] (';' recordElement[$record])*
 		;
 
-recordElement[Block bParam, RecordTypeDefinition record]
-		: (ids+=ID ',')* ids+=ID ':' t=typeName[bParam]
+recordElement[RecordTypeDefinition record]
+		: (ids+=ID ',')* ids+=ID ':' t=typeName
 		;
 
-localDeclaration[Block bParam]
-		: variableDeclaration[bParam]
-		| constDeclaration[bParam]
-		| typeDeclaration[bParam]
+localDeclaration
+		: variableDeclaration
+		| constDeclaration
+		| typeDeclaration
 		;
 
-typeDeclaration[Block bParam]:
+typeDeclaration:
 		TYPE
-          singleTypeDeclaration[bParam]+
+          singleTypeDeclaration+
 		  ;
 
-singleTypeDeclaration[Block bParam]:
-		  id=ID '=' t=typeName[bParam] ';'
+singleTypeDeclaration:
+		  id=ID '=' t=typeName ';'
 		  ;
 
-variableDeclaration[Block bParam]:
+variableDeclaration:
 		VAR
-          singleVariableDeclaration[bParam]+
+          singleVariableDeclaration+
 		  ;
 
-singleVariableDeclaration[Block bParam]:
-		  (v+=ID ',')* v+=ID ':' t=typeName[bParam] ';'
+singleVariableDeclaration:
+		  (v+=ID ',')* v+=ID ':' t=typeName ';'
 		  ;
 
-constDeclaration[Block bParam]:
+constDeclaration:
 		CONST
-		  constDeclarationElement[bParam]+
+		  constDeclarationElement+
 		  ;
 
-constDeclarationElement[Block bParam]:
-		c=ID '=' e=relationalExpression[bParam] ';'
+constDeclarationElement:
+		c=ID '=' e=expression ';'
 		;
 
-block[Block bParam] returns [string ret]
-		: (BEGIN statements[bParam, bParam])? END ID
+block returns [string ret]
+		: (BEGIN statements)? END ID
 		{ $ret = $ID.text; }
 		;
 
-statements[Block bParam, Block container]:
-		statement[bParam, container]
-		( ';' statement[bParam, container] )*
+statements:
+		statement
+		( ';' statement )*
 		;
 
-statement[Block bParam, Block container]
-		: {isVar(CurrentToken.Text, $bParam)}? assign_statement[bParam, container]
-		| {!isVar(CurrentToken.Text, $bParam)}? procCall_statement[bParam, container]
-		| while_statement[bParam, container]
-		| repeat_statement[bParam, container]
-		| if_statement[bParam, container]
+statement
+		: {isVar(CurrentToken.Text, currentBlock)}? assign_statement
+		| {!isVar(CurrentToken.Text, currentBlock)}? procCall_statement
+		| while_statement
+		| repeat_statement
+		| if_statement
 		| 
 		;
 
-procCall_statement[Block bParam, Block container]
-		: id=ID ('(' cp=callParameters[bParam] ')')?
+procCall_statement
+		: id=ID ('(' cp=callParameters ')')?
 		;
 
-assign_statement[Block bParam, Block container]
-		: id=ID s=selector[bParam, $bParam.LookupVar($id.text)] ':=' r=relationalExpression[bParam]
+assign_statement
+		: id=ID s=selector[currentBlock.LookupVar($id.text)] ':=' r=expression
 		;
 
-while_statement[Block bParam, Block container]
+while_statement
 	locals[WhileStatement ws]
 	@init{
-		$ws = new WhileStatement(bParam);
+		$ws = new WhileStatement(currentBlock);
+		PushBlock($ws.Block);
 	}
-		: WHILE r=relationalExpression[bParam] DO
-		  statements[bParam, $ws.Block]
+		: WHILE r=expression DO
+		  statements
 		  END
+		  { PopBlock(); }
 		;
 
-repeat_statement[Block bParam, Block container]
+repeat_statement
 	locals[RepeatStatement rs]
 	@init{
-		$rs = new RepeatStatement(bParam);
+		$rs = new RepeatStatement(currentBlock);
+		PushBlock($rs.Block);
 	}
 		: REPEAT
-		  statements[bParam, $rs.Block]
-		  UNTIL r=relationalExpression[bParam]
+		  statements
+		  UNTIL r=expression 
+		  { PopBlock(); }
 		;
 
-if_statement[Block bParam, Block container]
+if_statement
 	locals[IfStatement ifs, Block thenBlock]
 	@init{
-		$ifs = new IfStatement(bParam);
+		$ifs = new IfStatement(currentBlock);
 	}
-		: IF c+=relationalExpression[bParam] THEN
-			  { $thenBlock = new Block(bParam); }
-			  statements[bParam, $thenBlock]
-			  { $ifs.ThenParts.Add($thenBlock); }
-		  ( ELSIF c+=relationalExpression[bParam] THEN
-			  { $thenBlock = new Block(bParam); }
-			  statements[bParam, $thenBlock]
-			  { $ifs.ThenParts.Add($thenBlock); }
+		: IF c+=expression THEN
+			  { $thenBlock = PushBlock(); }
+			  statements
+			  { $ifs.ThenParts.Add($thenBlock); PopBlock(); }
+		  ( ELSIF c+=expression THEN
+			  { $thenBlock = PushBlock(); }
+			  statements
+			  { $ifs.ThenParts.Add($thenBlock); PopBlock(); }
 		  )* 
 		  (ELSE 
-			  { $thenBlock = new Block(bParam); }
-			  statements[bParam, $thenBlock]
-			  { $ifs.ElsePart = $thenBlock; }
+			  { $thenBlock = PushBlock(); }
+			  statements
+			  { $ifs.ElsePart = $thenBlock; PopBlock(); }
 		  )? 
 		  END
 		;
 
 // Expressions
-relationalExpression[Block bParam]
+expression
 	returns[Expression expReturn]
-	: s+=simpleExpression[bParam] ( op+=('<' | '<=' | '>' | '>=' | '=' | '#') s+=simpleExpression[bParam] ) *
+	: op=(NOT | MINUS) e=expression		#exprNotExpression
+	| l=expression op=('*' | DIV | MOD | AND) r=expression #exprMultPrecedence
+	| l=expression op=('+' | '-' | OR)  r=expression #exprFactPrecedence
+	| l=expression op=('<' | '<=' | '>' | '>=' | '=' | '#') r=expression #exprRelPrecedence
+	| {isVar(CurrentToken.Text, currentBlock)}? id=ID 
+		s=selector[currentBlock.LookupVar($id.text)]				#exprSingleId
+	| {!isVar(CurrentToken.Text, currentBlock)}? 
+		id=ID '(' cp=callParameters? ')'	#exprFuncCall
+	| '(' e=expression ')'	#exprEmbeddedExpression
+	| b=BooleanConstant							#exprBoolConst
+	| c=Constant								#exprConstant
+	| s=STRING_LITERAL							#exprStringLiteral
 	;
 
-simpleExpression[Block bParam]
-	returns[Expression expReturn]
-	: f+=factorExpression[bParam] ( op+=('+' | '-' | OR)  f+=factorExpression[bParam] )*
-	;
-
-factorExpression[Block bParam]
-	returns[Expression expReturn]
-	: s+=expressionPrefix[bParam] ( op+=('*' | DIV | MOD | '&') s+=expressionPrefix[bParam] )*
-	;
-
-expressionPrefix[Block bParam]
-	returns[Expression expReturn]
-	: '-' t=expressionTerm[bParam]		#unaryExpressionPrefix
-	| t=expressionTerm[bParam]			#nonUnaryExpressionPrefix
-	;
-
-expressionTerm[Block bParam]
-	returns[Expression expReturn]
-	: b=BooleanConstant							#termBoolConst
-	| {isVar(CurrentToken.Text, $bParam)}? id=ID s=selector[bParam, $bParam.LookupVar($id.text)]				#termSingleId
-	| {!isVar(CurrentToken.Text, $bParam)}? 
-		id=ID '(' cp=callParameters[bParam]? ')'	#termFuncCall
-	| c=Constant								#termConstant
-	| s=STRING_LITERAL							#termStringLiteral
-	| '(' e=relationalExpression[bParam] ')'	#termEmbeddedExpression
-	| '~' e=relationalExpression[bParam]		#termNotExpression
-	;
-
-callParameters[Block bParam]
-		: p+=relationalExpression[bParam] (',' p+=relationalExpression[bParam])*
+callParameters
+		: p+=expression (',' p+=expression)*
 		;
 
-selector[Block bParam, Declaration type] returns [VariableSelector vsRet]
-	: i+=arrayOrRecordSelector[bParam]*
+selector[Declaration type] returns [VariableSelector vsRet]
+	: i+=arrayOrRecordSelector*
 	;
 
-arrayOrRecordSelector[Block bParam] returns [BaseSelectorElement selRet]
-	: '[' e=simpleExpression[bParam] ']'		# arraySelector
+arrayOrRecordSelector returns [BaseSelectorElement selRet]
+	: '[' e=expression ']'		# arraySelector
 	| '.' ID									# recordSelector
 	;
 

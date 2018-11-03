@@ -44,7 +44,7 @@ END Array.";
                 cg.DumpCode(w);
             }
 
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(sb.ToString(), null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(sb.ToString(), null, out var outputData, m));
             Assert.IsTrue(string.IsNullOrEmpty(outputData));
         }
 
@@ -80,7 +80,7 @@ END Array.";
             cg.Generate();
             var code = cg.DumpCode();
 
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("1024\n", outputData.NlFix());
         }
 
@@ -111,7 +111,7 @@ END Array.";
             }
 
             var code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData));
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
             Assert.AreEqual("1\n", outputData.NlFix());
         }
     }

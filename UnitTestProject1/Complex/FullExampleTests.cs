@@ -52,15 +52,24 @@ END Divide;
 
 PROCEDURE BinSearch;
 VAR i, j, k, n, x: INTEGER;
- a: ARRAY 32 OF INTEGER;
-BEGIN ReadInt(x); k := 0;
- WHILE ~eot() DO ReadInt(a[k]); k := k + 1 END ;
- i := 0; j := n;
- WHILE i < j DO
- k := (i+j) DIV 2;
- IF x < a[k] THEN j := k ELSE i := k+1 END
- END ;
- WriteInt(i); WriteInt(j); WriteInt(a[j]); WriteLn
+    a: ARRAY 32 OF INTEGER;
+BEGIN 
+    ReadInt(x); 
+    k := 0;
+    WHILE ~eot() DO 
+        ReadInt(a[k]); 
+        k := k + 1 
+    END;
+    i := 0; 
+    j := n;
+    WHILE i < j DO
+        k := (i+j) DIV 2;
+        IF x < a[k] THEN j := k ELSE i := k+1 END
+    END;
+    WriteInt(i); 
+    WriteInt(j); 
+    WriteInt(a[j]); 
+    WriteLn
 END BinSearch;
 BEGIN ReadInt(n);
  IF n = 0 THEN Multiply ELSIF n = 1 THEN Divide ELSE BinSearch END

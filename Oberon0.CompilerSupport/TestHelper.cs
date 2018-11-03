@@ -10,7 +10,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-namespace Oberon0.CompilerSupport
+namespace Oberon0.TestSupport
 {
     using System;
     using System.Collections.Generic;
@@ -23,7 +23,6 @@ namespace Oberon0.CompilerSupport
 
     using Oberon0.Compiler;
     using Oberon0.Compiler.Definitions;
-    using Oberon0.TestSupport;
 
     public static class TestHelper
     {
@@ -44,6 +43,11 @@ namespace Oberon0.CompilerSupport
 
             OberonGrammarParser.ModuleContext context = parser.module();
             errors.AddRange(CompilerErrors);
+            if (context.modres != null)
+            {
+                context.modres.HasError = CompilerErrors.Any();
+            }
+
             return context.modres;
         }
 

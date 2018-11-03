@@ -24,14 +24,14 @@ namespace Oberon0.Compiler.Definitions
         public Block Block { get; }
 
         /// <summary>
-        /// Additional information used by the generator engine
+        /// Gets or sets additional information used by the generator engine
         /// </summary>
         /// <value>Generator information.</value>
         public IGeneratorInfo GeneratorInfo { get; set; }
 
         public override string ToString()
         {
-            return $"var {Name} = {Type}";
+            return $"{Name}:{Type}";
         }
     }
 }

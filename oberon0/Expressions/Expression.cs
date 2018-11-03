@@ -1,7 +1,4 @@
-﻿using JetBrains.Annotations;
-using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Generator;
-using Oberon0.Compiler.Types;
+﻿using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions
 {
@@ -19,8 +16,6 @@ namespace Oberon0.Compiler.Expressions
         public int Operator { get; set; }
 
         public TypeDefinition TargetType { get; set; }
-
-        public IGeneratorInfo GeneratorInfo { [UsedImplicitly] get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this expression is constant.

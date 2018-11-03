@@ -132,14 +132,14 @@ namespace Oberon0.Generator.Msil
             EmitNoNewLine("call", GetTypeName(func.ReturnType), $"{prototype}(");
             List<string> typeNames = new List<string>();
             typeNames.AddRange(
-                func.Block.Declarations.OfType<ProcedureParameter>().Select(parameter => GetTypeName(parameter.Type)));
+                func.Block.Declarations.OfType<ProcedureParameter>().Select(parameter => GetTypeName(parameter.Type) + (parameter.IsVar ? "&" : string.Empty)));
             Write(string.Join(",", typeNames));
             WriteLine(")");
         }
 
-        internal void Emit(string opCode, params object[] parameters)
+        internal void Emit(string code, params object[] parameters)
         {
-            EmitNoNewLine(opCode, parameters);
+            EmitNoNewLine(code, parameters);
             WriteLine();
         }
 
@@ -297,7 +297,7 @@ namespace Oberon0.Generator.Msil
             foreach (ProcedureParameter parameter in functionDeclaration.Block.Declarations.OfType<ProcedureParameter>())
             {
                 parameter.GeneratorInfo = new DeclarationGeneratorInfo(id++);
-                paramList.Add($"{GetTypeName(parameter.Type)} {parameter.Name}");
+                paramList.Add($"{GetTypeName(parameter.Type)}{(parameter.IsVar ? "&" : string.Empty)} {parameter.Name}");
             }
 
             WriteLine(

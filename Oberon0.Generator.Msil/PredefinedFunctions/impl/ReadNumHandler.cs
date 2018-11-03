@@ -13,6 +13,7 @@
 namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using JetBrains.Annotations;
 
@@ -34,7 +35,12 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
         {
             VariableReferenceExpression reference = (VariableReferenceExpression)parameters[0];
 
-            generator.StartStoreVar(block, reference.Declaration, reference.Selector);
+            var isVar = (reference.Declaration is ProcedureParameter pp) && pp.IsVar;
+            if (isVar || (reference.Selector != null && reference.Selector.Any()))
+            {
+                generator.Load(block, reference.Declaration, reference.Selector, true);
+            }
+
             generator.Code.WriteLine("\tcall string [mscorlib]System.Console::ReadLine()");
             switch (functionDeclaration.Name)
             {

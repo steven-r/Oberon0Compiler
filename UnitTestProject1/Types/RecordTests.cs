@@ -21,7 +21,6 @@ namespace Oberon0.Compiler.Tests.Types
     using Oberon0.Compiler.Expressions;
     using Oberon0.Compiler.Statements;
     using Oberon0.Compiler.Types;
-    using Oberon0.CompilerSupport;
     using Oberon0.TestSupport;
 
     [TestFixture]
@@ -182,6 +181,43 @@ END Test.");
             Declaration a = rtd.Elements.First();
             Assert.AreEqual("a", a.Name);
             Assert.AreEqual(intType, a.Type);
+        }
+
+        [Test]
+        public void RecordFailSimple()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+
+VAR a: RECORD
+      b: INTEGER
+    END;
+    b: INTEGER;
+BEGIN
+  a := b;
+END Test.", 
+                "Left & right side do not match types");
+        }
+
+        [Test]
+        public void RecordFailElement()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+TYPE 
+t = RECORD
+   a: INTEGER
+END;
+t2 = RECORD
+   a: INTEGER
+END;
+
+VAR a: t;
+    b: t2;
+BEGIN
+  a := b;
+END Test.",
+                "Left & right side do not match types");
         }
     }
 }

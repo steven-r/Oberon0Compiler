@@ -22,7 +22,7 @@ namespace Oberon0.Compiler.Tests.Types
     using Oberon0.Compiler.Expressions.Constant;
     using Oberon0.Compiler.Statements;
     using Oberon0.Compiler.Types;
-    using Oberon0.CompilerSupport;
+    using Oberon0.TestSupport;
 
     [TestFixture]
     public class TypeTests
