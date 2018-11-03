@@ -28,7 +28,7 @@ namespace Oberon0.Compiler.Expressions.Operations
                 switch (operationParameters.Operation)
                 {
                     case OberonGrammarLexer.AND:
-                        res = left.ToBool() & right.ToBool();
+                        res = left.ToBool() && right.ToBool();
                         break;
                     case OberonGrammarLexer.OR:
                         res = left.ToBool() || right.ToBool();
