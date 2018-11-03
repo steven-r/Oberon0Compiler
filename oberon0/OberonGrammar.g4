@@ -141,8 +141,8 @@ statements:
 		;
 
 statement
-		: {isVar(CurrentToken.Text, currentBlock)}? assign_statement
-		| {!isVar(CurrentToken.Text, currentBlock)}? procCall_statement
+		: assign_statement
+		| procCall_statement
 		| while_statement
 		| repeat_statement
 		| if_statement
@@ -207,17 +207,16 @@ if_statement
 expression
 	returns[Expression expReturn]
 	: op=(NOT | MINUS) e=expression		#exprNotExpression
-	| l=expression op=('*' | DIV | MOD | AND) r=expression #exprMultPrecedence
-	| l=expression op=('+' | '-' | OR)  r=expression #exprFactPrecedence
-	| l=expression op=('<' | '<=' | '>' | '>=' | '=' | '#') r=expression #exprRelPrecedence
-	| {isVar(CurrentToken.Text, currentBlock)}? id=ID 
-		s=selector[currentBlock.LookupVar($id.text)]				#exprSingleId
-	| {!isVar(CurrentToken.Text, currentBlock)}? 
-		id=ID '(' cp=callParameters? ')'	#exprFuncCall
-	| '(' e=expression ')'	#exprEmbeddedExpression
-	| b=BooleanConstant							#exprBoolConst
-	| c=Constant								#exprConstant
-	| s=STRING_LITERAL							#exprStringLiteral
+	| l=expression op=('*' | DIV | MOD | AND) r=expression					#exprMultPrecedence
+	| l=expression op=('+' | '-' | OR)  r=expression						#exprFactPrecedence
+	| l=expression op=('<' | '<=' | '>' | '>=' | '=' | '#') r=expression	#exprRelPrecedence
+	| id=ID 
+		s=selector[currentBlock.LookupVar($id.text)]						#exprSingleId
+	| id=ID '(' cp=callParameters? ')'										#exprFuncCall
+	| '(' e=expression ')'													#exprEmbeddedExpression
+	| b=BooleanConstant														#exprBoolConst
+	| c=Constant															#exprConstant
+	| s=STRING_LITERAL														#exprStringLiteral
 	;
 
 callParameters

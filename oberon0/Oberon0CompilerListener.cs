@@ -151,7 +151,25 @@ namespace Oberon0.Compiler
 
         public override void ExitExprSingleId(OberonGrammarParser.ExprSingleIdContext context)
         {
-            context.expReturn = VariableReferenceExpression.Create(this.parser.currentBlock, context.id.Text, context.s.vsRet);
+            var decl = this.parser.currentBlock.LookupVar(context.id.Text);
+            if (decl == null)
+            {
+                this.parser.NotifyErrorListeners(context.id, "Unknown identifier: " + context.id.Text, null);
+                context.expReturn = ConstantIntExpression.Zero;
+            }
+            else if (decl is ConstDeclaration cd)
+            {
+                if (context.s._i.Any())
+                {
+                    this.parser.NotifyErrorListeners(context.s.Start, "Selectors are not allowed for constants", null);
+                }
+
+                context.expReturn = cd.Value;
+            }
+            else
+            {
+                context.expReturn = VariableReferenceExpression.Create(this.parser.currentBlock, context.id.Text, context.s.vsRet);
+            }
         }
 
         public override void ExitExprStringLiteral(OberonGrammarParser.ExprStringLiteralContext context)
