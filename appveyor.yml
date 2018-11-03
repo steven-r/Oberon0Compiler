@@ -32,11 +32,11 @@ before_build:
   - nuget restore
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
   - cmd: >-
-    IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
-    SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%"
-    ) ELSE (
-    SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" 
-    )
+      IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
+        SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%"
+      ) ELSE (
+        SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" 
+      )
   
 test_script:
   - tools\coverlet .\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll " --format json --output .\msil-tests.json --exclude "[NUnit3*]*"
