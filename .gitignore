@@ -247,3 +247,4 @@ ModelManifest.xml
 opencover.xml
 /tools
 /oberon0/.antlr
+/lib/Oberon0.System.*
