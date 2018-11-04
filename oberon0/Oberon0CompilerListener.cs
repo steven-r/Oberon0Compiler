@@ -113,11 +113,6 @@ namespace Oberon0.Compiler
 
         /* expressions */
 
-        public override void ExitExprBoolConst(OberonGrammarParser.ExprBoolConstContext context)
-        {
-            context.expReturn = ConstantExpression.Create(context.b.Text);
-        }
-
         public override void ExitExprConstant(OberonGrammarParser.ExprConstantContext context)
         {
             context.expReturn = ConstantExpression.Create(context.c.Text);
