@@ -3,7 +3,7 @@ param()
 
 ##### Config #####
 # Path to GitVersion.exe
-$gitversion = "tools\GitVersion\GitVersion.exe"
+$gitversion = "GitVersion.exe"
 function Create-AdditionalReleaseArtifacts
 {
  param( [string]$Version )
