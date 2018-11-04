@@ -184,7 +184,7 @@ repeat_statement
 if_statement
 	locals[IfStatement ifs, Block thenBlock]
 	@init{
-		$ifs = new IfStatement(currentBlock);
+		$ifs = new IfStatement();
 	}
 		: IF c+=expression THEN
 			  { $thenBlock = PushBlock(); }

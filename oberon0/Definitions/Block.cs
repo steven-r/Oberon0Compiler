@@ -49,7 +49,7 @@ namespace Oberon0.Compiler.Definitions
 
         public List<FunctionDeclaration> Procedures { get; private set; }
 
-        public List<BasicStatement> Statements { get; private set; }
+        public List<IStatement> Statements { get; private set; }
 
         public List<TypeDefinition> Types { get; private set; }
 
@@ -192,7 +192,7 @@ namespace Oberon0.Compiler.Definitions
         {
             Declarations = new List<Declaration>();
             Types = new List<TypeDefinition>();
-            Statements = new List<BasicStatement>();
+            Statements = new List<IStatement>();
             Procedures = new List<FunctionDeclaration>();
         }
     }
