@@ -5,7 +5,7 @@ using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Statements
 {
-    public class ProcedureCallStatement : BasicStatement
+    public class ProcedureCallStatement : IStatement
     {
         public ProcedureCallStatement(FunctionDeclaration functionDeclaration, Block block, List<Expression> parameters)
         {

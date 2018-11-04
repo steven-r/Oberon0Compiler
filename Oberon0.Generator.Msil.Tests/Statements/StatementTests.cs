@@ -19,10 +19,87 @@ namespace Oberon0.Generator.Msil.Tests.Statements
 
     using Oberon0.Compiler;
     using Oberon0.Compiler.Definitions;
+    using Oberon0.TestSupport;
 
     [TestFixture]
     public class StatementTests
     {
+        [Test]
+        public void TestIssue25If()
+        {
+            string source = @"MODULE Issue25; 
+VAR 
+  x: BOOLEAN;
+
+BEGIN
+    x := TRUE;
+    IF (x) THEN WriteString('Yes') ELSE WriteString('No') END;
+    WriteLn
+END Issue25.";
+
+            Module m = TestHelper.CompileString(source);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            var code = cg.DumpCode();
+
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
+            Assert.AreEqual("Yes\n", outputData.NlFix());
+        }
+
+        [Test]
+        public void TestIssue25While()
+        {
+            string source = @"MODULE Issue25; 
+VAR 
+  x: BOOLEAN;
+
+BEGIN
+    x := FALSE;
+    WriteString('Yes');
+    WHILE x DO WriteString('No'); x := TRUE END;
+    WriteLn
+END Issue25.";
+
+            Module m = TestHelper.CompileString(source);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            var code = cg.DumpCode();
+
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
+            Assert.AreEqual("Yes\n", outputData.NlFix());
+        }
+
+        [Test]
+        public void TestIssue25Repeat()
+        {
+            string source = @"MODULE Issue25; 
+VAR 
+  x: BOOLEAN;
+
+BEGIN
+    x := FALSE;
+    REPEAT
+        WriteString('Yes'); 
+        x := TRUE
+    UNTIL x;
+    WriteLn
+END Issue25.";
+
+            Module m = TestHelper.CompileString(source);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            var code = cg.DumpCode();
+
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
+            Assert.AreEqual("Yes\n", outputData.NlFix());
+        }
+
         [Test]
         public void RepeatTest()
         {

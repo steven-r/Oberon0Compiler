@@ -6,8 +6,8 @@ namespace Oberon0.Compiler.Statements
     /// <summary>
     /// handle WHILE
     /// </summary>
-    /// <seealso cref="BasicStatement" />
-    public class WhileStatement: BasicStatement
+    /// <seealso cref="IStatement" />
+    public class WhileStatement: IStatement
     {
         public WhileStatement(Block parent)
         {

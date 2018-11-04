@@ -3,7 +3,7 @@ using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Statements
 {
-    public class AssignmentStatement : BasicStatement
+    public class AssignmentStatement : IStatement
     {
         public Declaration Variable { get; set; }
 

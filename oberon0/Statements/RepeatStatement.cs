@@ -3,7 +3,7 @@ using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Statements
 {
-    public class RepeatStatement : BasicStatement
+    public class RepeatStatement : IStatement
     {
         public RepeatStatement(Block parent)
         {

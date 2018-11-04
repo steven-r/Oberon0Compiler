@@ -231,15 +231,6 @@ namespace Oberon0.Compiler
                     return;
                 }
 
-                if (expressionContext.expReturn is VariableReferenceExpression var)
-                {
-                    expressionContext.expReturn = BinaryExpression.Create(
-                        OberonGrammarLexer.EQUAL,
-                        var,
-                        ConstantExpression.Create(true),
-                        this.parser.currentBlock);
-                }
-
                 context.ifs.Conditions.Add(expressionContext.expReturn);
             }
 

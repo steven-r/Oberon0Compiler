@@ -148,18 +148,7 @@ namespace Oberon0.Generator.Msil
             {
                 string nextLabel = this.Code.GetLabel();
                 var expression = this.ExpressionCompiler(block, stmt.Conditions[i]);
-                if (expression is BinaryExpression bin)
-                {
-                    this.Code.Branch(RelRevJumpMapping[bin.Operator], nextLabel);
-                }
-                else if (expression is VariableReferenceExpression)
-                {
-                    this.Code.Branch(RelRevJumpMapping[OberonGrammarLexer.NOT], nextLabel);
-                }
-                else
-                {
-                    throw new NotImplementedException("Unknown IF condition " + expression.GetType().FullName);
-                }
+                this.HandleJumpCondition(expression, nextLabel);
 
                 this.ProcessStatements(stmt.ThenParts[i]);
                 this.Code.Branch("br", endLabel);
@@ -175,8 +164,9 @@ namespace Oberon0.Generator.Msil
             this.Code.EmitComment("REPEAT");
             string label = this.Code.EmitLabel();
             this.ProcessStatements(stmt.Block);
-            BinaryExpression bin = (BinaryExpression)this.ExpressionCompiler(block, stmt.Condition);
-            this.Code.Branch(RelRevJumpMapping[bin.Operator], label);
+            var expression = this.ExpressionCompiler(block, stmt.Condition);
+            this.Code.EmitComment("UNTIL " + expression);
+            this.HandleJumpCondition(expression, label);
         }
 
         private void GenerateWhileStatement(WhileStatement stmt, Block block)
@@ -184,8 +174,8 @@ namespace Oberon0.Generator.Msil
             string endLabel = this.Code.GetLabel();
             this.Code.EmitComment("WHILE");
             string label = this.Code.EmitLabel();
-            BinaryExpression bin = (BinaryExpression)this.ExpressionCompiler(block, stmt.Condition);
-            this.Code.Branch(RelRevJumpMapping[bin.Operator], endLabel);
+            var expression = this.ExpressionCompiler(block, stmt.Condition);
+            this.HandleJumpCondition(expression, endLabel);
             this.ProcessStatements(stmt.Block);
             this.Code.Branch("br", label);
             this.Code.EmitLabel(endLabel);
@@ -242,6 +232,22 @@ namespace Oberon0.Generator.Msil
                         this.CallProcedure(callStmt, block);
                         break;
                 }
+            }
+        }
+
+        private void HandleJumpCondition(Expression expression, string nextLabel)
+        {
+            if (expression is BinaryExpression bin)
+            {
+                this.Code.Branch(RelRevJumpMapping[bin.Operator], nextLabel);
+            }
+            else if (expression is VariableReferenceExpression)
+            {
+                this.Code.Branch(RelRevJumpMapping[OberonGrammarLexer.EQUAL], nextLabel);
+            }
+            else
+            {
+                throw new NotImplementedException("Unknown condition type" + expression.GetType().FullName);
             }
         }
     }
