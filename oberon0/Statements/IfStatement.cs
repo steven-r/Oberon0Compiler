@@ -21,9 +21,8 @@ namespace Oberon0.Compiler.Statements
 
     public class IfStatement : IStatement
     {
-        public IfStatement(Block parent)
+        public IfStatement()
         {
-            this.ParentBlock = parent;
             this.Conditions = new List<Expression>();
             this.ThenParts = new List<Block>();
         }
@@ -42,10 +41,5 @@ namespace Oberon0.Compiler.Statements
         /// Gets the then parts.
         /// </summary>
         public List<Block> ThenParts { get; }
-
-        /// <summary>
-        /// Gets the parent block.
-        /// </summary>
-        private Block ParentBlock { [UsedImplicitly] get; }
     }
 }
