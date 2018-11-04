@@ -214,7 +214,6 @@ expression
 		s=selector[currentBlock.LookupVar($id.text)]						#exprSingleId
 	| id=ID '(' cp=callParameters? ')'										#exprFuncCall
 	| '(' e=expression ')'													#exprEmbeddedExpression
-	| b=BooleanConstant														#exprBoolConst
 	| c=Constant															#exprConstant
 	| s=STRING_LITERAL														#exprStringLiteral
 	;
@@ -243,8 +242,6 @@ Constant
 	;
 
 IntegerConstant: DigitSequence;
-
-BooleanConstant: 'true' | 'false';
 
 fragment
 FloatingConstant

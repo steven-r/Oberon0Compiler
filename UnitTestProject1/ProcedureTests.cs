@@ -1,5 +1,4 @@
 ﻿#region copyright
-
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ProcedureTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -9,7 +8,6 @@
 //     Part of oberon0 - Oberon0Compiler.Tests/ProcedureTests.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-
 #endregion
 
 namespace Oberon0.Compiler.Tests
@@ -176,6 +174,25 @@ END ;
 END Test.",
                 "missing ID at ';'",
                 "The name of the procedure does not match the name after END");
+        }
+
+        [Test]
+        public void ProcMissingByRefExpression()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+VAR 
+  x: INTEGER;
+
+PROCEDURE TestProc(VAR x: INTEGER);
+BEGIN
+  x := 0
+END TestProc;
+
+BEGIN
+  TestProc(x +1);
+END Test.",
+                "Parameter x requires a variable reference, not an expression");
         }
     }
 }
