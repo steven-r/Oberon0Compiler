@@ -44,7 +44,7 @@ $stableVersion = $versionInfo.MajorMinorPatch
 # Create release
 Create-AdditionalReleaseArtifacts $stableVersion
 # Always create a new commit because some CI servers cannot be triggered by just pushing a tag
-& git commit -Am "Create release $stableVersion" --allow-empty 
+& git commit -am "Create release $stableVersion" --allow-empty 
 & git tag $stableVersion
 if ($LASTEXITCODE -ne 0) {
     & git reset --hard HEAD^
