@@ -12,6 +12,7 @@
 
 namespace Oberon0.Generator.Msil.Tests.Types
 {
+    using System;
     using System.IO;
     using System.Text;
 

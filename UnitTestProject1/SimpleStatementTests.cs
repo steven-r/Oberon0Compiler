@@ -168,6 +168,29 @@ END Test.
         }
 
         [Test]
+        public void TestAssignableUnaryInt()
+        {
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  x: INTEGER;
+
+BEGIN 
+    x := 0;
+    x := -x;
+END Test.
+");
+            Assert.AreEqual(2, m.Block.Statements.Count);
+            Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[1];
+            UnaryExpression expr = ast.Expression as UnaryExpression;
+            Assert.NotNull(expr);
+            Assert.IsTrue(expr.IsUnary);
+            Assert.IsFalse(expr.IsConst);
+            Assert.AreEqual("x:INTEGER := MINUS (INTEGER) -> INTEGER", ast.ToString());
+        }
+
+        [Test]
         public void TestAssignArray()
         {
             var errors = new List<CompilerError>();
@@ -202,6 +225,30 @@ END Test.
                 errors);
             Assert.AreEqual(1, errors.Count);
             Assert.AreEqual("Left & right side do not match types", errors.First().Message);
+        }
+
+
+        [Test]
+        public void TestAssignableAddVars()
+        {
+            var m = TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  x, y: INTEGER;
+
+BEGIN 
+    x := 2;
+    y := x + y
+END Test.
+");
+            Assert.AreEqual(2, m.Block.Statements.Count);
+            Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[1];
+            BinaryExpression expr = ast.Expression as BinaryExpression;
+            Assert.NotNull(expr);
+            Assert.IsFalse(expr.IsUnary);
+            Assert.IsFalse(expr.IsConst);
+            Assert.AreEqual("y:INTEGER := PLUS (INTEGER, INTEGER) -> INTEGER", ast.ToString());
         }
     }
 }

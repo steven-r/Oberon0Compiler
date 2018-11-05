@@ -53,6 +53,15 @@ namespace Oberon0.Compiler.Tests.Expressions
         }
 
         [Test]
+        public void ExpressionVarNotFound()
+        {
+            var m = new Module();
+            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")));
+            var var = VariableReferenceExpression.Create(m.Block, "b", null);
+            Assert.IsNull(var);
+        }
+
+        [Test]
         public void ExpressionRelEquals()
         {
             var m = new Module();
@@ -301,6 +310,7 @@ namespace Oberon0.Compiler.Tests.Expressions
             var binExpr = assignment.Expression as BinaryExpression;
             Assert.NotNull(binExpr);
             Assert.AreEqual(OberonGrammarLexer.AND, binExpr.Operation.Metadata.Operation);
+            Assert.AreEqual(OberonGrammarLexer.AND, binExpr.Operator);
         }
 
         [Test]
@@ -410,6 +420,20 @@ namespace Oberon0.Compiler.Tests.Expressions
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
             Assert.NotNull(boolExpression);
+            Assert.AreEqual(true, boolExpression.ToBool());
+        }
+
+        [Test]
+        public void TestIntAssign()
+        {
+            var m = TestHelper.CompileString(
+                "MODULE test; CONST true_ = TRUE; false_ = FALSE; VAR a,b,c,d,e,f,g,h,x,y,z: BOOLEAN; BEGIN b := 1 END test.");
+
+            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            Assert.NotNull(assignment);
+            var boolExpression = assignment.Expression as ConstantIntExpression;
+            Assert.NotNull(boolExpression);
+            Assert.AreEqual(1, boolExpression.ToInt32());
             Assert.AreEqual(true, boolExpression.ToBool());
         }
 

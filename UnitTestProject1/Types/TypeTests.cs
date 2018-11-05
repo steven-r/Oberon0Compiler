@@ -12,9 +12,6 @@
 
 namespace Oberon0.Compiler.Tests.Types
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
     using NUnit.Framework;
 
     using Oberon0.Compiler.Definitions;

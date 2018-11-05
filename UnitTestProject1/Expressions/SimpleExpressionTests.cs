@@ -39,6 +39,24 @@ namespace Oberon0.Compiler.Tests.Expressions
         }
 
         [Test]
+        public void ExpressionAddRes0()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(
+                OberonGrammarLexer.PLUS,
+                ConstantExpression.Create(1),
+                ConstantDoubleExpression.Zero,
+                m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1, result.ToInt32());
+            Assert.AreEqual(1.0, result.ToDouble());
+            Assert.AreEqual(true, result.ToBool());
+            Assert.AreEqual(false, result.IsUnary);
+            Assert.AreEqual(true, result.IsConst);
+        }
+
+        [Test]
         public void ExpressionAdd2()
         {
             var m = new Module();
@@ -59,7 +77,7 @@ namespace Oberon0.Compiler.Tests.Expressions
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create("10.0"),
-                ConstantExpression.Create(0),
+                ConstantIntExpression.Zero, 
                 m.Block);
             Assert.Throws<DivideByZeroException>(() => { ConstantSolver.Solve(e, m.Block); });
         }
@@ -188,6 +206,27 @@ namespace Oberon0.Compiler.Tests.Expressions
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(0.5, result.ToDouble());
+        }
+
+        [Test]
+        public void ExpressionAnd()
+        {
+            var m = new Module();
+            var e = BinaryExpression.Create(
+                OberonGrammarLexer.AND,
+                ConstantExpression.Create(false),
+                ConstantExpression.Create("true"),
+                m.Block);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(false, result.ToBool());
+        }
+
+        [Test]
+        public void ExpressionInvalidConst()
+        {
+            var ex = Assert.Throws<InvalidOperationException>(() => ConstantExpression.Create("Test"));
+            Assert.AreEqual("Unknown constant 'Test'", ex.Message);
         }
     }
 }
