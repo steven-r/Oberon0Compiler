@@ -17,6 +17,7 @@ namespace Oberon0.Compiler.Tests
     using NUnit.Framework;
 
     using Oberon0.Compiler.Definitions;
+    using Oberon0.Compiler.Statements;
     using Oberon0.Compiler.Types;
     using Oberon0.TestSupport;
 
@@ -141,6 +142,28 @@ END Test.");
             Assert.NotNull(x);
             Assert.AreEqual(BaseTypes.Int, x.Type.Type);
             Assert.AreEqual("x:INTEGER", x.ToString());
+        }
+
+        [Test]
+        public void ProcCall()
+        {
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
+PROCEDURE TestProc;
+BEGIN
+END TestProc;
+
+BEGIN
+  TestProc
+END Test.");
+            Assert.NotNull(m);
+            var proc = m.Block.LookupFunction("TestProc");
+            Assert.NotNull(proc);
+            Assert.AreEqual("TestProc", proc.Name);
+            Assert.AreEqual(1, m.Block.Statements.Count);
+            var statement = m.Block.Statements[0] as ProcedureCallStatement;
+            Assert.NotNull(statement);
+            Assert.NotNull(statement.FunctionDeclaration);
         }
 
         [Test]

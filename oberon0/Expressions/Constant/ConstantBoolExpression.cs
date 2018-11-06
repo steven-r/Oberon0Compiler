@@ -35,5 +35,10 @@ namespace Oberon0.Compiler.Expressions.Constant
         {
             return (bool)Value;
         }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
     }
 }

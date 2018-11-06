@@ -7,16 +7,13 @@ namespace Oberon0.Compiler.Statements
 {
     public class ProcedureCallStatement : IStatement
     {
-        public ProcedureCallStatement(FunctionDeclaration functionDeclaration, Block block, List<Expression> parameters)
+        public ProcedureCallStatement(FunctionDeclaration functionDeclaration, List<Expression> parameters)
         {
-            Block = block;
             FunctionDeclaration = functionDeclaration;
             Parameters = parameters;
         }
 
         public List<Expression> Parameters { get; }
-
-        public Block Block { [UsedImplicitly] get; set; }
 
         public FunctionDeclaration FunctionDeclaration { get; }
     }

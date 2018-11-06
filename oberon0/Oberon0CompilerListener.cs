@@ -293,7 +293,7 @@ namespace Oberon0.Compiler
                 }
             }
 
-            this.parser.currentBlock.Statements.Add(new ProcedureCallStatement(fp, this.parser.currentBlock, parameters.ToList()));
+            parser.currentBlock.Statements.Add(new ProcedureCallStatement(fp, parameters.ToList()));
         }
 
         public override void ExitProcedureDeclaration(OberonGrammarParser.ProcedureDeclarationContext context)
@@ -305,6 +305,7 @@ namespace Oberon0.Compiler
                     "The name of the procedure does not match the name after END",
                     null);
             }
+
             this.parser.PopBlock();
             this.parser.currentBlock.Procedures.Add(context.p.proc);
         }
@@ -419,7 +420,7 @@ namespace Oberon0.Compiler
                 }
                 else if (v is IndexSelector indexSelector)
                 {
-                    type = this.CheckArrayIndexSelector(indexSelector, type, context);
+                    type = this.CheckArrayIndexSelector(indexSelector, type);
                 }
             }
 
@@ -471,7 +472,6 @@ namespace Oberon0.Compiler
             }
         }
 
-
         public override void ExitWhile_statement(OberonGrammarParser.While_statementContext context)
         {
             var r = context.r.expReturn;
@@ -490,8 +490,7 @@ namespace Oberon0.Compiler
 
         private TypeDefinition CheckArrayIndexSelector(
             IndexSelector indexSelector,
-            TypeDefinition type,
-            OberonGrammarParser.SelectorContext context)
+            TypeDefinition type)
         {
             var arrayType = type as ArrayTypeDefinition;
             if (arrayType == null)
