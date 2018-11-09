@@ -234,14 +234,14 @@ BEGIN
     y := x + y
 END Test.
 ");
-            Assert.AreEqual(2, m.Block.Statements.Count);
-            Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+            Assert.That(m.Block.Statements.Count, Is.EqualTo(2));
+            Assert.That(m.Block.Statements[1], Is.AssignableTo<AssignmentStatement>());
             AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[1];
             BinaryExpression expr = ast.Expression as BinaryExpression;
-            Assert.NotNull(expr);
-            Assert.IsFalse(expr.IsUnary);
-            Assert.IsFalse(expr.IsConst);
-            Assert.AreEqual("y:INTEGER := PLUS (INTEGER, INTEGER) -> INTEGER", ast.ToString());
+            Assert.That(expr, Is.Not.Null);
+            Assert.That(expr.IsUnary, Is.False);
+            Assert.That(expr.IsConst, Is.False);
+            Assert.That(ast.ToString(), Is.EqualTo("y:INTEGER := PLUS (INTEGER, INTEGER) -> INTEGER"));
         }
     }
 }
