@@ -26,7 +26,7 @@ namespace Oberon0.Compiler.Expressions.Constant
             throw new System.NotImplementedException();
         }
 
-        public override decimal ToDouble()
+        public override double ToDouble()
         {
             throw new System.NotImplementedException();
         }

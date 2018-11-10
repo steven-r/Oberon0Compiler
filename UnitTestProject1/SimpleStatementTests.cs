@@ -15,15 +15,12 @@ namespace Oberon0.Compiler.Tests
     using System.Collections.Generic;
     using System.Linq;
 
-    using Antlr4.Runtime.Atn;
-
     using NUnit.Framework;
 
     using Oberon0.Compiler.Definitions;
     using Oberon0.Compiler.Expressions;
     using Oberon0.Compiler.Expressions.Constant;
     using Oberon0.Compiler.Statements;
-    using Oberon0.Compiler.Types;
     using Oberon0.TestSupport;
 
     [TestFixture]
@@ -96,8 +93,7 @@ END Test.
         [Test]
         public void SimpleRepeatFailCondition()
         {
-            var errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(
+            TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   x: INTEGER;
@@ -109,9 +105,7 @@ BEGIN
     UNTIL 0
 END Test.
 ",
-                errors);
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("The condition needs to return a logical condition", errors[0].Message);
+                "The condition needs to return a logical condition");
         }
 
         /// <summary>
@@ -227,7 +221,6 @@ END Test.
             Assert.AreEqual("Left & right side do not match types", errors.First().Message);
         }
 
-
         [Test]
         public void TestAssignableAddVars()
         {
@@ -241,14 +234,14 @@ BEGIN
     y := x + y
 END Test.
 ");
-            Assert.AreEqual(2, m.Block.Statements.Count);
-            Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+            Assert.That(m.Block.Statements.Count, Is.EqualTo(2));
+            Assert.That(m.Block.Statements[1], Is.AssignableTo<AssignmentStatement>());
             AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[1];
             BinaryExpression expr = ast.Expression as BinaryExpression;
-            Assert.NotNull(expr);
-            Assert.IsFalse(expr.IsUnary);
-            Assert.IsFalse(expr.IsConst);
-            Assert.AreEqual("y:INTEGER := PLUS (INTEGER, INTEGER) -> INTEGER", ast.ToString());
+            Assert.That(expr, Is.Not.Null);
+            Assert.That(expr.IsUnary, Is.False);
+            Assert.That(expr.IsConst, Is.False);
+            Assert.That(ast.ToString(), Is.EqualTo("y:INTEGER := PLUS (INTEGER, INTEGER) -> INTEGER"));
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Oberon0.Compiler.Expressions.Constant
 
         public abstract int ToInt32();
 
-        public abstract decimal ToDouble();
+        public abstract double ToDouble();
 
         public abstract bool ToBool();
 
@@ -44,9 +44,9 @@ namespace Oberon0.Compiler.Expressions.Constant
                     return new ConstantIntExpression(intVal);
                 }
 
-                if (decimal.TryParse(stringVal, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out decimal decimalVal))
+                if (double.TryParse(stringVal, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var doubleVal))
                 {
-                    return new ConstantDoubleExpression(decimalVal);
+                    return new ConstantDoubleExpression(doubleVal);
                 }
 
                 if (bool.TryParse(stringVal, out bool boolVal))
@@ -59,7 +59,7 @@ namespace Oberon0.Compiler.Expressions.Constant
 
             if (value is float || value is double || value is decimal)
             {
-                return new ConstantDoubleExpression(Convert.ToDecimal(value));
+                return new ConstantDoubleExpression(Convert.ToDouble(value));
             }
 
             if (value is bool)

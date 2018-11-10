@@ -16,6 +16,7 @@ namespace Oberon0.Compiler.Definitions
     using System.Reflection;
 
     using Oberon0.Attributes;
+    using Oberon0.Compiler.Expressions;
     using Oberon0.Compiler.Expressions.Constant;
     using Oberon0.Compiler.Types;
 
@@ -55,6 +56,8 @@ namespace Oberon0.Compiler.Definitions
                 new ConstDeclaration("TRUE", this.Block.LookupType("BOOLEAN"), new ConstantBoolExpression(true)));
             this.Block.Declarations.Add(
                 new ConstDeclaration("FALSE", this.Block.LookupType("BOOLEAN"), new ConstantBoolExpression(false)));
+            this.Block.Declarations.Add(
+                new ConstDeclaration("EPSILON", this.Block.LookupType("REAL"), new ConstantDoubleExpression(double.Epsilon)));
         }
 
         private void DeclareStandardFunctions()
@@ -111,7 +114,7 @@ namespace Oberon0.Compiler.Definitions
         {
             SimpleTypeDefinition.IntType = new SimpleTypeDefinition(BaseTypes.Int, "INTEGER", true);
             SimpleTypeDefinition.BoolType = new SimpleTypeDefinition(BaseTypes.Bool, "BOOLEAN", true);
-            SimpleTypeDefinition.RealType = new SimpleTypeDefinition(BaseTypes.Decimal, "REAL", true);
+            SimpleTypeDefinition.RealType = new SimpleTypeDefinition(BaseTypes.Real, "REAL", true);
             SimpleTypeDefinition.StringType = new SimpleTypeDefinition(BaseTypes.String, "STRING", true);
             SimpleTypeDefinition.VoidType = new SimpleTypeDefinition(
                 BaseTypes.Void,

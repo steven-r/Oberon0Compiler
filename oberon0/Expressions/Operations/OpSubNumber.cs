@@ -20,9 +20,9 @@ namespace Oberon0.Compiler.Expressions.Operations
     using Oberon0.Compiler.Types;
 
     [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.Int, BaseTypes.Int, BaseTypes.Int)]
-    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.Int, BaseTypes.Decimal, BaseTypes.Decimal)]
-    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.Decimal, BaseTypes.Decimal, BaseTypes.Decimal)]
-    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.Decimal, BaseTypes.Int, BaseTypes.Decimal)]
+    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.Int, BaseTypes.Real, BaseTypes.Real)]
+    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.Real, BaseTypes.Real, BaseTypes.Real)]
+    [ArithmeticOperation(OberonGrammarLexer.MINUS, BaseTypes.Real, BaseTypes.Int, BaseTypes.Real)]
     [UsedImplicitly]
     internal class OpSubNumber : BinaryOperation
     {

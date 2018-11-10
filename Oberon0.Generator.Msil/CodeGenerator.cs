@@ -241,7 +241,7 @@ namespace Oberon0.Generator.Msil
             {
                 this.Code.Branch(RelRevJumpMapping[bin.Operator], nextLabel);
             }
-            else if (expression is VariableReferenceExpression)
+            else if (expression is VariableReferenceExpression || expression is FunctionCallExpression)
             {
                 this.Code.Branch(RelRevJumpMapping[OberonGrammarLexer.EQUAL], nextLabel);
             }

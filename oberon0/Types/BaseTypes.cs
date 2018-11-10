@@ -31,9 +31,9 @@ namespace Oberon0.Compiler.Types
         String = Simple + 2,
 
         /// <summary>
-        /// The decimal type
+        /// The REAL type
         /// </summary>
-        Decimal = Simple + 3,
+        Real = Simple + 3,
 
         /// <summary>
         /// The bool type

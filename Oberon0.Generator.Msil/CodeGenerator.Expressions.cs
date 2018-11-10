@@ -227,7 +227,7 @@ namespace Oberon0.Generator.Msil
                 case BaseTypes.Bool:
                     suffix = ".i4";
                     break;
-                case BaseTypes.Decimal:
+                case BaseTypes.Real:
                     suffix = ".r8";
                     break;
                 default:
@@ -307,7 +307,7 @@ namespace Oberon0.Generator.Msil
                 generator.LoadConstantExpression(ConstantIntExpression.Zero, null);
             }
 
-            if (bin.IsUnary && bin.LeftHandSide.TargetType.Type == BaseTypes.Decimal)
+            if (bin.IsUnary && bin.LeftHandSide.TargetType.Type == BaseTypes.Real)
             {
                 generator.LoadConstantExpression(ConstantDoubleExpression.Zero, null);
             }
@@ -326,7 +326,7 @@ namespace Oberon0.Generator.Msil
         {
             switch (target)
             {
-                case BaseTypes.Decimal:
+                case BaseTypes.Real:
                     return $"[mscorlib]System.Convert::ToDouble({Code.GetTypeName(source)})";
                 case BaseTypes.Bool:
                     return $"[mscorlib]System.Convert::ToBoolean({Code.GetTypeName(source)})";
