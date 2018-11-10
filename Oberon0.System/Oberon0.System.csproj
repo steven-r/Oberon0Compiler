@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Attributes\Oberon0LibraryAttribute.cs" />
     <Compile Include="Attributes\Oberon0ExportAttribute.cs" />
+    <Compile Include="Oberon0System.Math.cs" />
     <Compile Include="Oberon0System.IO.cs" />
     <Compile Include="Oberon0System.Strings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -12,10 +12,6 @@
 
 namespace Oberon0.Generator.Msil.Tests.Types
 {
-    using System;
-    using System.IO;
-    using System.Text;
-
     using NUnit.Framework;
 
     using Oberon0.Compiler;
@@ -27,123 +23,70 @@ namespace Oberon0.Generator.Msil.Tests.Types
         [Test]
         public void TestRealFromConst()
         {
-            string source = @"MODULE Test; 
-CONST
-  c = 1.2;
-
-VAR 
-  r: REAL;
-
-BEGIN
-  r := c;
-  WriteReal(r);
-  WriteLn
-END Test.";
-
-            Module m = Oberon0Compiler.CompileString(source);
-
-            CodeGenerator cg = new CodeGenerator(m);
-
-            cg.Generate();
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter w = new StringWriter(sb))
-            {
-                cg.DumpCode(w);
-            }
-
-            string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
-            Assert.AreEqual($"{1.2}\n", outputData.NlFix());
+            CheckCodeReal("z := c;", $"{1.2}\n");
         }
 
         [Test]
         public void TestRealFromInt()
         {
-            string source = @"MODULE Test; 
-VAR 
-  r: REAL;
-
-BEGIN
-  r := 1;
-  WriteReal(r);
-  WriteLn
-END Test.";
-
-            Module m = Oberon0Compiler.CompileString(source);
-
-            CodeGenerator cg = new CodeGenerator(m);
-
-            cg.Generate();
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter w = new StringWriter(sb))
-            {
-                cg.DumpCode(w);
-            }
-
-            string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
-            Assert.AreEqual("1\n", outputData.NlFix());
+            CheckCodeReal("z := 1;", "1\n");
         }
 
         [Test]
         public void TestRealFromIntConst()
         {
-            string source = @"MODULE Test;
-CONST
-  c = 42;
-
-VAR 
-  r: REAL;
-
-BEGIN
-  r := c;
-  WriteReal(r);
-  WriteLn
-END Test.";
-
-            Module m = Oberon0Compiler.CompileString(source);
-
-            CodeGenerator cg = new CodeGenerator(m);
-
-            cg.Generate();
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter w = new StringWriter(sb))
-            {
-                cg.DumpCode(w);
-            }
-
-            string code = sb.ToString();
-            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
-            Assert.AreEqual("42\n", outputData.NlFix());
+            CheckCodeReal("z := i;", "42\n");
         }
 
         [Test]
         public void TestRealFromReal()
         {
-            string source = @"MODULE Test; 
-VAR 
-  r: REAL;
+            CheckCodeReal("z := 1.2;", $"{1.2}\n");
+        }
 
-BEGIN
-  r := 1.2;
-  WriteReal(r);
-  WriteLn
-END Test.";
+        [Test]
+        public void TestRealFromPlus1()
+        {
+            CheckCodeReal("z := 1.2+1.2;", $"{2.4}\n");
+        }
+
+        [Test]
+        public void TestRealFromPlus2()
+        {
+            CheckCodeReal("r := 1.2; z := r+1.2;", $"{2.4}\n");
+        }
+
+        [Test]
+        public void TestRealFromPlus3()
+        {
+            CheckCodeReal("z := c+c;", $"{2.4}\n");
+        }
+
+        [Test]
+        public void TestRealComplex1()
+        {
+            CheckCodeReal("r := 1.2345678; s := 7.2; z := r*s DIV 3;", $"{2.96296272}\n");
+        }
+
+        [Test]
+        public void TestRealDiv0()
+        {
+            CheckCodeReal("r := 1.2345678; s := 0; z := r DIV s;", $"Infinity\n");
+        }
+
+        private void CheckCodeReal(string sourceCode, string expectedResults)
+        {
+            string source = $@"MODULE Test; CONST c = 1.2; i = 42; VAR r, s, t, x, y, z: REAL; 
+BEGIN {sourceCode} IF isinfinity(z) THEN WriteString('Infinity') ELSE WriteReal(z) END; WriteLn END Test.";
 
             Module m = Oberon0Compiler.CompileString(source);
 
             CodeGenerator cg = new CodeGenerator(m);
 
             cg.Generate();
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter w = new StringWriter(sb))
-            {
-                cg.DumpCode(w);
-            }
-
-            string code = sb.ToString();
+            var code = cg.DumpCode();
             Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
-            Assert.AreEqual($"{1.2}\n", outputData.NlFix());
+            Assert.AreEqual(expectedResults, outputData.NlFix());
         }
     }
 }
