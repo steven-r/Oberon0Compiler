@@ -74,6 +74,37 @@ namespace Oberon0.Generator.Msil.Tests.Types
             CheckCodeReal("r := 1.2345678; s := 0; z := r DIV s;", $"Infinity\n");
         }
 
+        [Test]
+        public void TestEpsilon()
+        {
+            string source = @"MODULE Test; 
+CONST 
+    expected = 10.8511834932;
+VAR 
+    r, s, z: REAL; 
+    b, c: BOOLEAN;
+
+BEGIN
+    r := 1.5;
+    s := 7.2341223288;
+    z := r * s;
+    b := (r - expected) < EPSILON;
+    c := r = expected;
+    WriteBool(b);
+    WriteString(',');
+    WriteBool(c);
+    WriteLn 
+END Test.";
+            Module m = Oberon0Compiler.CompileString(source);
+
+            CodeGenerator cg = new CodeGenerator(m);
+
+            cg.Generate();
+            var code = cg.DumpCode();
+            Assert.IsTrue(MsilTestHelper.CompileRunTest(code, null, out var outputData, m));
+            Assert.AreEqual($"{true},{false}\n", outputData.NlFix());
+        }
+
         private void CheckCodeReal(string sourceCode, string expectedResults)
         {
             string source = $@"MODULE Test; CONST c = 1.2; i = 42; VAR r, s, t, x, y, z: REAL; 

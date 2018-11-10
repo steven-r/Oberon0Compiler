@@ -128,6 +128,42 @@ END TestAssignment.");
             Assert.AreEqual("r:REAL := i(INTEGER)", statement.ToString());
         }
 
+
+        [Test]
+        public void TestEpsilon()
+        {
+            var m = TestHelper.CompileString(
+                @"MODULE TestAssignment;
+VAR r: REAL;
+
+BEGIN
+    r := EPSILON;
+END TestAssignment.");
+            Assert.NotNull(m);
+            Assert.AreEqual(1, m.Block.Statements.Count);
+            AssignmentStatement statement = m.Block.Statements[0] as AssignmentStatement;
+            Assert.NotNull(statement);
+            Assert.AreEqual($"r:REAL := {double.Epsilon}", statement.ToString());
+        }
+
+
+        [Test]
+        public void TestEpsilonDiv2()
+        {
+            var m = TestHelper.CompileString(
+                @"MODULE TestAssignment;
+VAR r: REAL;
+
+BEGIN
+    r := EPSILON DIV 2;
+END TestAssignment.");
+            Assert.NotNull(m);
+            Assert.AreEqual(1, m.Block.Statements.Count);
+            AssignmentStatement statement = m.Block.Statements[0] as AssignmentStatement;
+            Assert.NotNull(statement);
+            Assert.AreEqual($"r:REAL := 0", statement.ToString());
+        }
+
         [Test]
         public void TestAssignmentBoolVarFail()
         {
