@@ -25,7 +25,7 @@ namespace Oberon0.Compiler.Tests
         {
             Module m = Oberon0Compiler.CompileString("MODULE Test; END Test.");
             Assert.AreEqual("Test", m.Name);
-            Assert.AreEqual(2, m.Block.Declarations.Count);
+            Assert.AreEqual(3, m.Block.Declarations.Count);
         }
 
         [Test]
