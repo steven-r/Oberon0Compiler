@@ -29,7 +29,7 @@ namespace Oberon0.Generator.Msil
             foreach (var typeDefinition in block.Types.Where(x => x is RecordTypeDefinition))
             {
                 var recordType = (RecordTypeDefinition)typeDefinition;
-                this.Code.WriteLine($".class nested private {recordType.Name} {{");
+                this.Code.WriteLine($".class nested private __{recordType.Name} {{");
                 foreach (Declaration declaration in recordType.Elements)
                 {
                     this.Code.Write("\t.field public ");
@@ -65,7 +65,7 @@ namespace Oberon0.Generator.Msil
                 }
                 else if (declaration.Type is RecordTypeDefinition rd)
                 {
-                    this.Code.Emit("newobj", "instance void", $"{this.Code.ClassName}/{rd.Name}::.ctor()");
+                    this.Code.Emit("newobj", "instance void", $"{this.Code.ClassName}/__{rd.Name}::.ctor()");
                     this.StoreVar(block, declaration, null);
                 }
             }

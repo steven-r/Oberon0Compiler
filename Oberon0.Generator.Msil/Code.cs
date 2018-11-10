@@ -47,13 +47,13 @@ namespace Oberon0.Generator.Msil
         public void ConstField(ConstDeclaration constDeclaration)
         {
             WriteLine(
-                $".data {constDeclaration.Name} = {GetDataTypeName(constDeclaration.Type)} ({DumpConstValue(constDeclaration.Value, false, true)})");
+                $".data __{constDeclaration.Name} = {GetDataTypeName(constDeclaration.Type)} ({DumpConstValue(constDeclaration.Value, false, true)})");
         }
 
         public void DataField(Declaration declaration, bool isStatic)
         {
             WriteLine(
-                $".field {(isStatic ? "static " : string.Empty)}{GetTypeName(declaration.Type)} {declaration.Name}");
+                $".field {(isStatic ? "static " : string.Empty)}{GetTypeName(declaration.Type)} __{declaration.Name}");
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Oberon0.Generator.Msil
             string prototype = func.Prototype;
             if (!func.IsExternal)
             {
-                prototype = $"Oberon0.{ModuleName}::{func.Name}";
+                prototype = $"Oberon0.{ModuleName}::__{func.Name}";
             }
 
             // local procedure
@@ -182,7 +182,7 @@ namespace Oberon0.Generator.Msil
             Emit(
                 "stfld",
                 GetTypeName(identSelector.Element.Type),
-                GetTypeName(identSelector.Type) + "::" + identSelector.Name);
+                GetTypeName(identSelector.Type) + "::__" + identSelector.Name);
         }
 
         internal void EndClass()
@@ -198,7 +198,7 @@ namespace Oberon0.Generator.Msil
 
         internal string GetLabel()
         {
-            return $"L{this.labelId++}";
+            return $"L{labelId++}";
         }
 
         internal string GetTypeName(TypeDefinition type)
@@ -209,7 +209,7 @@ namespace Oberon0.Generator.Msil
                 case BaseTypes.Array:
                     return $"{GetTypeName(((ArrayTypeDefinition)type).ArrayType)}[]";
                 case BaseTypes.Record:
-                    return $"class {ClassName}/{type.Name}";
+                    return $"class {ClassName}/__{type.Name}";
                 default:
                     return GetTypeName(type.Type);
             }
@@ -217,12 +217,12 @@ namespace Oberon0.Generator.Msil
 
         internal void LoadConstRef(ConstDeclaration constDeclaration)
         {
-            Emit("ldvar", constDeclaration.Name);
+            Emit("ldvar", $"__{constDeclaration.Name}");
         }
 
         internal void LocalVarDef(Declaration declaration, bool isPointer)
         {
-            Write($"{(isPointer ? "&" : string.Empty)}{GetTypeName(declaration.Type)} {declaration.Name}");
+            Write($"{(isPointer ? "&" : string.Empty)}{GetTypeName(declaration.Type)} __{declaration.Name}");
         }
 
         internal void PushConst([NotNull] object data)
@@ -291,13 +291,13 @@ namespace Oberon0.Generator.Msil
 
         internal void StartMethod(FunctionDeclaration functionDeclaration)
         {
-            Write($".method private static {GetTypeName(functionDeclaration.ReturnType)} {functionDeclaration.Name}(");
+            Write($".method private static {GetTypeName(functionDeclaration.ReturnType)} __{functionDeclaration.Name}(");
             List<string> paramList = new List<string>();
             int id = 0;
             foreach (ProcedureParameter parameter in functionDeclaration.Block.Declarations.OfType<ProcedureParameter>())
             {
                 parameter.GeneratorInfo = new DeclarationGeneratorInfo(id++);
-                paramList.Add($"{GetTypeName(parameter.Type)}{(parameter.IsVar ? "&" : string.Empty)} {parameter.Name}");
+                paramList.Add($"{GetTypeName(parameter.Type)}{(parameter.IsVar ? "&" : string.Empty)} __{parameter.Name}");
             }
 
             WriteLine(
