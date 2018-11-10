@@ -79,7 +79,9 @@ namespace Oberon0.Compiler.Tests.Expressions
                 ConstantExpression.Create("10.0"),
                 ConstantIntExpression.Zero, 
                 m.Block);
-            Assert.Throws<DivideByZeroException>(() => { ConstantSolver.Solve(e, m.Block); });
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
+            Assert.NotNull(result);
+            Assert.IsTrue(double.IsInfinity(result.ToDouble()));
         }
 
         [Test]
@@ -177,7 +179,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ToDouble() == 42.7m);
+            Assert.IsTrue(result.ToDouble() - 42.7 < double.Epsilon);
         }
 
         [Test]

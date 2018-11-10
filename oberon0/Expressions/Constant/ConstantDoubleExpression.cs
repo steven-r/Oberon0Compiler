@@ -26,7 +26,7 @@ namespace Oberon0.Compiler.Expressions
             Zero = new ConstantDoubleExpression(0);
         }
 
-        public ConstantDoubleExpression(decimal value)
+        public ConstantDoubleExpression(double value)
             : base(SimpleTypeDefinition.RealType, value)
         {
         }
@@ -40,7 +40,7 @@ namespace Oberon0.Compiler.Expressions
 
         public override string ToString()
         {
-            return ((decimal)Value).ToString("G");
+            return ((double)Value).ToString("G");
         }
 
         public override int ToInt32()
@@ -48,14 +48,14 @@ namespace Oberon0.Compiler.Expressions
             return Convert.ToInt32(Value);
         }
 
-        public override decimal ToDouble()
+        public override double ToDouble()
         {
-            return (decimal)Value;
+            return (double)Value;
         }
 
         public override bool ToBool()
         {
-            return (decimal)Value != 0;
+            return (double)Value != 0;
         }
     }
 }

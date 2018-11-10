@@ -48,9 +48,9 @@ namespace Oberon0.Compiler.Expressions.Constant
             return (int)Value;
         }
 
-        public override decimal ToDouble()
+        public override double ToDouble()
         {
-            return Convert.ToDecimal(Value);
+            return Convert.ToDouble(Value);
         }
 
         public override bool ToBool()

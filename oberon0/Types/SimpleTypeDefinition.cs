@@ -66,7 +66,7 @@ namespace Oberon0.Compiler.Types
         public override bool IsAssignable(TypeDefinition sourceType)
         {
             return sourceType.Type == this.Type // same simple type
-                   || (sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Decimal)
+                   || (sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Real)
                    || (sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Bool);
         }
 

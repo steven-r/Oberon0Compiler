@@ -70,7 +70,7 @@ END TestAssignment.");
             AssignmentStatement statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
             Assert.IsInstanceOf<ConstantDoubleExpression>(statement.Expression);
-            Assert.AreEqual($"r:REAL := {3.0:0.0}", statement.ToString());
+            Assert.AreEqual($"r:REAL := 3", statement.ToString());
         }
 
         [Test]

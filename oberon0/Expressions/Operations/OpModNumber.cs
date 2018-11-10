@@ -18,9 +18,9 @@ namespace Oberon0.Compiler.Expressions.Operations
     using Oberon0.Compiler.Types;
 
     [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Int, BaseTypes.Int, BaseTypes.Int)]
-    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Int, BaseTypes.Decimal, BaseTypes.Decimal)]
-    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Decimal, BaseTypes.Decimal, BaseTypes.Decimal)]
-    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Decimal, BaseTypes.Int, BaseTypes.Decimal)]
+    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Int, BaseTypes.Real, BaseTypes.Real)]
+    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Real, BaseTypes.Real, BaseTypes.Real)]
+    [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Real, BaseTypes.Int, BaseTypes.Real)]
     internal class OpModNumber : BinaryOperation
     {
         protected override Expression BinaryOperate(
@@ -38,7 +38,7 @@ namespace Oberon0.Compiler.Expressions.Operations
                     return new ConstantIntExpression(left.ToInt32() % right.ToInt32());
                 }
 
-                decimal res = left.ToDouble() % right.ToDouble();
+                var res = left.ToDouble() % right.ToDouble();
                 return new ConstantDoubleExpression(res);
             }
 

@@ -71,7 +71,7 @@ namespace Oberon0.Generator.Msil
                 case BaseTypes.Bool:
                     suffix = ".i4";
                     break;
-                case BaseTypes.Decimal:
+                case BaseTypes.Real:
                     suffix = ".r8";
                     break;
                 default:
@@ -104,7 +104,7 @@ namespace Oberon0.Generator.Msil
                     return "int32";
                 case BaseTypes.String:
                     return "string";
-                case BaseTypes.Decimal:
+                case BaseTypes.Real:
                     return "float64";
                 case BaseTypes.Bool:
                     return "bool";
@@ -165,7 +165,7 @@ namespace Oberon0.Generator.Msil
                 case BaseTypes.Bool:
                     suffix = ".i4";
                     break;
-                case BaseTypes.Decimal:
+                case BaseTypes.Real:
                     suffix = ".r8";
                     break;
                 default:
@@ -256,8 +256,8 @@ namespace Oberon0.Generator.Msil
                 case TypeCode.Single:
                     Emit("ldc.r4", data);
                     break;
-                case TypeCode.Decimal:
-                    Emit("ldc.r8", ((decimal)data).ToString(CultureInfo.InvariantCulture));
+                case TypeCode.Double:
+                    Emit("ldc.r8", ((double)data).ToString(CultureInfo.InvariantCulture));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(data), "Unknown data type");
@@ -320,7 +320,7 @@ namespace Oberon0.Generator.Msil
             {
                 case BaseTypes.Int:
                     return constantExpression.ToInt32().ToString(CultureInfo.InvariantCulture);
-                case BaseTypes.Decimal:
+                case BaseTypes.Real:
                     return constantExpression.ToDouble().ToString("G", CultureInfo.InvariantCulture);
                 case BaseTypes.Bool:
                     if (isLoad || isData)
@@ -340,7 +340,7 @@ namespace Oberon0.Generator.Msil
                     return "int32";
                 case BaseTypes.String:
                     return "string";
-                case BaseTypes.Decimal:
+                case BaseTypes.Real:
                     return "float64";
                 case BaseTypes.Void:
                     return "void";

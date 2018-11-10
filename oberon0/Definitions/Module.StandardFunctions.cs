@@ -111,7 +111,7 @@ namespace Oberon0.Compiler.Definitions
         {
             SimpleTypeDefinition.IntType = new SimpleTypeDefinition(BaseTypes.Int, "INTEGER", true);
             SimpleTypeDefinition.BoolType = new SimpleTypeDefinition(BaseTypes.Bool, "BOOLEAN", true);
-            SimpleTypeDefinition.RealType = new SimpleTypeDefinition(BaseTypes.Decimal, "REAL", true);
+            SimpleTypeDefinition.RealType = new SimpleTypeDefinition(BaseTypes.Real, "REAL", true);
             SimpleTypeDefinition.StringType = new SimpleTypeDefinition(BaseTypes.String, "STRING", true);
             SimpleTypeDefinition.VoidType = new SimpleTypeDefinition(
                 BaseTypes.Void,
