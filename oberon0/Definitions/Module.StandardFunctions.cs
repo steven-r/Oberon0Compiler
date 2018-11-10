@@ -16,6 +16,7 @@ namespace Oberon0.Compiler.Definitions
     using System.Reflection;
 
     using Oberon0.Attributes;
+    using Oberon0.Compiler.Expressions;
     using Oberon0.Compiler.Expressions.Constant;
     using Oberon0.Compiler.Types;
 
@@ -55,6 +56,8 @@ namespace Oberon0.Compiler.Definitions
                 new ConstDeclaration("TRUE", this.Block.LookupType("BOOLEAN"), new ConstantBoolExpression(true)));
             this.Block.Declarations.Add(
                 new ConstDeclaration("FALSE", this.Block.LookupType("BOOLEAN"), new ConstantBoolExpression(false)));
+            this.Block.Declarations.Add(
+                new ConstDeclaration("EPSILON", this.Block.LookupType("REAL"), new ConstantDoubleExpression(double.Epsilon)));
         }
 
         private void DeclareStandardFunctions()
