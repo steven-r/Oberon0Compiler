@@ -14,6 +14,8 @@
 
 namespace Oberon0.Compiler.Expressions
 {
+    using Antlr4.Runtime;
+
     using Oberon0.Compiler.Definitions;
     using Oberon0.Compiler.Expressions.Operations.Internal;
     using Oberon0.Compiler.Types;
@@ -26,6 +28,7 @@ namespace Oberon0.Compiler.Expressions
 
         internal ArithmeticOperation Operation { get; private set; }
 
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
         /// <summary>
         /// Creates the specified binary expression.
         /// </summary>
@@ -33,8 +36,10 @@ namespace Oberon0.Compiler.Expressions
         /// <param name="left">The left hand side.</param>
         /// <param name="right">The right hand side.</param>
         /// <param name="block">The block to handle.</param>
+        /// <param name="token">The source code token</param>
         /// <returns>A binary expression.</returns>
-        public static BinaryExpression Create(int tokenType, Expression left, Expression right, Block block)
+        public static BinaryExpression Create(int tokenType, Expression left, Expression right, Block block, IToken token)
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
         {
             ArithmeticOperation op;
             BinaryExpression result;
@@ -47,7 +52,8 @@ namespace Oberon0.Compiler.Expressions
                         LeftHandSide = left,
                         Operator = tokenType,
                         TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType),
-                        Operation = op
+                        Operation = op,
+                        Token = token
                     };
                 return result;
             }
@@ -58,11 +64,10 @@ namespace Oberon0.Compiler.Expressions
                     LeftHandSide = left,
                     RightHandSide = right,
                     Operator = tokenType,
-                    TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType)
-                };
-            result.LeftHandSide = left;
-            result.RightHandSide = right;
-            result.Operation = op;
+                    TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType),
+                    Operation = op,
+                    Token = token
+            };
             return result;
         }
 

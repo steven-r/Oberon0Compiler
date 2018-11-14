@@ -37,7 +37,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         public static StandardFunctionGeneratorListElement Get(FunctionDeclaration function)
         {
             string key =
-                $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Block.Declarations.OfType<ProcedureParameter>().Select(GetFunctionName))}";
+                $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Block.Declarations.OfType<ProcedureParameterDeclaration>().Select(GetFunctionName))}";
 
             var func = standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
             if (func == null)
@@ -65,12 +65,12 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
                                                                    };
 
                 var parameters = mefFunction.Metadata.ParameterTypes?.Split(',') ?? new string[0];
-                element.ParameterTypes = new ProcedureParameter[parameters.Length];
+                element.ParameterTypes = new ProcedureParameterDeclaration[parameters.Length];
 
                 for (int j = 0; j < parameters.Length; j++)
                 {
                     TypeDefinition td = module.Block.LookupType(parameters[j]);
-                    element.ParameterTypes[j] = new ProcedureParameter(
+                    element.ParameterTypes[j] = new ProcedureParameterDeclaration(
                         parameters[j],
                         module.Block,
                         td,
@@ -83,7 +83,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
             }
         }
 
-        private static object GetFunctionName(ProcedureParameter parameter)
+        private static object GetFunctionName(ProcedureParameterDeclaration parameter)
         {
             return $"{(parameter.IsVar ? "&" : string.Empty)}{parameter.Type.Name}";
         }

@@ -127,14 +127,16 @@ namespace Oberon0.Compiler
                         OberonGrammarLexer.MINUS,
                         context.e.expReturn,
                         null,
-                        this.parser.currentBlock);
+                        this.parser.currentBlock, 
+                        context.op);
                     break;
                 case OberonGrammarLexer.NOT:
                     context.expReturn = BinaryExpression.Create(
                         OberonGrammarLexer.NOT,
                         context.e.expReturn,
                         null,
-                        this.parser.currentBlock);
+                        this.parser.currentBlock,
+                        context.op);
                     break;
             }
         }
@@ -178,7 +180,8 @@ namespace Oberon0.Compiler
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
-                this.parser.currentBlock);
+                this.parser.currentBlock,
+                context.op);
         }
 
         public override void ExitExprMultPrecedence(OberonGrammarParser.ExprMultPrecedenceContext context)
@@ -187,7 +190,8 @@ namespace Oberon0.Compiler
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
-                this.parser.currentBlock);
+                this.parser.currentBlock,
+                context.op);
         }
 
         public override void ExitExprRelPrecedence(OberonGrammarParser.ExprRelPrecedenceContext context)
@@ -196,7 +200,8 @@ namespace Oberon0.Compiler
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
-                this.parser.currentBlock);
+                this.parser.currentBlock,
+                context.op);
         }
 
         public override void ExitExprFuncCall(OberonGrammarParser.ExprFuncCallContext context)
@@ -204,17 +209,19 @@ namespace Oberon0.Compiler
             var parameters = context.cp?._p?.Select(x => x.expReturn).ToArray() ?? new Expression[0];
             var fp = parser.currentBlock.LookupFunction(
                 context.id.Text,
+                context.Start,
                 parameters);
 
             if (fp == null)
             {
-                parser.NotifyErrorListeners(context.id, $"Function '{context.id.Text}' not known", null);
+                context.expReturn = new ConstantIntExpression(0);
                 return;
             }
 
             context.expReturn = new FunctionCallExpression(
                 fp,
                 parser.currentBlock,
+                context.Start,
                 parameters);
         }
 
@@ -239,58 +246,13 @@ namespace Oberon0.Compiler
 
         public override void ExitProcCall_statement(OberonGrammarParser.ProcCall_statementContext context)
         {
-            FunctionDeclaration fp = this.parser.currentBlock.LookupFunction(context.id.Text);
+            var parameters = context.cp?._p?.Select(x => x.expReturn).ToArray() ?? new Expression[0];
+            FunctionDeclaration fp = this.parser.currentBlock.LookupFunction(context.id.Text, context.Start, parameters);
+
             if (fp == null)
             {
-                this.parser.NotifyErrorListeners(context.id, $"Function '{context.id.Text}' not known", null);
+                // error has been reported already
                 return;
-            }
-
-            if (fp.ReturnType.Type != BaseTypes.Void)
-            {
-                this.parser.NotifyErrorListeners(
-                    context.id,
-                    $"Procedure {fp.Name} not known or a function with this name is called as a procedure",
-                    null);
-                return;
-            }
-
-            ProcedureParameter[] procParameters = fp.Block.Declarations.OfType<ProcedureParameter>().ToArray();
-            Expression[] parameters = context.cp?._p?.Select(x => x.expReturn).ToArray() ?? new Expression[0];
-            if (parameters.Length != procParameters.Length)
-            {
-                this.parser.NotifyErrorListeners(
-                    context.id,
-                    $"Number of parameters expected: {procParameters.Length}",
-                    null);
-                return;
-            }
-
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                parameters[i] = ConstantSolver.Solve(parameters[i], this.parser.currentBlock);
-                if (procParameters[i].Type.Type == BaseTypes.Any)
-                {
-                    continue;
-                }
-
-                if (procParameters[i].Type.Type != parameters[i].TargetType.Type)
-                {
-                    this.parser.NotifyErrorListeners(
-                        context.id,
-                        $"Parameter {procParameters[i].Name} mismatch. Expected {procParameters[i].Type}, found {parameters[i].TargetType}",
-                        null);
-                    return;
-                }
-
-                if (procParameters[i].IsVar && !(parameters[i] is VariableReferenceExpression))
-                {
-                    this.parser.NotifyErrorListeners(
-                        context.id,
-                        $"Parameter {procParameters[i].Name} requires a variable reference, not an expression",
-                        null);
-                    return;
-                }
             }
 
             parser.currentBlock.Statements.Add(new ProcedureCallStatement(fp, parameters.ToList()));
@@ -312,13 +274,12 @@ namespace Oberon0.Compiler
 
         public override void ExitProcedureHeader(OberonGrammarParser.ProcedureHeaderContext context)
         {
-            context.proc = new FunctionDeclaration(context.name.Text, this.parser.currentBlock, context.r?.@params);
-            this.parser.PushBlock(context.proc.Block);
+            context.proc = new FunctionDeclaration(context.name.Text, context.procBlock, SimpleTypeDefinition.VoidType, context.pps?.@params);
         }
 
         public override void ExitProcedureParameter(OberonGrammarParser.ProcedureParameterContext context)
         {
-            context.param = new ProcedureParameter(
+            context.param = new ProcedureParameterDeclaration(
                 context.name.Text,
                 this.parser.currentBlock,
                 context.t.returnType,
@@ -327,7 +288,7 @@ namespace Oberon0.Compiler
 
         public override void ExitProcedureParameters(OberonGrammarParser.ProcedureParametersContext context)
         {
-            List<ProcedureParameter> resultSet = new List<ProcedureParameter>();
+            List<ProcedureParameterDeclaration> resultSet = new List<ProcedureParameterDeclaration>();
 
             // check for double parameter names
             foreach (OberonGrammarParser.ProcedureParameterContext parameterContext in context._p)
@@ -405,6 +366,7 @@ namespace Oberon0.Compiler
             }
 
             TypeDefinition type = context.type.Type;
+            TypeDefinition baseType = context.type.Type;
             foreach (var v in vs)
             {
                 if (type == null)
@@ -413,14 +375,14 @@ namespace Oberon0.Compiler
                     return;
                 }
 
+                v.BasicTypeDefinition = baseType;
                 if (v is IdentifierSelector selector)
                 {
-                    selector.Type = type;
-                    type = this.CheckRecordSelector(selector, type);
+                    selector.TypeDefinition = type = this.CheckRecordSelector(selector, type);
                 }
                 else if (v is IndexSelector indexSelector)
                 {
-                    type = this.CheckArrayIndexSelector(indexSelector, type);
+                    indexSelector.TypeDefinition = type = this.CheckArrayIndexSelector(indexSelector, type);
                 }
             }
 

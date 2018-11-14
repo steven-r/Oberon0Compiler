@@ -21,7 +21,7 @@ namespace Oberon0.Compiler.Definitions
     public class IdentifierSelector : BaseSelectorElement
     {
 #pragma warning disable CS3001 // Argument type is not CLS-compliant
-        public IdentifierSelector(string name, [NotNull] IToken tokenStart)
+        public IdentifierSelector(string name, IToken tokenStart)
 #pragma warning restore CS3001 // Argument type is not CLS-compliant
             : base(tokenStart)
         {
@@ -31,7 +31,5 @@ namespace Oberon0.Compiler.Definitions
         public Declaration Element { get; set; }
 
         public string Name { get; }
-
-        public TypeDefinition Type { get; set; }
     }
 }

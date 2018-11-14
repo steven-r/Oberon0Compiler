@@ -14,14 +14,12 @@ namespace Oberon0.Compiler.Definitions
 {
     using Antlr4.Runtime;
 
-    using JetBrains.Annotations;
-
     using Oberon0.Compiler.Expressions;
 
     public class IndexSelector : BaseSelectorElement
     {
 #pragma warning disable CS3001 // Argument type is not CLS-compliant
-        public IndexSelector(Expression index, [NotNull] IToken tokenStart)
+        public IndexSelector(Expression index, IToken tokenStart)
             : base(tokenStart)
 #pragma warning restore CS3001 // Argument type is not CLS-compliant
         {

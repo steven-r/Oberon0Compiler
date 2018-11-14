@@ -13,10 +13,10 @@
     public class WriteLnHandler : IStandardFunctionGenerator
     {
         public void Generate(
-            IStandardFunctionMetadata metadata, 
-            CodeGenerator generator, 
-            FunctionDeclaration functionDeclaration, 
-            List<Expression> parameters,
+            IStandardFunctionMetadata metadata,
+            CodeGenerator generator,
+            FunctionDeclaration functionDeclaration,
+            IReadOnlyList<Expression> parameters,
             Block block)
         {
             generator.Code.Emit("call", "void", "[mscorlib]System.Console::WriteLine()");

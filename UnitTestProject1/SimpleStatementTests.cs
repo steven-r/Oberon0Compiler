@@ -29,16 +29,13 @@ namespace Oberon0.Compiler.Tests
         [Test]
         public void InvalidParameterCount()
         {
-            var errors = new List<CompilerError>();
             TestHelper.CompileString(
                 @"MODULE Test; 
 BEGIN 
     WriteInt
 END Test.
 ",
-                errors);
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("Number of parameters expected: 1", errors[0].Message);
+                "No procedure/function with prototype 'WriteInt()' found");
         }
 
         [Test]

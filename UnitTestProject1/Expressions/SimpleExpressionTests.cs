@@ -32,7 +32,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.PLUS,
                 ConstantExpression.Create(1),
                 ConstantExpression.Create(1),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.ToInt32());
@@ -46,7 +47,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.PLUS,
                 ConstantExpression.Create(1),
                 ConstantDoubleExpression.Zero,
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.ToInt32());
@@ -64,7 +66,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.PLUS,
                 ConstantExpression.Create(1),
                 ConstantExpression.Create(1.42),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(2.42, result.ToDouble());
@@ -78,7 +81,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create("10.0"),
                 ConstantIntExpression.Zero, 
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.NotNull(result);
             Assert.IsTrue(double.IsInfinity(result.ToDouble()));
@@ -92,7 +96,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(2),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(5, result.ToInt32());
@@ -106,7 +111,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.ToInt32());
@@ -120,7 +126,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create("10.0"),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(2.5, result.ToDouble());
@@ -134,7 +141,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.MOD,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.ToInt32());
@@ -148,7 +156,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.MOD,
                 ConstantExpression.Create(10.5),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(2.5m, result.ToDouble());
@@ -162,7 +171,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.MULT,
                 ConstantExpression.Create(6),
                 ConstantExpression.Create(7),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(42, result.ToInt32());
@@ -176,7 +186,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.MULT,
                 ConstantExpression.Create(6.1),
                 ConstantExpression.Create(7),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.IsTrue(result.ToDouble() - 42.7 < double.Epsilon);
@@ -190,7 +201,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.MINUS,
                 ConstantExpression.Create(1),
                 ConstantExpression.Create(1),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.ToInt32());
@@ -204,7 +216,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.MINUS,
                 ConstantExpression.Create(1.5),
                 ConstantExpression.Create(1),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(0.5, result.ToDouble());
@@ -218,7 +231,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.AND,
                 ConstantExpression.Create(false),
                 ConstantExpression.Create("true"),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.ToBool());

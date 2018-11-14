@@ -32,7 +32,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void ExpressionNot()
         {
             var m = new Module();
-            var e = BinaryExpression.Create(OberonGrammarLexer.NOT, new ConstantBoolExpression(true), null, m.Block);
+            var e = BinaryExpression.Create(OberonGrammarLexer.NOT, new ConstantBoolExpression(true), null, m.Block, null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.ToBool());
@@ -47,7 +47,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.NOT,
                 VariableReferenceExpression.Create(m.Block, "a", null),
                 null,
-                m.Block);
+                m.Block, 
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as BinaryExpression;
             Assert.IsNotNull(result);
         }
@@ -69,7 +70,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.EQUAL,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block, 
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(true, result.ToBool());
@@ -83,7 +85,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.EQUAL,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block);
+                m.Block, 
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.ToBool());
@@ -97,7 +100,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GE,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block, 
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(true, result.ToBool());
@@ -111,7 +115,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GE,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(true, result.ToBool());
@@ -125,7 +130,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GE,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.ToBool());
@@ -139,7 +145,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GT,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(true, result.ToBool());
@@ -153,7 +160,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GT,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.ToBool());
@@ -167,7 +175,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GT,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.ToBool());
@@ -181,7 +190,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LE,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.ToBool());
@@ -195,7 +205,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LE,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(true, result.ToBool());
@@ -209,7 +220,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LT,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(true, result.ToBool());
@@ -223,7 +235,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LT,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.ToBool());
@@ -237,7 +250,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LT,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.ToBool());
@@ -251,7 +265,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LT,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(true, result.ToBool());
@@ -265,7 +280,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.NOTEQUAL,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(false, result.ToBool());
@@ -279,7 +295,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.NOTEQUAL,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(true, result.ToBool());
@@ -294,7 +311,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.NOTEQUAL,
                 VariableReferenceExpression.Create(m.Block, "a", null),
                 ConstantExpression.Create(10),
-                m.Block);
+                m.Block,
+                null);
             var result = ConstantSolver.Solve(e, m.Block) as BinaryExpression;
             Assert.IsNotNull(result);
             Assert.IsFalse(result.IsConst);

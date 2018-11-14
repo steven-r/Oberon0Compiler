@@ -16,19 +16,32 @@ namespace Oberon0.Compiler.Definitions
 
     using Antlr4.Runtime;
 
-    using JetBrains.Annotations;
+    using Oberon0.Compiler.Types;
 
     public abstract class BaseSelectorElement
     {
 #pragma warning disable CS3001 // Argument type is not CLS-compliant
-        protected BaseSelectorElement([NotNull] IToken tokenStart)
+        protected BaseSelectorElement(IToken tokenStart)
 #pragma warning restore CS3001 // Argument type is not CLS-compliant
         {
-            this.Token = tokenStart ?? throw new ArgumentNullException(nameof(tokenStart));
+            this.Token = tokenStart;
         }
 
 #pragma warning disable CS3003 // Type is not CLS-compliant
+        /// <summary>
+        /// Gets the token or available.
+        /// </summary>
         public IToken Token { get; }
 #pragma warning restore CS3003 // Type is not CLS-compliant
+
+        /// <summary>
+        /// Gets or sets the type definition.
+        /// </summary>
+        public TypeDefinition TypeDefinition { get; set; }
+
+        /// <summary>
+        /// Gets or sets the basic type definition. The base type definition represents the root type.
+        /// </summary>
+        public TypeDefinition BasicTypeDefinition { get; set; }
     }
 }
