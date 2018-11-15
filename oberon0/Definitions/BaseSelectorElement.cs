@@ -12,8 +12,6 @@
 
 namespace Oberon0.Compiler.Definitions
 {
-    using System;
-
     using Antlr4.Runtime;
 
     using Oberon0.Compiler.Types;
