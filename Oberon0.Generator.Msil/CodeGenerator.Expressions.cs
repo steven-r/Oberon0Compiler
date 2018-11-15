@@ -404,7 +404,6 @@ namespace Oberon0.Generator.Msil
             else if (assignmentVariable.Type is RecordTypeDefinition && selector == null)
             {
                 this.Code.Emit("stloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
-                //this.Code.Emit("stobj", Code.GetTypeName(assignmentVariable.Type));
             }
             else
             {
