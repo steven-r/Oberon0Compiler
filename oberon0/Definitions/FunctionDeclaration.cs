@@ -18,7 +18,6 @@ namespace Oberon0.Compiler.Definitions
     using System.Linq;
     using System.Text;
 
-    using Oberon0.Compiler.Generator;
     using Oberon0.Compiler.Types;
 
     public class FunctionDeclaration
@@ -44,7 +43,6 @@ namespace Oberon0.Compiler.Definitions
             }
 
             this.ReturnType = returnType;
-            this.Prototype = BuildPrototype(name, returnType, parameters);
         }
 
         public Block Block { get; }
@@ -59,11 +57,6 @@ namespace Oberon0.Compiler.Definitions
         /// Gets the name.
         /// </summary>
         public string Name { get; }
-
-        /// <summary>
-        /// Gets the prototype.
-        /// </summary>
-        public string Prototype { get; }
 
         /// <summary>
         /// Gets the return type.

@@ -52,41 +52,12 @@ namespace Oberon0.Compiler.Definitions
 
         public List<TypeDefinition> Types { get; private set; }
 
-        /// <summary>
-        /// Lookup a procedure definition
-        /// </summary>
-        /// <param name="procedureName">Name of the procedure.</param>
-        /// <param name="token">The position at the source</param>
-        /// <param name="returnType">The return type</param>
-        /// <param name="parameters">The parameters provided</param>
-        /// <returns>the <see cref="FunctionDeclaration"/>.</returns>
-        public FunctionDeclaration LookupFunction(
-            string procedureName,
-#pragma warning disable CS3001 // Argument type is not CLS-compliant
-            IToken token,
-#pragma warning restore CS3001 // Argument type is not CLS-compliant
-            TypeDefinition returnType,
-            params Expression[] parameters)
-        {
-            var callParameters = CallParameter.FromExpressions(parameters);
-            return LookupFunction(procedureName, token, returnType, callParameters);
-        }
-
 #pragma warning disable CS3001 // Argument type is not CLS-compliant
         public FunctionDeclaration LookupFunction(string name, IToken token, params Expression[] parameters)
 #pragma warning restore CS3001 // Argument type is not CLS-compliant
         {
             var callParameters = CallParameter.FromExpressions(parameters);
             return this.LookupFunction(name, token, SimpleTypeDefinition.VoidType, callParameters);
-        }
-
-
-#pragma warning disable CS3001 // Argument type is not CLS-compliant
-        public FunctionDeclaration LookupFunction(string name, IToken token, string returnType, string parameters)
-#pragma warning restore CS3001 // Argument type is not CLS-compliant
-        {
-            var callParameters = CallParameter.FromExpressions(this, parameters);
-            return this.LookupFunction(name, token, LookupType(returnType), callParameters);
         }
 
 #pragma warning disable CS3001 // Argument type is not CLS-compliant
