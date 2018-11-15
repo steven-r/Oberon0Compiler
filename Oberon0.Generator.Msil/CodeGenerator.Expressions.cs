@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="CodeGenerator.Expressions.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,6 +9,7 @@
 //     Part of oberon0 - Oberon0.Generator.Msil/CodeGenerator.Expressions.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 namespace Oberon0.Generator.Msil
@@ -113,8 +115,8 @@ namespace Oberon0.Generator.Msil
                     {
                         this.Code.EmitComment(fc.FunctionDeclaration.ToString());
                         int i = 0;
-                        var parameters =
-                            fc.FunctionDeclaration.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToList();
+                        var parameters = fc.FunctionDeclaration.Block.Declarations
+                            .OfType<ProcedureParameterDeclaration>().ToList();
                         foreach (ProcedureParameterDeclaration parameter in parameters)
                         {
                             if (parameter.IsVar)
@@ -183,29 +185,7 @@ namespace Oberon0.Generator.Msil
                 throw new NotImplementedException("internal error - dgi is null");
             }
 
-            if (varDeclaration.Block.Parent == null)
-            {
-                this.Code.Emit(
-                    "ldsfld" + (isVarParam ? "a" : string.Empty),
-                    this.Code.GetTypeName(varDeclaration.Type),
-                    $"{this.Code.ClassName}::__{varDeclaration.Name}");
-            }
-            else
-            {
-                if (varDeclaration is ProcedureParameterDeclaration pp)
-                {
-                    this.Code.Emit("ldarg." + dgi.Offset.ToString(CultureInfo.InvariantCulture));
-                    var isVar = pp.IsVar && pp.Type.Type.HasFlag(BaseTypes.Simple);
-                    if (isVar && !isStore)
-                    {
-                        this.Code.Emit("ldind" + Code.GetIndirectSuffix(pp.Type));
-                    }
-                }
-                else
-                {
-                    this.Code.Emit("ldloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
-                }
-            }
+            this.DoLoad(varDeclaration, isStore, isVarParam, dgi);
 
             if (varDeclaration.Type.Type.HasFlag(BaseTypes.Complex) && selector != null)
             {
@@ -239,7 +219,7 @@ namespace Oberon0.Generator.Msil
         private static BinaryExpression HandleRelOperation(
             int operation,
             CodeGenerator generator,
-            Block block, 
+            Block block,
             BinaryExpression bin)
         {
             Expression left = bin.LeftHandSide;
@@ -333,6 +313,33 @@ namespace Oberon0.Generator.Msil
             }
         }
 
+        private void DoLoad(Declaration varDeclaration, bool isStore, bool isVarParam, DeclarationGeneratorInfo dgi)
+        {
+            if (varDeclaration.Block.Parent == null)
+            {
+                this.Code.Emit(
+                    "ldsfld" + (isVarParam ? "a" : string.Empty),
+                    this.Code.GetTypeName(varDeclaration.Type),
+                    $"{this.Code.ClassName}::__{varDeclaration.Name}");
+            }
+            else
+            {
+                if (varDeclaration is ProcedureParameterDeclaration pp)
+                {
+                    this.Code.Emit("ldarg." + dgi.Offset.ToString(CultureInfo.InvariantCulture));
+                    var isVar = pp.IsVar && pp.Type.Type.HasFlag(BaseTypes.Simple);
+                    if (isVar && !isStore)
+                    {
+                        this.Code.Emit("ldind" + Code.GetIndirectSuffix(pp.Type));
+                    }
+                }
+                else
+                {
+                    this.Code.Emit("ldloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
+                }
+            }
+        }
+
         private Expression HandleVariableReferenceExpression(Block block, VariableReferenceExpression v)
         {
             if (v.IsConst)
@@ -348,7 +355,7 @@ namespace Oberon0.Generator.Msil
                     d = dgi.ReplacedBy;
                 }
 
-                Load(block, d, v.Selector);
+                this.Load(block, d, v.Selector);
             }
 
             return v;
@@ -362,15 +369,18 @@ namespace Oberon0.Generator.Msil
                 {
                     var ad = (ArrayTypeDefinition)varDeclaration.Type;
                     this.ExpressionCompiler(block, ae.IndexDefinition);
-                    Code.PushConst(1);
-                    Code.Emit("sub"); // rebase to 0
+                    this.Code.PushConst(1);
+                    this.Code.Emit("sub"); // rebase to 0
                     if (!isStore)
                         this.Code.EmitLdelem(ae, ad);
                     continue;
                 }
 
                 if (selectorElement is IdentifierSelector ie && !isStore)
-                    this.Code.Emit("ldfld", this.Code.GetTypeName(ie.Element.Type), $"{this.Code.GetTypeName(ie.BasicTypeDefinition)}::__{ie.Name}");
+                    this.Code.Emit(
+                        "ldfld",
+                        this.Code.GetTypeName(ie.Element.Type),
+                        $"{this.Code.GetTypeName(ie.BasicTypeDefinition)}::__{ie.Name}");
             }
         }
 

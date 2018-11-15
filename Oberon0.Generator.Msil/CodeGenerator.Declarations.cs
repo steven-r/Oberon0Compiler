@@ -148,38 +148,45 @@ namespace Oberon0.Generator.Msil
                     continue;
                 }
 
+                if (declaration.GeneratorInfo == null)
+                {
+                    declaration.GeneratorInfo = new DeclarationGeneratorInfo(varId++);
+                }
+
                 if (declaration is ConstDeclaration c)
                 {
                     this.Code.ConstField(c);
                     continue;
                 }
 
-                if (declaration.GeneratorInfo == null)
-                {
-                    declaration.GeneratorInfo = new DeclarationGeneratorInfo(varId++);
-                }
-
-                if (isRoot)
-                {
-                    Code.DataField(declaration, true);
-                }
-                else
-                {
-                    if (isFirst)
-                    {
-                        this.Code.Write("\t.locals (");
-                        isFirst = false;
-                    }
-                    else
-                    {
-                        this.Code.Write(", ");
-                    }
-
-                    this.Code.LocalVarDef(declaration, false);
-                }
+                isFirst = this.ProcessSingleDeclarationField(isRoot, declaration, isFirst);
             }
 
             if (!isFirst) this.Code.WriteLine(")");
+        }
+
+        private bool ProcessSingleDeclarationField(bool isRoot, Declaration declaration, bool isFirst)
+        {
+            if (isRoot)
+            {
+                this.Code.DataField(declaration, true);
+            }
+            else
+            {
+                if (isFirst)
+                {
+                    this.Code.Write("\t.locals (");
+                    isFirst = false;
+                }
+                else
+                {
+                    this.Code.Write(", ");
+                }
+
+                this.Code.LocalVarDef(declaration, false);
+            }
+
+            return isFirst;
         }
 
         private void GenerateComplexTypeMappings(Block block)
