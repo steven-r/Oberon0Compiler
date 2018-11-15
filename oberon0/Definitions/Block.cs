@@ -35,11 +35,6 @@ namespace Oberon0.Compiler.Definitions
             this.Parent = parent;
         }
 
-        protected Block()
-        {
-            this.InitLists();
-        }
-
         public List<Declaration> Declarations { get; private set; }
 
         /// <summary>
