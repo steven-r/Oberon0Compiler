@@ -16,17 +16,42 @@ namespace Oberon0.Compiler
 
     using Oberon0.Compiler.Definitions;
 
-    public static class Oberon0Compiler
+    public class Oberon0Compiler
     {
-        public static Module CompileString(string source)
+        public static Oberon0Compiler Instance { get; set; }
+
+#pragma warning disable CS3003 // Type is not CLS-compliant
+        public OberonGrammarParser.ModuleContext Context { get; set; }
+#pragma warning restore CS3003 // Type is not CLS-compliant
+
+#pragma warning disable CS3003 // Type is not CLS-compliant
+        public OberonGrammarLexer Lexer { get; private set; }
+#pragma warning restore CS3003 // Type is not CLS-compliant
+
+#pragma warning disable CS3003 // Type is not CLS-compliant
+        public OberonGrammarParser Parser { get; private set; }
+#pragma warning restore CS3003 // Type is not CLS-compliant
+
+        public static Module CompileString(string source, Oberon0CompilerOptions options = null)
         {
+            Instance = new Oberon0Compiler();
+
             AntlrInputStream input = new AntlrInputStream(source);
-            OberonGrammarLexer lexer = new OberonGrammarLexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            OberonGrammarParser parser = new OberonGrammarParser(tokens);
-            parser.AddParseListener(new Oberon0CompilerListener(parser));
-            OberonGrammarParser.ModuleContext context = parser.module();
-            return context.modres;
+            Instance.Lexer = new OberonGrammarLexer(input);
+            CommonTokenStream tokens = new CommonTokenStream(Instance.Lexer);
+
+            options?.InitLexer?.Invoke(Instance.Lexer);
+
+            Instance.Parser = new OberonGrammarParser(tokens);
+            Instance.Parser.AddParseListener(new Oberon0CompilerListener(Instance.Parser));
+
+            options?.InitParser?.Invoke(Instance.Parser);
+
+            Instance.Context = Instance.Parser.module();
+
+            options?.AfterCompile?.Invoke(Instance);
+
+            return Instance.Context.modres;
         }
     }
 }

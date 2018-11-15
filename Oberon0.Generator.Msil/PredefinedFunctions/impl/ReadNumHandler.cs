@@ -30,12 +30,12 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
             IStandardFunctionMetadata metadata,
             CodeGenerator generator,
             FunctionDeclaration functionDeclaration,
-            List<Expression> parameters,
+            IReadOnlyList<Expression> parameters,
             Block block)
         {
             VariableReferenceExpression reference = (VariableReferenceExpression)parameters[0];
 
-            var isVar = (reference.Declaration is ProcedureParameter pp) && pp.IsVar;
+            var isVar = (reference.Declaration is ProcedureParameterDeclaration pp) && pp.IsVar;
             if (isVar || (reference.Selector != null && reference.Selector.Any()))
             {
                 generator.Load(block, reference.Declaration, reference.Selector, true);

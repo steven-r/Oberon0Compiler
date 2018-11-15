@@ -31,24 +31,29 @@ namespace Oberon0.TestSupport
         public static Module CompileString(string source, List<CompilerError> errors)
         {
             CompilerErrors.Clear();
-            AntlrInputStream input = new AntlrInputStream(source);
-            OberonGrammarLexer lexer = new OberonGrammarLexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            OberonGrammarParser parser = new OberonGrammarParser(tokens);
-            lexer.RemoveErrorListeners();
-            lexer.AddErrorListener(TestErrorListener.Instance);
-            parser.RemoveErrorListeners();
-            parser.AddErrorListener(TestErrorListener.Instance);
-            parser.AddParseListener(new Oberon0CompilerListener(parser));
-
-            OberonGrammarParser.ModuleContext context = parser.module();
-            errors.AddRange(CompilerErrors);
-            if (context.modres != null)
-            {
-                context.modres.HasError = CompilerErrors.Any();
-            }
-
-            return context.modres;
+            return Oberon0Compiler.CompileString(
+                source,
+                new Oberon0CompilerOptions
+                    {
+                        InitParser = parser =>
+                            {
+                                parser.RemoveErrorListeners();
+                                parser.AddErrorListener(TestErrorListener.Instance);
+                            },
+                        InitLexer = lexer =>
+                            {
+                                lexer.RemoveErrorListeners();
+                                lexer.AddErrorListener(TestErrorListener.Instance);
+                            },
+                        AfterCompile = compiler =>
+                            {
+                                errors.AddRange(CompilerErrors);
+                                if (compiler.Context.modres != null)
+                                {
+                                    compiler.Context.modres.HasError = CompilerErrors.Any();
+                                }
+                            }
+                    });
         }
 
         [ExcludeFromCodeCoverage]
@@ -66,7 +71,7 @@ namespace Oberon0.TestSupport
                 Assert.Fail($"Expected {expectedErrors.Length} errors, actually found {errors.Count}");
             }
 
-            for (int i = 0; i < expectedErrors.Length; i++)
+            for (var i = 0; i < expectedErrors.Length; i++)
             {
                 Assert.AreEqual(expectedErrors[i], errors[i].Message);    
             }

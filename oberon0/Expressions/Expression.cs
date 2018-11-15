@@ -2,6 +2,8 @@
 
 namespace Oberon0.Compiler.Expressions
 {
+    using Antlr4.Runtime;
+
     public abstract class Expression
     {
         protected Expression()
@@ -12,6 +14,10 @@ namespace Oberon0.Compiler.Expressions
         {
             TargetType = targetType;
         }
+
+#pragma warning disable CS3003 // Type is not CLS-compliant
+        public IToken Token { get; set; }
+#pragma warning restore CS3003 // Type is not CLS-compliant
 
         public int Operator { get; set; }
 

@@ -32,10 +32,10 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
             IStandardFunctionMetadata metadata,
             CodeGenerator generator,
             FunctionDeclaration functionDeclaration,
-            List<Expression> parameters,
+            IReadOnlyList<Expression> parameters,
             Block block)
         {
-            ProcedureParameter parameter = functionDeclaration.Block.Declarations.OfType<ProcedureParameter>().First();
+            ProcedureParameterDeclaration parameter = functionDeclaration.Block.Declarations.OfType<ProcedureParameterDeclaration>().First();
             if ((parameter.Type.Type & BaseTypes.Simple) == 0)
             {
                 throw new ArgumentException("Argument must be simple type", nameof(parameters));

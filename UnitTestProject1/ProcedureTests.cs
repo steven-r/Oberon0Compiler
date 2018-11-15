@@ -35,7 +35,7 @@ END Test1;
 
 END Test.");
 
-            Assert.NotNull(m.Block.LookupFunction("Test1"));
+            Assert.NotNull(m.Block.LookupFunction("Test1", null));
         }
 
         [Test]
@@ -49,11 +49,11 @@ END Test1;
 
 END Test.");
 
-            FunctionDeclaration p = m.Block.LookupFunction("Test1");
+            FunctionDeclaration p = m.Block.LookupFunction("Test1", null, "INTEGER");
             Assert.NotNull(p);
             Assert.AreEqual(1, p.Block.Declarations.Count);
             Assert.AreEqual("a", p.Block.Declarations[0].Name);
-            Assert.AreEqual(false, ((ProcedureParameter)p.Block.Declarations[0]).IsVar);
+            Assert.AreEqual(false, ((ProcedureParameterDeclaration)p.Block.Declarations[0]).IsVar);
         }
 
         [Test]
@@ -67,11 +67,11 @@ END Test1;
 
 END Test.");
 
-            FunctionDeclaration p = m.Block.LookupFunction("Test1");
+            FunctionDeclaration p = m.Block.LookupFunction("Test1", null, "&INTEGER");
             Assert.NotNull(p);
             Assert.AreEqual(1, p.Block.Declarations.Count);
             Assert.AreEqual("a", p.Block.Declarations[0].Name);
-            Assert.AreEqual(true, ((ProcedureParameter)p.Block.Declarations[0]).IsVar);
+            Assert.AreEqual(true, ((ProcedureParameterDeclaration)p.Block.Declarations[0]).IsVar);
         }
 
         [Test]
@@ -102,10 +102,10 @@ END TestProc;
 
 END Test.");
             Assert.NotNull(m);
-            var proc = m.Block.LookupFunction("TestProc");
+            var proc = m.Block.LookupFunction("TestProc", null);
             Assert.NotNull(proc);
             Assert.AreEqual("TestProc", proc.Name);
-            Assert.AreEqual(0, proc.Block.Declarations.OfType<ProcedureParameter>().Count());
+            Assert.AreEqual(0, proc.Block.Declarations.OfType<ProcedureParameterDeclaration>().Count());
             Assert.AreEqual(1, proc.Block.Declarations.Count);
             var x = m.Block.LookupVar("x");
             Assert.IsNull(x);
@@ -129,10 +129,10 @@ END TestProc;
 
 END Test.");
             Assert.NotNull(m);
-            var proc = m.Block.LookupFunction("TestProc");
+            var proc = m.Block.LookupFunction("TestProc", null);
             Assert.NotNull(proc);
             Assert.AreEqual("TestProc", proc.Name);
-            Assert.AreEqual(0, proc.Block.Declarations.OfType<ProcedureParameter>().Count());
+            Assert.AreEqual(0, proc.Block.Declarations.OfType<ProcedureParameterDeclaration>().Count());
             Assert.AreEqual(0, proc.Block.Declarations.Count);
             var x = proc.Block.LookupVar("x", false);
             Assert.IsNull(x);
@@ -157,7 +157,7 @@ BEGIN
   TestProc
 END Test.");
             Assert.NotNull(m);
-            var proc = m.Block.LookupFunction("TestProc");
+            var proc = m.Block.LookupFunction("TestProc", null);
             Assert.NotNull(proc);
             Assert.AreEqual("TestProc", proc.Name);
             Assert.AreEqual(1, m.Block.Statements.Count);
@@ -215,7 +215,30 @@ END TestProc;
 BEGIN
   TestProc(x +1);
 END Test.",
-                "Parameter x requires a variable reference, not an expression");
+                "No procedure/function with prototype 'TestProc(INTEGER)' found");
+        }
+
+        [Test]
+        public void ProcArrayCallByValue()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+VAR 
+    arr: ARRAY 5 OF INTEGER; 
+
+    PROCEDURE TestArray(a: ARRAY 5 OF INTEGER);
+    BEGIN
+        IF (a[1] # 1) THEN WriteString('a is 0') END;
+        a[1] := 2
+    END TestArray;
+
+BEGIN
+    arr[1] := 1;
+    TestArray(arr);
+    WriteBool(arr[1] = 1);
+    WriteLn 
+END Test.",
+                "No procedure/function with prototype 'TestArray(INTEGER[5])' found");
         }
     }
 }

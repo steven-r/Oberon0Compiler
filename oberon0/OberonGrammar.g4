@@ -10,12 +10,12 @@ using Oberon0.Compiler.Statements;
 }
 
 @members {
+	internal Stack<Block> blockStack = new Stack<Block>();
+	internal Block currentBlock;
+
 	private bool isVar(string id, Block block) {
 		return block.LookupVar(id, true) != null;
 	}
-
-	public Stack<Block> blockStack = new Stack<Block>();
-	public Block currentBlock;
 
 	internal Block PushBlock() {
 		var block = new Block(currentBlock);
@@ -63,15 +63,18 @@ procedureDeclaration:
 		';'
 		;
 
-procedureHeader returns[FunctionDeclaration proc]:
-		PROCEDURE name=ID (r=procedureParameters)? ';'
+procedureHeader 
+	returns[FunctionDeclaration proc]
+	locals[Block procBlock]
+	: { $procBlock = PushBlock(); }
+		PROCEDURE name=ID (pps=procedureParameters)? ';'
 		;
 
-procedureParameters returns [ProcedureParameter[] params]:
+procedureParameters returns [ProcedureParameterDeclaration[] params]:
 		'(' (p+=procedureParameter ';') * p+=procedureParameter ')'
 		;
 
-procedureParameter returns[ProcedureParameter param] locals[bool isVar]
+procedureParameter returns[ProcedureParameterDeclaration param] locals[bool isVar]
 @init{
 	$isVar = false;
 }

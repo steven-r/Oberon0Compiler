@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Code.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,6 +9,7 @@
 //     Part of oberon0 - Oberon0.Generator.Msil/Code.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 namespace Oberon0.Generator.Msil
@@ -22,8 +24,10 @@ namespace Oberon0.Generator.Msil
     using JetBrains.Annotations;
 
     using Oberon0.Compiler.Definitions;
+    using Oberon0.Compiler.Expressions;
     using Oberon0.Compiler.Expressions.Constant;
     using Oberon0.Compiler.Types;
+    using Oberon0.Generator.Msil.PredefinedFunctions;
 
     public class Code : StringWriter
     {
@@ -39,21 +43,31 @@ namespace Oberon0.Generator.Msil
         // ReSharper disable once MemberCanBePrivate.Global
         internal string ModuleName { [UsedImplicitly] get; set; }
 
+        public static void CallInternalFunction(
+            CodeGenerator generator,
+            FunctionDeclaration call,
+            Block block,
+            IReadOnlyList<Expression> expressions)
+        {
+            var function = StandardFunctionRepository.Get(call);
+            function.Instance.Generate(function, generator, call, expressions, block);
+        }
+
         public void Branch(string branchType, string label)
         {
-            Emit(branchType, label);
+            this.Emit(branchType, label);
         }
 
         public void ConstField(ConstDeclaration constDeclaration)
         {
-            WriteLine(
-                $".data {constDeclaration.Name} = {GetDataTypeName(constDeclaration.Type)} ({DumpConstValue(constDeclaration.Value, false, true)})");
+            this.WriteLine(
+                $".data __{constDeclaration.Name} = {GetDataTypeName(constDeclaration.Type)} ({DumpConstValue(constDeclaration.Value, false, true)})");
         }
 
         public void DataField(Declaration declaration, bool isStatic)
         {
-            WriteLine(
-                $".field {(isStatic ? "static " : string.Empty)}{GetTypeName(declaration.Type)} {declaration.Name}");
+            this.WriteLine(
+                $".field {(isStatic ? "static " : string.Empty)}{this.GetTypeName(declaration.Type)} __{declaration.Name}");
         }
 
         /// <summary>
@@ -75,11 +89,11 @@ namespace Oberon0.Generator.Msil
                     suffix = ".r8";
                     break;
                 default:
-                    param = GetTypeName(arrayTypeDefinition.ArrayType);
+                    param = this.GetTypeName(arrayTypeDefinition.ArrayType);
                     break;
             }
 
-            Emit("ldelem" + suffix, param);
+            this.Emit("ldelem" + suffix, param);
         }
 
         internal static string DotNumOrArg(int value, int min, int max, bool isSimpleShortForm = true)
@@ -94,6 +108,31 @@ namespace Oberon0.Generator.Msil
             if (value < 0)
                 return $".m{-value}";
             return $".{value}";
+        }
+
+        internal static string GetIndirectSuffix(TypeDefinition type)
+        {
+            string suffix;
+            switch (type.Type)
+            {
+                case BaseTypes.Int:
+                case BaseTypes.Bool:
+                    suffix = ".i4";
+                    break;
+                case BaseTypes.Real:
+                    suffix = ".r8";
+                    break;
+                case BaseTypes.Array:
+                    suffix = GetIndirectSuffix(((ArrayTypeDefinition)type).ArrayType);
+                    break;
+                case BaseTypes.Record:
+                    suffix = ".ref";
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            return suffix;
         }
 
         internal static string GetTypeName(BaseTypes type)
@@ -115,43 +154,46 @@ namespace Oberon0.Generator.Msil
             }
         }
 
-        internal void Call(FunctionDeclaration func)
+        internal void Call(CodeGenerator generator, FunctionDeclaration func, IReadOnlyList<Expression> expressions)
         {
             if (func.IsInternal)
             {
-                throw new NotImplementedException();
+                CallInternalFunction(generator, func, func.Block, expressions);
+                return;
             }
 
-            string prototype = func.Prototype;
-            if (!func.IsExternal)
-            {
-                prototype = $"Oberon0.{ModuleName}::{func.Name}";
-            }
+            string prototype = this.GetPrototypeName(func);
+
+            var parameters = func.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToList();
 
             // local procedure
-            EmitNoNewLine("call", GetTypeName(func.ReturnType), $"{prototype}(");
+            this.EmitNoNewLine("call", this.GetTypeName(func.ReturnType), $"{prototype}(");
             List<string> typeNames = new List<string>();
             typeNames.AddRange(
-                func.Block.Declarations.OfType<ProcedureParameter>().Select(parameter => GetTypeName(parameter.Type) + (parameter.IsVar ? "&" : string.Empty)));
-            Write(string.Join(",", typeNames));
-            WriteLine(")");
+                parameters.Select(
+                    parameter => this.GetTypeName(parameter.Type)
+                                 + (!parameter.Type.Type.HasFlag(BaseTypes.Complex) && parameter.IsVar
+                                        ? "&"
+                                        : string.Empty)));
+            this.Write(string.Join(",", typeNames));
+            this.WriteLine(")");
         }
 
         internal void Emit(string code, params object[] parameters)
         {
-            EmitNoNewLine(code, parameters);
-            WriteLine();
+            this.EmitNoNewLine(code, parameters);
+            this.WriteLine();
         }
 
         internal void EmitComment(string comment)
         {
-            WriteLine("// " + comment);
+            this.WriteLine("// " + comment);
         }
 
         internal string EmitLabel(string label = null)
         {
-            label = label ?? GetLabel();
-            Write(label + ": ");
+            label = label ?? this.GetLabel();
+            this.Write(label + ": ");
             return label;
         }
 
@@ -170,30 +212,30 @@ namespace Oberon0.Generator.Msil
                     break;
                 default:
                     suffix = ".ref";
-                    param = GetTypeName(indexSelector.IndexDefinition.TargetType);
+                    param = this.GetTypeName(indexSelector.IndexDefinition.TargetType);
                     break;
             }
 
-            Emit("stelem" + suffix, param);
+            this.Emit("stelem" + suffix, param);
         }
 
         internal void EmitStfld(IdentifierSelector identSelector)
         {
-            Emit(
+            this.Emit(
                 "stfld",
-                GetTypeName(identSelector.Element.Type),
-                GetTypeName(identSelector.Type) + "::" + identSelector.Name);
+                this.GetTypeName(identSelector.Element.Type),
+                $"{this.GetTypeName(identSelector.BasicTypeDefinition)}::__{identSelector.Name}");
         }
 
         internal void EndClass()
         {
-            WriteLine("}");
+            this.WriteLine("}");
         }
 
         internal void EndMethod()
         {
-            Emit("ret");
-            WriteLine("}");
+            this.Emit("ret");
+            this.WriteLine("}");
         }
 
         internal string GetLabel()
@@ -207,9 +249,9 @@ namespace Oberon0.Generator.Msil
             switch (type.Type)
             {
                 case BaseTypes.Array:
-                    return $"{GetTypeName(((ArrayTypeDefinition)type).ArrayType)}[]";
+                    return $"{this.GetTypeName(((ArrayTypeDefinition)type).ArrayType)}[]";
                 case BaseTypes.Record:
-                    return $"class {ClassName}/{type.Name}";
+                    return $"class {this.ClassName}/__{type.Name}";
                 default:
                     return GetTypeName(type.Type);
             }
@@ -217,12 +259,12 @@ namespace Oberon0.Generator.Msil
 
         internal void LoadConstRef(ConstDeclaration constDeclaration)
         {
-            Emit("ldvar", constDeclaration.Name);
+            this.Emit("ldvar", $"__{constDeclaration.Name}");
         }
 
         internal void LocalVarDef(Declaration declaration, bool isPointer)
         {
-            Write($"{(isPointer ? "&" : string.Empty)}{GetTypeName(declaration.Type)} {declaration.Name}");
+            this.Write($"{(isPointer ? "&" : string.Empty)}{this.GetTypeName(declaration.Type)} __{declaration.Name}");
         }
 
         internal void PushConst([NotNull] object data)
@@ -232,32 +274,32 @@ namespace Oberon0.Generator.Msil
             switch (Type.GetTypeCode(data.GetType()))
             {
                 case TypeCode.Boolean:
-                    Emit("ldc.i4." + ((bool)data ? "1" : "0"));
+                    this.Emit("ldc.i4." + ((bool)data ? "1" : "0"));
                     break;
                 case TypeCode.Char:
-                    Emit("ldc.i4.s ", Convert.ToByte((char)data).ToString("x2"));
+                    this.Emit("ldc.i4.s ", Convert.ToByte((char)data).ToString("x2"));
                     break;
                 case TypeCode.Int16:
                 case TypeCode.SByte:
                 case TypeCode.UInt16:
-                    Emit("ldc.i2", data);
+                    this.Emit("ldc.i2", data);
                     break;
                 case TypeCode.Byte:
-                    Emit("ldc.i1.s", data);
+                    this.Emit("ldc.i1.s", data);
                     break;
                 case TypeCode.Int32:
                 case TypeCode.UInt32:
-                    Emit("ldc.i4" + DotNumOrArg((int)data, -1, 8));
+                    this.Emit("ldc.i4" + DotNumOrArg((int)data, -1, 8));
                     break;
                 case TypeCode.Int64:
                 case TypeCode.UInt64:
-                    Emit("ldc.i8 ", data);
+                    this.Emit("ldc.i8 ", data);
                     break;
                 case TypeCode.Single:
-                    Emit("ldc.r4", data);
+                    this.Emit("ldc.r4", data);
                     break;
                 case TypeCode.Double:
-                    Emit("ldc.r8", ((double)data).ToString(CultureInfo.InvariantCulture));
+                    this.Emit("ldc.r8", ((double)data).ToString(CultureInfo.InvariantCulture));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(data), "Unknown data type");
@@ -266,23 +308,23 @@ namespace Oberon0.Generator.Msil
 
         internal void Reference(string assemblyName)
         {
-            WriteLine($".assembly extern {assemblyName} {{ }}");
+            this.WriteLine($".assembly extern {assemblyName} {{ }}");
         }
 
         internal void StartAssembly(string moduleName)
         {
-            WriteLine($".assembly {moduleName} {{ }}");
+            this.WriteLine($".assembly {moduleName} {{ }}");
         }
 
         internal void StartClass(string className)
         {
-            WriteLine($".class public {className} {{");
-            ClassName = className;
+            this.WriteLine($".class public {className} {{");
+            this.ClassName = className;
         }
 
         internal void StartMainMethod()
         {
-            Write(
+            this.Write(
                 $@"
 .method static public void $O0$main() cil managed
 {{   .entrypoint 
@@ -291,24 +333,35 @@ namespace Oberon0.Generator.Msil
 
         internal void StartMethod(FunctionDeclaration functionDeclaration)
         {
-            Write($".method private static {GetTypeName(functionDeclaration.ReturnType)} {functionDeclaration.Name}(");
+            this.Write(
+                $".method private static {this.GetTypeName(functionDeclaration.ReturnType)} __{functionDeclaration.Name}(");
             List<string> paramList = new List<string>();
-            int id = 0;
-            foreach (ProcedureParameter parameter in functionDeclaration.Block.Declarations.OfType<ProcedureParameter>())
+            foreach (ProcedureParameterDeclaration parameter in functionDeclaration.Block.Declarations
+                .OfType<ProcedureParameterDeclaration>())
             {
-                parameter.GeneratorInfo = new DeclarationGeneratorInfo(id++);
-                paramList.Add($"{GetTypeName(parameter.Type)}{(parameter.IsVar ? "&" : string.Empty)} {parameter.Name}");
+                var isVar = parameter.IsVar;
+                var name = parameter.Name;
+                if (!parameter.IsVar && parameter.Type.Type.HasFlag(BaseTypes.Complex))
+                {
+                    name = $"param__{name}";
+                }
+                else
+                {
+                    isVar = isVar && !parameter.Type.Type.HasFlag(BaseTypes.Complex);
+                }
+
+                paramList.Add($"{this.GetTypeName(parameter.Type)}{(isVar ? "&" : string.Empty)} __{name}");
             }
 
-            WriteLine(
+            this.WriteLine(
                 string.Join(", ", paramList) + @")
 {");
         }
 
         internal void StartModule(string moduleName)
         {
-            WriteLine($".module {moduleName}.exe");
-            ModuleName = moduleName;
+            this.WriteLine($".module {moduleName}.exe");
+            this.ModuleName = moduleName;
         }
 
         private static string DumpConstValue(
@@ -349,14 +402,24 @@ namespace Oberon0.Generator.Msil
             }
         }
 
-        private void EmitNoNewLine(string opCode, params object[] parameters)
+        private void EmitNoNewLine(string code, params object[] parameters)
         {
-            Write("\t" + opCode);
+            this.Write("\t" + code);
             foreach (string parameter in parameters)
             {
                 if (!string.IsNullOrEmpty(parameter))
-                    Write("\t" + parameter);
+                    this.Write("\t" + parameter);
             }
+        }
+
+        private string GetPrototypeName(FunctionDeclaration func)
+        {
+            if (func is ExternalFunctionDeclaration exfunc)
+            {
+                return $"[{exfunc.Assembly.GetName().Name}]{exfunc.ClassName}::{exfunc.MethodName}";
+            }
+
+            return $"Oberon0.{this.ModuleName}::__{func.Name}";
         }
     }
 }

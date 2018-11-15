@@ -25,7 +25,7 @@ namespace Oberon0.Compiler.Definitions
     /// </summary>
     public partial class Module
     {
-        private void AddParameters(Oberon0ExportAttribute attr, int i, ProcedureParameter[] procParameters)
+        private void AddParameters(Oberon0ExportAttribute attr, int i, ProcedureParameterDeclaration[] procParameters)
         {
             var isVar = false;
             var paramType = attr.Parameters[i];
@@ -47,7 +47,7 @@ namespace Oberon0.Compiler.Definitions
                 throw new InvalidOperationException($"type {attr.Parameters[i]} not found");
             }
 
-            procParameters[i] = new ProcedureParameter(paramName, this.Block, td, isVar);
+            procParameters[i] = new ProcedureParameterDeclaration(paramName, this.Block, td, isVar);
         }
 
         private void DeclareStandardConsts()
@@ -65,40 +65,52 @@ namespace Oberon0.Compiler.Definitions
             // hardwired
             this.Block.Procedures.Add(
                 FunctionDeclaration.AddHardwiredFunction(
+                    "ABS",
+                    this,
+                    SimpleTypeDefinition.IntType,
+                    new ProcedureParameterDeclaration("any", this.Block, SimpleTypeDefinition.IntType, false)));
+            this.Block.Procedures.Add(
+                FunctionDeclaration.AddHardwiredFunction(
+                    "ABS",
+                    this,
+                    Block.LookupType("REAL"),
+                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("REAL"), false)));
+            this.Block.Procedures.Add(
+                FunctionDeclaration.AddHardwiredFunction(
                     "WriteInt",
                     this,
-                    new ProcedureParameter("any", this.Block, this.Block.LookupType("INTEGER"), false)));
+                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("INTEGER"), false)));
             this.Block.Procedures.Add(
                 FunctionDeclaration.AddHardwiredFunction(
                     "WriteBool",
                     this,
-                    new ProcedureParameter("any", this.Block, this.Block.LookupType("BOOLEAN"), false)));
+                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("BOOLEAN"), false)));
             this.Block.Procedures.Add(
                 FunctionDeclaration.AddHardwiredFunction(
                     "WriteString",
                     this,
-                    new ProcedureParameter("any", this.Block, this.Block.LookupType("STRING"), false)));
+                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("STRING"), false)));
             this.Block.Procedures.Add(
                 FunctionDeclaration.AddHardwiredFunction(
                     "WriteReal",
                     this,
-                    new ProcedureParameter("any", this.Block, this.Block.LookupType("REAL"), false)));
+                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("REAL"), false)));
             this.Block.Procedures.Add(FunctionDeclaration.AddHardwiredFunction("WriteLn", this));
             this.Block.Procedures.Add(
                 FunctionDeclaration.AddHardwiredFunction(
                     "ReadInt",
                     this,
-                    new ProcedureParameter("any", this.Block, this.Block.LookupType("INTEGER"), true)));
+                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("INTEGER"), true)));
             this.Block.Procedures.Add(
                 FunctionDeclaration.AddHardwiredFunction(
                     "ReadBool",
                     this,
-                    new ProcedureParameter("any", this.Block, this.Block.LookupType("BOOLEAN"), true)));
+                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("BOOLEAN"), true)));
             this.Block.Procedures.Add(
                 FunctionDeclaration.AddHardwiredFunction(
                     "ReadReal",
                     this,
-                    new ProcedureParameter("any", this.Block, this.Block.LookupType("REAL"), true)));
+                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("REAL"), true)));
 
             var asm = Assembly.Load("Oberon0.System");
             foreach (Type type in asm.GetExportedTypes())
@@ -133,7 +145,6 @@ namespace Oberon0.Compiler.Definitions
         /// <param name="type">The type.</param>
         private void LoadLibraryMembers(Type type)
         {
-            AssemblyName name = new AssemblyName(type.Assembly.FullName);
             foreach (MethodInfo method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
             {
                 var attr = method.GetCustomAttribute<Oberon0ExportAttribute>();
@@ -149,16 +160,13 @@ namespace Oberon0.Compiler.Definitions
                     throw new InvalidOperationException($"return type {attr.ReturnType} not found");
                 }
 
-                ProcedureParameter[] procParameters = new ProcedureParameter[attr.Parameters.Length];
+                ProcedureParameterDeclaration[] procParameters = new ProcedureParameterDeclaration[attr.Parameters.Length];
                 for (int i = 0; i < attr.Parameters.Length; i++)
                 {
                     this.AddParameters(attr, i, procParameters);
                 }
 
-                var fd = new FunctionDeclaration(attr.Name, this.Block, rt, procParameters)
-                             {
-                                 Prototype = $"[{name.Name}]Oberon0.{type.Name}::{method.Name}", IsExternal = true,
-                             };
+                var fd = new ExternalFunctionDeclaration(attr.Name, new Block(this.Block), rt, method, procParameters);
                 this.Block.Procedures.Add(fd);
             }
 

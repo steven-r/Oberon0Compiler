@@ -88,29 +88,25 @@ namespace Oberon0.Generator.Msil
             this.Code.EndClass();
         }
 
-        private void CallInternalFunction(ProcedureCallStatement call, Block block)
-        {
-            var function = StandardFunctionRepository.Get(call.FunctionDeclaration);
-            function.Instance.Generate(function, this, call.FunctionDeclaration, call.Parameters, block);
-        }
-
         private void CallProcedure(ProcedureCallStatement call, Block block)
         {
             this.Code.EmitComment("Call " + call.FunctionDeclaration.Name);
             int i = 0;
             if (call.FunctionDeclaration.IsInternal)
             {
-                this.CallInternalFunction(call, block);
+                Code.CallInternalFunction(this, call.FunctionDeclaration, block, call.Parameters);
             }
             else
             {
-                foreach (ProcedureParameter parameter in call.FunctionDeclaration.Block.Declarations
-                    .OfType<ProcedureParameter>())
+                var parameters = call.FunctionDeclaration.Block.Declarations.OfType<ProcedureParameterDeclaration>()
+                    .ToList();
+                foreach (ProcedureParameterDeclaration parameter in parameters)
                 {
                     if (parameter.IsVar)
                     {
                         VariableReferenceExpression reference = (VariableReferenceExpression)call.Parameters[i];
-                        this.Load(block, reference.Declaration, reference.Selector, isVarParam: true);
+
+                        this.Load(block, reference.Declaration, reference.Selector, isCall: true, isVarParam: ((DeclarationGeneratorInfo)reference.Declaration.GeneratorInfo).IsVar(reference.Declaration, reference.Selector));
                     }
                     else
                     {
@@ -120,14 +116,14 @@ namespace Oberon0.Generator.Msil
                     i++;
                 }
 
-                this.Code.Call(call.FunctionDeclaration);
+                this.Code.Call(this, call.FunctionDeclaration, call.Parameters);
             }
         }
 
         private void GenerateAssignmentStatement(Block block, AssignmentStatement assignment)
         {
             this.Code.EmitComment(assignment.Variable + " := " + assignment.Expression);
-            var isVar = (assignment.Variable is ProcedureParameter pp) && pp.IsVar;
+            var isVar = (assignment.Variable is ProcedureParameterDeclaration pp) && pp.IsVar;
             if (isVar || (assignment.Selector != null && assignment.Selector.Any()))
             {
                 this.Load(block, assignment.Variable, assignment.Selector, true);
@@ -197,7 +193,7 @@ namespace Oberon0.Generator.Msil
             foreach (var functionDeclaration in block.Procedures)
             {
                 // ignore system and external libraries
-                if (functionDeclaration.IsInternal || functionDeclaration.IsExternal)
+                if (functionDeclaration.IsInternal || functionDeclaration is ExternalFunctionDeclaration)
                     continue;
                 this.Code.StartMethod(functionDeclaration);
                 this.ProcessDeclarations(functionDeclaration.Block);

@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="CodeGenerator.Expressions.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,6 +9,7 @@
 //     Part of oberon0 - Oberon0.Generator.Msil/CodeGenerator.Expressions.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 namespace Oberon0.Generator.Msil
@@ -113,8 +115,9 @@ namespace Oberon0.Generator.Msil
                     {
                         this.Code.EmitComment(fc.FunctionDeclaration.ToString());
                         int i = 0;
-                        foreach (ProcedureParameter parameter in fc.FunctionDeclaration.Block.Declarations
-                            .OfType<ProcedureParameter>())
+                        var parameters = fc.FunctionDeclaration.Block.Declarations
+                            .OfType<ProcedureParameterDeclaration>().ToList();
+                        foreach (ProcedureParameterDeclaration parameter in parameters)
                         {
                             if (parameter.IsVar)
                             {
@@ -129,7 +132,7 @@ namespace Oberon0.Generator.Msil
                             i++;
                         }
 
-                        this.Code.Call(fc.FunctionDeclaration);
+                        this.Code.Call(this, fc.FunctionDeclaration, fc.Parameters);
                         result = fc;
                     }
 
@@ -159,36 +162,30 @@ namespace Oberon0.Generator.Msil
         /// <param name="selector">The selector provided</param>
         /// <param name="isStore"><c>true</c>, of this operation is part of a store operation (i.e. assignment)</param>
         /// <param name="isVarParam"><c>true</c>, if function call param is "VAR" parameter</param>
+        /// <param name="isCall"><c>true</c>, if used as parameter for a function call</param>
+        /// <param name="ignoreReplacement">if <c>true</c>, replacements are not resolved</param>
         internal void Load(
             Block block,
             Declaration varDeclaration,
             VariableSelector selector,
             bool isStore = false,
-            bool isVarParam = false)
+            bool isVarParam = false,
+            bool isCall = false,
+            bool ignoreReplacement = false)
         {
-            if (varDeclaration.Block.Parent == null && !(varDeclaration is ProcedureParameter))
+            DeclarationGeneratorInfo dgi = (DeclarationGeneratorInfo)varDeclaration.GeneratorInfo;
+            if (!ignoreReplacement && dgi?.ReplacedBy != null)
             {
-                this.Code.Emit(
-                    "ldsfld" + (isVarParam ? "a" : string.Empty),
-                    this.Code.GetTypeName(varDeclaration.Type),
-                    $"{this.Code.ClassName}::{varDeclaration.Name}");
+                varDeclaration = dgi.ReplacedBy;
+                dgi = (DeclarationGeneratorInfo)varDeclaration.GeneratorInfo;
             }
-            else
+
+            if (dgi == null)
             {
-                DeclarationGeneratorInfo dgi = (DeclarationGeneratorInfo)varDeclaration.GeneratorInfo;
-                if (varDeclaration is ProcedureParameter pp)
-                {
-                    this.Code.Emit("ldarg." + dgi.Offset.ToString(CultureInfo.InvariantCulture));
-                    if (pp.IsVar && !isStore)
-                    {
-                        this.Code.Emit("ldind" + GetIndirectSuffix(pp));
-                    }
-                }
-                else
-                {
-                    this.Code.Emit("ldloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
-                }
+                throw new NotImplementedException("internal error - dgi is null");
             }
+
+            this.DoLoad(varDeclaration, isStore, isVarParam, dgi);
 
             if (varDeclaration.Type.Type.HasFlag(BaseTypes.Complex) && selector != null)
             {
@@ -218,30 +215,11 @@ namespace Oberon0.Generator.Msil
             }
         }
 
-        private static string GetIndirectSuffix(ProcedureParameter pp)
-        {
-            string suffix;
-            switch (pp.Type.Type)
-            {
-                case BaseTypes.Int:
-                case BaseTypes.Bool:
-                    suffix = ".i4";
-                    break;
-                case BaseTypes.Real:
-                    suffix = ".r8";
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            return suffix;
-        }
-
         // "a <rel> b" or "<rel> a" (aka ~)
         private static BinaryExpression HandleRelOperation(
             int operation,
             CodeGenerator generator,
-            Block block, 
+            Block block,
             BinaryExpression bin)
         {
             Expression left = bin.LeftHandSide;
@@ -335,6 +313,33 @@ namespace Oberon0.Generator.Msil
             }
         }
 
+        private void DoLoad(Declaration varDeclaration, bool isStore, bool isVarParam, DeclarationGeneratorInfo dgi)
+        {
+            if (varDeclaration.Block.Parent == null)
+            {
+                this.Code.Emit(
+                    "ldsfld" + (isVarParam ? "a" : string.Empty),
+                    this.Code.GetTypeName(varDeclaration.Type),
+                    $"{this.Code.ClassName}::__{varDeclaration.Name}");
+            }
+            else
+            {
+                if (varDeclaration is ProcedureParameterDeclaration pp)
+                {
+                    this.Code.Emit("ldarg." + dgi.Offset.ToString(CultureInfo.InvariantCulture));
+                    var isVar = pp.IsVar && pp.Type.Type.HasFlag(BaseTypes.Simple);
+                    if (isVar && !isStore)
+                    {
+                        this.Code.Emit("ldind" + Code.GetIndirectSuffix(pp.Type));
+                    }
+                }
+                else
+                {
+                    this.Code.Emit("ldloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
+                }
+            }
+        }
+
         private Expression HandleVariableReferenceExpression(Block block, VariableReferenceExpression v)
         {
             if (v.IsConst)
@@ -343,7 +348,14 @@ namespace Oberon0.Generator.Msil
             }
             else
             {
-                this.Load(block, v.Declaration, v.Selector);
+                DeclarationGeneratorInfo dgi = v.Declaration.GeneratorInfo as DeclarationGeneratorInfo;
+                Declaration d = v.Declaration;
+                if (dgi?.ReplacedBy != null)
+                {
+                    d = dgi.ReplacedBy;
+                }
+
+                this.Load(block, d, v.Selector);
             }
 
             return v;
@@ -357,6 +369,8 @@ namespace Oberon0.Generator.Msil
                 {
                     var ad = (ArrayTypeDefinition)varDeclaration.Type;
                     this.ExpressionCompiler(block, ae.IndexDefinition);
+                    this.Code.PushConst(1);
+                    this.Code.Emit("sub"); // rebase to 0
                     if (!isStore)
                         this.Code.EmitLdelem(ae, ad);
                     continue;
@@ -366,7 +380,7 @@ namespace Oberon0.Generator.Msil
                     this.Code.Emit(
                         "ldfld",
                         this.Code.GetTypeName(ie.Element.Type),
-                        $"{this.Code.GetTypeName(ie.Type)}::{ie.Name}");
+                        $"{this.Code.GetTypeName(ie.BasicTypeDefinition)}::__{ie.Name}");
             }
         }
 
@@ -378,27 +392,37 @@ namespace Oberon0.Generator.Msil
 
         private void StoreSingletonVar(Declaration assignmentVariable, VariableSelector selector)
         {
-            if (assignmentVariable.Block.Parent == null && !(assignmentVariable is ProcedureParameter))
+            var dgi = (DeclarationGeneratorInfo)assignmentVariable.GeneratorInfo;
+            if (dgi.ReplacedBy != null)
+            {
+                assignmentVariable = dgi.ReplacedBy;
+                dgi = (DeclarationGeneratorInfo)assignmentVariable.GeneratorInfo;
+            }
+
+            if (dgi == null)
+            {
+                throw new NotImplementedException("Internal error - dgi is null");
+            }
+
+            if (assignmentVariable.Block.Parent == null && !(assignmentVariable is ProcedureParameterDeclaration))
             {
                 this.Code.Emit(
                     "stsfld",
                     this.Code.GetTypeName(assignmentVariable.Type),
-                    $"{this.Code.ClassName}::{assignmentVariable.Name}");
+                    $"{this.Code.ClassName}::__{assignmentVariable.Name}");
             }
             else if (assignmentVariable.Type is RecordTypeDefinition && selector == null)
             {
-                this.Code.Emit("stobj", "valuetype", $"{this.Code.ClassName}::{assignmentVariable.Name}");
+                this.Code.Emit("stloc" + Code.DotNumOrArg(dgi.Offset, 0, 3));
             }
             else
             {
-                var dgi = (DeclarationGeneratorInfo)assignmentVariable.GeneratorInfo;
-
                 // pp != null --> parameter otherwise local var
-                if (assignmentVariable is ProcedureParameter pp)
+                if (assignmentVariable is ProcedureParameterDeclaration pp)
                 {
                     if (pp.IsVar)
                     {
-                        var suffix = GetIndirectSuffix(pp);
+                        var suffix = Code.GetIndirectSuffix(pp.Type);
                         this.Code.Emit("stind" + suffix);
                     }
                     else

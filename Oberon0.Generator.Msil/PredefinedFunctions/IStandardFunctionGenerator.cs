@@ -34,7 +34,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
             IStandardFunctionMetadata metadata,
             CodeGenerator generator,
             FunctionDeclaration functionDeclaration,
-            List<Expression> parameters,
+            IReadOnlyList<Expression> parameters,
             Block block);
     }
 }

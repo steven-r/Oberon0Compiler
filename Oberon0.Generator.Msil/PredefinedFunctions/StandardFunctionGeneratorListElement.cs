@@ -31,7 +31,7 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         public TypeDefinition ReturnType { get; set; }
 
         /// <inheritdoc />
-        public ProcedureParameter[] ParameterTypes { get; set; }
+        public ProcedureParameterDeclaration[] ParameterTypes { get; set; }
 
         public string AdditionalInfo { get; set; }
     }

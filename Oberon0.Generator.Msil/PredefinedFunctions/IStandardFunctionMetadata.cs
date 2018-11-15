@@ -26,6 +26,6 @@ namespace Oberon0.Generator.Msil.PredefinedFunctions
         /// The types of the parameter
         /// </summary>
         /// <value>The parameter types.</value>
-        ProcedureParameter[] ParameterTypes { get; }
+        ProcedureParameterDeclaration[] ParameterTypes { get; }
     }
 }

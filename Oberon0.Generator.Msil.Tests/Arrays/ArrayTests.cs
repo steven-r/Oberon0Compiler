@@ -59,14 +59,14 @@ VAR
   s: INTEGER;
 
 BEGIN
-  i := 0;
-  WHILE (i < 32) DO
+  i := 1;
+  WHILE (i <= 32) DO
     a[i] := i;
     b[i] := 32-i;
     i := i+1
   END;
-  i := 0;
-  WHILE (i < 32) DO
+  i := 1;
+  WHILE (i <= 32) DO
     s := s + a[i] + b[i];
     i := i+1
   END;
@@ -93,8 +93,8 @@ VAR
   n: INTEGER;
 
 BEGIN
-  a[0] := 1;
-  n := a[0];
+  a[1] := 1;
+  n := a[1];
   WriteInt(n);
   WriteLn
 END Array.";

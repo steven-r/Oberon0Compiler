@@ -1,4 +1,5 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Block.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,6 +9,7 @@
 //     Part of oberon0 - Oberon0Compiler/Block.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 namespace Oberon0.Compiler.Definitions
@@ -15,6 +17,8 @@ namespace Oberon0.Compiler.Definitions
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
+    using Antlr4.Runtime;
 
     using JetBrains.Annotations;
 
@@ -29,11 +33,6 @@ namespace Oberon0.Compiler.Definitions
         {
             this.InitLists();
             this.Parent = parent;
-        }
-
-        protected Block()
-        {
-            this.InitLists();
         }
 
         public List<Declaration> Declarations { get; private set; }
@@ -53,23 +52,70 @@ namespace Oberon0.Compiler.Definitions
 
         public List<TypeDefinition> Types { get; private set; }
 
-        /// <summary>
-        /// Lookup a procedure definition
-        /// </summary>
-        /// <param name="procedureName">Name of the procedure.</param>
-        /// <returns>the <see cref="FunctionDeclaration"/>.</returns>
-        public FunctionDeclaration LookupFunction(string procedureName)
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
+        public FunctionDeclaration LookupFunction(string name, IToken token, params Expression[] parameters)
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
+        {
+            var callParameters = CallParameter.FromExpressions(parameters);
+            return this.LookupFunction(name, token, SimpleTypeDefinition.VoidType, callParameters);
+        }
+
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
+        public FunctionDeclaration LookupFunction(string name, IToken token, string parameters)
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
+        {
+            var callParameters = CallParameter.FromExpressions(this, parameters);
+            return this.LookupFunction(name, token, SimpleTypeDefinition.VoidType, callParameters);
+        }
+
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
+        public FunctionDeclaration LookupFunction(string procedureName, IToken token, TypeDefinition returnType, IReadOnlyList<CallParameter> callParameters)
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
         {
             Block b = this;
+            FunctionDeclaration resFunc = null;
+            var score = -1;
             while (b != null)
             {
-                var res = b.Procedures.FirstOrDefault(x => x.Name == procedureName);
-                if (res != null)
-                    return res;
+                var res = b.Procedures.Where(x => x.Name == procedureName);
+                foreach (FunctionDeclaration func in res)
+                {
+                    var newScore = this.FunctionParameterMatch(func, callParameters);
+
+                    if (newScore <= score) continue;
+
+                    resFunc = func;
+                    score = newScore;
+                }
+
+                if (score >= 0)
+                {
+                    break; // found
+                }
+
                 b = b.Parent;
             }
 
-            return null;
+            if (resFunc == null)
+            {
+                var parameterList = new List<ProcedureParameterDeclaration>(callParameters.Count);
+                var n = 0;
+
+                parameterList.AddRange(
+                    callParameters.Select(
+                        expression => new ProcedureParameterDeclaration("param_" + n++, this, expression.TargetType, false)));
+
+                var prototype = FunctionDeclaration.BuildPrototype(
+                    procedureName,
+                    returnType,
+                    parameterList.ToArray());
+                Oberon0Compiler.Instance.Parser.NotifyErrorListeners(
+                    token,
+                    $"No procedure/function with prototype '{prototype}' found",
+                    null);
+            }
+
+            return resFunc;
         }
 
         public TypeDefinition LookupType(string name)
@@ -107,23 +153,6 @@ namespace Oberon0.Compiler.Definitions
             return res;
         }
 
-        internal FunctionDeclaration LookupFunction(string procedureName, IList<Expression> parameters)
-        {
-            Block b = this;
-            while (b != null)
-            {
-                var functionDeclaration = CheckForFunction(procedureName, parameters, b);
-                if (functionDeclaration != null)
-                {
-                    return functionDeclaration;
-                }
-
-                b = b.Parent;
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// Lookups a variable.
         /// </summary>
@@ -159,41 +188,59 @@ namespace Oberon0.Compiler.Definitions
             return null;
         }
 
-        private static FunctionDeclaration CheckForFunction(string procedureName, IList<Expression> parameters, Block b)
+        private int FunctionParameterMatch(FunctionDeclaration func, IReadOnlyList<CallParameter> parameters)
         {
-            var res = b.Procedures.Where(x => x.Name == procedureName);
-            foreach (FunctionDeclaration func in res)
+            var paramNo = 0;
+            var score = 0;
+            var procParams = func.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray();
+            if (parameters.Count != procParams.Length)
             {
-                var paramList = func.Block.GetParameters();
-                if (paramList.Count != parameters.Count) continue;
-                bool found = true;
-                for (int i = 0; i < parameters.Count; i++)
-                {
-                    if (paramList[i].Type.Type != parameters[i].TargetType.Type)
-                    {
-                        found = false;
-                        break;
-                    }
-                }
-
-                if (found)
-                    return func;
+                return -1; // will never match
             }
 
-            return null;
-        }
+            foreach (var procedureParameter in procParams)
+            {
+                if (procedureParameter.IsVar)
+                {
+                    if (parameters[paramNo].CanBeVarReference)
+                    {
+                        if (!procedureParameter.Type.Equals(parameters[paramNo].TargetType))
+                        {
+                            // VAR parameter need to have the same type as calling parameter
+                            return -1;
+                        }
 
-        private IList<ProcedureParameter> GetParameters()
-        {
-            return this.Declarations.OfType<ProcedureParameter>().ToList();
+                        score += 1000;
+                    }
+                    else
+                    {
+                        // VAR parameter cannot have expression as source
+                        return -1;
+                    }
+                }
+                else if (procedureParameter.Type.ToString() == parameters[paramNo].TypeName)
+                {
+                    score += 1000;
+                }
+                else if (!procedureParameter.Type.IsAssignable(parameters[paramNo].TargetType))
+                {
+                    return -1;
+                }
+                else
+                {
+                    score++; // match as assignable --> small increment
+                }
+            }
+
+            return score;
         }
 
         private void InitLists()
         {
-            Declarations = new List<Declaration>();
-            Types = new List<TypeDefinition>();
-            Statements = new List<IStatement>();
-            Procedures = new List<FunctionDeclaration>();
+            this.Declarations = new List<Declaration>();
+            this.Types = new List<TypeDefinition>();
+            this.Statements = new List<IStatement>();
+            this.Procedures = new List<FunctionDeclaration>();
         }
     }
 }
