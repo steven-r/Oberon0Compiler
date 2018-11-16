@@ -53,11 +53,6 @@ namespace Oberon0.Compiler.Definitions
         public IGeneratorInfo GeneratorInfo { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the module has at least one error.
-        /// </summary>
-        public bool HasError { get; set; }
-
-        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         public string Name { get; set; }

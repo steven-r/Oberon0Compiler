@@ -32,6 +32,11 @@ namespace Oberon0.Compiler
         public OberonGrammarParser Parser { get; private set; }
 #pragma warning restore CS3003 // Type is not CLS-compliant
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the module has at least one error.
+        /// </summary>
+        public bool HasError { get; set; }
+
         public static Module CompileString(string source, Oberon0CompilerOptions options = null)
         {
             Instance = new Oberon0Compiler();
@@ -48,6 +53,8 @@ namespace Oberon0.Compiler
             options?.InitParser?.Invoke(Instance.Parser);
 
             Instance.Context = Instance.Parser.module();
+
+            Instance.HasError = Instance.Parser.NumberOfSyntaxErrors > 0;
 
             options?.AfterCompile?.Invoke(Instance);
 

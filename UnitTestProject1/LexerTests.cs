@@ -26,13 +26,10 @@ namespace Oberon0.Compiler.Tests
         {
             var errors = new List<CompilerError>();
             TestHelper.CompileString(@"MODULÜE XXÄ; BEGIN END XXÄ.", errors);
-            Assert.AreEqual(5, errors.Count);
+            Assert.AreEqual(2, errors.Count);
 
-            Assert.That(errors[0].Message, Does.StartWith("token recognition error at:"));
-            Assert.AreEqual("missing 'MODULE' at 'MODUL'", errors[1].Message);
-            Assert.AreEqual("mismatched input 'E' expecting ';'", errors[2].Message);
-            Assert.That(errors[3].Message, Does.StartWith("token recognition error at:"));
-            Assert.That(errors[4].Message, Does.StartWith("token recognition error at:"));
+            Assert.AreEqual("missing 'MODULE' at 'MODUL'", errors[0].Message);
+            Assert.That(errors[1].Message.StartsWith("mismatched input "));
         }
     }
 }

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net462</TargetFramework>
+    <RuntimeEnvironments>win-x86</RuntimeEnvironments>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.3.0" />
+    <PackageReference Include="ILRepack" Version="2.0.16" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Oberon0.Generator.Msil\Oberon0.Generator.Msil.csproj" />
+    <ProjectReference Include="..\Oberon0.System\Oberon0.System.csproj" />
+    <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj" />
+  </ItemGroup>
+  <Target Name="ILMerge">
+    <!-- the ILMergePath property points to the location of ILMerge.exe console application -->
+    <Exec Command="$(ILRepack) /log &quot;/lib:bin\Release\net462\win-x64\publish&quot; /out:Oberon0Msil.exe bin\Release\net462\win-x64\publish\Oberon0.Msil.exe bin\Release\net462\win-x64\publish\CommandLine.dll" />
+  </Target>
+</Project>
