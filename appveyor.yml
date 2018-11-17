@@ -29,13 +29,15 @@ install:
   - choco install gitversion.portable -pre -y
   - choco install msbuild-sonarqube-runner -y
   - dotnet tool install coverlet.console --tool-path tools
-  - choco install codecov -y
 
 before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
   - cmd: IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" ) ELSE ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" )
+
+before_package:
+- cmd: msbuild Oberon0.Msil\Oberon0.Msil.csproj /t:ILMerge
   
 test_script:
   - tools\coverlet .\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll " --format json --output .\msil-tests.json --exclude "[NUnit3*]*"
@@ -43,4 +45,7 @@ test_script:
 
 after_test:
   - SonarScanner.MSBuild.exe end /d:sonar.login=%SonarToken%
-  - codecov -f "%CD%\opencover.xml" -t "07e9dbc6-d0d9-4b46-8fc8-7d0ec4bf46f3"
+
+artifacts:
+- path: '%CD%\Oberon0.Msil\Oberon0Msil.exe'
+  name: Oberon0Msil

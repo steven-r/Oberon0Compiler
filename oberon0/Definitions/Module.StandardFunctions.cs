@@ -111,8 +111,18 @@ namespace Oberon0.Compiler.Definitions
                     "ReadReal",
                     this,
                     new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("REAL"), true)));
+            Assembly asm = this.GetType().Assembly;
 
-            var asm = Assembly.Load("Oberon0.System");
+            try
+            {
+                var sysAsm = Assembly.Load("Oberon0.System");
+                asm = sysAsm; // reached only if no exception
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             foreach (Type type in asm.GetExportedTypes())
             {
                 if (type.GetCustomAttribute<Oberon0LibraryAttribute>() != null)

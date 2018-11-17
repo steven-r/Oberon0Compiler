@@ -244,7 +244,7 @@ END Test.
         [Test]
         public void TestAssignableFailSymbol()
         {
-            var m = TestHelper.CompileString(
+            TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   x: ARRAY 5 OF INTEGER;
@@ -255,6 +255,59 @@ END Test.
 ",
                 "mismatched input '=' expecting ':='",
                 "Cannot parse right side of assignment");
+        }
+
+        [Test]
+        public void TestAssignFailVarNotFound()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  x: INTEGER;
+
+BEGIN 
+    y := 2
+END Test.
+",
+                "Variable y not known");
+        }
+
+        [Test]
+        public void TestWhileNotBool()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+BEGIN 
+    WHILE 1+1 DO
+    END
+END Test.
+",
+                "The condition needs to return a logical condition");
+        }
+
+        [Test]
+        public void TestRepeatNotBool()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+BEGIN 
+    REPEAT
+    UNTIL 1+1
+END Test.
+",
+                "The condition needs to return a logical condition");
+        }
+
+        [Test]
+        public void TestIfNotBool()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+BEGIN 
+    IF 1+1 THEN WriteString('Yes') ELSE WriteString ('No') END
+END Test.
+",
+                "The condition needs to return a logical condition");
         }
     }
 }
