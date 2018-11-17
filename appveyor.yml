@@ -40,7 +40,6 @@ before_package:
 - cmd: msbuild Oberon0.Msil\Oberon0.Msil.csproj /t:ILMerge
   
 test_script:
-  - dir /s Oberon0*.exe
   - tools\coverlet .\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll " --format json --output .\msil-tests.json --exclude "[NUnit3*]*"
   - tools\coverlet .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll " --format opencover --output "%CD%\opencover.xml" --exclude "[NUnit3*]*" --merge-with .\msil-tests.json
 
@@ -48,5 +47,5 @@ after_test:
   - SonarScanner.MSBuild.exe end /d:sonar.login=%SonarToken%
 
 artifacts:
-- path: '%CD%\Oberon0Msil.exe'
+- path: 'Oberon0.Msil\Oberon0Msil.exe'
   name: Oberon0Msil
