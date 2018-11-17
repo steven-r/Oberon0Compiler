@@ -71,7 +71,7 @@ namespace Oberon0.Compiler
                 targetType = context.s.vsRet.SelectorResultType;
             }
 
-            if (context.r.expReturn == null)
+            if (context.r?.expReturn == null)
             {
                 parser.NotifyErrorListeners(context.id, "Cannot parse right side of assignment", null);
                 return;

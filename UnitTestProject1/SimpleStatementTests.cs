@@ -240,5 +240,21 @@ END Test.
             Assert.That(expr.IsConst, Is.False);
             Assert.That(ast.ToString(), Is.EqualTo("y:INTEGER := PLUS (INTEGER, INTEGER) -> INTEGER"));
         }
+
+        [Test]
+        public void TestAssignableFailSymbol()
+        {
+            var m = TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  x: ARRAY 5 OF INTEGER;
+
+BEGIN 
+    x[1] = 2
+END Test.
+",
+                "mismatched input '=' expecting ':='",
+                "Cannot parse right side of assignment");
+        }
     }
 }
