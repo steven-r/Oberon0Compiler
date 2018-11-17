@@ -7,6 +7,8 @@ using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Generator.Msil.Tests
 {
+    using Oberon0.Compiler;
+
     public static class MsilTestHelper
     {
         private static string tempPath;
@@ -21,7 +23,7 @@ namespace Oberon0.Generator.Msil.Tests
         public static bool CompileRunTest(string source, List<string> inputData, out string outputData, Module m)
         {
             outputData = string.Empty;
-            if (m == null || m.HasError)
+            if (Oberon0Compiler.Instance.HasError || m == null)
             {
                 return false;
             }

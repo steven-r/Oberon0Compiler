@@ -1,0 +1,28 @@
+﻿MODULE MultiplyTest;
+VAR
+  x, y, z: INTEGER;
+
+    PROCEDURE Multiply(x: INTEGER; y: INTEGER; VAR z: INTEGER);
+    VAR
+      negate : BOOLEAN;
+    BEGIN 
+        negate := x < 0;
+        IF (negate) THEN x := -x END;
+        z := 0;
+        WHILE x > 0 DO
+            IF x MOD 2 = 1 THEN 
+                z := z + y 
+            END;
+            y := 2*y; 
+            x := x DIV 2
+        END ;
+        IF (negate) THEN z := -z END;
+    END Multiply;
+
+BEGIN 
+ x := 10;
+ y := 15;
+ Multiply(x, y, z);
+ WriteInt(z);
+ WriteLn
+END MultiplyTest.

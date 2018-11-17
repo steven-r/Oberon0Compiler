@@ -339,3 +339,5 @@ MOD:		'MOD';
 
 ID:         [a-zA-Z_] [_a-zA-Z0-9]*;
 
+/* move all lexer errors to the parser */
+ErrorChar : . ;

@@ -48,10 +48,6 @@ namespace Oberon0.TestSupport
                         AfterCompile = compiler =>
                             {
                                 errors.AddRange(CompilerErrors);
-                                if (compiler.Context.modres != null)
-                                {
-                                    compiler.Context.modres.HasError = CompilerErrors.Any();
-                                }
                             }
                     });
         }

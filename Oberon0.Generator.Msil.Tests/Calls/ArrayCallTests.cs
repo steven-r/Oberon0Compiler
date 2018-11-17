@@ -24,10 +24,12 @@ namespace Oberon0.Generator.Msil.Tests.Calls
         public void TestArrayCallByValue()
         {
             string source = @"MODULE Test; 
+TYPE 
+    aType = ARRAY 5 OF INTEGER;
 VAR 
-    arr: ARRAY 5 OF INTEGER; 
+    arr: aType; 
 
-    PROCEDURE TestArray(a: ARRAY 5 OF INTEGER);
+    PROCEDURE TestArray(a: aType);
     BEGIN
         IF (a[1] # 1) THEN WriteString('a is 0') END;
         a[1] := 2
