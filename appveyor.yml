@@ -47,5 +47,5 @@ after_test:
   - SonarScanner.MSBuild.exe end /d:sonar.login=%SonarToken%
 
 artifacts:
-- path: '%CD%\Oberon0.Msil\Oberon0Msil.exe'
+- path: '%CD%\Oberon0Msil.exe'
   name: Oberon0Msil
