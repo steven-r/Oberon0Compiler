@@ -45,7 +45,7 @@ namespace Oberon0.Compiler.Tests.Expressions
             m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")));
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.NOT,
-                VariableReferenceExpression.Create(m.Block, "a", null),
+                VariableReferenceExpression.Create(m.Block, m.Block.LookupVar("a"), null),
                 null,
                 m.Block, 
                 null);
@@ -58,7 +58,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         {
             var m = new Module();
             m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")));
-            var var = VariableReferenceExpression.Create(m.Block, "b", null);
+            var var = VariableReferenceExpression.Create(m.Block, m.Block.LookupVar("b"), null);
             Assert.IsNull(var);
         }
 
@@ -309,7 +309,7 @@ namespace Oberon0.Compiler.Tests.Expressions
             m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("INTEGER")));
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.NOTEQUAL,
-                VariableReferenceExpression.Create(m.Block, "a", null),
+                VariableReferenceExpression.Create(m.Block, m.Block.LookupVar("a"), null),
                 ConstantExpression.Create(10),
                 m.Block,
                 null);

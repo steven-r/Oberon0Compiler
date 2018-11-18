@@ -24,31 +24,23 @@ namespace Oberon0.Compiler.Expressions
 
         private string Name { get; set; }
 
-        public static Expression Create(Block block, string name, VariableSelector s)
+        public static Expression Create(Block block, Declaration declaration, VariableSelector s)
         {
-            Block b = block;
-            while (b != null)
+            if (declaration == null) return null;
+
+            if (declaration is ConstDeclaration c)
             {
-                var v = b.Declarations.FirstOrDefault(x => x.Name == name);
-                if (v == null)
-                {
-                    b = b.Parent;
-                    continue;
-                }
-
-                if (v is ConstDeclaration c)
-                {
-                    return c.Value;
-                }
-
-                var e = new VariableReferenceExpression
-                    {
-                        Name = name, Declaration = v, TargetType = s?.SelectorResultType ?? v.Type, Selector = s
-                    };
-                return e;
+                return c.Value;
             }
 
-            return null;
+            var e = new VariableReferenceExpression
+                {
+                    Name = declaration.Name,
+                    Declaration = declaration,
+                    TargetType = s?.SelectorResultType ?? declaration.Type,
+                    Selector = s
+                };
+            return e;
         }
 
         public override string ToString()

@@ -225,7 +225,7 @@ callParameters
 		: p+=expression (',' p+=expression)*
 		;
 
-selector[Declaration type] returns [VariableSelector vsRet]
+selector[Declaration referenceId] returns [VariableSelector vsRet]
 	: i+=arrayOrRecordSelector*
 	;
 
