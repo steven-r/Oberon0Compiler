@@ -240,5 +240,18 @@ BEGIN
 END Test.",
                 "No procedure/function with prototype 'TestArray(INTEGER[5])' found");
         }
+
+        [Test]
+        public void FuncNotFoundError()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  a: INTEGER;
+BEGIN
+    a := NOTFOUND() 
+END Test.",
+                "No procedure/function with prototype 'NOTFOUND()' found");
+        }
     }
 }

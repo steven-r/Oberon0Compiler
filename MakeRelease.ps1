@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([string] $newVersion)
 
 ##### Config #####
 # Path to GitVersion.exe
@@ -25,7 +25,7 @@ Push-Location $PSScriptRoot
 # Make sure there are no pending changes
 $pendingChanges = & git status --porcelain
 if ($pendingChanges -ne $null) 
-{
+
   throw 'You have pending changes, aborting release'
 }
 
@@ -34,12 +34,18 @@ if ($pendingChanges -ne $null)
 & git checkout master
 & git merge origin/master --ff-only
 
-# Determine version to release 
-$output = & $gitversion /output json
-$versionInfoJson = $output -join "`n"
+if (!$newVersion) {
+	# Determine version to release 
+	$output = & $gitversion /output json
+	$versionInfoJson = $output -join "`n"
 
-$versionInfo = $versionInfoJson | ConvertFrom-Json
-$stableVersion = $versionInfo.MajorMinorPatch
+	$versionInfo = $versionInfoJson | ConvertFrom-Json
+	$stableVersion = $versionInfo.MajorMinorPatch
+}
+else {
+	$stableVersion = $newVersion
+}
+Write-Host "Generate version $stableVersion"
 
 # Create release
 Create-AdditionalReleaseArtifacts $stableVersion
@@ -47,7 +53,7 @@ Create-AdditionalReleaseArtifacts $stableVersion
 & git commit -am "Create release $stableVersion" --allow-empty 
 & git tag $stableVersion
 if ($LASTEXITCODE -ne 0) {
-    & git reset --hard HEAD^
+    # & git reset --hard HEAD^
     throw "No changes detected since last release"
 }
 

@@ -153,20 +153,10 @@ namespace Oberon0.Compiler
             {
                 this.parser.NotifyErrorListeners(context.id, "Unknown identifier: " + context.id.Text, null);
                 context.expReturn = ConstantIntExpression.Zero;
+                return;
             }
-            else if (decl is ConstDeclaration cd)
-            {
-                if (context.s._i.Any())
-                {
-                    this.parser.NotifyErrorListeners(context.s.Start, "Selectors are not allowed for constants", null);
-                }
 
-                context.expReturn = cd.Value;
-            }
-            else
-            {
-                context.expReturn = VariableReferenceExpression.Create(this.parser.currentBlock, context.id.Text, context.s.vsRet);
-            }
+            context.expReturn = VariableReferenceExpression.Create(this.parser.currentBlock, decl, context.s.vsRet);
         }
 
         public override void ExitExprStringLiteral(OberonGrammarParser.ExprStringLiteralContext context)
@@ -206,7 +196,7 @@ namespace Oberon0.Compiler
 
         public override void ExitExprFuncCall(OberonGrammarParser.ExprFuncCallContext context)
         {
-            var parameters = context.cp?._p?.Select(x => x.expReturn).ToArray() ?? new Expression[0];
+            var parameters = context.cp?._p.Select(x => x.expReturn).ToArray() ?? new Expression[0];
             var fp = parser.currentBlock.LookupFunction(
                 context.id.Text,
                 context.Start,
@@ -214,6 +204,7 @@ namespace Oberon0.Compiler
 
             if (fp == null)
             {
+                // error has been reported by LookupFunction
                 context.expReturn = new ConstantIntExpression(0);
                 return;
             }
@@ -246,7 +237,7 @@ namespace Oberon0.Compiler
 
         public override void ExitProcCall_statement(OberonGrammarParser.ProcCall_statementContext context)
         {
-            var parameters = context.cp?._p?.Select(x => x.expReturn).ToArray() ?? new Expression[0];
+            var parameters = context.cp?._p.Select(x => x.expReturn).ToArray() ?? new Expression[0];
             FunctionDeclaration fp = this.parser.currentBlock.LookupFunction(context.id.Text, context.Start, parameters);
 
             if (fp == null)
@@ -355,18 +346,24 @@ namespace Oberon0.Compiler
 
         public override void ExitSelector(OberonGrammarParser.SelectorContext context)
         {
+            if (context.referenceId == null)
+            {
+                // variable not found
+                return;
+            }
+
             VariableSelector vs = new VariableSelector();
             vs.AddRange(context._i.Select(selElement => selElement.selRet));
             if (!vs.Any()) return;
 
-            if (context.type.Type.Type.HasFlag(BaseTypes.Simple))
+            if (context.referenceId.Type.Type.HasFlag(BaseTypes.Simple))
             {
-                parser.NotifyErrorListeners(context.start, "Simple variables do not allow any selector", null);
+                parser.NotifyErrorListeners(context.start, "Simple variables or constants do not allow any selector", null);
                 return;
             }
 
-            TypeDefinition type = context.type.Type;
-            TypeDefinition baseType = context.type.Type;
+            TypeDefinition type = context.referenceId.Type;
+            TypeDefinition baseType = context.referenceId.Type;
             foreach (var v in vs)
             {
                 if (type == null)
@@ -458,24 +455,24 @@ namespace Oberon0.Compiler
             if (arrayType == null)
             {
                 this.parser.NotifyErrorListeners(indexSelector.Token, "Array reference expected", null);
-                return null;
+                return SimpleTypeDefinition.IntType;
             }
 
             indexSelector.IndexDefinition = ConstantSolver.Solve(indexSelector.IndexDefinition, this.parser.currentBlock);
             if (indexSelector.IndexDefinition.TargetType.Type != BaseTypes.Int)
             {
                 this.parser.NotifyErrorListeners(indexSelector.Token, "Array reference must be INTEGER", null);
-                return null;
+                return SimpleTypeDefinition.IntType;
             }
 
             if (indexSelector.IndexDefinition.IsConst)
             {
                 ConstantExpression ce = (ConstantExpression)indexSelector.IndexDefinition;
                 int index = ce.ToInt32();
-                if (index < 0 || index >= arrayType.Size)
+                if (index < 1 || index > arrayType.Size)
                 {
-                    this.parser.NotifyErrorListeners(indexSelector.Token, "Array index of out bounds", null);
-                    return null;
+                    this.parser.NotifyErrorListeners(indexSelector.Token, "Array index out of bounds", null);
+                    return SimpleTypeDefinition.IntType;
                 }
             }
 
@@ -488,7 +485,7 @@ namespace Oberon0.Compiler
             if (recordType == null)
             {
                 this.parser.NotifyErrorListeners(identifierSelector.Token, "Record reference expected", null);
-                return null;
+                return SimpleTypeDefinition.IntType;
             }
 
             foreach (Declaration declaration in recordType.Elements)
@@ -503,7 +500,7 @@ namespace Oberon0.Compiler
             }
 
             this.parser.NotifyErrorListeners(identifierSelector.Token, "Element not found in underlying type", null);
-            return null;
+            return SimpleTypeDefinition.IntType;
         }
     }
 }

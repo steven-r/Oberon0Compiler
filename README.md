@@ -2,7 +2,6 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/pcc7f0s3bq7m6sfh?svg=true)](https://ci.appveyor.com/project/steven-r/oberon0compiler)
 [![QUality](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=alert_status)](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=alert_status)
-[![codecov](https://codecov.io/gh/steven-r/Oberon0Compiler/branch/master/graph/badge.svg)](https://codecov.io/gh/steven-r/Oberon0Compiler)
 [![GitHub license](https://img.shields.io/github/license/steven-r/Oberon0Compiler.svg)](https://github.com/steven-r/Oberon0Compiler/blob/master/LICENSE.md)
 ![GitHub release](https://img.shields.io/github/release/steven-r/Oberon0Compiler.svg)
 
@@ -16,6 +15,8 @@ The compiler is based on the ANTLR4 parser (C# version).
 Current status:
 
 * All language elements are supported
-* Support for REAL (limited, implemented as `decimal`)
+* Support for REAL (Done --> Missing is a lot of library functions)
 * Support for STRING (limited)
-* Handling of complex type scenarios (`ARRAY OF RECORD`, ...) is limited
+* Handling of complex type scenarios (`ARRAY OF RECORD`, ...) is limited (see #12)
+
+Use `Oberon0Msil.exe` to compile and execute code.
