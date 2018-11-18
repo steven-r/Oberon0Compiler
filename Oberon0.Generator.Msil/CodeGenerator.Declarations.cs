@@ -29,16 +29,32 @@ namespace Oberon0.Generator.Msil
             foreach (var typeDefinition in block.Types.Where(x => x is RecordTypeDefinition))
             {
                 var recordType = (RecordTypeDefinition)typeDefinition;
-                this.Code.WriteLine($".class nested private __{recordType.Name} {{");
-                foreach (Declaration declaration in recordType.Elements)
-                {
-                    this.Code.Write("\t.field public ");
-                    this.Code.LocalVarDef(declaration, false);
-                    this.Code.WriteLine();
-                }
+                GenerateRecordType(recordType);
+            }
 
-                this.Code.Write(
-                    @"	.method public hidebysig specialname rtspecialname instance void 
+            // add anonymous variables
+            foreach (var typeDefinition in block.Declarations.Where(x => x.Type is RecordTypeDefinition))
+            {
+                var recordType = (RecordTypeDefinition)typeDefinition.Type;
+                if (string.IsNullOrEmpty(recordType.Name))
+                {
+                    GenerateRecordType(recordType);
+                }
+            }
+        }
+
+        private void GenerateRecordType(RecordTypeDefinition recordType)
+        {
+            this.Code.WriteLine($".class nested private __{recordType.Name} {{");
+            foreach (Declaration declaration in recordType.Elements)
+            {
+                this.Code.Write("\t.field public ");
+                this.Code.LocalVarDef(declaration, false);
+                this.Code.WriteLine();
+            }
+
+            this.Code.Write(
+                @"	.method public hidebysig specialname rtspecialname instance void 
       .ctor() cil managed 
     {
       .maxstack 8
@@ -46,11 +62,10 @@ namespace Oberon0.Generator.Msil
 		ldarg.0      // this
 		call         instance void [mscorlib]System.Object::.ctor()
 ");
-                this.Code.Emit("nop");
-                this.Code.Emit("ret");
-                this.Code.WriteLine("}");
-                this.Code.WriteLine("}");
-            }
+            this.Code.Emit("nop");
+            this.Code.Emit("ret");
+            this.Code.WriteLine("}");
+            this.Code.WriteLine("}");
         }
 
         private void InitComplexData(Block block)
