@@ -242,6 +242,26 @@ END Test.
         }
 
         [Test]
+        public void TestAssignableArraySimpleFail()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+TYPE
+  t = RECORD a: INTEGER END;
+  a = ARRAY 5 OF INTEGER;
+
+VAR
+  x : t;
+  y : a;
+
+BEGIN 
+    y := x
+END Test.
+",
+                "Left & right side do not match types");
+        }
+
+        [Test]
         public void TestAssignableFailSymbol()
         {
             TestHelper.CompileString(
