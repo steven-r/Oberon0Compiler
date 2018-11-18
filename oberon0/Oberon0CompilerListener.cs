@@ -196,7 +196,7 @@ namespace Oberon0.Compiler
 
         public override void ExitExprFuncCall(OberonGrammarParser.ExprFuncCallContext context)
         {
-            var parameters = context.cp._p.Select(x => x.expReturn).ToArray();
+            var parameters = context.cp?._p.Select(x => x.expReturn).ToArray() ?? new Expression[0];
             var fp = parser.currentBlock.LookupFunction(
                 context.id.Text,
                 context.Start,
@@ -237,7 +237,7 @@ namespace Oberon0.Compiler
 
         public override void ExitProcCall_statement(OberonGrammarParser.ProcCall_statementContext context)
         {
-            var parameters = context.cp._p.Select(x => x.expReturn).ToArray();
+            var parameters = context.cp?._p.Select(x => x.expReturn).ToArray() ?? new Expression[0];
             FunctionDeclaration fp = this.parser.currentBlock.LookupFunction(context.id.Text, context.Start, parameters);
 
             if (fp == null)

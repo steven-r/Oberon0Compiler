@@ -253,7 +253,7 @@ BEGIN
     x := y
 END Test.
 ",
-                "Identifier not found: 'y'");
+                "Unknown identifier: y");
         }
 
         [Test]
