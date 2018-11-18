@@ -25,7 +25,7 @@ Push-Location $PSScriptRoot
 # Make sure there are no pending changes
 $pendingChanges = & git status --porcelain
 if ($pendingChanges -ne $null) 
-
+{
   throw 'You have pending changes, aborting release'
 }
 
