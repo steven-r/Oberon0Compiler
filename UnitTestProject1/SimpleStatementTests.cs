@@ -242,6 +242,21 @@ END Test.
         }
 
         [Test]
+        public void TestAssignableVarNotFound()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  x: INTEGER;
+
+BEGIN 
+    x := y
+END Test.
+",
+                "Identifier not found: 'y'");
+        }
+
+        [Test]
         public void TestAssignableArraySimpleFail()
         {
             TestHelper.CompileString(

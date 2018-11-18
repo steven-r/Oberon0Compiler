@@ -219,5 +219,56 @@ BEGIN
 END Test.",
                 "Left & right side do not match types");
         }
+
+        [Test]
+        public void RecordNoRecordTypeSelectorError()
+        {
+            TestHelper.CompileString(
+                @"MODULE test; 
+TYPE 
+    aType= ARRAY 5 OF INTEGER;
+
+VAR 
+  a : aType;
+                
+BEGIN
+    a.s := 1;
+END test.",
+                "Record reference expected");
+        }
+
+        [Test]
+        public void RecordConstRecordSelectorError()
+        {
+            TestHelper.CompileString(
+                @"MODULE test; 
+CONST 
+  ci = 12;
+
+VAR 
+  a : INTEGER;
+                
+BEGIN
+    a := ci.s;
+END test.",
+                "Simple variables or constants do not allow any selector");
+        }
+
+        [Test]
+        public void RecordElementNotFoundError()
+        {
+            TestHelper.CompileString(
+                @"MODULE test; 
+TYPE 
+    rType = RECORD a: INTEGER END;
+
+VAR 
+  r : rType;
+                
+BEGIN
+    r.s := 1;
+END test.",
+                "Element not found in underlying type");
+        }
     }
 }
