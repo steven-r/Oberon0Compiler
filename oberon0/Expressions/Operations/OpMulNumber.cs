@@ -19,10 +19,10 @@ namespace Oberon0.Compiler.Expressions.Operations
     using Oberon0.Compiler.Expressions.Operations.Internal;
     using Oberon0.Compiler.Types;
 
-    [ArithmeticOperation(OberonGrammarLexer.MULT, BaseTypes.Int, BaseTypes.Int, BaseTypes.Int)]
-    [ArithmeticOperation(OberonGrammarLexer.MULT, BaseTypes.Int, BaseTypes.Real, BaseTypes.Real)]
-    [ArithmeticOperation(OberonGrammarLexer.MULT, BaseTypes.Real, BaseTypes.Real, BaseTypes.Real)]
-    [ArithmeticOperation(OberonGrammarLexer.MULT, BaseTypes.Real, BaseTypes.Int, BaseTypes.Real)]
+    [ArithmeticOperation(OberonGrammarLexer.STAR, BaseTypes.Int, BaseTypes.Int, BaseTypes.Int)]
+    [ArithmeticOperation(OberonGrammarLexer.STAR, BaseTypes.Int, BaseTypes.Real, BaseTypes.Real)]
+    [ArithmeticOperation(OberonGrammarLexer.STAR, BaseTypes.Real, BaseTypes.Real, BaseTypes.Real)]
+    [ArithmeticOperation(OberonGrammarLexer.STAR, BaseTypes.Real, BaseTypes.Int, BaseTypes.Real)]
     [UsedImplicitly]
     internal class OpMulNumber : BinaryOperation
     {

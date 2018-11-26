@@ -107,8 +107,15 @@ namespace Oberon0.Compiler
                 return;
             }
 
-            parser.currentBlock.Declarations.Add(
-                new ConstDeclaration(context.c.Text, constantExpression.TargetType, constantExpression, parser.currentBlock));
+            var constDeclaration = new ConstDeclaration(
+                context.c.Text,
+                constantExpression.TargetType,
+                constantExpression,
+                parser.currentBlock) { Exportable = context.export != null };
+
+            this.CheckExportable(context.export, constDeclaration.Exportable);
+
+            parser.currentBlock.Declarations.Add(constDeclaration);
         }
 
         /* expressions */
@@ -265,7 +272,14 @@ namespace Oberon0.Compiler
 
         public override void ExitProcedureHeader(OberonGrammarParser.ProcedureHeaderContext context)
         {
-            context.proc = new FunctionDeclaration(context.name.Text, context.procBlock, SimpleTypeDefinition.VoidType, context.pps?.@params);
+            context.proc = new FunctionDeclaration(
+                context.name.Text,
+                context.procBlock,
+                SimpleTypeDefinition.VoidType,
+                context.pps?.@params) {
+                                          Exportable = context.export != null 
+                                      };
+            CheckExportable(context.export, context.proc.Exportable, true);
         }
 
         public override void ExitProcedureParameter(OberonGrammarParser.ProcedureParameterContext context)
@@ -413,6 +427,9 @@ namespace Oberon0.Compiler
 
             // create the final type
             t = context.t.returnType.Clone(name);
+            t.Exportable = context.export != null;
+            this.CheckExportable(context.export, t.Exportable);
+
             this.parser.currentBlock.Types.Add(t);
         }
 
@@ -420,13 +437,25 @@ namespace Oberon0.Compiler
         {
             foreach (var token in context._v)
             {
-                if (this.parser.currentBlock.LookupVar(token.Text, false) != null)
+                if (this.parser.currentBlock.LookupVar(token.ID().GetText(), false) != null)
                 {
-                    this.parser.NotifyErrorListeners(token, "Variable declared twice", null);
+                    this.parser.NotifyErrorListeners(token.Start, "Variable declared twice", null);
                 }
                 else
                 {
-                    this.parser.currentBlock.Declarations.Add(new Declaration(token.Text, context.t.returnType, this.parser.currentBlock));
+                    var declaration = new Declaration(
+                        token.ID().GetText(),
+                        context.t.returnType,
+                        this.parser.currentBlock) { Exportable = token.export != null };
+
+                    this.CheckExportable(token.export, declaration.Exportable);
+
+                    if (declaration.Exportable && !(context.t.returnType.Exportable || context.t.returnType.IsInternal))
+                    {
+                        this.parser.NotifyErrorListeners(token.export, $"Non-basic type ({context.t.returnType}) need to be exportable if used on exportable elements.", null);
+                    }
+
+                    this.parser.currentBlock.Declarations.Add(declaration);
                 }
             }
         }
@@ -438,13 +467,36 @@ namespace Oberon0.Compiler
             {
                 this.parser.NotifyErrorListeners(
                     context.r.start,
-                    $"The condition needs to return a logical condition",
+                    "The condition needs to return a logical condition",
                     null);
                 return;
             }
 
             context.ws.Condition = r;
             this.parser.currentBlock.Statements.Add(context.ws);
+        }
+
+        public override void ExitImportDefinition(OberonGrammarParser.ImportDefinitionContext context)
+        {
+            var moduleName = context.id.Text;
+            if (this.parser.module.ExternalReferences.Any(x => x.GetName().Name == moduleName))
+            {
+                this.parser.NotifyErrorListeners(context.id, $"Module {moduleName} has already been imported", null);
+            }
+
+            //TODO: Load Module
+        }
+
+        public override void ExitModuleDefinition(OberonGrammarParser.ModuleDefinitionContext context)
+        {
+            if (this.parser.module.Name != null && (this.parser.module.Name != context.rId.ret?.Text))
+            {
+                parser.NotifyErrorListeners(context.rId.start, "The name of the module does not match the end node", null);
+            }
+
+            this.parser.module.HasExports = this.parser.module.Block.Declarations.Any(x => x.Exportable)
+                                            || this.parser.module.Block.Procedures.Any(x => x.Exportable)
+                                            || this.parser.module.Block.Types.Any(x => x.Exportable);
         }
 
         private TypeDefinition CheckArrayIndexSelector(
@@ -501,6 +553,14 @@ namespace Oberon0.Compiler
 
             this.parser.NotifyErrorListeners(identifierSelector.Token, "Element not found in underlying type", null);
             return SimpleTypeDefinition.IntType;
+        }
+
+        private void CheckExportable(IToken exportElement, bool isExportable, bool checkParent = false)
+        {
+            if (isExportable && ((this.parser.currentBlock.Parent != null && !checkParent) || (checkParent && this.parser.currentBlock.Parent?.Parent != null)))
+            {
+                this.parser.NotifyErrorListeners(exportElement, "Exportable elements can only be defined as global", null);
+            }
         }
     }
 }

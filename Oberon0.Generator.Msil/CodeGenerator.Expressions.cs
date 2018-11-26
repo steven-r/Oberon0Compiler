@@ -38,7 +38,7 @@ namespace Oberon0.Generator.Msil
                 {
                     { OberonGrammarLexer.PLUS, HandleSimpleOperation },
                     { OberonGrammarLexer.MINUS, HandleSimpleOperation },
-                    { OberonGrammarLexer.MULT, HandleSimpleOperation },
+                    { OberonGrammarLexer.STAR, HandleSimpleOperation },
                     { OberonGrammarLexer.DIV, HandleSimpleOperation },
                     { OberonGrammarLexer.MOD, HandleSimpleOperation },
                     { OberonGrammarLexer.EQUAL, HandleRelOperation },
@@ -56,7 +56,7 @@ namespace Oberon0.Generator.Msil
             {
                 { OberonGrammarLexer.PLUS, "add" },
                 { OberonGrammarLexer.DIV, "div" },
-                { OberonGrammarLexer.MULT, "mul" },
+                { OberonGrammarLexer.STAR, "mul" },
                 { OberonGrammarLexer.MINUS, "sub" },
                 { OberonGrammarLexer.MOD, "rem" },
             };

@@ -41,6 +41,11 @@ namespace Oberon0.Compiler.Definitions
         public IGeneratorInfo GeneratorInfo { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the given declaration is exportable.
+        /// </summary>
+        public bool Exportable { get; set; }
+
+        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         public string Name { get; set; }

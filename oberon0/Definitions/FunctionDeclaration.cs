@@ -54,6 +54,11 @@ namespace Oberon0.Compiler.Definitions
         public bool IsInternal { get; private set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this procedure can be exported.
+        /// </summary>
+        public bool Exportable { get; set; }
+
+        /// <summary>
         /// Gets the name.
         /// </summary>
         public string Name { get; }

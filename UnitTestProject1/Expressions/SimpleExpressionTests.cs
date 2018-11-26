@@ -168,7 +168,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         {
             var m = new Module();
             var e = BinaryExpression.Create(
-                OberonGrammarLexer.MULT,
+                OberonGrammarLexer.STAR,
                 ConstantExpression.Create(6),
                 ConstantExpression.Create(7),
                 m.Block,
@@ -183,7 +183,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         {
             var m = new Module();
             var e = BinaryExpression.Create(
-                OberonGrammarLexer.MULT,
+                OberonGrammarLexer.STAR,
                 ConstantExpression.Create(6.1),
                 ConstantExpression.Create(7),
                 m.Block,
