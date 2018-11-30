@@ -21,7 +21,7 @@ namespace Oberon0.Compiler
         public static Oberon0Compiler Instance { get; set; }
 
 #pragma warning disable CS3003 // Type is not CLS-compliant
-        public OberonGrammarParser.ModuleContext Context { get; set; }
+        public OberonGrammarParser.ModuleDefinitionContext Context { get; set; }
 #pragma warning restore CS3003 // Type is not CLS-compliant
 
 #pragma warning disable CS3003 // Type is not CLS-compliant
@@ -52,13 +52,13 @@ namespace Oberon0.Compiler
 
             options?.InitParser?.Invoke(Instance.Parser);
 
-            Instance.Context = Instance.Parser.module();
+            Instance.Context = Instance.Parser.moduleDefinition();
 
             Instance.HasError = Instance.Parser.NumberOfSyntaxErrors > 0;
 
             options?.AfterCompile?.Invoke(Instance);
 
-            return Instance.Context.modres;
+            return Instance.Parser.module;
         }
     }
 }

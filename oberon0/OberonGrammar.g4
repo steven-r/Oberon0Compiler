@@ -13,6 +13,8 @@ using Oberon0.Compiler.Statements;
 	internal Stack<Block> blockStack = new Stack<Block>();
 	internal Block currentBlock;
 
+	public Module module = new Module();
+
 	private bool isVar(string id, Block block) {
 		return block.LookupVar(id, true) != null;
 	}
@@ -35,30 +37,28 @@ using Oberon0.Compiler.Statements;
 	}
 }
 
-module returns [Module modres]: 
+moduleDefinition: 
 		MODULE n=ID ';'
 		{ 
-			$modres = new Module(); 
-			$modres.Name = $n.text; 
-			currentBlock = $modres.Block;
+			module.Name = $n.text; 
+			currentBlock = module.Block;
 		}
 		declarations
 		rId=block
-		{
-			if ($rId.ret != $n.text) {
-				NotifyErrorListeners(_localctx.n, "The name of the module does not match the end node", null);
-			}
-		}
 		'.'
 		;
 
 declarations:
-		( procedureDeclaration | localDeclaration ) *
+		( procedureDeclaration | localDeclaration | importDefinition ) *
+		;
+
+importDefinition:
+		IMPORT id=ID ';'
 		;
 
 procedureDeclaration:
 		p=procedureHeader 
-		localDeclaration*
+		(procedureDeclaration|localDeclaration)*
 		endname=block
 		';'
 		;
@@ -67,7 +67,7 @@ procedureHeader
 	returns[FunctionDeclaration proc]
 	locals[Block procBlock]
 	: { $procBlock = PushBlock(); }
-		PROCEDURE name=ID (pps=procedureParameters)? ';'
+		PROCEDURE name=ID (pps=procedureParameters)? (export=STAR)? ';'
 		;
 
 procedureParameters returns [ProcedureParameterDeclaration[] params]:
@@ -112,7 +112,7 @@ typeDeclaration:
 		  ;
 
 singleTypeDeclaration:
-		  id=ID '=' t=typeName ';'
+		  id=ID export=STAR? '=' t=typeName ';'
 		  ;
 
 variableDeclaration:
@@ -121,8 +121,12 @@ variableDeclaration:
 		  ;
 
 singleVariableDeclaration:
-		  (v+=ID ',')* v+=ID ':' t=typeName ';'
-		  ;
+			(v+=exportableID ',')* v+=exportableID  ':' t=typeName ';'
+			;
+
+exportableID:
+			ID (export=STAR)?
+			;
 
 constDeclaration:
 		CONST
@@ -130,12 +134,12 @@ constDeclaration:
 		  ;
 
 constDeclarationElement:
-		c=ID '=' e=expression ';'
+		c=ID export=STAR? '=' e=expression ';'
 		;
 
-block returns [string ret]
+block returns [IToken ret]
 		: (BEGIN statements)? END ID
-		{ $ret = $ID.text; }
+		{ $ret = $ID; }
 		;
 
 statements:
@@ -210,7 +214,7 @@ if_statement
 expression
 	returns[Expression expReturn]
 	: op=(NOT | MINUS) e=expression		#exprNotExpression
-	| l=expression op=('*' | DIV | MOD | AND) r=expression					#exprMultPrecedence
+	| l=expression op=(STAR | DIV | MOD | AND) r=expression					#exprMultPrecedence
 	| l=expression op=('+' | '-' | OR)  r=expression						#exprFactPrecedence
 	| l=expression op=('<' | '<=' | '>' | '>=' | '=' | '#') r=expression	#exprRelPrecedence
 	| id=ID 
@@ -306,7 +310,7 @@ AND:		'&';
 MINUS:		'-';
 NOTEQUAL:	'#';
 EQUAL:		'=';
-MULT:		'*';
+STAR:		'*';
 NOT:		'~';
 LT:			'<';
 LE:			'<=';
@@ -316,6 +320,7 @@ Assign:		':=';
 
 /* keywords */
 MODULE:		'MODULE';
+IMPORT:		'IMPORT';
 VAR:		'VAR';
 BEGIN:		'BEGIN';
 CONST:		'CONST';

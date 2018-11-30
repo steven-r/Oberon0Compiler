@@ -56,5 +56,10 @@ namespace Oberon0.Compiler.Definitions
         /// Gets or sets the name.
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the module contains export statements. In this case the output will be a DLL.
+        /// </summary>
+        public bool HasExports { get; set; }
     }
 }

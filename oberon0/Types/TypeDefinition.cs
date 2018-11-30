@@ -40,6 +40,11 @@ namespace Oberon0.Compiler.Types
         /// <value>Generator information.</value>
         public IGeneratorInfo GeneratorInfo { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the given type declaration is exportable.
+        /// </summary>
+        public bool Exportable { get; set; }
+
         public bool IsInternal { get; set; }
 
         public string Name { get; set; }

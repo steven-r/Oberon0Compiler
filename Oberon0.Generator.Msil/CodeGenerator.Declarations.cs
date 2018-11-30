@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="CodeGenerator.Declarations.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,6 +9,7 @@
 //     Part of oberon0 - Oberon0.Generator.Msil/CodeGenerator.Declarations.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 namespace Oberon0.Generator.Msil
@@ -24,28 +26,56 @@ namespace Oberon0.Generator.Msil
     /// </summary>
     public partial class CodeGenerator
     {
-        private void GenerateTypeDeclarations(Block block)
+        private int internalCount = 0;
+
+        /// <summary>
+        /// Copy data from parent.
+        /// </summary>
+        /// <param name="declaration">The given parameter</param>
+        private void CopyVarComplexData(Declaration declaration)
         {
-            foreach (var typeDefinition in block.Types.Where(x => x is RecordTypeDefinition))
+            this.PerformDeepCopy(declaration, declaration.Type);
+        }
+
+        private void GenerateComplexTypeMappings(Block block)
+        {
+            List<Declaration> addDeclarations = new List<Declaration>();
+            int paramId = 0;
+            int varId = 0;
+            foreach (ProcedureParameterDeclaration pp in block.Declarations.OfType<ProcedureParameterDeclaration>())
             {
-                var recordType = (RecordTypeDefinition)typeDefinition;
-                GenerateRecordType(recordType);
+                if (pp.IsVar || pp.Type.Type.HasFlag(BaseTypes.Simple))
+                {
+                    continue;
+                }
+
+                var name = pp.Name;
+                pp.Name = "param__" + name;
+                pp.GeneratorInfo = new DeclarationGeneratorInfo(paramId++);
+
+                // rename parameter and create a new field
+                var field = new Declaration(name, pp.Type, block)
+                    {
+                        GeneratorInfo = new DeclarationGeneratorInfo(varId++)
+                    };
+                ((DeclarationGeneratorInfo)field.GeneratorInfo).OriginalField = pp;
+                ((DeclarationGeneratorInfo)pp.GeneratorInfo).ReplacedBy = field;
+                addDeclarations.Add(field);
             }
 
-            // add anonymous variables
-            foreach (var typeDefinition in block.Declarations.Where(x => x.Type is RecordTypeDefinition))
-            {
-                var recordType = (RecordTypeDefinition)typeDefinition.Type;
-                if (string.IsNullOrEmpty(recordType.Name))
-                {
-                    GenerateRecordType(recordType);
-                }
-            }
+            block.Declarations.AddRange(addDeclarations);
         }
 
         private void GenerateRecordType(RecordTypeDefinition recordType)
         {
-            this.Code.WriteLine($".class nested private __{recordType.Name} {{");
+            if (string.IsNullOrEmpty(recordType.Name))
+            {
+                // create artificial names for internal records
+
+                recordType.Name = $"__internal__{++this.internalCount:0000}";
+            }
+
+            this.Code.WriteLine($".class nested private {Code.MakeName(recordType.Name)} {{");
             foreach (Declaration declaration in recordType.Elements)
             {
                 this.Code.Write("\t.field public ");
@@ -68,6 +98,25 @@ namespace Oberon0.Generator.Msil
             this.Code.WriteLine("}");
         }
 
+        private void GenerateTypeDeclarations(Block block)
+        {
+            foreach (var typeDefinition in block.Types.Where(x => x is RecordTypeDefinition))
+            {
+                var recordType = (RecordTypeDefinition)typeDefinition;
+                this.GenerateRecordType(recordType);
+            }
+
+            // add anonymous variables
+            foreach (var typeDefinition in block.Declarations.Where(x => x.Type is RecordTypeDefinition))
+            {
+                var recordType = (RecordTypeDefinition)typeDefinition.Type;
+                if (string.IsNullOrEmpty(recordType.Name))
+                {
+                    this.GenerateRecordType(recordType);
+                }
+            }
+        }
+
         private void InitComplexData(Block block)
         {
             foreach (Declaration declaration in block.Declarations.Where(x => x.Type.Type.HasFlag(BaseTypes.Complex)))
@@ -85,24 +134,18 @@ namespace Oberon0.Generator.Msil
                 }
                 else if (declaration.Type is RecordTypeDefinition rd)
                 {
-                    this.Code.Emit("newobj", "instance void", $"{this.Code.ClassName}/__{rd.Name}::.ctor()");
+                    this.Code.Emit(
+                        "newobj",
+                        "instance void",
+                        $"{this.Code.ClassName}/{Code.MakeName(rd.Name)}::.ctor()");
                     this.StoreVar(block, declaration, null);
                 }
 
                 if (declaration.GeneratorInfo is DeclarationGeneratorInfo dgi && dgi.OriginalField != null)
                 {
-                    CopyVarComplexData(declaration);
+                    this.CopyVarComplexData(declaration);
                 }
             }
-        }
-
-        /// <summary>
-        /// Copy data from parent.
-        /// </summary>
-        /// <param name="declaration">The given parameter</param>
-        private void CopyVarComplexData(Declaration declaration)
-        {
-            PerformDeepCopy(declaration, declaration.Type);
         }
 
         private void PerformDeepCopy(Declaration declaration, TypeDefinition type)
@@ -115,7 +158,7 @@ namespace Oberon0.Generator.Msil
                     DeclarationGeneratorInfo dgi = (DeclarationGeneratorInfo)declaration.GeneratorInfo;
                     this.Load(declaration.Block, declaration, vs, isStore: true);
                     this.Load(declaration.Block, dgi.OriginalField, vs, isVarParam: true, ignoreReplacement: true);
-                    StoreVar(declaration.Block, declaration, vs);
+                    this.StoreVar(declaration.Block, declaration, vs);
                 }
             }
             else if (type is RecordTypeDefinition recordType)
@@ -134,7 +177,7 @@ namespace Oberon0.Generator.Msil
                     DeclarationGeneratorInfo dgi = (DeclarationGeneratorInfo)declaration.GeneratorInfo;
                     this.Load(declaration.Block, declaration, vs, isStore: true);
                     this.Load(declaration.Block, dgi.OriginalField, vs, isVarParam: true, ignoreReplacement: true);
-                    StoreVar(declaration.Block, declaration, vs);
+                    this.StoreVar(declaration.Block, declaration, vs);
                 }
             }
         }
@@ -142,13 +185,13 @@ namespace Oberon0.Generator.Msil
         private void ProcessDeclarations(Block block, bool isRoot = false)
         {
             this.GenerateTypeDeclarations(block);
-            GenerateComplexTypeMappings(block);
-            int varId = block.Declarations.Where(x => !(x is ProcedureParameterDeclaration)).Select(x => x.GeneratorInfo)
-                            .OfType<DeclarationGeneratorInfo>().DefaultIfEmpty(new DeclarationGeneratorInfo(-1))
-                            .Max(y => y.Offset) + 1;
+            this.GenerateComplexTypeMappings(block);
+            int varId = block.Declarations.Where(x => !(x is ProcedureParameterDeclaration))
+                            .Select(x => x.GeneratorInfo).OfType<DeclarationGeneratorInfo>()
+                            .DefaultIfEmpty(new DeclarationGeneratorInfo(-1)).Max(y => y.Offset) + 1;
             int paramId = block.Declarations.Where(x => x is ProcedureParameterDeclaration).Select(x => x.GeneratorInfo)
-                            .OfType<DeclarationGeneratorInfo>().DefaultIfEmpty(new DeclarationGeneratorInfo(-1))
-                            .Max(y => y.Offset) + 1;
+                              .OfType<DeclarationGeneratorInfo>().DefaultIfEmpty(new DeclarationGeneratorInfo(-1))
+                              .Max(y => y.Offset) + 1;
             bool isFirst = true;
             foreach (Declaration declaration in block.Declarations)
             {
@@ -202,35 +245,6 @@ namespace Oberon0.Generator.Msil
             }
 
             return isFirst;
-        }
-
-        private void GenerateComplexTypeMappings(Block block)
-        {
-            List<Declaration> addDeclarations = new List<Declaration>();
-            int paramId = 0;
-            int varId = 0;
-            foreach (ProcedureParameterDeclaration pp in block.Declarations.OfType<ProcedureParameterDeclaration>())
-            {
-                if (pp.IsVar || pp.Type.Type.HasFlag(BaseTypes.Simple))
-                {
-                    continue;
-                }
-
-                var name = pp.Name;
-                pp.Name = "param__" + name;
-                pp.GeneratorInfo = new DeclarationGeneratorInfo(paramId++);
-
-                // rename parameter and create a new field
-                var field = new Declaration(name, pp.Type, block)
-                    {
-                        GeneratorInfo = new DeclarationGeneratorInfo(varId++)
-                    };
-                ((DeclarationGeneratorInfo)field.GeneratorInfo).OriginalField = pp;
-                ((DeclarationGeneratorInfo)pp.GeneratorInfo).ReplacedBy = field;
-                addDeclarations.Add(field);
-            }
-
-            block.Declarations.AddRange(addDeclarations);
         }
     }
 }

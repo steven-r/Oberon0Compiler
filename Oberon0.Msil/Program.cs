@@ -13,7 +13,6 @@
 namespace Oberon0.Msil
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
@@ -44,17 +43,26 @@ namespace Oberon0.Msil
         /// <param name="args">
         /// The args.
         /// </param>
-        public static void Main(string[] args)
+        /// <returns>
+        /// The return code.
+        /// </returns>
+        public static int Main(string[] args)
         {
+            int retCode = 0;
             Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(StartCompile);
+                .WithParsed((options) =>
+                    {
+                        retCode = StartCompile(options);
+                    });
+            return retCode;
         }
 
-        private static void StartCompile(Options options)
+        private static int StartCompile(Options options)
         {
             if (!File.Exists(options.SourceFile))
             {
                 Console.Error.Write("Cannot find {0}", options.SourceFile);
+                return 1;
             }
 
             fileName = Path.GetFileNameWithoutExtension(options.SourceFile);
@@ -63,7 +71,7 @@ namespace Oberon0.Msil
             Module m = Oberon0Compiler.CompileString(File.ReadAllText(options.SourceFile));
             if (Oberon0Compiler.Instance.HasError)
             {
-                Environment.Exit(1);
+                return 1;
             }
 
             CodeGenerator cg = new CodeGenerator(m);
@@ -73,8 +81,10 @@ namespace Oberon0.Msil
 
             if (!CompileCode(code, fileName, targetPath, m, options.Verbose))
             {
-                Environment.Exit(2);
+                return 2;
             }
+
+            return 0;
         }
 
         private static string GetTempFile()
@@ -169,16 +179,18 @@ namespace Oberon0.Msil
 
         private static void CopyReferencedAssemblies(Module module)
         {
+            // load system dll
             var assembly = Assembly.GetEntryAssembly();
-            using (Stream resFilestream = assembly.GetManifestResourceStream("Oberon0.Msil.Oberon0.System.dll"))
+            using (Stream resourceStream = assembly.GetManifestResourceStream("Oberon0.Msil.Oberon0.System.dll"))
             {
-                if (resFilestream == null) throw new InvalidOperationException("Cannot read embedded resource");
-                byte[] ba = new byte[resFilestream.Length];
-                resFilestream.Read(ba, 0, ba.Length);
+                if (resourceStream == null) throw new InvalidOperationException("Cannot read embedded resource");
+                byte[] ba = new byte[resourceStream.Length];
+                resourceStream.Read(ba, 0, ba.Length);
                 File.WriteAllBytes(
                     Path.Combine(tempPath, "Oberon0.System.dll"),
                     ba);
             }
+
             foreach (var reference in module.ExternalReferences)
             {
                 if (reference.GlobalAssemblyCache)
@@ -196,7 +208,7 @@ namespace Oberon0.Msil
         [UsedImplicitly]
         private class Options
         {
-            [Value(0, Required = true, HelpText = "Source file to compile")]
+            [Value(0, Required = true, HelpText = "Source file to compile", MetaName = "source file")]
             public string SourceFile { get; [UsedImplicitly] set; }
 
             [Option('v', "verbose", HelpText = "If set, verbose output is generated")]
@@ -211,6 +223,8 @@ namespace Oberon0.Msil
             {
                 this.logEnabled = logEnabled;
             }
+
+            public bool ShouldLogVerbose { get; set; }
 
             public void Log(object str)
             {
@@ -247,8 +261,6 @@ namespace Oberon0.Msil
             {
                 // ignored
             }
-
-            public bool ShouldLogVerbose { get; set; }
         }
     }
 }

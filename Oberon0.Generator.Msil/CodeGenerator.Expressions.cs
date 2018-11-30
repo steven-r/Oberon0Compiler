@@ -38,7 +38,7 @@ namespace Oberon0.Generator.Msil
                 {
                     { OberonGrammarLexer.PLUS, HandleSimpleOperation },
                     { OberonGrammarLexer.MINUS, HandleSimpleOperation },
-                    { OberonGrammarLexer.MULT, HandleSimpleOperation },
+                    { OberonGrammarLexer.STAR, HandleSimpleOperation },
                     { OberonGrammarLexer.DIV, HandleSimpleOperation },
                     { OberonGrammarLexer.MOD, HandleSimpleOperation },
                     { OberonGrammarLexer.EQUAL, HandleRelOperation },
@@ -56,7 +56,7 @@ namespace Oberon0.Generator.Msil
             {
                 { OberonGrammarLexer.PLUS, "add" },
                 { OberonGrammarLexer.DIV, "div" },
-                { OberonGrammarLexer.MULT, "mul" },
+                { OberonGrammarLexer.STAR, "mul" },
                 { OberonGrammarLexer.MINUS, "sub" },
                 { OberonGrammarLexer.MOD, "rem" },
             };
@@ -320,7 +320,7 @@ namespace Oberon0.Generator.Msil
                 this.Code.Emit(
                     "ldsfld" + (isVarParam ? "a" : string.Empty),
                     this.Code.GetTypeName(varDeclaration.Type),
-                    $"{this.Code.ClassName}::__{varDeclaration.Name}");
+                    $"{this.Code.ClassName}::{Code.MakeName(varDeclaration.Name)}");
             }
             else
             {
@@ -380,7 +380,7 @@ namespace Oberon0.Generator.Msil
                     this.Code.Emit(
                         "ldfld",
                         this.Code.GetTypeName(ie.Element.Type),
-                        $"{this.Code.GetTypeName(ie.BasicTypeDefinition)}::__{ie.Name}");
+                        $"{this.Code.GetTypeName(ie.BasicTypeDefinition)}::{Code.MakeName(ie.Name)}");
             }
         }
 
@@ -409,7 +409,7 @@ namespace Oberon0.Generator.Msil
                 this.Code.Emit(
                     "stsfld",
                     this.Code.GetTypeName(assignmentVariable.Type),
-                    $"{this.Code.ClassName}::__{assignmentVariable.Name}");
+                    $"{this.Code.ClassName}::{Code.MakeName(assignmentVariable.Name)}");
             }
             else if (assignmentVariable.Type is RecordTypeDefinition && selector == null)
             {
