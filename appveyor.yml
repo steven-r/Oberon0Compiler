@@ -21,7 +21,7 @@ configuration:
 
 build:
   project: Oberon0.sln
-  verbosity: minimal
+  verbosity: debug
   
 install:
   - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
@@ -36,7 +36,7 @@ before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
-  - cmd: IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" ) ELSE ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" )
+  - cmd: IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" ) ELSE ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" )
 
 before_package:
 - cmd: msbuild Oberon0.Msil\Oberon0.Msil.csproj /t:ILMerge
