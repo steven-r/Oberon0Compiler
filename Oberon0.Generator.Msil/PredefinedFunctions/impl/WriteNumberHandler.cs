@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="WriteNumberHandler.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,19 +9,17 @@
 //     Part of oberon0 - Oberon0.Generator.Msil/WriteNumberHandler.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-#endregion
+
+#endregion copyright
 
 namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     using JetBrains.Annotations;
-
     using Oberon0.Compiler.Definitions;
     using Oberon0.Compiler.Expressions;
     using Oberon0.Compiler.Types;
+    using System.Collections.Generic;
+    using System.Linq;
 
     [StandardFunctionMetadata("WriteInt", TypeDefinition.VoidTypeName, "INTEGER")]
     [StandardFunctionMetadata("WriteBool", TypeDefinition.VoidTypeName, "BOOLEAN")]
