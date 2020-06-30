@@ -21,7 +21,7 @@ configuration:
 
 build:
   project: Oberon0.sln
-  verbosity: normal
+  verbosity: minimal
   
 install:
   - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
