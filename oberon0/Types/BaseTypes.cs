@@ -17,7 +17,6 @@ namespace Oberon0.Compiler.Types
     /// <summary>
     /// Standard types 
     /// </summary>
-    [Flags]
     public enum BaseTypes
     {
         /// <summary>

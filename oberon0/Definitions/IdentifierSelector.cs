@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="IdentifierSelector.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,19 +9,17 @@
 //     Part of oberon0 - Oberon0Compiler/IdentifierSelector.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-#endregion
+
+#endregion copyright
 
 namespace Oberon0.Compiler.Definitions
 {
     using Antlr4.Runtime;
 
-    using JetBrains.Annotations;
-
-    using Oberon0.Compiler.Types;
-
     public class IdentifierSelector : BaseSelectorElement
     {
 #pragma warning disable CS3001 // Argument type is not CLS-compliant
+
         public IdentifierSelector(string name, IToken tokenStart)
 #pragma warning restore CS3001 // Argument type is not CLS-compliant
             : base(tokenStart)

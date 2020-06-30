@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Oberon0.Attributes;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Oberon0.Attributes;
 
 namespace Oberon0
 {
@@ -32,6 +27,5 @@ namespace Oberon0
         {
             return value.ToString(CultureInfo.InvariantCulture);
         }
-
     }
 }

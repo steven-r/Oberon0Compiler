@@ -1,4 +1,5 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SimpleTypeDefinition.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,12 +9,11 @@
 //     Part of oberon0 - Oberon0Compiler/SimpleTypeDefinition.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-#endregion
+
+#endregion copyright
 
 namespace Oberon0.Compiler.Types
 {
-    using System;
-
     public class SimpleTypeDefinition : TypeDefinition
     {
         public SimpleTypeDefinition(BaseTypes baseTypes)
