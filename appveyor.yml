@@ -2,12 +2,14 @@ branches:
   except:
     - pr
   
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 pull_requests:
   do_not_increment_build_number: true
   
 environment:
+  global:
+    NET_FRAMEWORK: net48
   SonarToken:
     secure: Yqq5NPe3TMsALEVm/5AQZIi47F1OOwB+cmzLvYHF5qfbQUdyFaZ/E1ZjtTC5qEgO
 
@@ -31,17 +33,17 @@ install:
   - dotnet tool install coverlet.console --tool-path tools
 
 before_build:
-  - call call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
+  - call call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
-  - cmd: IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" ) ELSE ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /d:sonar.organization="steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" )
+  - cmd: IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" ) ELSE ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" )
 
 before_package:
 - cmd: msbuild Oberon0.Msil\Oberon0.Msil.csproj /t:ILMerge
   
 test_script:
-  - tools\coverlet .\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll " --format json --output .\msil-tests.json --exclude "[NUnit3*]*"
-  - tools\coverlet .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll " --format opencover --output "%CD%\opencover.xml" --exclude "[NUnit3*]*" --merge-with .\msil-tests.json
+  - tools\coverlet .\Oberon0.Generator.Msil.Tests\bin\Debug\%NET_FRAMEWORK%\Oberon0.Generator.Msil.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\%NET_FRAMEWORK%\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\%NET_FRAMEWORK%\Oberon0.Compiler.Tests.dll " --format json --output .\msil-tests.json --exclude "[NUnit3*]*"
+  - tools\coverlet .\UnitTestProject1\bin\Debug\%NET_FRAMEWORK%\Oberon0.Compiler.Tests.dll --target "nunit3-console" --targetargs ".\Oberon0.Generator.Msil.Tests\bin\Debug\%NET_FRAMEWORK%\Oberon0.Generator.Msil.Tests.dll .\UnitTestProject1\bin\Debug\%NET_FRAMEWORK%\Oberon0.Compiler.Tests.dll " --format opencover --output "%CD%\opencover.xml" --exclude "[NUnit3*]*" --merge-with .\msil-tests.json
 
 after_test:
   - SonarScanner.MSBuild.exe end /d:sonar.login=%SonarToken%

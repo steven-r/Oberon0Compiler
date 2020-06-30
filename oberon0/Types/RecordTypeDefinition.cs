@@ -1,4 +1,5 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="RecordTypeDefinition.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,14 +9,13 @@
 //     Part of oberon0 - Oberon0Compiler/RecordTypeDefinition.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-#endregion
+
+#endregion copyright
 
 namespace Oberon0.Compiler.Types
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
     using Oberon0.Compiler.Definitions;
+    using System.Collections.Generic;
 
     public class RecordTypeDefinition : TypeDefinition
     {
@@ -48,7 +48,7 @@ namespace Oberon0.Compiler.Types
                 return false;
             }
 
-            if ((Name == null || sourceType.Name == null) 
+            if ((Name == null || sourceType.Name == null)
                 || (Elements.Count != rt.Elements.Count))
             {
                 return false;

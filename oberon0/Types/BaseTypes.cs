@@ -1,4 +1,5 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="BaseTypes.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,16 +9,14 @@
 //     Part of oberon0 - Oberon0Compiler/BaseTypes.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-#endregion
+
+#endregion copyright
 
 namespace Oberon0.Compiler.Types
 {
-    using System;
-
     /// <summary>
-    /// Standard types 
+    /// Standard types
     /// </summary>
-    [Flags]
     public enum BaseTypes
     {
         /// <summary>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Oberon0.Compiler.Expressions.Operations
+﻿namespace Oberon0.Compiler.Expressions.Operations
 {
     using JetBrains.Annotations;
 
@@ -30,6 +24,7 @@ namespace Oberon0.Compiler.Expressions.Operations
                     case OberonGrammarLexer.AND:
                         res = left.ToBool() && right.ToBool();
                         break;
+
                     case OberonGrammarLexer.OR:
                         res = left.ToBool() || right.ToBool();
                         break;

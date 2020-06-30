@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MathAbs.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,17 +9,16 @@
 //     Part of oberon0 - Oberon0.Generator.Msil/MathAbs.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-#endregion
+
+#endregion copyright
 
 namespace Oberon0.Generator.Msil.PredefinedFunctions.impl
 {
-    using System.Collections.Generic;
-
     using JetBrains.Annotations;
-
     using Oberon0.Compiler.Definitions;
     using Oberon0.Compiler.Expressions;
     using Oberon0.Compiler.Types;
+    using System.Collections.Generic;
 
     [StandardFunctionMetadata("ABS", "REAL", "REAL")]
     [StandardFunctionMetadata("ABS", "INTEGER", "INTEGER")]

@@ -111,7 +111,7 @@ namespace Oberon0.Compiler.Definitions
                     "ReadReal",
                     this,
                     new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("REAL"), true)));
-            Assembly asm = this.GetType().Assembly;
+            Assembly asm = null;
 
             try
             {
@@ -123,11 +123,14 @@ namespace Oberon0.Compiler.Definitions
                 // ignored
             }
 
-            foreach (Type type in asm.GetExportedTypes())
+            if (asm != null)
             {
-                if (type.GetCustomAttribute<Oberon0LibraryAttribute>() != null)
+                foreach (Type type in asm.GetExportedTypes())
                 {
-                    this.LoadLibraryMembers(type);
+                    if (type.GetCustomAttribute<Oberon0LibraryAttribute>() != null)
+                    {
+                        this.LoadLibraryMembers(type);
+                    }
                 }
             }
         }
