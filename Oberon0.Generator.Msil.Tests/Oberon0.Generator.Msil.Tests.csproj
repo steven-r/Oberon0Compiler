@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Oberon0.CompilerSupport\Oberon0.TestSupport.csproj" />
     <ProjectReference Include="..\Oberon0.Generator.Msil\Oberon0.Generator.Msil.csproj" />
+    <ProjectReference Include="..\Oberon0.Msil\Oberon0.Msil.csproj" />
     <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj" />
   </ItemGroup>
 </Project>

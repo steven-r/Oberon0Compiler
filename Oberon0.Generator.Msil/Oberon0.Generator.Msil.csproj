@@ -5,6 +5,12 @@
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="PredefinedFunctions\Code.ReservedWords.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Code.ReservedWords.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Antlr4" Version="4.6.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

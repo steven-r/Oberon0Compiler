@@ -26,7 +26,7 @@ namespace Oberon0.Generator.Msil
     using Oberon0.Generator.Msil.PredefinedFunctions;
 
     /// <summary>
-    /// The code generator to generate RISC code
+    /// The code generator to generate MSIL code
     /// </summary>
     public partial class CodeGenerator
     {
@@ -83,8 +83,7 @@ namespace Oberon0.Generator.Msil
             this.Code.EmitComment("Code compiled for module " + this.module.Name);
             this.Code.StartModule(this.module.Name);
             this.Code.StartClass($"Oberon0.{this.module.Name}");
-            this.ProcessMainBlock(this.module.Block);
-            this.Code.EndMethod();
+            this.ProcessMainBlock();
             this.Code.EndClass();
         }
 
@@ -187,10 +186,10 @@ namespace Oberon0.Generator.Msil
             return selector.SelectorResultType;
         }
 
-        private void ProcessMainBlock(Block block)
+        private void ProcessMainBlock()
         {
-            this.ProcessDeclarations(block, true);
-            foreach (var functionDeclaration in block.Procedures)
+            this.ProcessDeclarations(this.module.Block, true);
+            foreach (var functionDeclaration in this.module.Block.Procedures)
             {
                 // ignore system and external libraries
                 if (functionDeclaration.IsInternal || functionDeclaration is ExternalFunctionDeclaration)
@@ -201,8 +200,10 @@ namespace Oberon0.Generator.Msil
                 this.Code.EndMethod();
             }
 
-            this.Code.StartMainMethod();
-            this.ProcessStatements(block);
+            this.Code.StartMethod(new FunctionDeclaration("$init", new Block(this.module.Block), SimpleTypeDefinition.VoidType));
+            this.ProcessStatements(this.module.Block);
+            this.Code.EndMethod();
+            this.Code.MainMethod(this.module);
         }
 
         private void ProcessStatements(Block block)

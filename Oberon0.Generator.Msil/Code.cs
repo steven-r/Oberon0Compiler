@@ -1,5 +1,4 @@
 ﻿#region copyright
-
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Code.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -9,7 +8,6 @@
 //     Part of oberon0 - Oberon0.Generator.Msil/Code.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-
 #endregion
 
 namespace Oberon0.Generator.Msil
@@ -29,15 +27,27 @@ namespace Oberon0.Generator.Msil
     using Oberon0.Compiler.Types;
     using Oberon0.Generator.Msil.PredefinedFunctions;
 
-    public class Code : StringWriter
+    /// <summary>
+    /// The code generation basics.
+    /// </summary>
+    public partial class Code : StringWriter
     {
         private int labelId;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Code"/> class.
+        /// </summary>
+        /// <param name="sb">
+        /// The String builder that builds the string.
+        /// </param>
         public Code(StringBuilder sb)
             : base(sb)
         {
         }
 
+        /// <summary>
+        /// Gets the class name that is also the name of the module/application.
+        /// </summary>
         internal string ClassName { get; private set; }
 
         // ReSharper disable once MemberCanBePrivate.Global
@@ -61,17 +71,26 @@ namespace Oberon0.Generator.Msil
         public void ConstField(ConstDeclaration constDeclaration)
         {
             this.WriteLine(
-                $".data __{constDeclaration.Name} = {GetDataTypeName(constDeclaration.Type)} ({DumpConstValue(constDeclaration.Value, false, true)})");
-        }
-
-        public void DataField(Declaration declaration, bool isStatic)
-        {
-            this.WriteLine(
-                $".field {(isStatic ? "static " : string.Empty)}{this.GetTypeName(declaration.Type)} __{declaration.Name}");
+                $".data {(constDeclaration.Exportable ? "export " : string.Empty)} {MakeName(constDeclaration.Name)} = {GetDataTypeName(constDeclaration.Type)} ({DumpConstValue(constDeclaration.Value, false, true)})");
         }
 
         /// <summary>
-        /// Emits the ldelem.
+        /// Create a data field
+        /// </summary>
+        /// <param name="declaration">
+        /// The declaration.
+        /// </param>
+        /// <param name="isStatic">
+        /// The is static.
+        /// </param>
+        public void DataField(Declaration declaration, bool isStatic)
+        {
+            this.WriteLine(
+                $".field {(declaration.Exportable ? "export " : string.Empty)}static {this.GetTypeName(declaration.Type)} {MakeName(declaration.Name)}");
+        }
+
+        /// <summary>
+        /// Emits the "ldelem" call.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="arrayTypeDefinition">The array type definition.</param>
@@ -113,6 +132,7 @@ namespace Oberon0.Generator.Msil
         internal static string GetIndirectSuffix(TypeDefinition type)
         {
             string suffix;
+            // ReSharper disable once SwitchStatementMissingSomeCases
             switch (type.Type)
             {
                 case BaseTypes.Int:
@@ -224,7 +244,7 @@ namespace Oberon0.Generator.Msil
             this.Emit(
                 "stfld",
                 this.GetTypeName(identSelector.Element.Type),
-                $"{this.GetTypeName(identSelector.BasicTypeDefinition)}::__{identSelector.Name}");
+                $"{this.GetTypeName(identSelector.BasicTypeDefinition)}::{MakeName(identSelector.Name)}");
         }
 
         internal void EndClass()
@@ -251,7 +271,7 @@ namespace Oberon0.Generator.Msil
                 case BaseTypes.Array:
                     return $"{this.GetTypeName(((ArrayTypeDefinition)type).ArrayType)}[]";
                 case BaseTypes.Record:
-                    return $"class {this.ClassName}/__{type.Name}";
+                    return $"class {this.ClassName}/{MakeName(type.Name)}";
                 default:
                     return GetTypeName(type.Type);
             }
@@ -259,12 +279,12 @@ namespace Oberon0.Generator.Msil
 
         internal void LoadConstRef(ConstDeclaration constDeclaration)
         {
-            this.Emit("ldvar", $"__{constDeclaration.Name}");
+            this.Emit("ldvar", $"{MakeName(constDeclaration.Name)}");
         }
 
         internal void LocalVarDef(Declaration declaration, bool isPointer)
         {
-            this.Write($"{(isPointer ? "&" : string.Empty)}{this.GetTypeName(declaration.Type)} __{declaration.Name}");
+            this.Write($"{(isPointer ? "&" : string.Empty)}{this.GetTypeName(declaration.Type)} {MakeName(declaration.Name)}");
         }
 
         internal void PushConst([NotNull] object data)
@@ -322,19 +342,33 @@ namespace Oberon0.Generator.Msil
             this.ClassName = className;
         }
 
-        internal void StartMainMethod()
+        /// <summary>
+        /// create the main method.
+        /// </summary>
+        /// <param name="module">
+        /// The module.
+        /// </param>
+        internal void MainMethod(Module module)
         {
-            this.Write(
-                $@"
+            if (!module.HasExports)
+            {
+                this.Write(
+                    @"
 .method static public void $O0$main() cil managed
-{{   .entrypoint 
+{   
+    .entrypoint 
 ");
+                this.Emit("call", GetTypeName(BaseTypes.Void), $"Oberon0.{this.ModuleName}::$init ()");
+
+                this.WriteLine("\tret");
+                this.WriteLine("}");
+            }
         }
 
         internal void StartMethod(FunctionDeclaration functionDeclaration)
         {
             this.Write(
-                $".method private static {this.GetTypeName(functionDeclaration.ReturnType)} __{functionDeclaration.Name}(");
+                $".method {(functionDeclaration.Exportable ? "extern " : "private ")}static {this.GetTypeName(functionDeclaration.ReturnType)} {MakeName(functionDeclaration.Name)}(");
             List<string> paramList = new List<string>();
             foreach (ProcedureParameterDeclaration parameter in functionDeclaration.Block.Declarations
                 .OfType<ProcedureParameterDeclaration>())
@@ -350,7 +384,7 @@ namespace Oberon0.Generator.Msil
                     isVar = isVar && !parameter.Type.Type.HasFlag(BaseTypes.Complex);
                 }
 
-                paramList.Add($"{this.GetTypeName(parameter.Type)}{(isVar ? "&" : string.Empty)} __{name}");
+                paramList.Add($"{this.GetTypeName(parameter.Type)}{(isVar ? "&" : string.Empty)} {MakeName(name)}");
             }
 
             this.WriteLine(
@@ -414,12 +448,12 @@ namespace Oberon0.Generator.Msil
 
         private string GetPrototypeName(FunctionDeclaration func)
         {
-            if (func is ExternalFunctionDeclaration exfunc)
+            if (func is ExternalFunctionDeclaration exFunc)
             {
-                return $"[{exfunc.Assembly.GetName().Name}]{exfunc.ClassName}::{exfunc.MethodName}";
+                return $"[{exFunc.Assembly.GetName().Name}]{exFunc.ClassName}::{exFunc.MethodName}";
             }
 
-            return $"Oberon0.{this.ModuleName}::__{func.Name}";
+            return $"Oberon0.{this.ModuleName}::{MakeName(func.Name)}";
         }
     }
 }
