@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Program.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,24 +9,21 @@
 //     Part of oberon0 - Oberon0.Msil/Program.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-#endregion
+
+#endregion copyright
 
 namespace Oberon0.Msil
 {
+    using CommandLine;
+    using ILRepacking;
+    using JetBrains.Annotations;
+    using Oberon0.Compiler;
+    using Oberon0.Generator.Msil;
     using System;
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
     using System.Text;
-
-    using CommandLine;
-
-    using ILRepacking;
-
-    using JetBrains.Annotations;
-
-    using Oberon0.Compiler;
-    using Oberon0.Generator.Msil;
     using Module = Compiler.Definitions.Module;
 
     /// <summary>

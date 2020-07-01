@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="VariableReferenceExpression.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
@@ -8,12 +9,11 @@
 //     Part of oberon0 - Oberon0Compiler/VariableReferenceExpression.cs
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-#endregion
+
+#endregion copyright
 
 namespace Oberon0.Compiler.Expressions
 {
-    using System.Linq;
-
     using Oberon0.Compiler.Definitions;
 
     public class VariableReferenceExpression : Expression
@@ -34,12 +34,12 @@ namespace Oberon0.Compiler.Expressions
             }
 
             var e = new VariableReferenceExpression
-                {
-                    Name = declaration.Name,
-                    Declaration = declaration,
-                    TargetType = s?.SelectorResultType ?? declaration.Type,
-                    Selector = s
-                };
+            {
+                Name = declaration.Name,
+                Declaration = declaration,
+                TargetType = s?.SelectorResultType ?? declaration.Type,
+                Selector = s
+            };
             return e;
         }
 

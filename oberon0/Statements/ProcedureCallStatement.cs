@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using JetBrains.Annotations;
-using Oberon0.Compiler.Definitions;
+﻿using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
+using System.Collections.Generic;
 
 namespace Oberon0.Compiler.Statements
 {
