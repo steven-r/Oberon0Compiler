@@ -8,6 +8,7 @@ pull_requests:
   do_not_increment_build_number: true
   
 environment:
+  nodejs_version: "LTS"
   global:
     NET_FRAMEWORK: net48
     JAVA_HOME: C:\Program Files\Java\jdk11
@@ -37,6 +38,8 @@ before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
+  - ps: (Get-Content "package.json") | Foreach-Object {$_ -replace '"version": "[0-9.]+"',"""version"": ""$env:GitVersion_SemVer"""} | Out-File "package.json"
+  - npm changelog
   - cmd: IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" ) ELSE ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" )
 
 before_package:
