@@ -81,4 +81,3 @@ deploy:
     force_update: true
     on:
       branch: /release\/release-[0-9a-z.-]+/                 # release from release branch only
-      APPVEYOR_REPO_TAG: true          # deploy on tag push only
