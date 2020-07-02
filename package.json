@@ -1,6 +1,6 @@
 {
   "name": "oberon0compiler",
-  "version": "0.4.0",
+  "version": "0.5.0-beta.1",
   "description": "[![Build status](https://ci.appveyor.com/api/projects/status/pcc7f0s3bq7m6sfh?svg=true)](https://ci.appveyor.com/project/steven-r/oberon0compiler)\r [![QUality](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=alert_status)](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=alert_status)\r [![GitHub license](https://img.shields.io/github/license/steven-r/Oberon0Compiler.svg)](https://github.com/steven-r/Oberon0Compiler/blob/master/LICENSE.md)\r ![GitHub release](https://img.shields.io/github/release/steven-r/Oberon0Compiler.svg)",
   "main": "index.js",
   "directories": {
@@ -28,5 +28,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "conventional-changelog-cli": "^2.0.34"
   }
 }

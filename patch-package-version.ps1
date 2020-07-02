@@ -1,3 +1,3 @@
 (Get-Content 'package.json') | 
-	Foreach-Object {$_ -replace '"version": "[0-9.]+"',"""version"": ""$env:GitVersion_SemVer""" } | 
+	Foreach-Object {$_ -replace '"version": ".+"',"""version"": ""$env:GitVersion_SemVer""" } | 
 	Out-File -Encoding Default "package.json"
