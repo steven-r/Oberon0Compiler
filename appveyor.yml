@@ -39,6 +39,8 @@ before_build:
   - nuget restore
   - npm install
   - npm -g install conventional-changelog
+  - node --version
+  - npm --version
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
   - ps: if ($true) { . .\patch-package-version.ps1 }
   - cmd: type package.json
