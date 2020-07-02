@@ -43,7 +43,7 @@ before_build:
   - npm install -g conventional-changelog-cli conventional-changelog
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
   - ps: if ($true) { . .\patch-package-version.ps1 }
-  - npm run conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+  - conventional-changelog -p angular -i CHANGELOG.md -s -r 0
   - cmd: IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" ) ELSE ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" )
 
 before_package:
