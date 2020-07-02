@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/steven-r/Oberon0Compiler#readme",
   "devDependencies": {
-    "cz-conventional-changelog": "^3.2.0"
+    "cz-conventional-changelog": "^3.2.0",
+    "conventional-changelog": "^3.1.21"
   },
   "config": {
     "commitizen": {

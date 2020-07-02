@@ -37,6 +37,7 @@ install:
 before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
+  - npm install
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
   - ps: if ($true) { . .\patch-package-version.ps1 }
   - cmd: type package.json
