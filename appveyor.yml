@@ -80,6 +80,7 @@ deploy:
     artifact: Oberon0Msil,CHANGELOG
     draft: true
     prerelease: true
+    force_update: true
     on:
-      branch: release/                 # release from master branch only
+      branch: /release\/release-[0-9a-z.-]+/                 # release from release branch only
       APPVEYOR_REPO_TAG: true          # deploy on tag push only
