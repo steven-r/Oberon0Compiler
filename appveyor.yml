@@ -36,6 +36,7 @@ install:
   - dotnet tool install coverlet.console --tool-path tools
 
 before_build:
+  - ps: Get-ExecutionPolicy
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
   - npm install
