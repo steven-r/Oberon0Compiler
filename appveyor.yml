@@ -8,11 +8,14 @@ pull_requests:
   do_not_increment_build_number: true
   
 environment:
+  nodejs_version: "12"
   global:
     NET_FRAMEWORK: net48
     JAVA_HOME: C:\Program Files\Java\jdk11
   SonarToken:
     secure: Yqq5NPe3TMsALEVm/5AQZIi47F1OOwB+cmzLvYHF5qfbQUdyFaZ/E1ZjtTC5qEgO
+  GitHubToken:
+    secure: lEdFzP16FFnzrhclyiPpWIS5u+mDod8Y56dR1ulbBzB4IO+xuHEdnrsrHuDA2SwD
 
 platform:
   - Any CPU
@@ -25,10 +28,7 @@ build:
   verbosity: minimal
   
 install:
-  - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
-        https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `
-        Where-Object pullRequestId -eq $env:APPVEYOR_PULL_REQUEST_NUMBER)[0].buildNumber) { `
-          throw "There are newer queued builds for this pull request, failing early." }
+  - ps: Install-Product node $env:nodejs_version
   - choco install gitversion.portable -pre -y
   - choco install msbuild-sonarqube-runner -y
   - dotnet tool install coverlet.console --tool-path tools
@@ -36,7 +36,11 @@ install:
 before_build:
   - call call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"
   - nuget restore
+  - npm install
+  - npm install -g conventional-changelog-cli conventional-changelog
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
+  - ps: if ($true) { . .\patch-package-version.ps1 }
+  - conventional-changelog -p angular -i CHANGELOG.md -s -r 0
   - cmd: IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" ) ELSE ( SonarScanner.MSBuild.exe begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=%SonarToken% /d:sonar.cs.opencover.reportsPaths="%CD%\opencover.xml" /v:"%GitVersion_FullSemVer%" /d:"sonar.pullrequest.branch=%APPVEYOR_REPO_BRANCH%" /d:"sonar.pullrequest.key=%APPVEYOR_PULL_REQUEST_NUMBER%" )
 
 before_package:
@@ -50,5 +54,30 @@ after_test:
   - SonarScanner.MSBuild.exe end /d:sonar.login=%SonarToken%
 
 artifacts:
-- path: 'Oberon0.Msil\Oberon0Msil.exe'
-  name: Oberon0Msil
+  - path: 'Oberon0.Msil\Oberon0Msil.exe'
+    name: Oberon0Msil
+  - path: 'CHANGELOG.md'
+    name: CHANGELOG
+
+deploy:
+  - release: v$(appveyor_build_version)
+    description: 'Release description'
+    provider: GitHub
+    auth_token: $(GitHubToken)
+    artifact: Oberon0Msil,CHANGELOG
+    draft: true
+    prerelease: false
+    on:
+      branch: master                 # release from master branch only
+      APPVEYOR_REPO_TAG: true        # deploy on tag push only
+
+  - release: v$(appveyor_build_version)
+    description: 'Release description'
+    provider: GitHub
+    auth_token: $(GitHubToken)
+    artifact: Oberon0Msil,CHANGELOG
+    draft: true
+    prerelease: true
+    force_update: true
+    on:
+      branch: /release\/release-[0-9a-z.-]+/                 # release from release branch only
