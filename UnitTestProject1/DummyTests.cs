@@ -1,20 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
+
+using NUnit.Framework;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Generator;
+using Oberon0.TestSupport;
 
 namespace Oberon0.Compiler.Tests
 {
-    using NUnit.Framework;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Generator;
-    using Oberon0.TestSupport;
-
     [TestFixture]
     public class DummyTests
     {
+        private class DummyGeneratorInfo : IGeneratorInfo
+        {}
+
         [Test]
         public void FixupGeneratorInfo()
         {
@@ -30,10 +33,6 @@ END Test.");
             Assert.IsNull(d.GeneratorInfo);
             d.GeneratorInfo = new DummyGeneratorInfo();
             Assert.NotNull(d.GeneratorInfo);
-        }
-
-        private class DummyGeneratorInfo : IGeneratorInfo
-        {
         }
     }
 }

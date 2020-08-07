@@ -1,49 +1,23 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ArrayTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler.Tests/ArrayTests.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Linq;
+using NUnit.Framework;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions.Constant;
+using Oberon0.Compiler.Statements;
+using Oberon0.Compiler.Types;
+using Oberon0.TestSupport;
+
 namespace Oberon0.Compiler.Tests.Types
 {
-    using System.Linq;
-
-    using NUnit.Framework;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Expressions.Constant;
-    using Oberon0.Compiler.Statements;
-    using Oberon0.Compiler.Types;
-    using Oberon0.TestSupport;
-
     [TestFixture]
     public class ArrayTests
     {
-        [Test]
-        public void ArrayType()
-        {
-            Module m = TestHelper.CompileString(
-                @"
-MODULE test; 
-TYPE 
-    aType= ARRAY 5 OF INTEGER;
-VAR 
-  a : aType;
-                
-END test.");
-            var type = m.Block.LookupType("aType");
-            Assert.NotNull(type);
-            var arrayType = type as ArrayTypeDefinition;
-            Assert.NotNull(arrayType);
-            Assert.AreEqual("ARRAY 5 OF INTEGER", arrayType.ToString());
-        }
-
         [Test]
         public void ArrayFail1TestIndex0()
         {
@@ -88,6 +62,22 @@ END test.");
         }
 
         [Test]
+        public void ArrayTestIndexArraySimple()
+        {
+            TestHelper.CompileString(
+                @"MODULE test; 
+TYPE 
+    aType= ARRAY 5 OF INTEGER;
+VAR 
+  a : RECORD b: INTEGER END;
+                
+BEGIN
+    a[1] := 1;
+END test.",
+                "Array reference expected");
+        }
+
+        [Test]
         public void ArrayTestIndexRealFail()
         {
             TestHelper.CompileString(
@@ -104,19 +94,22 @@ END test.",
         }
 
         [Test]
-        public void ArrayTestIndexArraySimple()
+        public void ArrayType()
         {
-            TestHelper.CompileString(
-                @"MODULE test; 
+            Module m = TestHelper.CompileString(
+                @"
+MODULE test; 
 TYPE 
     aType= ARRAY 5 OF INTEGER;
 VAR 
-  a : RECORD b: INTEGER END;
+  a : aType;
                 
-BEGIN
-    a[1] := 1;
-END test.",
-                "Array reference expected");
+END test.");
+            var type = m.Block.LookupType("aType");
+            Assert.NotNull(type);
+            var arrayType = type as ArrayTypeDefinition;
+            Assert.NotNull(arrayType);
+            Assert.AreEqual("ARRAY 5 OF INTEGER", arrayType.ToString());
         }
     }
 }

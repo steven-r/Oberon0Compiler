@@ -1,19 +1,14 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FullExampleTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler.Tests/FullExampleTests.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using NUnit.Framework;
+
 namespace Oberon0.Compiler.Tests.Complex
 {
-    using NUnit.Framework;
-
     [TestFixture]
     public class FullExampleTests
     {

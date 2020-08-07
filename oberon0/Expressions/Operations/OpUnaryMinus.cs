@@ -1,26 +1,19 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="OpUnaryMinus.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/OpUnaryMinus.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
+using JetBrains.Annotations;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions.Constant;
+using Oberon0.Compiler.Expressions.Operations.Internal;
+using Oberon0.Compiler.Types;
+
 namespace Oberon0.Compiler.Expressions.Operations
 {
-    using System;
-
-    using JetBrains.Annotations;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Expressions.Constant;
-    using Oberon0.Compiler.Expressions.Operations.Internal;
-    using Oberon0.Compiler.Types;
-
     /// <summary>
     /// Handle "~".
     /// </summary>
@@ -37,7 +30,6 @@ namespace Oberon0.Compiler.Expressions.Operations
             IArithmeticOpMetadata operationParameters)
         {
             if (bin.LeftHandSide.IsConst)
-            {
                 switch (bin.LeftHandSide.TargetType.Type)
                 {
                     case BaseTypes.Int:
@@ -53,7 +45,6 @@ namespace Oberon0.Compiler.Expressions.Operations
                     default:
                         throw new ArgumentException($"Cannot perform unary minus on {bin.LeftHandSide.TargetType.Type}");
                 }
-            }
 
             return bin; // expression remains the same
         }

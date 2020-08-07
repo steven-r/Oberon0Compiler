@@ -1,36 +1,30 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Oberon0CompilerListener.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/Oberon0CompilerListener.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Antlr4.Runtime;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Expressions.Constant;
+using Oberon0.Compiler.Solver;
+using Oberon0.Compiler.Statements;
+using Oberon0.Compiler.Types;
+
 namespace Oberon0.Compiler
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Antlr4.Runtime;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Expressions;
-    using Oberon0.Compiler.Expressions.Constant;
-    using Oberon0.Compiler.Solver;
-    using Oberon0.Compiler.Statements;
-    using Oberon0.Compiler.Types;
-
     internal class Oberon0CompilerListener : OberonGrammarBaseListener
     {
-        private readonly OberonGrammarParser parser;
+        private readonly OberonGrammarParser _parser;
 
         public Oberon0CompilerListener(OberonGrammarParser parser)
         {
-            this.parser = parser;
+            _parser = parser;
         }
 
         public override void ExitArraySelector(OberonGrammarParser.ArraySelectorContext context)
@@ -41,14 +35,14 @@ namespace Oberon0.Compiler
         public override void ExitArrayType(OberonGrammarParser.ArrayTypeContext context)
         {
             var constExpression =
-                ConstantSolver.Solve(context.e.expReturn, parser.currentBlock);
+                ConstantSolver.Solve(context.e.expReturn, _parser.currentBlock);
             if (constExpression is ConstantIntExpression cie)
             {
                 context.returnType = new ArrayTypeDefinition(cie.ToInt32(), context.t.returnType);
             }
             else
             {
-                this.parser.NotifyErrorListeners(
+                _parser.NotifyErrorListeners(
                     context.Start,
                     "The array size must return a constant integer expression",
                     null);
@@ -58,52 +52,47 @@ namespace Oberon0.Compiler
 
         public override void ExitAssign_statement(OberonGrammarParser.Assign_statementContext context)
         {
-            var v = parser.currentBlock.LookupVar(context.id.Text);
+            var v = _parser.currentBlock.LookupVar(context.id.Text);
             if (v == null)
             {
-                parser.NotifyErrorListeners(context.id, $"Variable {context.id.Text} not known", null);
+                _parser.NotifyErrorListeners(context.id, $"Variable {context.id.Text} not known", null);
                 return;
             }
 
             var targetType = v.Type;
-            if (context.s.vsRet != null)
-            {
-                targetType = context.s.vsRet.SelectorResultType;
-            }
+            if (context.s.vsRet != null) targetType = context.s.vsRet.SelectorResultType;
 
             if (context.r?.expReturn == null)
             {
-                parser.NotifyErrorListeners(context.id, "Cannot parse right side of assignment", null);
+                _parser.NotifyErrorListeners(context.id, "Cannot parse right side of assignment", null);
                 return;
             }
 
-            Expression e = ConstantSolver.Solve(context.r.expReturn, this.parser.currentBlock);
+            Expression e = ConstantSolver.Solve(context.r.expReturn, _parser.currentBlock);
             if (!targetType.IsAssignable(e.TargetType))
             {
-                this.parser.NotifyErrorListeners(context.id, "Left & right side do not match types", null);
+                _parser.NotifyErrorListeners(context.id, "Left & right side do not match types", null);
                 return;
             }
 
-            parser.currentBlock.Statements.Add(
+            _parser.currentBlock.Statements.Add(
                 new AssignmentStatement { Variable = v, Selector = context.s.vsRet, Expression = e });
         }
 
         public override void ExitConstDeclarationElement(OberonGrammarParser.ConstDeclarationElementContext context)
         {
-            if (this.parser.currentBlock.LookupVar(context.c.Text, false) != null)
+            if (_parser.currentBlock.LookupVar(context.c.Text, false) != null)
             {
-                this.parser.NotifyErrorListeners(
+                _parser.NotifyErrorListeners(
                     context.c,
                     "A variable/constant with this name has been defined already",
                     null);
                 return;
             }
 
-            ConstantExpression constantExpression =
-                ConstantSolver.Solve(context.e.expReturn, this.parser.currentBlock) as ConstantExpression;
-            if (constantExpression == null)
+            if (!(ConstantSolver.Solve(context.e.expReturn, _parser.currentBlock) is ConstantExpression constantExpression))
             {
-                parser.NotifyErrorListeners(context.e.start, "A constant must resolve during compile time", null);
+                _parser.NotifyErrorListeners(context.e.start, "A constant must resolve during compile time", null);
                 return;
             }
 
@@ -111,11 +100,11 @@ namespace Oberon0.Compiler
                 context.c.Text,
                 constantExpression.TargetType,
                 constantExpression,
-                parser.currentBlock) { Exportable = context.export != null };
+                _parser.currentBlock) { Exportable = context.export != null };
 
-            this.CheckExportable(context.export, constDeclaration.Exportable);
+            CheckExportable(context.export, constDeclaration.Exportable);
 
-            parser.currentBlock.Declarations.Add(constDeclaration);
+            _parser.currentBlock.Declarations.Add(constDeclaration);
         }
 
         /* expressions */
@@ -134,7 +123,7 @@ namespace Oberon0.Compiler
                         OberonGrammarLexer.MINUS,
                         context.e.expReturn,
                         null,
-                        this.parser.currentBlock, 
+                        _parser.currentBlock, 
                         context.op);
                     break;
                 case OberonGrammarLexer.NOT:
@@ -142,7 +131,7 @@ namespace Oberon0.Compiler
                         OberonGrammarLexer.NOT,
                         context.e.expReturn,
                         null,
-                        this.parser.currentBlock,
+                        _parser.currentBlock,
                         context.op);
                     break;
             }
@@ -155,20 +144,25 @@ namespace Oberon0.Compiler
 
         public override void ExitExprSingleId(OberonGrammarParser.ExprSingleIdContext context)
         {
-            var decl = this.parser.currentBlock.LookupVar(context.id.Text);
+            var decl = _parser.currentBlock.LookupVar(context.id.Text);
             if (decl == null)
             {
-                this.parser.NotifyErrorListeners(context.id, "Unknown identifier: " + context.id.Text, null);
+                _parser.NotifyErrorListeners(context.id, "Unknown identifier: " + context.id.Text, null);
                 context.expReturn = ConstantIntExpression.Zero;
                 return;
             }
 
-            context.expReturn = VariableReferenceExpression.Create(this.parser.currentBlock, decl, context.s.vsRet);
+            context.expReturn = VariableReferenceExpression.Create(decl, context.s.vsRet);
         }
 
         public override void ExitExprStringLiteral(OberonGrammarParser.ExprStringLiteralContext context)
         {
-            context.expReturn = new StringExpression(context.s.Text);
+            var match = Regex.Match(context.s.Text, "^'((?:[^']+|'')*)'$");
+            if (match.Success)
+            {
+                string data = match.Groups[1].Value.Replace("''", "'");
+                context.expReturn = new StringExpression(data);
+            }
         }
 
         public override void ExitExprFactPrecedence(OberonGrammarParser.ExprFactPrecedenceContext context)
@@ -177,7 +171,7 @@ namespace Oberon0.Compiler
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
-                this.parser.currentBlock,
+                _parser.currentBlock,
                 context.op);
         }
 
@@ -187,7 +181,7 @@ namespace Oberon0.Compiler
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
-                this.parser.currentBlock,
+                _parser.currentBlock,
                 context.op);
         }
 
@@ -197,14 +191,14 @@ namespace Oberon0.Compiler
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
-                this.parser.currentBlock,
+                _parser.currentBlock,
                 context.op);
         }
 
         public override void ExitExprFuncCall(OberonGrammarParser.ExprFuncCallContext context)
         {
             var parameters = context.cp?._p.Select(x => x.expReturn).ToArray() ?? new Expression[0];
-            var fp = parser.currentBlock.LookupFunction(
+            var fp = _parser.currentBlock.LookupFunction(
                 context.id.Text,
                 context.Start,
                 parameters);
@@ -218,7 +212,7 @@ namespace Oberon0.Compiler
 
             context.expReturn = new FunctionCallExpression(
                 fp,
-                parser.currentBlock,
+                _parser.currentBlock,
                 context.Start,
                 parameters);
         }
@@ -229,7 +223,7 @@ namespace Oberon0.Compiler
             {
                 if (expressionContext.expReturn.TargetType.Type != BaseTypes.Bool)
                 {
-                    this.parser.NotifyErrorListeners(
+                    _parser.NotifyErrorListeners(
                         expressionContext.start,
                         "The condition needs to return a logical condition",
                         null);
@@ -239,35 +233,31 @@ namespace Oberon0.Compiler
                 context.ifs.Conditions.Add(expressionContext.expReturn);
             }
 
-            this.parser.currentBlock.Statements.Add(context.ifs);
+            _parser.currentBlock.Statements.Add(context.ifs);
         }
 
         public override void ExitProcCall_statement(OberonGrammarParser.ProcCall_statementContext context)
         {
             var parameters = context.cp?._p.Select(x => x.expReturn).ToArray() ?? new Expression[0];
-            FunctionDeclaration fp = this.parser.currentBlock.LookupFunction(context.id.Text, context.Start, parameters);
+            FunctionDeclaration fp = _parser.currentBlock.LookupFunction(context.id.Text, context.Start, parameters);
 
             if (fp == null)
-            {
-                // error has been reported already
+            // error has been reported already
                 return;
-            }
 
-            parser.currentBlock.Statements.Add(new ProcedureCallStatement(fp, parameters.ToList()));
+            _parser.currentBlock.Statements.Add(new ProcedureCallStatement(fp, parameters.ToList()));
         }
 
         public override void ExitProcedureDeclaration(OberonGrammarParser.ProcedureDeclarationContext context)
         {
             if (context.endname._ID.Text != context.p.proc.Name)
-            {
-                this.parser.NotifyErrorListeners(
+                _parser.NotifyErrorListeners(
                     context.endname._ID,
                     "The name of the procedure does not match the name after END",
                     null);
-            }
 
-            this.parser.PopBlock();
-            this.parser.currentBlock.Procedures.Add(context.p.proc);
+            _parser.PopBlock();
+            _parser.currentBlock.Procedures.Add(context.p.proc);
         }
 
         public override void ExitProcedureHeader(OberonGrammarParser.ProcedureHeaderContext context)
@@ -286,7 +276,7 @@ namespace Oberon0.Compiler
         {
             context.param = new ProcedureParameterDeclaration(
                 context.name.Text,
-                this.parser.currentBlock,
+                _parser.currentBlock,
                 context.t.returnType,
                 context.isVar);
         }
@@ -297,16 +287,10 @@ namespace Oberon0.Compiler
 
             // check for double parameter names
             foreach (OberonGrammarParser.ProcedureParameterContext parameterContext in context._p)
-            {
                 if (context._p.Any(x => x.name.Text == parameterContext.name.Text && x != parameterContext))
-                {
-                    this.parser.NotifyErrorListeners(parameterContext.name, "Duplicate parameter", null);
-                }
+                    _parser.NotifyErrorListeners(parameterContext.name, "Duplicate parameter", null);
                 else
-                {
                     resultSet.Add(parameterContext.param);
-                }
-            }
 
             // build result set
             context.@params = resultSet.ToArray();
@@ -319,7 +303,7 @@ namespace Oberon0.Compiler
                 string name = token.Text;
                 if (context.record.Elements.Any(x => x.Name == name))
                 {
-                    this.parser.NotifyErrorListeners(token, $"Element {name} defined more than once", null);
+                    _parser.NotifyErrorListeners(token, $"Element {name} defined more than once", null);
                     continue; // ignore this element
                 }
 
@@ -347,7 +331,7 @@ namespace Oberon0.Compiler
             var r = context.r.expReturn;
             if (r.TargetType != SimpleTypeDefinition.BoolType)
             {
-                this.parser.NotifyErrorListeners(
+                _parser.NotifyErrorListeners(
                     context.r.start,
                     $"The condition needs to return a logical condition",
                     null);
@@ -355,24 +339,22 @@ namespace Oberon0.Compiler
             }
 
             context.rs.Condition = r;
-            this.parser.currentBlock.Statements.Add(context.rs);
+            _parser.currentBlock.Statements.Add(context.rs);
         }
 
         public override void ExitSelector(OberonGrammarParser.SelectorContext context)
         {
             if (context.referenceId == null)
-            {
-                // variable not found
+            // variable not found
                 return;
-            }
 
-            VariableSelector vs = new VariableSelector();
+            VariableSelector vs = new VariableSelector(null);
             vs.AddRange(context._i.Select(selElement => selElement.selRet));
             if (!vs.Any()) return;
 
             if (context.referenceId.Type.Type.HasFlag(BaseTypes.Simple))
             {
-                parser.NotifyErrorListeners(context.start, "Simple variables or constants do not allow any selector", null);
+                _parser.NotifyErrorListeners(context.start, "Simple variables or constants do not allow any selector", null);
                 return;
             }
 
@@ -381,20 +363,13 @@ namespace Oberon0.Compiler
             foreach (var v in vs)
             {
                 if (type == null)
-                {
-                    // there has been an error before (wrong index, ...). Therefore we just pass out without setting vsRet
+                // there has been an error before (wrong index, ...). Therefore we just pass out without setting vsRet
                     return;
-                }
 
                 v.BasicTypeDefinition = baseType;
                 if (v is IdentifierSelector selector)
-                {
-                    selector.TypeDefinition = type = this.CheckRecordSelector(selector, type);
-                }
-                else if (v is IndexSelector indexSelector)
-                {
-                    indexSelector.TypeDefinition = type = this.CheckArrayIndexSelector(indexSelector, type);
-                }
+                    selector.TypeDefinition = type = CheckRecordSelector(selector, type);
+                else if (v is IndexSelector indexSelector) indexSelector.TypeDefinition = type = CheckArrayIndexSelector(indexSelector, type);
             }
 
             vs.SelectorResultType = type;
@@ -403,11 +378,11 @@ namespace Oberon0.Compiler
 
         public override void ExitSimpleTypeName(OberonGrammarParser.SimpleTypeNameContext context)
         {
-            var type = this.parser.currentBlock.LookupType(context.ID().GetText());
+            var type = _parser.currentBlock.LookupType(context.ID().GetText());
             if (type == null)
             {
-                this.parser.NotifyErrorListeners(context.ID().Symbol, "Type not known", null);
-                context.returnType = this.parser.currentBlock.LookupType(TypeDefinition.VoidTypeName);
+                _parser.NotifyErrorListeners(context.ID().Symbol, "Type not known", null);
+                context.returnType = _parser.currentBlock.LookupType(TypeDefinition.VoidTypeName);
             }
             else
             {
@@ -418,46 +393,41 @@ namespace Oberon0.Compiler
         public override void ExitSingleTypeDeclaration(OberonGrammarParser.SingleTypeDeclarationContext context)
         {
             string name = context.id.Text;
-            TypeDefinition t = this.parser.currentBlock.LookupType(name);
+            TypeDefinition t = _parser.currentBlock.LookupType(name);
             if (t != null)
             {
-                this.parser.NotifyErrorListeners(context.id, $"Type {name} declared twice", null);
+                _parser.NotifyErrorListeners(context.id, $"Type {name} declared twice", null);
                 return;
             }
 
             // create the final type
             t = context.t.returnType.Clone(name);
             t.Exportable = context.export != null;
-            this.CheckExportable(context.export, t.Exportable);
+            CheckExportable(context.export, t.Exportable);
 
-            this.parser.currentBlock.Types.Add(t);
+            _parser.currentBlock.Types.Add(t);
         }
 
         public override void ExitSingleVariableDeclaration(OberonGrammarParser.SingleVariableDeclarationContext context)
         {
             foreach (var token in context._v)
-            {
-                if (this.parser.currentBlock.LookupVar(token.ID().GetText(), false) != null)
+                if (_parser.currentBlock.LookupVar(token.ID().GetText(), false) != null)
                 {
-                    this.parser.NotifyErrorListeners(token.Start, "Variable declared twice", null);
+                    _parser.NotifyErrorListeners(token.Start, "Variable declared twice", null);
                 }
                 else
                 {
                     var declaration = new Declaration(
                         token.ID().GetText(),
                         context.t.returnType,
-                        this.parser.currentBlock) { Exportable = token.export != null };
+                        _parser.currentBlock) { Exportable = token.export != null };
 
-                    this.CheckExportable(token.export, declaration.Exportable);
+                    CheckExportable(token.export, declaration.Exportable);
 
-                    if (declaration.Exportable && !(context.t.returnType.Exportable || context.t.returnType.IsInternal))
-                    {
-                        this.parser.NotifyErrorListeners(token.export, $"Non-basic type ({context.t.returnType}) need to be exportable if used on exportable elements.", null);
-                    }
+                    if (declaration.Exportable && !(context.t.returnType.Exportable || context.t.returnType.IsInternal)) _parser.NotifyErrorListeners(token.export, $"Non-basic type ({context.t.returnType}) need to be exportable if used on exportable elements.", null);
 
-                    this.parser.currentBlock.Declarations.Add(declaration);
+                    _parser.currentBlock.Declarations.Add(declaration);
                 }
-            }
         }
 
         public override void ExitWhile_statement(OberonGrammarParser.While_statementContext context)
@@ -465,7 +435,7 @@ namespace Oberon0.Compiler
             var r = context.r.expReturn;
             if (r.TargetType != SimpleTypeDefinition.BoolType)
             {
-                this.parser.NotifyErrorListeners(
+                _parser.NotifyErrorListeners(
                     context.r.start,
                     "The condition needs to return a logical condition",
                     null);
@@ -473,47 +443,40 @@ namespace Oberon0.Compiler
             }
 
             context.ws.Condition = r;
-            this.parser.currentBlock.Statements.Add(context.ws);
+            _parser.currentBlock.Statements.Add(context.ws);
         }
 
         public override void ExitImportDefinition(OberonGrammarParser.ImportDefinitionContext context)
         {
             var moduleName = context.id.Text;
-            if (this.parser.module.ExternalReferences.Any(x => x.GetName().Name == moduleName))
-            {
-                this.parser.NotifyErrorListeners(context.id, $"Module {moduleName} has already been imported", null);
-            }
+            if (_parser.module.ExternalReferences.Any(x => x.GetName().Name == moduleName)) _parser.NotifyErrorListeners(context.id, $"Module {moduleName} has already been imported", null);
 
             //TODO: Load Module
         }
 
         public override void ExitModuleDefinition(OberonGrammarParser.ModuleDefinitionContext context)
         {
-            if (this.parser.module.Name != null && (this.parser.module.Name != context.rId.ret?.Text))
-            {
-                parser.NotifyErrorListeners(context.rId.start, "The name of the module does not match the end node", null);
-            }
+            if (_parser.module.Name != null && _parser.module.Name != context.rId.ret?.Text) _parser.NotifyErrorListeners(context.rId.start, "The name of the module does not match the end node", null);
 
-            this.parser.module.HasExports = this.parser.module.Block.Declarations.Any(x => x.Exportable)
-                                            || this.parser.module.Block.Procedures.Any(x => x.Exportable)
-                                            || this.parser.module.Block.Types.Any(x => x.Exportable);
+            _parser.module.HasExports = _parser.module.Block.Declarations.Any(x => x.Exportable)
+                                        || _parser.module.Block.Procedures.Any(x => x.Exportable)
+                                        || _parser.module.Block.Types.Any(x => x.Exportable);
         }
 
         private TypeDefinition CheckArrayIndexSelector(
             IndexSelector indexSelector,
             TypeDefinition type)
         {
-            var arrayType = type as ArrayTypeDefinition;
-            if (arrayType == null)
+            if (!(type is ArrayTypeDefinition arrayType))
             {
-                this.parser.NotifyErrorListeners(indexSelector.Token, "Array reference expected", null);
+                _parser.NotifyErrorListeners(indexSelector.Token, "Array reference expected", null);
                 return SimpleTypeDefinition.IntType;
             }
 
-            indexSelector.IndexDefinition = ConstantSolver.Solve(indexSelector.IndexDefinition, this.parser.currentBlock);
+            indexSelector.IndexDefinition = ConstantSolver.Solve(indexSelector.IndexDefinition, _parser.currentBlock);
             if (indexSelector.IndexDefinition.TargetType.Type != BaseTypes.Int)
             {
-                this.parser.NotifyErrorListeners(indexSelector.Token, "Array reference must be INTEGER", null);
+                _parser.NotifyErrorListeners(indexSelector.Token, "Array reference must be INTEGER", null);
                 return SimpleTypeDefinition.IntType;
             }
 
@@ -523,7 +486,7 @@ namespace Oberon0.Compiler
                 int index = ce.ToInt32();
                 if (index < 1 || index > arrayType.Size)
                 {
-                    this.parser.NotifyErrorListeners(indexSelector.Token, "Array index out of bounds", null);
+                    _parser.NotifyErrorListeners(indexSelector.Token, "Array index out of bounds", null);
                     return SimpleTypeDefinition.IntType;
                 }
             }
@@ -533,15 +496,13 @@ namespace Oberon0.Compiler
 
         private TypeDefinition CheckRecordSelector(IdentifierSelector identifierSelector, TypeDefinition type)
         {
-            var recordType = type as RecordTypeDefinition;
-            if (recordType == null)
+            if (!(type is RecordTypeDefinition recordType))
             {
-                this.parser.NotifyErrorListeners(identifierSelector.Token, "Record reference expected", null);
+                _parser.NotifyErrorListeners(identifierSelector.Token, "Record reference expected", null);
                 return SimpleTypeDefinition.IntType;
             }
 
             foreach (Declaration declaration in recordType.Elements)
-            {
                 if (declaration.Name == identifierSelector.Name)
                 {
                     identifierSelector.Element = declaration;
@@ -549,18 +510,14 @@ namespace Oberon0.Compiler
                     // found
                     return declaration.Type;
                 }
-            }
 
-            this.parser.NotifyErrorListeners(identifierSelector.Token, "Element not found in underlying type", null);
+            _parser.NotifyErrorListeners(identifierSelector.Token, "Element not found in underlying type", null);
             return SimpleTypeDefinition.IntType;
         }
 
         private void CheckExportable(IToken exportElement, bool isExportable, bool checkParent = false)
         {
-            if (isExportable && ((this.parser.currentBlock.Parent != null && !checkParent) || (checkParent && this.parser.currentBlock.Parent?.Parent != null)))
-            {
-                this.parser.NotifyErrorListeners(exportElement, "Exportable elements can only be defined as global", null);
-            }
+            if (isExportable && (_parser.currentBlock.Parent != null && !checkParent || checkParent && _parser.currentBlock.Parent?.Parent != null)) _parser.NotifyErrorListeners(exportElement, "Exportable elements can only be defined as global", null);
         }
     }
 }

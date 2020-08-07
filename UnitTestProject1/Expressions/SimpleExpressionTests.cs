@@ -1,33 +1,26 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SimpleExpressionTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler.Tests/SimpleExpressionTests.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
+using NUnit.Framework;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Expressions.Constant;
+using Oberon0.Compiler.Solver;
+
 namespace Oberon0.Compiler.Tests.Expressions
 {
-    using System;
-
-    using NUnit.Framework;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Expressions;
-    using Oberon0.Compiler.Expressions.Constant;
-    using Oberon0.Compiler.Solver;
-
     [TestFixture]
     public class SimpleExpressionTests
     {
         [Test]
         public void ExpressionAdd1()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.PLUS,
                 ConstantExpression.Create(1),
@@ -40,9 +33,24 @@ namespace Oberon0.Compiler.Tests.Expressions
         }
 
         [Test]
+        public void ExpressionAdd2()
+        {
+            var m = new Module(null);
+            var e = BinaryExpression.Create(
+                OberonGrammarLexer.PLUS,
+                ConstantExpression.Create(1),
+                ConstantExpression.Create(1.42),
+                m.Block,
+                null);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(2.42, result.ToDouble());
+        }
+
+        [Test]
         public void ExpressionAddRes0()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.PLUS,
                 ConstantExpression.Create(1),
@@ -59,24 +67,24 @@ namespace Oberon0.Compiler.Tests.Expressions
         }
 
         [Test]
-        public void ExpressionAdd2()
+        public void ExpressionAnd()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
-                OberonGrammarLexer.PLUS,
-                ConstantExpression.Create(1),
-                ConstantExpression.Create(1.42),
+                OberonGrammarLexer.AND,
+                ConstantExpression.Create(false),
+                ConstantExpression.Create("true"),
                 m.Block,
                 null);
-            var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.IsNotNull(result);
-            Assert.AreEqual(2.42, result.ToDouble());
+            Assert.AreEqual(false, result.ToBool());
         }
 
         [Test]
         public void ExpressionDiv0()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create("10.0"),
@@ -91,7 +99,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Test]
         public void ExpressionDiv1()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create(10),
@@ -106,7 +114,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Test]
         public void ExpressionDiv2()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create(10),
@@ -121,7 +129,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Test]
         public void ExpressionDiv3()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create("10.0"),
@@ -134,9 +142,16 @@ namespace Oberon0.Compiler.Tests.Expressions
         }
 
         [Test]
+        public void ExpressionInvalidConst()
+        {
+            var ex = Assert.Throws<InvalidOperationException>(() => ConstantExpression.Create("Test"));
+            Assert.AreEqual("Unknown constant 'Test'", ex.Message);
+        }
+
+        [Test]
         public void ExpressionMod()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.MOD,
                 ConstantExpression.Create(10),
@@ -151,7 +166,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Test]
         public void ExpressionMod2()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.MOD,
                 ConstantExpression.Create(10.5),
@@ -166,7 +181,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Test]
         public void ExpressionMult1()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.STAR,
                 ConstantExpression.Create(6),
@@ -181,7 +196,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Test]
         public void ExpressionMult2()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.STAR,
                 ConstantExpression.Create(6.1),
@@ -196,7 +211,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Test]
         public void ExpressionSub1()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.MINUS,
                 ConstantExpression.Create(1),
@@ -211,7 +226,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Test]
         public void ExpressionSub2()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.MINUS,
                 ConstantExpression.Create(1.5),
@@ -221,28 +236,6 @@ namespace Oberon0.Compiler.Tests.Expressions
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.IsNotNull(result);
             Assert.AreEqual(0.5, result.ToDouble());
-        }
-
-        [Test]
-        public void ExpressionAnd()
-        {
-            var m = new Module();
-            var e = BinaryExpression.Create(
-                OberonGrammarLexer.AND,
-                ConstantExpression.Create(false),
-                ConstantExpression.Create("true"),
-                m.Block,
-                null);
-            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(false, result.ToBool());
-        }
-
-        [Test]
-        public void ExpressionInvalidConst()
-        {
-            var ex = Assert.Throws<InvalidOperationException>(() => ConstantExpression.Create("Test"));
-            Assert.AreEqual("Unknown constant 'Test'", ex.Message);
         }
     }
 }

@@ -1,50 +1,37 @@
 #region copyright
-
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Block.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/Block.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
-
 #endregion
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Antlr4.Runtime;
+using JetBrains.Annotations;
+using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Generator;
+using Oberon0.Compiler.Statements;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Antlr4.Runtime;
-
-    using JetBrains.Annotations;
-
-    using Oberon0.Compiler.Expressions;
-    using Oberon0.Compiler.Generator;
-    using Oberon0.Compiler.Statements;
-    using Oberon0.Compiler.Types;
-
     public class Block
     {
-        public Block(Block parent)
+        public Block(Block parent, Module module)
         {
-            this.InitLists();
-            this.Parent = parent;
+            Module = module;
+            InitLists();
+            Parent = parent;
         }
+
+        public Module Module { get; }
 
         public List<Declaration> Declarations { get; private set; }
 
-        /// <summary>
-        /// Gets or sets additional information used by the generator engine
-        /// </summary>
-        /// <value>Generator information.</value>
-        [UsedImplicitly]
-        public IGeneratorInfo GeneratorInfo { get; set; }
 
-        public Block Parent { get; set; }
+        public Block Parent { get; }
 
         public List<FunctionDeclaration> Procedures { get; private set; }
 
@@ -80,7 +67,7 @@ namespace Oberon0.Compiler.Definitions
                 var res = b.Procedures.Where(x => x.Name == procedureName);
                 foreach (FunctionDeclaration func in res)
                 {
-                    var newScore = this.FunctionParameterMatch(func, callParameters);
+                    var newScore = FunctionParameterMatch(func, callParameters);
 
                     if (newScore <= score) continue;
 
@@ -88,10 +75,7 @@ namespace Oberon0.Compiler.Definitions
                     score = newScore;
                 }
 
-                if (score >= 0)
-                {
-                    break; // found
-                }
+                if (score >= 0) break; // found
 
                 b = b.Parent;
             }
@@ -109,7 +93,7 @@ namespace Oberon0.Compiler.Definitions
                     procedureName,
                     returnType,
                     parameterList.ToArray());
-                Oberon0Compiler.Instance.Parser.NotifyErrorListeners(
+                Module.CompilerInstance.Parser.NotifyErrorListeners(
                     token,
                     $"No procedure/function with prototype '{prototype}' found",
                     null);
@@ -144,10 +128,7 @@ namespace Oberon0.Compiler.Definitions
             Block b = this;
 
             // internal types are only available on level 0
-            while (b.Parent != null)
-            {
-                b = b.Parent;
-            }
+            while (b.Parent != null) b = b.Parent;
 
             var res = b.Types.FirstOrDefault(x => x.Type == baseTypes && x.IsInternal);
             return res;
@@ -160,7 +141,7 @@ namespace Oberon0.Compiler.Definitions
         /// <returns><see cref="Declaration"/>.</returns>
         internal Declaration LookupVar(string name)
         {
-            return this.LookupVar(name, true);
+            return LookupVar(name, true);
         }
 
         /// <summary>
@@ -177,10 +158,7 @@ namespace Oberon0.Compiler.Definitions
                 var res = b.Declarations.FirstOrDefault(x => x.Name == name);
                 if (res != null)
                     return res;
-                if (!lookupParents)
-                {
-                    return null; // nothing in local env
-                }
+                if (!lookupParents) return null; // nothing in local env
 
                 b = b.Parent;
             }
@@ -193,22 +171,16 @@ namespace Oberon0.Compiler.Definitions
             var paramNo = 0;
             var score = 0;
             var procParams = func.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray();
-            if (parameters.Count != procParams.Length)
-            {
-                return -1; // will never match
-            }
+            if (parameters.Count != procParams.Length) return -1; // will never match
 
             foreach (var procedureParameter in procParams)
-            {
                 if (procedureParameter.IsVar)
                 {
                     if (parameters[paramNo].CanBeVarReference)
                     {
                         if (!procedureParameter.Type.Equals(parameters[paramNo].TargetType))
-                        {
                             // VAR parameter need to have the same type as calling parameter
                             return -1;
-                        }
 
                         score += 1000;
                     }
@@ -230,17 +202,16 @@ namespace Oberon0.Compiler.Definitions
                 {
                     score++; // match as assignable --> small increment
                 }
-            }
 
             return score;
         }
 
         private void InitLists()
         {
-            this.Declarations = new List<Declaration>();
-            this.Types = new List<TypeDefinition>();
-            this.Statements = new List<IStatement>();
-            this.Procedures = new List<FunctionDeclaration>();
+            Declarations = new List<Declaration>();
+            Types = new List<TypeDefinition>();
+            Statements = new List<IStatement>();
+            Procedures = new List<FunctionDeclaration>();
         }
     }
 }

@@ -1,29 +1,35 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ProcedureTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler.Tests/ProcedureTests.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Linq;
+using NUnit.Framework;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Statements;
+using Oberon0.Compiler.Types;
+using Oberon0.TestSupport;
+
 namespace Oberon0.Compiler.Tests
 {
-    using System.Linq;
-
-    using NUnit.Framework;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Statements;
-    using Oberon0.Compiler.Types;
-    using Oberon0.TestSupport;
-
     [TestFixture]
     public class ProcedureTests
     {
+        [Test]
+        public void FuncNotFoundError()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+VAR
+  a: INTEGER;
+BEGIN
+    a := NOTFOUND() 
+END Test.",
+                "No procedure/function with prototype 'NOTFOUND()' found");
+        }
+
         [Test]
         public void Proc1()
         {
@@ -75,73 +81,26 @@ END Test.");
         }
 
         [Test]
-        public void ProcDuplicateParameterFail()
+        public void ProcArrayCallByValue()
         {
             TestHelper.CompileString(
                 @"MODULE Test; 
-PROCEDURE Test1 (VAR a: INTEGER; a: INTEGER);
+VAR 
+    arr: ARRAY 5 OF INTEGER; 
 
-END Test1;
+    PROCEDURE TestArray(a: ARRAY 5 OF INTEGER);
+    BEGIN
+        IF (a[1] # 1) THEN WriteString('a is 0') END;
+        a[1] := 2
+    END TestArray;
 
+BEGIN
+    arr[1] := 1;
+    TestArray(arr);
+    WriteBool(arr[1] = 1);
+    WriteLn 
 END Test.",
-                "Duplicate parameter",
-                "Duplicate parameter");
-        }
-
-        [Test]
-        public void ProcLocalVar()
-        {
-            Module m = TestHelper.CompileString(
-                @"MODULE Test; 
-PROCEDURE TestProc;
-VAR 
-  x: INTEGER;
-BEGIN
-  x := 0;
-END TestProc;
-
-END Test.");
-            Assert.NotNull(m);
-            var proc = m.Block.LookupFunction("TestProc", null);
-            Assert.NotNull(proc);
-            Assert.AreEqual("TestProc", proc.Name);
-            Assert.AreEqual(0, proc.Block.Declarations.OfType<ProcedureParameterDeclaration>().Count());
-            Assert.AreEqual(1, proc.Block.Declarations.Count);
-            var x = m.Block.LookupVar("x");
-            Assert.IsNull(x);
-            x = proc.Block.LookupVar("x");
-            Assert.NotNull(x);
-            Assert.AreEqual(BaseTypes.Int, x.Type.Type);
-            Assert.AreEqual("x:INTEGER", x.ToString());
-        }
-
-        [Test]
-        public void ProcGlobalVar()
-        {
-            Module m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR 
-  x: INTEGER;
-PROCEDURE TestProc;
-BEGIN
-  x := 0;
-END TestProc;
-
-END Test.");
-            Assert.NotNull(m);
-            var proc = m.Block.LookupFunction("TestProc", null);
-            Assert.NotNull(proc);
-            Assert.AreEqual("TestProc", proc.Name);
-            Assert.AreEqual(0, proc.Block.Declarations.OfType<ProcedureParameterDeclaration>().Count());
-            Assert.AreEqual(0, proc.Block.Declarations.Count);
-            var x = proc.Block.LookupVar("x", false);
-            Assert.IsNull(x);
-            x = proc.Block.LookupVar("x");
-            Assert.NotNull(x);
-            x = m.Block.LookupVar("x");
-            Assert.NotNull(x);
-            Assert.AreEqual(BaseTypes.Int, x.Type.Type);
-            Assert.AreEqual("x:INTEGER", x.ToString());
+                "No procedure/function with prototype 'TestArray(INTEGER[5])' found");
         }
 
         [Test]
@@ -183,20 +142,73 @@ END Test.",
         }
 
         [Test]
-        public void ProcMissingEndName()
+        public void ProcDuplicateParameterFail()
         {
             TestHelper.CompileString(
+                @"MODULE Test; 
+PROCEDURE Test1 (VAR a: INTEGER; a: INTEGER);
+
+END Test1;
+
+END Test.",
+                "Duplicate parameter",
+                "Duplicate parameter");
+        }
+
+        [Test]
+        public void ProcGlobalVar()
+        {
+            Module m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR 
   x: INTEGER;
 PROCEDURE TestProc;
 BEGIN
   x := 0;
-END ;
+END TestProc;
 
-END Test.",
-                "missing ID at ';'",
-                "The name of the procedure does not match the name after END");
+END Test.");
+            Assert.NotNull(m);
+            var proc = m.Block.LookupFunction("TestProc", null);
+            Assert.NotNull(proc);
+            Assert.AreEqual("TestProc", proc.Name);
+            Assert.AreEqual(0, proc.Block.Declarations.OfType<ProcedureParameterDeclaration>().Count());
+            Assert.AreEqual(0, proc.Block.Declarations.Count);
+            var x = proc.Block.LookupVar("x", false);
+            Assert.IsNull(x);
+            x = proc.Block.LookupVar("x");
+            Assert.NotNull(x);
+            x = m.Block.LookupVar("x");
+            Assert.NotNull(x);
+            Assert.AreEqual(BaseTypes.Int, x.Type.Type);
+            Assert.AreEqual("x:INTEGER", x.ToString());
+        }
+
+        [Test]
+        public void ProcLocalVar()
+        {
+            Module m = TestHelper.CompileString(
+                @"MODULE Test; 
+PROCEDURE TestProc;
+VAR 
+  x: INTEGER;
+BEGIN
+  x := 0;
+END TestProc;
+
+END Test.");
+            Assert.NotNull(m);
+            var proc = m.Block.LookupFunction("TestProc", null);
+            Assert.NotNull(proc);
+            Assert.AreEqual("TestProc", proc.Name);
+            Assert.AreEqual(0, proc.Block.Declarations.OfType<ProcedureParameterDeclaration>().Count());
+            Assert.AreEqual(1, proc.Block.Declarations.Count);
+            var x = m.Block.LookupVar("x");
+            Assert.IsNull(x);
+            x = proc.Block.LookupVar("x");
+            Assert.NotNull(x);
+            Assert.AreEqual(BaseTypes.Int, x.Type.Type);
+            Assert.AreEqual("x:INTEGER", x.ToString());
         }
 
         [Test]
@@ -219,39 +231,20 @@ END Test.",
         }
 
         [Test]
-        public void ProcArrayCallByValue()
+        public void ProcMissingEndName()
         {
             TestHelper.CompileString(
                 @"MODULE Test; 
 VAR 
-    arr: ARRAY 5 OF INTEGER; 
-
-    PROCEDURE TestArray(a: ARRAY 5 OF INTEGER);
-    BEGIN
-        IF (a[1] # 1) THEN WriteString('a is 0') END;
-        a[1] := 2
-    END TestArray;
-
+  x: INTEGER;
+PROCEDURE TestProc;
 BEGIN
-    arr[1] := 1;
-    TestArray(arr);
-    WriteBool(arr[1] = 1);
-    WriteLn 
-END Test.",
-                "No procedure/function with prototype 'TestArray(INTEGER[5])' found");
-        }
+  x := 0;
+END ;
 
-        [Test]
-        public void FuncNotFoundError()
-        {
-            TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  a: INTEGER;
-BEGIN
-    a := NOTFOUND() 
 END Test.",
-                "No procedure/function with prototype 'NOTFOUND()' found");
+                "missing ID at ';'",
+                "The name of the procedure does not match the name after END");
         }
     }
 }

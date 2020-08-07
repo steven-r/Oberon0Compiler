@@ -1,36 +1,20 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ExportTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler.Tests/ExportTests.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using NUnit.Framework;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
+using Oberon0.TestSupport;
+
 namespace Oberon0.Compiler.Tests.Exports
 {
-    using NUnit.Framework;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Types;
-    using Oberon0.TestSupport;
-
     [TestFixture]
     public class ExportTests
     {
-        [Test]
-        public void ModuleExportTest()
-        {
-            Module m = TestHelper.CompileString(
-                @"MODULE Test;
-
-END Test.");
-            Assert.IsFalse(m.HasExports);
-        }
-
         [Test]
         public void ModuleExportConst()
         {
@@ -54,6 +38,76 @@ END Test.");
             cp = (ConstDeclaration)c;
             Assert.IsFalse(cp.Exportable);
             Assert.IsTrue(m.HasExports);
+        }
+
+        [Test]
+        public void ModuleExportGlobalFail()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test;
+PROCEDURE TestProc(VAR x*: INTEGER);
+BEGIN
+END TestProc;
+
+END Test.",
+                "no viable alternative at input 'VARx*'",
+                "extraneous input ')' expecting ';'",
+                "Exportable elements can only be defined as global");
+        }
+
+        [Test]
+        public void ModuleExportGlobalFailConst()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test;
+PROCEDURE TestProc;
+CONST
+    x* = 21;
+BEGIN
+END TestProc;
+
+END Test.",
+                "Exportable elements can only be defined as global");
+        }
+
+        [Test]
+        public void ModuleExportGlobalFailType()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test;
+PROCEDURE TestProc;
+TYPE
+    t* = INTEGER;
+BEGIN
+END TestProc;
+
+END Test.",
+                "Exportable elements can only be defined as global");
+        }
+
+        [Test]
+        public void ModuleExportGlobalFailVar()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test;
+PROCEDURE TestProc;
+VAR
+    x*: INTEGER;
+BEGIN
+END TestProc;
+
+END Test.",
+                "Exportable elements can only be defined as global");
+        }
+
+        [Test]
+        public void ModuleExportTest()
+        {
+            Module m = TestHelper.CompileString(
+                @"MODULE Test;
+
+END Test.");
+            Assert.IsFalse(m.HasExports);
         }
 
         [Test]
@@ -83,6 +137,24 @@ END Test.");
             Assert.IsInstanceOf<TypeDefinition>(t);
             Assert.IsFalse(t.Exportable);
             Assert.IsTrue(m.HasExports);
+        }
+
+        [Test]
+        public void ModuleExportTypeExportCheck()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test;
+TYPE
+  TestType = INTEGER;
+  ExportType* = INTEGER;
+
+VAR
+  TestVar* : TestType;
+  TestVar2* : ExportType;
+  ExportVar2* : INTEGER;
+
+END Test.",
+                "Non-basic type (TestType) need to be exportable if used on exportable elements.");
         }
 
         [Test]
@@ -121,84 +193,6 @@ END Test.");
             Assert.IsNotNull(c);
             Assert.IsFalse(c.Exportable);
             Assert.IsTrue(m.HasExports);
-        }
-
-        [Test]
-        public void ModuleExportTypeExportCheck()
-        {
-            TestHelper.CompileString(
-                @"MODULE Test;
-TYPE
-  TestType = INTEGER;
-  ExportType* = INTEGER;
-
-VAR
-  TestVar* : TestType;
-  TestVar2* : ExportType;
-  ExportVar2* : INTEGER;
-
-END Test.",
-                "Non-basic type (TestType) need to be exportable if used on exportable elements.");
-        }
-
-        [Test]
-        public void ModuleExportGlobalFail()
-        {
-            TestHelper.CompileString(
-                @"MODULE Test;
-PROCEDURE TestProc(VAR x*: INTEGER);
-BEGIN
-END TestProc;
-
-END Test.",
-                "no viable alternative at input 'VARx*'",
-                "extraneous input ')' expecting ';'",
-                "Exportable elements can only be defined as global");
-        }
-
-        [Test]
-        public void ModuleExportGlobalFailVar()
-        {
-            TestHelper.CompileString(
-                @"MODULE Test;
-PROCEDURE TestProc;
-VAR
-    x*: INTEGER;
-BEGIN
-END TestProc;
-
-END Test.",
-                "Exportable elements can only be defined as global");
-        }
-
-        [Test]
-        public void ModuleExportGlobalFailType()
-        {
-            TestHelper.CompileString(
-                @"MODULE Test;
-PROCEDURE TestProc;
-TYPE
-    t* = INTEGER;
-BEGIN
-END TestProc;
-
-END Test.",
-                "Exportable elements can only be defined as global");
-        }
-
-        [Test]
-        public void ModuleExportGlobalFailConst()
-        {
-            TestHelper.CompileString(
-                @"MODULE Test;
-PROCEDURE TestProc;
-CONST
-    x* = 21;
-BEGIN
-END TestProc;
-
-END Test.",
-                "Exportable elements can only be defined as global");
         }
 
         [Test]

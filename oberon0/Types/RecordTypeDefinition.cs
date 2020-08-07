@@ -1,22 +1,15 @@
 #region copyright
-
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RecordTypeDefinition.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/RecordTypeDefinition.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+#endregion
 
-#endregion copyright
+using System.Collections.Generic;
+using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Compiler.Types
 {
-    using Oberon0.Compiler.Definitions;
-    using System.Collections.Generic;
-
     public class RecordTypeDefinition : TypeDefinition
     {
         public RecordTypeDefinition()
@@ -43,16 +36,11 @@ namespace Oberon0.Compiler.Types
 
         public override bool IsAssignable(TypeDefinition sourceType)
         {
-            if (!(sourceType is RecordTypeDefinition rt))
-            {
-                return false;
-            }
+            if (!(sourceType is RecordTypeDefinition rt)) return false;
 
-            if ((Name == null || sourceType.Name == null)
-                || (Elements.Count != rt.Elements.Count))
-            {
+            if (Name == null || sourceType.Name == null
+                             || Elements.Count != rt.Elements.Count)
                 return false;
-            }
 
             return Name == sourceType.Name;
         }

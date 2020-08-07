@@ -1,23 +1,16 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FunctionCallExpression.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/FunctionCallExpression.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Collections.Generic;
+using Antlr4.Runtime;
+using Oberon0.Compiler.Definitions;
+
 namespace Oberon0.Compiler.Expressions
 {
-    using System.Collections.Generic;
-
-    using Antlr4.Runtime;
-
-    using Oberon0.Compiler.Definitions;
-
     public class FunctionCallExpression : Expression
     {
 #pragma warning disable CS3001 // Argument type is not CLS-compliant

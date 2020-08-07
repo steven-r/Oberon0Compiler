@@ -1,25 +1,19 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Module.StandardFunctions.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/Module.StandardFunctions.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
+using System.Reflection;
+using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Expressions.Constant;
+using Oberon0.Compiler.Types;
+using Oberon0System.Attributes;
+
 namespace Oberon0.Compiler.Definitions
 {
-    using System;
-    using System.Reflection;
-
-    using Oberon0.Attributes;
-    using Oberon0.Compiler.Expressions;
-    using Oberon0.Compiler.Expressions.Constant;
-    using Oberon0.Compiler.Types;
-
     /// <summary>
     /// The module.
     /// </summary>
@@ -42,10 +36,7 @@ namespace Oberon0.Compiler.Definitions
 
             var paramName = "attr" + i;
             TypeDefinition td = this.Block.LookupType(paramType);
-            if (td == null)
-            {
-                throw new InvalidOperationException($"type {attr.Parameters[i]} not found");
-            }
+            if (td == null) throw new InvalidOperationException($"type {attr.Parameters[i]} not found");
 
             procParameters[i] = new ProcedureParameterDeclaration(paramName, this.Block, td, isVar);
         }
@@ -124,15 +115,8 @@ namespace Oberon0.Compiler.Definitions
             }
 
             if (asm != null)
-            {
-                foreach (Type type in asm.GetExportedTypes())
-                {
-                    if (type.GetCustomAttribute<Oberon0LibraryAttribute>() != null)
-                    {
-                        this.LoadLibraryMembers(type);
-                    }
-                }
-            }
+                foreach (var type in asm.GetExportedTypes())
+                    if (type.GetCustomAttribute<Oberon0LibraryAttribute>() != null) LoadLibraryMembers(type);
         }
 
         private void DeclareStandardTypes()
@@ -162,24 +146,15 @@ namespace Oberon0.Compiler.Definitions
             {
                 var attr = method.GetCustomAttribute<Oberon0ExportAttribute>();
                 if (attr == null) continue; // this method is not officially exported
-                if (!method.IsStatic)
-                {
-                    throw new InvalidOperationException("method not static");
-                }
+                if (!method.IsStatic) throw new InvalidOperationException("method not static");
 
                 var rt = this.Block.LookupType(attr.ReturnType);
-                if (rt == null)
-                {
-                    throw new InvalidOperationException($"return type {attr.ReturnType} not found");
-                }
+                if (rt == null) throw new InvalidOperationException($"return type {attr.ReturnType} not found");
 
                 ProcedureParameterDeclaration[] procParameters = new ProcedureParameterDeclaration[attr.Parameters.Length];
-                for (int i = 0; i < attr.Parameters.Length; i++)
-                {
-                    this.AddParameters(attr, i, procParameters);
-                }
+                for (int i = 0; i < attr.Parameters.Length; i++) this.AddParameters(attr, i, procParameters);
 
-                var fd = new ExternalFunctionDeclaration(attr.Name, new Block(this.Block), rt, method, procParameters);
+                var fd = new ExternalFunctionDeclaration(attr.Name, new Block(this.Block, this), rt, method, procParameters);
                 this.Block.Procedures.Add(fd);
             }
 

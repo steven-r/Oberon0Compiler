@@ -1,29 +1,29 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Oberon0ExportAttribute.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0.System/Oberon0ExportAttribute.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-namespace Oberon0.Attributes
+using System;
+using JetBrains.Annotations;
+
+namespace Oberon0System.Attributes
 {
-    using System;
-
-    using JetBrains.Annotations;
-
     /// <summary>
     /// Declare a library export for the Oberon0 language
     /// </summary>
-    /// <seealso cref="System.Attribute" />
+    /// <seealso cref="Attribute" />
     [AttributeUsage(AttributeTargets.Method)]
     [UsedImplicitly]
     public class Oberon0ExportAttribute : Attribute
     {
+        /// <summary>
+        /// Attribute being used to lookup library functions
+        /// </summary>
+        /// <param name="name">The name of the function</param>
+        /// <param name="returnType">The return type (Oberon0-Notation)</param>
+        /// <param name="parameters">list of types (oberon0 notation) describing the parameters. Reference parameters are noted with a beginning ampersand (e.g. <code>&amp;INTEGER</code>)</param>
         public Oberon0ExportAttribute([NotNull] string name, [NotNull] string returnType, params string[] parameters)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -31,10 +31,19 @@ namespace Oberon0.Attributes
             Parameters = parameters;
         }
 
+        /// <summary>
+        /// Gets the name of the function
+        /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        /// Gets the parameter list (can be empty)
+        /// </summary>
         public string[] Parameters { get; }
 
+        /// <summary>
+        /// Gets the return type
+        /// </summary>
         public string ReturnType { get; }
     }
 }

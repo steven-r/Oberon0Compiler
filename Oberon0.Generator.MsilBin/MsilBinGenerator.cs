@@ -1,0 +1,197 @@
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
+
+using System.Data;
+using System.IO;
+using System.Linq;
+using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
+using Oberon0.Generator.MsilBin.PredefinedFunctions;
+using Oberon0.Shared;
+
+namespace Oberon0.Generator.MsilBin
+{
+    /// <summary>
+    /// Generator for MSIL output using Roslyn
+    /// </summary>
+    public partial class MsilBinGenerator : ICodeGenerator
+    {
+        private ClassDeclarationSyntax _classDeclaration;
+        private CompilationUnitSyntax _compiledCode;
+        private int _internalCount;
+        private NamespaceDeclarationSyntax _namespace;
+
+        /// <summary>
+        /// The main class being generated (usually <code>Oberon0.{module name}</code>)
+        /// </summary>
+        public string MainClassName { get; set; }
+
+        /// <summary>
+        /// The name space for the main class (to be used for integration and testing)
+        /// </summary>
+        public string MainClassNamespace { get; set; }
+
+        /// <summary>
+        /// The used compiler module
+        /// </summary>
+        public Module Module { get; set; }
+
+        /// <summary>
+        /// Dump generated code as string
+        /// </summary>
+        /// <returns>a (hopefully) compilable string</returns>
+        public string DumpCode()
+        {
+            return _compiledCode.ToFullString();
+        }
+
+        /// <summary>
+        /// Dump generated code to a <see cref="TextWriter"/>
+        /// </summary>
+        /// <param name="writer">The TextWriter to write to</param>
+        public void DumpCode(TextWriter writer)
+        {
+            _compiledCode.WriteTo(writer);
+        }
+
+        /// <summary>
+        /// Start code generation
+        /// </summary>
+        public void Generate()
+        {
+            if (Module == null) throw new DataException("Please set Module before calling Generate()");
+            StandardFunctionRepository.Initialize(Module);
+
+            _compiledCode = SyntaxFactory.CompilationUnit();
+
+            MainClassNamespace = "Oberon0." + Module.Name;
+            MainClassName = Module.Name + "__Impl";
+
+            // Create a namespace: (namespace CodeGenerationSample)
+            _namespace = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(MainClassNamespace))
+                .NormalizeWhitespace();
+
+            // Add System using statement: (using System)
+            _namespace = _namespace.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")),
+                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("AnyClone")));
+
+            GenerateClass();
+
+            _namespace = _namespace.AddMembers(_classDeclaration);
+
+            _compiledCode = _compiledCode.AddMembers(_namespace).NormalizeWhitespace();
+        }
+
+        private void GenerateClass()
+        {
+            _classDeclaration = SyntaxFactory.ClassDeclaration(MainClassName);
+
+            // Add the public modifier: (public class Order)
+            _classDeclaration = _classDeclaration.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+
+            ProcessMainBlock(Module.Block);
+        }
+
+        private MethodDeclarationSyntax GenerateFunctionOrProcedure(FunctionDeclaration functionDeclaration)
+        {
+            GenerateComplexTypeMappings(functionDeclaration.Block);
+            MethodDeclarationSyntax function = StartFunction(functionDeclaration);
+
+            var statements =
+                new SyntaxList<StatementSyntax>(GenerateLocalDefinitions(functionDeclaration));
+            statements = GenerateBlockStatements(functionDeclaration.Block, statements);
+            function = function.WithBody(
+                SyntaxFactory.Block(statements));
+            return function;
+        }
+
+        private void ProcessMainBlock(Block block)
+        {
+            _classDeclaration = GenerateRecordDeclarations(_classDeclaration, block);
+            GenerateComplexTypeMappings(block);
+
+            // declarations
+            foreach (var declaration in block.Declarations)
+            {
+                if (declaration is ProcedureParameterDeclaration) continue;
+                _classDeclaration = _classDeclaration.AddMembers(GenerateFieldDeclaration(declaration, false));
+            }
+
+            // add functions/procedures
+            foreach (var functionDeclaration in block.Procedures)
+            {
+                // ignore system and external libraries
+                if (functionDeclaration.IsInternal || functionDeclaration is ExternalFunctionDeclaration)
+                    continue;
+                var function = GenerateFunctionOrProcedure(functionDeclaration);
+                _classDeclaration = _classDeclaration.AddMembers(function);
+            }
+
+            var mainBlock = new Block(block, Module);
+            mainBlock.Statements.AddRange(block.Statements);
+            var mainFuncDecl = new FunctionDeclaration("__MAIN__" + Module.Name, mainBlock, SimpleTypeDefinition.VoidType, null);
+            _classDeclaration = _classDeclaration.AddMembers(GenerateFunctionOrProcedure(mainFuncDecl));
+
+            _classDeclaration = _classDeclaration.AddMembers(SyntaxFactory.MethodDeclaration(
+                    SyntaxFactory.PredefinedType(
+                        SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                    MapIdentifier("Main"))
+                .WithModifiers(
+                    SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                        SyntaxFactory.Token(SyntaxKind.StaticKeyword)))
+                .WithBody(
+                    SyntaxFactory.Block(
+                        SyntaxFactory.SingletonList<StatementSyntax>(
+                            SyntaxFactory.ExpressionStatement(
+                                SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        SyntaxFactory.ObjectCreationExpression(
+                                                MapIdentifierName(MainClassName))
+                                            .WithArgumentList(
+                                                SyntaxFactory.ArgumentList()),
+                                        MapIdentifierName("__MAIN__" + Module.Name))))))));
+        }
+
+        /**
+         * start a new procedure/function
+         */
+        private static MethodDeclarationSyntax StartFunction([NotNull] FunctionDeclaration functionDeclaration)
+        {
+            var method =
+                SyntaxFactory.MethodDeclaration(GetTypeName(functionDeclaration.ReturnType), functionDeclaration.Name);
+
+            if (!functionDeclaration.Block.Declarations.Any(x => x is ProcedureParameterDeclaration)) return method;
+
+            var list = new SyntaxNodeOrTokenList();
+            var first = true;
+            foreach (var declaration in functionDeclaration.Block.Declarations.OfType<ProcedureParameterDeclaration>())
+            {
+                if (!first) list = list.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+
+                first = false;
+                var param = SyntaxFactory.Parameter(MapIdentifier(declaration.Name))
+                    .WithType(AddTypeSyntaxSpecification(declaration));
+                if (declaration.IsVar)
+                    param = param.WithModifiers(SyntaxFactory.TokenList(
+                        SyntaxFactory.Token(SyntaxKind.RefKeyword)));
+
+                list = list.Add(param);
+            }
+
+            if (list.Any())
+                method = method.WithParameterList(SyntaxFactory.ParameterList(
+                    SyntaxFactory.SeparatedList<ParameterSyntax>(list)));
+
+            return method;
+        }
+    }
+}

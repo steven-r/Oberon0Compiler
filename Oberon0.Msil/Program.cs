@@ -1,39 +1,31 @@
 ﻿#region copyright
-
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0.Msil/Program.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+#endregion
 
-#endregion copyright
+using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.CommandLine.Parsing;
+using System.IO;
+using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Oberon0.Compiler;
+using Oberon0.Generator.MsilBin;
+using Oberon0.Shared;
 
 namespace Oberon0.Msil
 {
-    using CommandLine;
-    using ILRepacking;
-    using JetBrains.Annotations;
-    using Oberon0.Compiler;
-    using Oberon0.Generator.Msil;
-    using System;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Reflection;
-    using System.Text;
-    using Module = Compiler.Definitions.Module;
-
     /// <summary>
     /// The program.
     /// </summary>
+    [UsedImplicitly]
     public class Program
     {
-        private static string tempPath;
-
-        private static string fileName;
+        private static string _fileName;
 
         /// <summary>
         /// The main.
@@ -46,219 +38,59 @@ namespace Oberon0.Msil
         /// </returns>
         public static int Main(string[] args)
         {
-            int retCode = 0;
-            Parser.Default.ParseArguments<Options>(args)
-                .WithParsed((options) =>
-                    {
-                        retCode = StartCompile(options);
-                    });
-            return retCode;
+            var rootCommand = new RootCommand("Compile an Oberon0 source file.")
+            {
+                new Option<FileInfo>(
+                    new [] {"--input", "-i"},
+                    "The input file to be compiled.") { Argument = new Argument<FileInfo>().ExistingOnly()},
+                new Option<bool>(
+                    new[] {"-v", "--verbose"},
+                    "Be verbose on parsing"
+                    ),
+            };
+            rootCommand.Handler = CommandHandler.Create<ParseResult, FileInfo, bool, IConsole>(StartCompile);
+            return rootCommand.Invoke(args.Length == 0 ? new [] { "--help" } : args);
         }
 
-        private static int StartCompile(Options options)
+        private static int StartCompile(ParseResult result, FileSystemInfo input, bool verbose, IConsole console)
         {
-            if (!File.Exists(options.SourceFile))
+            if (!input.Exists)
             {
-                Console.Error.Write("Cannot find {0}", options.SourceFile);
+                Console.Error.Write("Cannot find {0}", input.FullName);
                 return 1;
             }
 
-            fileName = Path.GetFileNameWithoutExtension(options.SourceFile);
-            var targetPath = Path.GetDirectoryName(Path.GetFullPath(options.SourceFile));
+            _fileName = Path.GetFileNameWithoutExtension(input.FullName);
 
-            Module m = Oberon0Compiler.CompileString(File.ReadAllText(options.SourceFile));
-            if (Oberon0Compiler.Instance.HasError)
-            {
-                return 1;
-            }
+            var m = Oberon0Compiler.CompileString(File.ReadAllText(input.FullName));
+            if (m.CompilerInstance.HasError) return 1;
 
-            CodeGenerator cg = new CodeGenerator(m);
+            ICodeGenerator cg = new MsilBinGenerator() { Module = m };
 
             cg.Generate();
-            var code = cg.DumpCode();
+            string code = cg.DumpCode();
 
-            if (!CompileCode(code, fileName, targetPath, m, options.Verbose))
-            {
-                return 2;
-            }
+            if (!CompileCode(code, _fileName, cg, verbose)) return 2;
 
             return 0;
         }
 
-        private static string GetTempFile()
+        private static bool CompileCode(string source, string filename, ICodeGenerator cg, bool showWarnings = false)
         {
-            if (tempPath == null)
-            {
-                tempPath = Path.GetTempFileName();
-                var file = Path.GetFileNameWithoutExtension(tempPath);
-                tempPath = Path.Combine(Path.GetTempPath(), file);
-                Directory.CreateDirectory(tempPath);
-            }
+            string assemblyName = Path.GetFileNameWithoutExtension(filename);
 
-            return Path.Combine(tempPath, fileName);
-        }
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
 
-        private static bool CompileCode(string source, string filename, string targetPath, Module m, bool dumpOutput = false)
-        {
-            var tempFile = GetTempFile();
-            using (TextWriter w = File.CreateText(tempFile + ".il"))
-            {
-                w.Write(source);
-            }
+            if (syntaxTree == null)
+                throw new InvalidOperationException("Could not compile source code, please look at error report");
 
-            CopyReferencedAssemblies(m);
+            var compilationUnit = syntaxTree.CreateCompiledCSharpCode(assemblyName, cg);
 
-            var runtimePath = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
-            StringBuilder output = new StringBuilder();
-            StringBuilder error = new StringBuilder();
-            using (Process ilasm = new Process())
-            {
-                ilasm.StartInfo.FileName = runtimePath + "ilasm.exe";
-                ilasm.StartInfo.Arguments =
-                    $"\"{Path.Combine(tempPath, filename)}.il\" /exe /output:\"{Path.Combine(tempPath, fileName)}.exe\" /debug=IMPL";
-                ilasm.StartInfo.UseShellExecute = false;
-                ilasm.StartInfo.CreateNoWindow = true;
-                ilasm.StartInfo.WorkingDirectory = runtimePath;
-                ilasm.StartInfo.RedirectStandardOutput = true;
-                ilasm.StartInfo.RedirectStandardError = true;
-                ilasm.OutputDataReceived += (sender, args) =>
-                {
-                    if (!string.IsNullOrEmpty(args.Data))
-                        output.AppendLine(args.Data);
-                };
-                ilasm.ErrorDataReceived += (sender, args) =>
-                {
-                    if (!string.IsNullOrEmpty(args.Data))
-                        error.AppendLine(args.Data);
-                };
-                if (!ilasm.Start())
-                {
-                    return false;
-                }
-
-                // Start the asynchronous read of the sort output stream.
-                ilasm.BeginOutputReadLine();
-                ilasm.BeginErrorReadLine();
-
-                // Wait for the process to write output.
-                ilasm.WaitForExit();
-                if (error.Length > 0)
-                {
-                    Console.Error.WriteLine("ERROR output:");
-                    Console.Error.WriteLine(error.ToString());
-                }
-
-                if (ilasm.ExitCode != 0 || dumpOutput)
-                {
-                    Console.Write(output.ToString());
-                }
-
-                if (ilasm.ExitCode != 0)
-                    return false; // fail
-            }
-
-            MergeLibraries(tempPath, filename, targetPath, dumpOutput);
+            using var file = File.Create(filename + ".exe");
+            var result = compilationUnit.Emit(file);
+            result.ThrowExceptionIfCompilationFailure(showWarnings);
+            file.Flush(true);
             return true;
-        }
-
-        private static void MergeLibraries(string path, string filename, string targetPath, bool logOutput)
-        {
-            var repack = new ILRepack(
-                new RepackOptions(
-                    new CommandLine(
-                        new[]
-                            {
-                        $"/out:{Path.Combine(targetPath, filename + ".exe")}", Path.Combine(path, filename + ".exe"),
-                            Path.Combine(path, "Oberon0.System.dll")
-                        })),
-                new MyLogger(logOutput));
-            repack.Repack();
-        }
-
-        private static void CopyReferencedAssemblies(Module module)
-        {
-            // load system dll
-            var assembly = Assembly.GetEntryAssembly();
-            using (Stream resourceStream = assembly.GetManifestResourceStream("Oberon0.Msil.Oberon0.System.dll"))
-            {
-                if (resourceStream == null) throw new InvalidOperationException("Cannot read embedded resource");
-                byte[] ba = new byte[resourceStream.Length];
-                resourceStream.Read(ba, 0, ba.Length);
-                File.WriteAllBytes(
-                    Path.Combine(tempPath, "Oberon0.System.dll"),
-                    ba);
-            }
-
-            foreach (var reference in module.ExternalReferences)
-            {
-                if (reference.GlobalAssemblyCache)
-                {
-                    continue; // ignored
-                }
-
-                if (reference.GetName().Name != "Oberon0.System")
-                {
-                    File.Copy(reference.Location, Path.Combine(tempPath, Path.GetFileName(reference.Location)), true);
-                }
-            }
-        }
-
-        [UsedImplicitly]
-        private class Options
-        {
-            [Value(0, Required = true, HelpText = "Source file to compile", MetaName = "source file")]
-            public string SourceFile { get; [UsedImplicitly] set; }
-
-            [Option('v', "verbose", HelpText = "If set, verbose output is generated")]
-            public bool Verbose { get; [UsedImplicitly] set; }
-        }
-
-        private class MyLogger : ILogger
-        {
-            private readonly bool logEnabled;
-
-            public MyLogger(bool logEnabled)
-            {
-                this.logEnabled = logEnabled;
-            }
-
-            public bool ShouldLogVerbose { get; set; }
-
-            public void Log(object str)
-            {
-                if (this.logEnabled)
-                {
-                    Console.WriteLine(str);
-                }
-            }
-
-            public void Error(string msg)
-            {
-                Log("ERR:" + msg);
-            }
-
-            public void Warn(string msg)
-            {
-                Log("WARN:" + msg);
-            }
-
-            public void Info(string msg)
-            {
-                Log("INFO:" + msg);
-            }
-
-            public void Verbose(string msg)
-            {
-                if (ShouldLogVerbose)
-                {
-                    Log("VERBOSE:" + msg);
-                }
-            }
-
-            public void DuplicateIgnored(string ignoredType, object ignoredObject)
-            {
-                // ignored
-            }
         }
     }
 }

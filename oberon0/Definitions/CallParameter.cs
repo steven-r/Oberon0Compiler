@@ -1,28 +1,20 @@
 ﻿#region copyright
-
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CallParameter.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/CallParameter.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
-
 #endregion
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using JetBrains.Annotations;
+using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text.RegularExpressions;
-
-    using JetBrains.Annotations;
-
-    using Oberon0.Compiler.Expressions;
-    using Oberon0.Compiler.Types;
-
     /// <summary>
     /// A call parameter.
     /// </summary>
@@ -55,10 +47,7 @@ namespace Oberon0.Compiler.Definitions
         public static IReadOnlyList<CallParameter> FromExpressions(params Expression[] expressions)
         {
             var list = new List<CallParameter>(expressions.Length);
-            foreach (var expression in expressions)
-            {
-                list.Add(FromExpression(expression));
-            }
+            list.AddRange(expressions.Select(FromExpression));
 
             return list;
         }
@@ -78,29 +67,20 @@ namespace Oberon0.Compiler.Definitions
             if (block == null) throw new ArgumentNullException(nameof(block));
 
             var resultList = new List<CallParameter>();
-            if (parameters == null)
-            {
-                return resultList;
-            }
+            if (parameters == null) return resultList;
 
-            foreach (var element in parameters.Split(','))
+            foreach (string element in parameters.Split(','))
             {
                 var callParameter = new CallParameter();
                 var matches = Regex.Match(
                     element,
                     "(?<ref>&)?(?<name>[A-Za-z][A-Za-z$0-9]*)(?<isarray>\\[(?<size>\\d+)\\])?");
-                if (!matches.Success)
-                {
-                    throw new ArgumentException($"{element} is not a valid type reference", nameof(parameters));
-                }
+                if (!matches.Success) throw new ArgumentException($"{element} is not a valid type reference", nameof(parameters));
 
                 callParameter.CanBeVarReference = matches.Groups["ref"].Value == "&";
 
                 var type = block.LookupType(matches.Groups["name"].Value);
-                if (type == null)
-                {
-                    throw new ArgumentException($"{element} is not a valid type reference", nameof(parameters));
-                }
+                if (type == null) throw new ArgumentException($"{element} is not a valid type reference", nameof(parameters));
 
                 callParameter.TargetType = matches.Groups["isarray"].Success
                                                ? new ArrayTypeDefinition(int.Parse(matches.Groups["size"].Value), type)

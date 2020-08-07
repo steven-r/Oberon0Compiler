@@ -1,21 +1,14 @@
 ﻿#region copyright
-
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="VariableReferenceExpression.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/VariableReferenceExpression.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+#endregion
 
-#endregion copyright
+using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Compiler.Expressions
 {
-    using Oberon0.Compiler.Definitions;
-
     public class VariableReferenceExpression : Expression
     {
         public Declaration Declaration { get; private set; }
@@ -24,14 +17,11 @@ namespace Oberon0.Compiler.Expressions
 
         private string Name { get; set; }
 
-        public static Expression Create(Block block, Declaration declaration, VariableSelector s)
+        public static Expression Create(Declaration declaration, VariableSelector s)
         {
             if (declaration == null) return null;
 
-            if (declaration is ConstDeclaration c)
-            {
-                return c.Value;
-            }
+            if (declaration is ConstDeclaration c) return c.Value;
 
             var e = new VariableReferenceExpression
             {
@@ -45,7 +35,7 @@ namespace Oberon0.Compiler.Expressions
 
         public override string ToString()
         {
-            return $"{this.Name}({this.TargetType:G})";
+            return $"{Name}({TargetType:G})";
         }
     }
 }

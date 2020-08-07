@@ -1,28 +1,21 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RecordTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler.Tests/RecordTests.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Collections.Generic;
+using System.Linq;
+using NUnit.Framework;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Statements;
+using Oberon0.Compiler.Types;
+using Oberon0.TestSupport;
+
 namespace Oberon0.Compiler.Tests.Types
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using NUnit.Framework;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Expressions;
-    using Oberon0.Compiler.Statements;
-    using Oberon0.Compiler.Types;
-    using Oberon0.TestSupport;
-
     [TestFixture]
     public class RecordTests
     {
@@ -77,9 +70,42 @@ END Test.",
         }
 
         [Test]
+        public void RecordConstRecordSelectorError()
+        {
+            TestHelper.CompileString(
+                @"MODULE test; 
+CONST 
+  ci = 12;
+
+VAR 
+  a : INTEGER;
+                
+BEGIN
+    a := ci.s;
+END test.",
+                "Simple variables or constants do not allow any selector");
+        }
+
+        [Test]
+        public void RecordElementNotFoundError()
+        {
+            TestHelper.CompileString(
+                @"MODULE test; 
+TYPE 
+    rType = RECORD a: INTEGER END;
+
+VAR 
+  r : rType;
+                
+BEGIN
+    r.s := 1;
+END test.",
+                "Element not found in underlying type");
+        }
+
+        [Test]
         public void RecordFail1()
         {
-            List<CompilerError> errors = new List<CompilerError>();
             TestHelper.CompileString(
                 @"MODULE Test; 
 TYPE
@@ -90,6 +116,43 @@ TYPE
 
 END Test.",
                 "Element a defined more than once");
+        }
+
+        [Test]
+        public void RecordFailElement()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+TYPE 
+t = RECORD
+   a: INTEGER
+END;
+t2 = RECORD
+   a: INTEGER
+END;
+
+VAR a: t;
+    b: t2;
+BEGIN
+  a := b;
+END Test.",
+                "Left & right side do not match types");
+        }
+
+        [Test]
+        public void RecordFailSimple()
+        {
+            TestHelper.CompileString(
+                @"MODULE Test; 
+
+VAR a: RECORD
+      b: INTEGER
+    END;
+    b: INTEGER;
+BEGIN
+  a := b;
+END Test.", 
+                "Left & right side do not match types");
         }
 
         [Test]
@@ -122,6 +185,23 @@ END Test.");
             Declaration d = rtd.Elements.SingleOrDefault(x => x.Name == "d");
             Assert.NotNull(d);
             Assert.AreEqual(embType, d.Type);
+        }
+
+        [Test]
+        public void RecordNoRecordTypeSelectorError()
+        {
+            TestHelper.CompileString(
+                @"MODULE test; 
+TYPE 
+    aType= ARRAY 5 OF INTEGER;
+
+VAR 
+  a : aType;
+                
+BEGIN
+    a.s := 1;
+END test.",
+                "Record reference expected");
         }
 
         [Test]
@@ -181,94 +261,6 @@ END Test.");
             Declaration a = rtd.Elements.First();
             Assert.AreEqual("a", a.Name);
             Assert.AreEqual(intType, a.Type);
-        }
-
-        [Test]
-        public void RecordFailSimple()
-        {
-            TestHelper.CompileString(
-                @"MODULE Test; 
-
-VAR a: RECORD
-      b: INTEGER
-    END;
-    b: INTEGER;
-BEGIN
-  a := b;
-END Test.", 
-                "Left & right side do not match types");
-        }
-
-        [Test]
-        public void RecordFailElement()
-        {
-            TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE 
-t = RECORD
-   a: INTEGER
-END;
-t2 = RECORD
-   a: INTEGER
-END;
-
-VAR a: t;
-    b: t2;
-BEGIN
-  a := b;
-END Test.",
-                "Left & right side do not match types");
-        }
-
-        [Test]
-        public void RecordNoRecordTypeSelectorError()
-        {
-            TestHelper.CompileString(
-                @"MODULE test; 
-TYPE 
-    aType= ARRAY 5 OF INTEGER;
-
-VAR 
-  a : aType;
-                
-BEGIN
-    a.s := 1;
-END test.",
-                "Record reference expected");
-        }
-
-        [Test]
-        public void RecordConstRecordSelectorError()
-        {
-            TestHelper.CompileString(
-                @"MODULE test; 
-CONST 
-  ci = 12;
-
-VAR 
-  a : INTEGER;
-                
-BEGIN
-    a := ci.s;
-END test.",
-                "Simple variables or constants do not allow any selector");
-        }
-
-        [Test]
-        public void RecordElementNotFoundError()
-        {
-            TestHelper.CompileString(
-                @"MODULE test; 
-TYPE 
-    rType = RECORD a: INTEGER END;
-
-VAR 
-  r : rType;
-                
-BEGIN
-    r.s := 1;
-END test.",
-                "Element not found in underlying type");
         }
     }
 }

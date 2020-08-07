@@ -1,6 +1,13 @@
-﻿namespace Oberon0.Compiler.Expressions
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
+
+namespace Oberon0.Compiler.Expressions
 {
-    internal class UnaryExpression: BinaryExpression
+    public class UnaryExpression: BinaryExpression
     {
         /// <summary>
         /// For unary expressions this value is true.

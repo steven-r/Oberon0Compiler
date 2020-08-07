@@ -1,38 +1,38 @@
 #region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Module.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/Module.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Collections.Generic;
+using System.Reflection;
+using JetBrains.Annotations;
+using Oberon0.Compiler.Generator;
+
 namespace Oberon0.Compiler.Definitions
 {
-    using System.Collections.Generic;
-    using System.Reflection;
-
-    using JetBrains.Annotations;
-
-    using Oberon0.Compiler.Generator;
-
     /// <summary>
     /// The module.
     /// </summary>
     public partial class Module
     {
-        public Module()
+        public Module(Oberon0Compiler compilerInstance)
         {
-            this.Block = new Block(null);
+            CompilerInstance = compilerInstance;
+            
+            this.Block = new Block(null, this);
             this.ExternalReferences = new List<Assembly>();
 
             this.DeclareStandardTypes();
             this.DeclareStandardConsts();
             this.DeclareStandardFunctions();
         }
+
+        /// <summary>
+        /// Gets the compiler instance this Module has been build with
+        /// </summary>
+        public Oberon0Compiler CompilerInstance { get; set; }
 
         /// <summary>
         /// Gets the block.
