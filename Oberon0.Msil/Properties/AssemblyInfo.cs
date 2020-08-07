@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Oberon0")]
-[assembly: AssemblyCopyright("Copyright © 2018 Stephen Reindl")]
+[assembly: AssemblyCopyright("Copyright © 2018-2020 Stephen Reindl")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
