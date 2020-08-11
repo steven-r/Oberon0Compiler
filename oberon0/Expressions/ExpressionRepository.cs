@@ -1,30 +1,23 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ExpressionRepository.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/ExpressionRepository.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Composition;
+using System.Composition.Hosting;
+using JetBrains.Annotations;
+using Oberon0.Compiler.Expressions.Operations.Internal;
+using Oberon0.Compiler.Types;
+
 namespace Oberon0.Compiler.Expressions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Composition;
-    using System.Composition.Hosting;
-
-    using JetBrains.Annotations;
-
-    using Oberon0.Compiler.Expressions.Operations.Internal;
-    using Oberon0.Compiler.Types;
-
     internal class ExpressionRepository
     {
-        private static ExpressionRepository instance;
+        private static ExpressionRepository _instance;
 
         private ExpressionRepository()
         {
@@ -51,7 +44,7 @@ namespace Oberon0.Compiler.Expressions
         /// Gets a singleton instance.
         /// </summary>
         /// <value>The instance.</value>
-        public static ExpressionRepository Instance { get; } = instance ?? (instance = new ExpressionRepository());
+        public static ExpressionRepository Instance { get; } = _instance ??= new ExpressionRepository();
 
         private Dictionary<ArithmeticOpKey, ArithmeticOperation> ArithmeticOperations { get; }
 

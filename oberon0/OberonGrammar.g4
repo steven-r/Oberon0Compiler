@@ -13,14 +13,14 @@ using Oberon0.Compiler.Statements;
 	internal Stack<Block> blockStack = new Stack<Block>();
 	internal Block currentBlock;
 
-	public Module module = new Module();
+	public Module module = new Module(null);
 
 	private bool isVar(string id, Block block) {
 		return block.LookupVar(id, true) != null;
 	}
 
 	internal Block PushBlock() {
-		var block = new Block(currentBlock);
+		var block = new Block(currentBlock, module);
 		blockStack.Push(currentBlock);
 		currentBlock = block;
 		return block;
@@ -108,7 +108,7 @@ localDeclaration
 
 typeDeclaration:
 		TYPE
-          singleTypeDeclaration+
+		  singleTypeDeclaration+
 		  ;
 
 singleTypeDeclaration:
@@ -117,7 +117,7 @@ singleTypeDeclaration:
 
 variableDeclaration:
 		VAR
-          singleVariableDeclaration+
+		  singleVariableDeclaration+
 		  ;
 
 singleVariableDeclaration:
@@ -244,58 +244,58 @@ STRING_LITERAL
    ;
 
 Constant
-    :   IntegerConstant
-    |   FloatingConstant
+	:   IntegerConstant
+	|   FloatingConstant
 	;
 
 IntegerConstant: DigitSequence;
 
 fragment
 FloatingConstant
-    :   FractionalConstant ExponentPart? 
-    |   DigitSequence ExponentPart 
-    ;
+	:   FractionalConstant ExponentPart? 
+	|   DigitSequence ExponentPart 
+	;
 
 fragment
 FractionalConstant
-    :   DigitSequence? '.' DigitSequence
-    |   DigitSequence '.'
-    ;
+	:   DigitSequence? '.' DigitSequence
+	|   DigitSequence '.'
+	;
 
 fragment
 ExponentPart
-    :   'e' Sign? DigitSequence
-    |   'E' Sign? DigitSequence
-    ;
+	:   'e' Sign? DigitSequence
+	|   'E' Sign? DigitSequence
+	;
 
 fragment
 Sign
-    :   '+' | '-'
-    ;
+	:   '+' | '-'
+	;
 
 fragment
 DigitSequence
-    :   Digit+
-    ;
+	:   Digit+
+	;
 
 fragment
 Digit: [0-9];
 
 Whitespace
 		:   [ \t]+
-        -> skip
+		-> skip
 		;
 
 Newline
 		:   (   '\r' '\n'?
-        |   '\n'
-        )
-        -> skip
+		|   '\n'
+		)
+		-> skip
 		;
 
 BlockComment
 		:   '(*' .*? '*)'
-        -> skip
+		-> skip
 		;
 
 

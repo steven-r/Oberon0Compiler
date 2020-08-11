@@ -2,3 +2,8 @@
 
 # CS0105: Using directive appeared previously in this namespace
 dotnet_diagnostic.CS0105.severity = silent
+
+[*.cs]
+
+# Commentor: Missing comments.
+dotnet_diagnostic.Commentor.severity = silent

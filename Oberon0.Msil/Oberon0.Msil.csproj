@@ -1,25 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RuntimeEnvironment>win-x64</RuntimeEnvironment>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
     <LibPath>bin\$(Configuration)\$(TargetFramework)</LibPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.3.0" />
-    <PackageReference Include="ILRepack" Version="2.0.16" />
-    <PackageReference Include="ILRepack.Lib" Version="2.0.16" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Oberon0.Generator.Msil\Oberon0.Generator.Msil.csproj" />
+    <ProjectReference Include="..\Oberon0.Generator.MsilBin\Oberon0.Generator.MsilBin.csproj" />
     <ProjectReference Include="..\Oberon0.System\Oberon0.System.csproj" />
     <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\lib\Oberon0.System.dll">
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <LibFiles Include="$(LibPath)\*.dll" Exclude="$(LibPath)\System.*.dll;$(LibPath)\netstandard*.dll" />
@@ -28,8 +19,8 @@
     <LibFiles Include="$(LibPath)\System.Composition.Hosting.dll" />
     <LibFiles Include="$(LibPath)\System.Composition.Runtime.dll" />
   </ItemGroup>
-  <Target Name="ILMerge">
-    <!-- the ILMergePath property points to the location of ILMerge.exe console application -->
-    <Exec Command="$(ILRepack) /log &quot;/lib:$(LibPath)&quot; /out:Oberon0Msil.exe $(LibPath)\Oberon0.Msil.exe @(LibFiles, ' ')" />
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.6" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
+  </ItemGroup>
 </Project>

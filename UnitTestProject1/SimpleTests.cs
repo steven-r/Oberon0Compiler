@@ -1,42 +1,35 @@
-﻿#region copyright
+#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SimpleTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler.Tests/SimpleTests.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using Xunit;
+using Oberon0.Compiler.Definitions;
+using Oberon0.TestSupport;
+
 namespace Oberon0.Compiler.Tests
 {
-    using NUnit.Framework;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.TestSupport;
-
-    [TestFixture]
     public class SimpleTests
     {
-        [Test]
+        [Fact]
         public void EmptyApplication()
         {
             Module m = Oberon0Compiler.CompileString("MODULE Test; END Test.");
-            Assert.AreEqual("Test", m.Name);
-            Assert.AreEqual(3, m.Block.Declarations.Count);
+            Assert.Equal("Test", m.Name);
+            Assert.Equal(3, m.Block.Declarations.Count);
         }
 
-        [Test]
+        [Fact]
         public void EmptyApplication2()
         {
             Module m = TestHelper.CompileString(
                 @"MODULE Test; BEGIN END Test.");
-            Assert.AreEqual(0, m.Block.Statements.Count);
+            Assert.Empty(m.Block.Statements);
         }
 
-        [Test]
+        [Fact]
         public void ModuleMissingDot()
         {
             TestHelper.CompileString(
@@ -44,7 +37,7 @@ namespace Oberon0.Compiler.Tests
                 "missing '.' at '<EOF>'");
         }
 
-        [Test]
+        [Fact]
         public void ModuleMissingId()
         {
             TestHelper.CompileString(

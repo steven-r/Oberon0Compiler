@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net48;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>Oberon0.Compiler</RootNamespace>
     <AssemblyName>Oberon0.Compiler</AssemblyName>
@@ -15,8 +15,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Antlr4.Runtime" Version="4.6.5" />
-    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
-    <PackageReference Include="System.Composition.TypedParts" Version="1.2.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
+    <PackageReference Include="System.Composition.TypedParts" Version="1.4.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Oberon0.System\Oberon0.System.csproj" />

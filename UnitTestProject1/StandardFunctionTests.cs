@@ -1,26 +1,19 @@
-﻿#region copyright
+#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StandardFunctionTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler.Tests/StandardFunctionTests.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using Xunit;
+using Oberon0.Compiler.Definitions;
+using Oberon0.TestSupport;
+
 namespace Oberon0.Compiler.Tests
 {
-    using NUnit.Framework;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.TestSupport;
-
-    [TestFixture]
     public class StandardFunctionTests
     {
-        [Test]
+        [Fact]
         public void TestReadInt()
         {
             Module m = TestHelper.CompileString(
@@ -30,10 +23,10 @@ VAR
 BEGIN
   ReadInt(Demo)
 END Test.");
-            Assert.AreEqual(1, m.Block.Statements.Count);
+            Assert.Single(m.Block.Statements);
         }
 
-        [Test]
+        [Fact]
         public void TestReadIntFailBoolType()
         {
             TestHelper.CompileString(
@@ -46,7 +39,7 @@ END Test.",
                 "No procedure/function with prototype 'ReadInt(BOOLEAN)' found");
         }
 
-        [Test]
+        [Fact]
         public void TestReadIntFailNumber()
         {
             TestHelper.CompileString(
@@ -59,7 +52,7 @@ END Test.",
                 "No procedure/function with prototype 'ReadInt(INTEGER)' found");
         }
 
-        [Test]
+        [Fact]
         public void TestReadIntFailString()
         {
             TestHelper.CompileString(
@@ -72,7 +65,7 @@ END Test.",
                 "No procedure/function with prototype 'ReadInt(STRING)' found");
         }
 
-        [Test]
+        [Fact]
         public void TestReadReal()
         {
             Module m = TestHelper.CompileString(
@@ -82,10 +75,10 @@ VAR
 BEGIN
   ReadReal(Demo)
 END Test.");
-            Assert.AreEqual(1, m.Block.Statements.Count);
+            Assert.Single(m.Block.Statements);
         }
 
-        [Test]
+        [Fact]
         public void TestReadRealFailIntType()
         {
             TestHelper.CompileString(
