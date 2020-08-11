@@ -1,16 +1,9 @@
 #region copyright
-
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SimpleTypeDefinition.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/SimpleTypeDefinition.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
-
-#endregion copyright
+#endregion
 
 namespace Oberon0.Compiler.Types
 {
@@ -66,8 +59,8 @@ namespace Oberon0.Compiler.Types
         public override bool IsAssignable(TypeDefinition sourceType)
         {
             return sourceType.Type == this.Type // same simple type
-                   || (sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Real)
-                   || (sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Bool);
+                   || sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Real
+                   || sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Bool;
         }
 
         public override string ToString()

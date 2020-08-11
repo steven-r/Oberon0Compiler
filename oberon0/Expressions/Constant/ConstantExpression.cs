@@ -1,22 +1,16 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConstantExpression{T}.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/ConstantExpression{T}.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
+using System.Globalization;
+using Oberon0.Compiler.Types;
+
 namespace Oberon0.Compiler.Expressions.Constant
 {
-    using System;
-    using System.Globalization;
-
-    using Oberon0.Compiler.Types;
-
     public abstract class ConstantExpression : Expression
     {
         protected ConstantExpression(TypeDefinition baseType, object value)
@@ -39,33 +33,18 @@ namespace Oberon0.Compiler.Expressions.Constant
         {
             if (value is string stringVal)
             { // from string
-                if (int.TryParse(stringVal, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out int intVal))
-                {
-                    return new ConstantIntExpression(intVal);
-                }
+                if (int.TryParse(stringVal, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out int intVal)) return new ConstantIntExpression(intVal);
 
-                if (double.TryParse(stringVal, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var doubleVal))
-                {
-                    return new ConstantDoubleExpression(doubleVal);
-                }
+                if (double.TryParse(stringVal, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var doubleVal)) return new ConstantDoubleExpression(doubleVal);
 
-                if (bool.TryParse(stringVal, out bool boolVal))
-                {
-                    return new ConstantBoolExpression(boolVal);
-                }
+                if (bool.TryParse(stringVal, out bool boolVal)) return new ConstantBoolExpression(boolVal);
 
                 throw new InvalidOperationException($"Unknown constant '{stringVal}'");
             }
 
-            if (value is float || value is double || value is decimal)
-            {
-                return new ConstantDoubleExpression(Convert.ToDouble(value));
-            }
+            if (value is float || value is double || value is decimal) return new ConstantDoubleExpression(Convert.ToDouble(value));
 
-            if (value is bool)
-            {
-                return new ConstantBoolExpression(Convert.ToBoolean(value));
-            }
+            if (value is bool) return new ConstantBoolExpression(Convert.ToBoolean(value));
 
             return new ConstantIntExpression(Convert.ToInt32(value));
         }

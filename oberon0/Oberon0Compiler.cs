@@ -1,25 +1,20 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Oberon0Compiler.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/Oberon0Compiler.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using Antlr4.Runtime;
+using Oberon0.Compiler.Definitions;
+
 namespace Oberon0.Compiler
 {
-    using Antlr4.Runtime;
-
-    using Oberon0.Compiler.Definitions;
-
+    /// <summary>
+    /// The Oberon0 compiler core class.
+    /// </summary>
     public class Oberon0Compiler
     {
-        public static Oberon0Compiler Instance { get; set; }
-
 #pragma warning disable CS3003 // Type is not CLS-compliant
         public OberonGrammarParser.ModuleDefinitionContext Context { get; set; }
 #pragma warning restore CS3003 // Type is not CLS-compliant
@@ -35,30 +30,36 @@ namespace Oberon0.Compiler
         /// <summary>
         /// Gets or sets a value indicating whether the module has at least one error.
         /// </summary>
-        public bool HasError { get; set; }
+        public bool HasError { get; private set; }
 
+        /// <summary>
+        /// Compile some source code
+        /// </summary>
+        /// <param name="source">The source file/code to compile</param>
+        /// <param name="options">Options which can be set (see <see cref="Oberon0CompilerOptions"/> for details)</param>
+        /// <returns>A compiled module containing the AST of the source file</returns>
         public static Module CompileString(string source, Oberon0CompilerOptions options = null)
         {
-            Instance = new Oberon0Compiler();
+            var instance = new Oberon0Compiler();
 
             AntlrInputStream input = new AntlrInputStream(source);
-            Instance.Lexer = new OberonGrammarLexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(Instance.Lexer);
+            instance.Lexer = new OberonGrammarLexer(input);
+            CommonTokenStream tokens = new CommonTokenStream(instance.Lexer);
 
-            options?.InitLexer?.Invoke(Instance.Lexer);
+            options?.InitLexer?.Invoke(instance.Lexer);
 
-            Instance.Parser = new OberonGrammarParser(tokens);
-            Instance.Parser.AddParseListener(new Oberon0CompilerListener(Instance.Parser));
+            instance.Parser = new OberonGrammarParser(tokens) {module = {CompilerInstance = instance}};
+            instance.Parser.AddParseListener(new Oberon0CompilerListener(instance.Parser));
 
-            options?.InitParser?.Invoke(Instance.Parser);
+            options?.InitParser?.Invoke(instance.Parser);
 
-            Instance.Context = Instance.Parser.moduleDefinition();
+            instance.Context = instance.Parser.moduleDefinition();
 
-            Instance.HasError = Instance.Parser.NumberOfSyntaxErrors > 0;
+            instance.HasError = instance.Parser.NumberOfSyntaxErrors > 0;
 
-            options?.AfterCompile?.Invoke(Instance);
+            options?.AfterCompile?.Invoke(instance);
 
-            return Instance.Parser.module;
+            return instance.Parser.module;
         }
     }
 }

@@ -1,29 +1,21 @@
-﻿#region copyright
+#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="VarDeclarationTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler.Tests/VarDeclarationTests.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Collections.Generic;
+using Xunit;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Types;
+using Oberon0.TestSupport;
+
 namespace Oberon0.Compiler.Tests
 {
-    using System.Collections.Generic;
-
-    using NUnit.Framework;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Types;
-    using Oberon0.TestSupport;
-
-    [TestFixture]
     public class VarDeclarationTests
     {
-        [Test]
+        [Fact]
         public void ArrayFailBooleanIndex()
         {
             TestHelper.CompileString(
@@ -35,7 +27,7 @@ VAR
                 "The array size must return a constant integer expression");
         }
 
-        [Test]
+        [Fact]
         public void ArrayOfArray()
         {
             Module m = TestHelper.CompileString(
@@ -47,19 +39,19 @@ VAR
             var id = m.Block.LookupVar("id");
             var intType = m.Block.LookupType("INTEGER");
             Assert.NotNull(id);
-            Assert.IsInstanceOf<ArrayTypeDefinition>(id.Type);
+            Assert.IsType<ArrayTypeDefinition>(id.Type);
 
             ArrayTypeDefinition atd = (ArrayTypeDefinition)id.Type;
 
-            Assert.AreEqual(5, atd.Size);
-            Assert.IsInstanceOf<ArrayTypeDefinition>(atd.ArrayType);
+            Assert.Equal(5, atd.Size);
+            Assert.IsType<ArrayTypeDefinition>(atd.ArrayType);
 
             ArrayTypeDefinition atd1 = (ArrayTypeDefinition)atd.ArrayType;
-            Assert.AreEqual(10, atd1.Size);
-            Assert.AreEqual(intType, atd1.ArrayType);
+            Assert.Equal(10, atd1.Size);
+            Assert.Equal(intType, atd1.ArrayType);
         }
 
-        [Test]
+        [Fact]
         public void OneVar()
         {
             Module m = TestHelper.CompileString(
@@ -68,11 +60,11 @@ VAR
   id: INTEGER;
  END Test.");
 
-            Assert.AreNotEqual(null, m.Block.LookupVar("id"));
-            Assert.AreEqual(BaseTypes.Int, m.Block.LookupVar("id").Type.Type);
+            Assert.NotNull(m.Block.LookupVar("id"));
+            Assert.Equal(BaseTypes.Int, m.Block.LookupVar("id").Type.Type);
         }
 
-        [Test]
+        [Fact]
         public void SimpleArray()
         {
             Module m = TestHelper.CompileString(
@@ -84,15 +76,15 @@ VAR
             var id = m.Block.LookupVar("id");
             var intType = m.Block.LookupType("INTEGER");
             Assert.NotNull(id);
-            Assert.IsInstanceOf<ArrayTypeDefinition>(id.Type);
+            Assert.IsType<ArrayTypeDefinition>(id.Type);
 
             ArrayTypeDefinition atd = (ArrayTypeDefinition)id.Type;
 
-            Assert.AreEqual(5, atd.Size);
-            Assert.AreEqual(intType, atd.ArrayType);
+            Assert.Equal(5, atd.Size);
+            Assert.Equal(intType, atd.ArrayType);
         }
 
-        [Test]
+        [Fact]
         public void TwoVars1()
         {
             Module m = TestHelper.CompileString(
@@ -103,14 +95,14 @@ VAR
  END Test.");
 
             var id = m.Block.LookupVar("id");
-            Assert.AreNotEqual(null, id);
-            Assert.AreEqual(BaseTypes.Int, id.Type.Type);
+            Assert.NotNull(id);
+            Assert.Equal(BaseTypes.Int, id.Type.Type);
             var id1 = m.Block.LookupVar("id1");
-            Assert.AreNotEqual(null, id1);
-            Assert.AreEqual(BaseTypes.Int, id1.Type.Type);
+            Assert.NotNull(id1);
+            Assert.Equal(BaseTypes.Int, id1.Type.Type);
         }
 
-        [Test]
+        [Fact]
         public void TwoVars2()
         {
             Module m = TestHelper.CompileString(
@@ -121,13 +113,13 @@ VAR
 
             var id = m.Block.LookupVar("id");
             var id1 = m.Block.LookupVar("id1");
-            Assert.AreNotEqual(null, id);
-            Assert.AreEqual(BaseTypes.Int, id.Type.Type);
-            Assert.AreNotEqual(null, id1);
-            Assert.AreEqual(BaseTypes.Int, id1.Type.Type);
+            Assert.NotNull(id);
+            Assert.Equal(BaseTypes.Int, id.Type.Type);
+            Assert.NotNull(id1);
+            Assert.Equal(BaseTypes.Int, id1.Type.Type);
         }
 
-        [Test]
+        [Fact]
         public void TwoVarsFail1()
         {
             TestHelper.CompileString(
@@ -139,7 +131,7 @@ VAR
                 "Variable declared twice");
         }
 
-        [Test]
+        [Fact]
         public void TwoVarsFail2()
         {
             TestHelper.CompileString(
@@ -150,7 +142,7 @@ VAR
                 "Variable declared twice");
         }
 
-        [Test]
+        [Fact]
         public void VarArrayNotConst()
         {
             TestHelper.CompileString(
@@ -163,7 +155,7 @@ VAR
                 "The array size must return a constant integer expression");
         }
 
-        [Test]
+        [Fact]
         public void VarWithoutId()
         {
             List<CompilerError> errors = new List<CompilerError>();
@@ -172,10 +164,10 @@ VAR
 VAR
  END Test.",
                 errors);
-            Assert.AreEqual(3, errors.Count);
+            Assert.Equal(3, errors.Count);
         }
 
-        [Test]
+        [Fact]
         public void VarWithoutWrongType()
         {
             TestHelper.CompileString(

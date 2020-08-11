@@ -1,4 +1,11 @@
-﻿using System.Reflection;
+﻿#region copyright
+// --------------------------------------------------------------------------------------------------------------------
+// Copyright (c) Stephen Reindl. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+// --------------------------------------------------------------------------------------------------------------------
+#endregion
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
@@ -9,7 +16,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Oberon0")]
-[assembly: AssemblyCopyright("Copyright © 2018 Stephen Reindl")]
+[assembly: AssemblyCopyright("Copyright © 2018-2020 Stephen Reindl")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

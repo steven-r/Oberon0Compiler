@@ -1,33 +1,25 @@
-﻿#region copyright
+#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SimpleExpressionTests.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler.Tests/SimpleExpressionTests.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
+using Xunit;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions;
+using Oberon0.Compiler.Expressions.Constant;
+using Oberon0.Compiler.Solver;
+
 namespace Oberon0.Compiler.Tests.Expressions
 {
-    using System;
-
-    using NUnit.Framework;
-
-    using Oberon0.Compiler.Definitions;
-    using Oberon0.Compiler.Expressions;
-    using Oberon0.Compiler.Expressions.Constant;
-    using Oberon0.Compiler.Solver;
-
-    [TestFixture]
     public class SimpleExpressionTests
     {
-        [Test]
+        [Fact]
         public void ExpressionAdd1()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.PLUS,
                 ConstantExpression.Create(1),
@@ -35,33 +27,14 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.ToInt32());
+            Assert.NotNull(result);
+            Assert.Equal(2, result.ToInt32());
         }
 
-        [Test]
-        public void ExpressionAddRes0()
-        {
-            var m = new Module();
-            var e = BinaryExpression.Create(
-                OberonGrammarLexer.PLUS,
-                ConstantExpression.Create(1),
-                ConstantDoubleExpression.Zero,
-                m.Block,
-                null);
-            var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.ToInt32());
-            Assert.AreEqual(1.0, result.ToDouble());
-            Assert.AreEqual(true, result.ToBool());
-            Assert.AreEqual(false, result.IsUnary);
-            Assert.AreEqual(true, result.IsConst);
-        }
-
-        [Test]
+        [Fact]
         public void ExpressionAdd2()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.PLUS,
                 ConstantExpression.Create(1),
@@ -69,14 +42,48 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2.42, result.ToDouble());
+            Assert.NotNull(result);
+            Assert.Equal(2.42, result.ToDouble());
         }
 
-        [Test]
+        [Fact]
+        public void ExpressionAddRes0()
+        {
+            var m = new Module(null);
+            var e = BinaryExpression.Create(
+                OberonGrammarLexer.PLUS,
+                ConstantExpression.Create(1),
+                ConstantDoubleExpression.Zero,
+                m.Block,
+                null);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
+            Assert.NotNull(result);
+            Assert.Equal(1, result.ToInt32());
+            Assert.Equal(1.0, result.ToDouble());
+            Assert.True(result.ToBool());
+            Assert.False(result.IsUnary);
+            Assert.True(result.IsConst);
+        }
+
+        [Fact]
+        public void ExpressionAnd()
+        {
+            var m = new Module(null);
+            var e = BinaryExpression.Create(
+                OberonGrammarLexer.AND,
+                ConstantExpression.Create(false),
+                ConstantExpression.Create("true"),
+                m.Block,
+                null);
+            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
+            Assert.NotNull(result);
+            Assert.False(result.ToBool());
+        }
+
+        [Fact]
         public void ExpressionDiv0()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create("10.0"),
@@ -85,13 +92,13 @@ namespace Oberon0.Compiler.Tests.Expressions
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.NotNull(result);
-            Assert.IsTrue(double.IsInfinity(result.ToDouble()));
+            Assert.True(double.IsInfinity(result.ToDouble()));
         }
 
-        [Test]
+        [Fact]
         public void ExpressionDiv1()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create(10),
@@ -99,14 +106,14 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(5, result.ToInt32());
+            Assert.NotNull(result);
+            Assert.Equal(5, result.ToInt32());
         }
 
-        [Test]
+        [Fact]
         public void ExpressionDiv2()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create(10),
@@ -114,14 +121,14 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.ToInt32());
+            Assert.NotNull(result);
+            Assert.Equal(2, result.ToInt32());
         }
 
-        [Test]
+        [Fact]
         public void ExpressionDiv3()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create("10.0"),
@@ -129,14 +136,21 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2.5, result.ToDouble());
+            Assert.NotNull(result);
+            Assert.Equal(2.5, result.ToDouble());
         }
 
-        [Test]
+        [Fact]
+        public void ExpressionInvalidConst()
+        {
+            var ex = Assert.Throws<InvalidOperationException>(() => ConstantExpression.Create("Test"));
+            Assert.Equal("Unknown constant 'Test'", ex.Message);
+        }
+
+        [Fact]
         public void ExpressionMod()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.MOD,
                 ConstantExpression.Create(10),
@@ -144,14 +158,14 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.ToInt32());
+            Assert.NotNull(result);
+            Assert.Equal(2, result.ToInt32());
         }
 
-        [Test]
+        [Fact]
         public void ExpressionMod2()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.MOD,
                 ConstantExpression.Create(10.5),
@@ -159,14 +173,14 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2.5m, result.ToDouble());
+            Assert.NotNull(result);
+            Assert.Equal(2.5, result.ToDouble());
         }
 
-        [Test]
+        [Fact]
         public void ExpressionMult1()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.STAR,
                 ConstantExpression.Create(6),
@@ -174,14 +188,14 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(42, result.ToInt32());
+            Assert.NotNull(result);
+            Assert.Equal(42, result.ToInt32());
         }
 
-        [Test]
+        [Fact]
         public void ExpressionMult2()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.STAR,
                 ConstantExpression.Create(6.1),
@@ -189,14 +203,14 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.ToDouble() - 42.7 < double.Epsilon);
+            Assert.NotNull(result);
+            Assert.True(result.ToDouble() - 42.7 < double.Epsilon);
         }
 
-        [Test]
+        [Fact]
         public void ExpressionSub1()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.MINUS,
                 ConstantExpression.Create(1),
@@ -204,14 +218,14 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantIntExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(0, result.ToInt32());
+            Assert.NotNull(result);
+            Assert.Equal(0, result.ToInt32());
         }
 
-        [Test]
+        [Fact]
         public void ExpressionSub2()
         {
-            var m = new Module();
+            var m = new Module(null);
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.MINUS,
                 ConstantExpression.Create(1.5),
@@ -219,30 +233,8 @@ namespace Oberon0.Compiler.Tests.Expressions
                 m.Block,
                 null);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(0.5, result.ToDouble());
-        }
-
-        [Test]
-        public void ExpressionAnd()
-        {
-            var m = new Module();
-            var e = BinaryExpression.Create(
-                OberonGrammarLexer.AND,
-                ConstantExpression.Create(false),
-                ConstantExpression.Create("true"),
-                m.Block,
-                null);
-            var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(false, result.ToBool());
-        }
-
-        [Test]
-        public void ExpressionInvalidConst()
-        {
-            var ex = Assert.Throws<InvalidOperationException>(() => ConstantExpression.Create("Test"));
-            Assert.AreEqual("Unknown constant 'Test'", ex.Message);
+            Assert.NotNull(result);
+            Assert.Equal(0.5, result.ToDouble());
         }
     }
 }

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AnyClone" Version="1.0.39" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Oberon0.Shared\Oberon0.Shared.csproj" />
+    <ProjectReference Include="..\Oberon0.System\Oberon0.System.csproj" />
+    <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj" />
+  </ItemGroup>
+
+</Project>

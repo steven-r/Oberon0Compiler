@@ -1,25 +1,17 @@
 ﻿#region copyright
-
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FunctionDeclaration.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0Compiler/FunctionDeclaration.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
-
 #endregion
+
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
-    using Oberon0.Compiler.Types;
-
     public class FunctionDeclaration
     {
         /// <summary>
@@ -37,10 +29,7 @@ namespace Oberon0.Compiler.Definitions
         {
             this.Name = name;
             this.Block = block;
-            if (parameters != null && parameters.Length > 0)
-            {
-                this.Block.Declarations.AddRange(parameters);
-            }
+            if (parameters != null && parameters.Length > 0) this.Block.Declarations.AddRange(parameters);
 
             this.ReturnType = returnType;
         }
@@ -73,7 +62,7 @@ namespace Oberon0.Compiler.Definitions
             Module module,
             params ProcedureParameterDeclaration[] parameters)
         {
-            var res = new FunctionDeclaration(name, new Block(module.Block), SimpleTypeDefinition.VoidType, parameters)
+            var res = new FunctionDeclaration(name, new Block(module.Block, module), SimpleTypeDefinition.VoidType, parameters)
                 {
                     IsInternal = true
                 };
@@ -86,7 +75,7 @@ namespace Oberon0.Compiler.Definitions
             TypeDefinition returnType,
             params ProcedureParameterDeclaration[] parameters)
         {
-            var res = new FunctionDeclaration(name, new Block(module.Block), returnType, parameters)
+            var res = new FunctionDeclaration(name, new Block(module.Block, module), returnType, parameters)
                 {
                     IsInternal = true
                 };
@@ -125,17 +114,10 @@ namespace Oberon0.Compiler.Definitions
                 {
                     string parameterName = parameter.IsVar ? "&" : string.Empty;
                     if (!string.IsNullOrWhiteSpace(parameter.Type.Name))
-                    {
                         parameterName += parameter.Type.Name;
-                    }
                     else if (parameter.Type is ArrayTypeDefinition array)
-                    {
                         parameterName += $"{array.ArrayType}[{array.Size}]";
-                    }
-                    else if (parameter.Type is RecordTypeDefinition)
-                    {
-                        parameterName += "RECORD {anonymous} END";
-                    }
+                    else if (parameter.Type is RecordTypeDefinition) parameterName += "RECORD {anonymous} END";
 
                     list.Add(parameterName);
                 }

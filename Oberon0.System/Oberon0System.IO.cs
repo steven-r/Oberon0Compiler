@@ -1,23 +1,16 @@
 ﻿#region copyright
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Oberon0System.IO.cs" company="Stephen Reindl">
 // Copyright (c) Stephen Reindl. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-// </copyright>
-// <summary>
-//     Part of oberon0 - Oberon0.System/Oberon0System.IO.cs
-// </summary>
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-namespace Oberon0
+using System;
+using JetBrains.Annotations;
+using Oberon0System.Attributes;
+
+namespace Oberon0System
 {
-    using System;
-
-    using JetBrains.Annotations;
-
-    using Oberon0.Attributes;
-
     /// <summary>
     /// The oberon 0 system library.
     /// </summary>
@@ -31,7 +24,9 @@ namespace Oberon0
         [UsedImplicitly]
         [Oberon0Export("eot", "BOOLEAN")]
         // ReSharper disable once InconsistentNaming
+#pragma warning disable IDE1006 // Naming Styles
         public static bool eot()
+#pragma warning restore IDE1006 // Naming Styles
         {
             return Console.In.Peek() < 0;
         }
