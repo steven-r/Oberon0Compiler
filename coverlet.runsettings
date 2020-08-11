@@ -4,7 +4,7 @@
     <DataCollectors>
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
-          <Format>cobertura</Format>          
+          <Format>cobertura,opencover</Format>
           <Exclude>[*]*.OberonGrammarParser,[*]*.OberonGrammarLexer</Exclude> <!-- [Assembly-Filter]Type-Filter -->
           <Include>[*]*</Include> <!-- [Assembly-Filter]Type-Filter -->
           <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
