@@ -8,7 +8,7 @@
     <LibPath>bin\$(Configuration)\$(TargetFramework)</LibPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.3.0" />
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="ILRepack" Version="2.0.16" />
     <PackageReference Include="ILRepack.Lib" Version="2.0.16" />
   </ItemGroup>
