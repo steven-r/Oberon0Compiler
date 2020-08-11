@@ -1,21 +1,20 @@
-﻿#region copyright
+#region copyright
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using NUnit.Framework;
+using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Types;
 using Oberon0.TestSupport;
 
 namespace Oberon0.Compiler.Tests.Exports
 {
-    [TestFixture]
     public class ExportTests
     {
-        [Test]
+        [Fact]
         public void ModuleExportConst()
         {
             Module m = TestHelper.CompileString(
@@ -29,18 +28,18 @@ BEGIN
 END Test.");
 
             var c = m.Block.LookupVar("TestConst");
-            Assert.IsNotNull(c);
-            Assert.IsInstanceOf<ConstDeclaration>(c);
+            Assert.NotNull(c);
+            Assert.IsType<ConstDeclaration>(c);
             var cp = (ConstDeclaration)c;
-            Assert.IsTrue(cp.Exportable);
+            Assert.True(cp.Exportable);
             c = m.Block.LookupVar("LocalConst");
-            Assert.IsInstanceOf<ConstDeclaration>(c);
+            Assert.IsType<ConstDeclaration>(c);
             cp = (ConstDeclaration)c;
-            Assert.IsFalse(cp.Exportable);
-            Assert.IsTrue(m.HasExports);
+            Assert.False(cp.Exportable);
+            Assert.True(m.HasExports);
         }
 
-        [Test]
+        [Fact]
         public void ModuleExportGlobalFail()
         {
             TestHelper.CompileString(
@@ -55,7 +54,7 @@ END Test.",
                 "Exportable elements can only be defined as global");
         }
 
-        [Test]
+        [Fact]
         public void ModuleExportGlobalFailConst()
         {
             TestHelper.CompileString(
@@ -70,7 +69,7 @@ END Test.",
                 "Exportable elements can only be defined as global");
         }
 
-        [Test]
+        [Fact]
         public void ModuleExportGlobalFailType()
         {
             TestHelper.CompileString(
@@ -85,7 +84,7 @@ END Test.",
                 "Exportable elements can only be defined as global");
         }
 
-        [Test]
+        [Fact]
         public void ModuleExportGlobalFailVar()
         {
             TestHelper.CompileString(
@@ -100,17 +99,17 @@ END Test.",
                 "Exportable elements can only be defined as global");
         }
 
-        [Test]
+        [Fact]
         public void ModuleExportTest()
         {
             Module m = TestHelper.CompileString(
                 @"MODULE Test;
 
 END Test.");
-            Assert.IsFalse(m.HasExports);
+            Assert.False(m.HasExports);
         }
 
-        [Test]
+        [Fact]
         public void ModuleExportType()
         {
             Module m = TestHelper.CompileString(
@@ -123,23 +122,23 @@ TYPE
 END Test.");
 
             var t = m.Block.LookupType("ExportType");
-            Assert.IsNotNull(t);
-            Assert.IsInstanceOf<RecordTypeDefinition>(t);
+            Assert.NotNull(t);
+            Assert.IsType<RecordTypeDefinition>(t);
             var cp = (RecordTypeDefinition)t;
-            Assert.IsTrue(cp.Exportable);
+            Assert.True(cp.Exportable);
             t = m.Block.LookupType("ExportSimple");
-            Assert.IsInstanceOf<TypeDefinition>(t);
-            Assert.IsTrue(t.Exportable);
+            Assert.IsAssignableFrom<TypeDefinition>(t);
+            Assert.True(t.Exportable);
             t = m.Block.LookupType("INTEGER");
-            Assert.IsInstanceOf<TypeDefinition>(t);
-            Assert.IsFalse(t.Exportable);
+            Assert.IsAssignableFrom<TypeDefinition>(t);
+            Assert.False(t.Exportable);
             t = m.Block.LookupType("LocalSimple");
-            Assert.IsInstanceOf<TypeDefinition>(t);
-            Assert.IsFalse(t.Exportable);
-            Assert.IsTrue(m.HasExports);
+            Assert.IsAssignableFrom<TypeDefinition>(t);
+            Assert.False(t.Exportable);
+            Assert.True(m.HasExports);
         }
 
-        [Test]
+        [Fact]
         public void ModuleExportTypeExportCheck()
         {
             TestHelper.CompileString(
@@ -157,7 +156,7 @@ END Test.",
                 "Non-basic type (TestType) need to be exportable if used on exportable elements.");
         }
 
-        [Test]
+        [Fact]
         public void ModuleExportVar()
         {
             Module m = TestHelper.CompileString(
@@ -168,12 +167,12 @@ VAR
 END Test.");
 
             var c = m.Block.LookupVar("TestVar");
-            Assert.IsNotNull(c);
-            Assert.IsTrue(c.Exportable);
-            Assert.IsTrue(m.HasExports);
+            Assert.NotNull(c);
+            Assert.True(c.Exportable);
+            Assert.True(m.HasExports);
         }
 
-        [Test]
+        [Fact]
         public void ModuleExportVarMult()
         {
             Module m = TestHelper.CompileString(
@@ -184,18 +183,18 @@ VAR
 END Test.");
 
             var c = m.Block.LookupVar("TestVar");
-            Assert.IsNotNull(c);
-            Assert.IsTrue(c.Exportable);
+            Assert.NotNull(c);
+            Assert.True(c.Exportable);
             c = m.Block.LookupVar("a");
-            Assert.IsNotNull(c);
-            Assert.IsFalse(c.Exportable);
+            Assert.NotNull(c);
+            Assert.False(c.Exportable);
             c = m.Block.LookupVar("c");
-            Assert.IsNotNull(c);
-            Assert.IsFalse(c.Exportable);
-            Assert.IsTrue(m.HasExports);
+            Assert.NotNull(c);
+            Assert.False(c.Exportable);
+            Assert.True(m.HasExports);
         }
 
-        [Test]
+        [Fact]
         public void NestedProcFailTest()
         {
             TestHelper.CompileString(
@@ -212,7 +211,7 @@ END Test.",
                 "Exportable elements can only be defined as global");
         }
 
-        [Test]
+        [Fact]
         public void ProcExportTest()
         {
             Module m = TestHelper.CompileString(
@@ -224,9 +223,9 @@ END TestProc;
 END Test.");
 
             var p = m.Block.LookupFunction("TestProc", null);
-            Assert.IsNotNull(p);
-            Assert.IsTrue(p.Exportable);
-            Assert.IsTrue(m.HasExports);
+            Assert.NotNull(p);
+            Assert.True(p.Exportable);
+            Assert.True(m.HasExports);
         }
     }
 }

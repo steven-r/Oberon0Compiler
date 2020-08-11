@@ -1,24 +1,23 @@
-﻿#region copyright
+#region copyright
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using NUnit.Framework;
+using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Generator;
 using Oberon0.TestSupport;
 
 namespace Oberon0.Compiler.Tests
 {
-    [TestFixture]
     public class DummyTests
     {
         private class DummyGeneratorInfo : IGeneratorInfo
         {}
 
-        [Test]
+        [Fact]
         public void FixupGeneratorInfo()
         {
             Module m = TestHelper.CompileString(
@@ -30,7 +29,7 @@ END Test.");
             Assert.NotNull(m);
             Declaration d = m.Block.LookupVar("x");
             Assert.NotNull(d);
-            Assert.IsNull(d.GeneratorInfo);
+            Assert.Null(d.GeneratorInfo);
             d.GeneratorInfo = new DummyGeneratorInfo();
             Assert.NotNull(d.GeneratorInfo);
         }

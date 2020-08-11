@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
@@ -6,7 +6,7 @@
 #endregion
 
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
@@ -15,10 +15,9 @@ using Oberon0.TestSupport;
 
 namespace Oberon0.Compiler.Tests.Types
 {
-    [TestFixture]
     public class ArrayTests
     {
-        [Test]
+        [Fact]
         public void ArrayFail1TestIndex0()
         {
             TestHelper.CompileString(
@@ -35,7 +34,7 @@ END test.",
                 "Array index out of bounds");
         }
 
-        [Test]
+        [Fact]
         public void ArrayTestIndex5()
         {
             Module m = TestHelper.CompileString(
@@ -49,19 +48,19 @@ BEGIN
     a[5] := 1;
 END test.");
             Assert.NotNull(m);
-            Assert.AreEqual(1, m.Block.Statements.Count);
-            Assert.IsInstanceOf<AssignmentStatement>(m.Block.Statements[0]);
+            Assert.Single(m.Block.Statements);
+            Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
             var statement = (AssignmentStatement)m.Block.Statements[0];
 
             Assert.NotNull(statement.Selector);
-            Assert.IsInstanceOf<IndexSelector>(statement.Selector.First());
+            Assert.IsType<IndexSelector>(statement.Selector.First());
 
             var selector = (IndexSelector)statement.Selector.First();
-            Assert.IsTrue(selector.IndexDefinition.IsConst);
-            Assert.AreEqual(5, ((ConstantExpression)selector.IndexDefinition).ToInt32());
+            Assert.True(selector.IndexDefinition.IsConst);
+            Assert.Equal(5, ((ConstantExpression)selector.IndexDefinition).ToInt32());
         }
 
-        [Test]
+        [Fact]
         public void ArrayTestIndexArraySimple()
         {
             TestHelper.CompileString(
@@ -77,7 +76,7 @@ END test.",
                 "Array reference expected");
         }
 
-        [Test]
+        [Fact]
         public void ArrayTestIndexRealFail()
         {
             TestHelper.CompileString(
@@ -93,7 +92,7 @@ END test.",
                 "Array reference must be INTEGER");
         }
 
-        [Test]
+        [Fact]
         public void ArrayType()
         {
             Module m = TestHelper.CompileString(
@@ -109,7 +108,7 @@ END test.");
             Assert.NotNull(type);
             var arrayType = type as ArrayTypeDefinition;
             Assert.NotNull(arrayType);
-            Assert.AreEqual("ARRAY 5 OF INTEGER", arrayType.ToString());
+            Assert.Equal("ARRAY 5 OF INTEGER", arrayType.ToString());
         }
     }
 }

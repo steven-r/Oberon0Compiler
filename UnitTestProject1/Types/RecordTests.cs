@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
@@ -7,7 +7,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Statements;
@@ -16,10 +16,9 @@ using Oberon0.TestSupport;
 
 namespace Oberon0.Compiler.Tests.Types
 {
-    [TestFixture]
     public class RecordTests
     {
-        [Test]
+        [Fact]
         public void RecordAssign()
         {
             var errors = new List<CompilerError>();
@@ -40,10 +39,10 @@ END Test.",
                 errors);
 
             Assert.NotNull(m);
-            Assert.AreEqual(0, errors.Count);
+            Assert.Empty(errors);
         }
 
-        [Test]
+        [Fact]
         public void RecordAssignFail()
         {
             var errors = new List<CompilerError>();
@@ -65,11 +64,11 @@ BEGIN
 END Test.",
                 errors);
 
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("Left & right side do not match types", errors[0].Message);
+            Assert.Single(errors);
+            Assert.Equal("Left & right side do not match types", errors[0].Message);
         }
 
-        [Test]
+        [Fact]
         public void RecordConstRecordSelectorError()
         {
             TestHelper.CompileString(
@@ -86,7 +85,7 @@ END test.",
                 "Simple variables or constants do not allow any selector");
         }
 
-        [Test]
+        [Fact]
         public void RecordElementNotFoundError()
         {
             TestHelper.CompileString(
@@ -103,7 +102,7 @@ END test.",
                 "Element not found in underlying type");
         }
 
-        [Test]
+        [Fact]
         public void RecordFail1()
         {
             TestHelper.CompileString(
@@ -118,7 +117,7 @@ END Test.",
                 "Element a defined more than once");
         }
 
-        [Test]
+        [Fact]
         public void RecordFailElement()
         {
             TestHelper.CompileString(
@@ -139,7 +138,7 @@ END Test.",
                 "Left & right side do not match types");
         }
 
-        [Test]
+        [Fact]
         public void RecordFailSimple()
         {
             TestHelper.CompileString(
@@ -155,7 +154,7 @@ END Test.",
                 "Left & right side do not match types");
         }
 
-        [Test]
+        [Fact]
         public void RecordMany()
         {
             Module m = TestHelper.CompileString(
@@ -178,16 +177,16 @@ END Test.");
             var embType = m.Block.LookupType("Embedded");
             Assert.NotNull(t);
             Assert.NotNull(embType);
-            Assert.IsInstanceOf<RecordTypeDefinition>(t);
-            Assert.IsInstanceOf<RecordTypeDefinition>(embType);
+            Assert.IsType<RecordTypeDefinition>(t);
+            Assert.IsType<RecordTypeDefinition>(embType);
             RecordTypeDefinition rtd = (RecordTypeDefinition)t;
-            Assert.AreEqual(4, rtd.Elements.Count);
+            Assert.Equal(4, rtd.Elements.Count);
             Declaration d = rtd.Elements.SingleOrDefault(x => x.Name == "d");
             Assert.NotNull(d);
-            Assert.AreEqual(embType, d.Type);
+            Assert.Equal(embType, d.Type);
         }
 
-        [Test]
+        [Fact]
         public void RecordNoRecordTypeSelectorError()
         {
             TestHelper.CompileString(
@@ -204,7 +203,7 @@ END test.",
                 "Record reference expected");
         }
 
-        [Test]
+        [Fact]
         public void RecordSelector()
         {
             Module m = TestHelper.CompileString(
@@ -230,17 +229,17 @@ END Test.");
             var intType = m.Block.LookupType("INTEGER");
             var s = m.Block.Statements[0];
             Assert.NotNull(s);
-            Assert.IsInstanceOf<ProcedureCallStatement>(s);
+            Assert.IsType<ProcedureCallStatement>(s);
             var pcs = (ProcedureCallStatement)s;
-            Assert.AreEqual(1, pcs.Parameters.Count);
-            Assert.IsInstanceOf<VariableReferenceExpression>(pcs.Parameters[0]);
+            Assert.Single(pcs.Parameters);
+            Assert.IsType<VariableReferenceExpression>(pcs.Parameters[0]);
             VariableReferenceExpression vre = (VariableReferenceExpression)pcs.Parameters[0];
             Assert.NotNull(vre.Selector);
-            Assert.AreEqual(3, vre.Selector.Count);
-            Assert.AreEqual(intType, vre.Selector.SelectorResultType);
+            Assert.Equal(3, vre.Selector.Count);
+            Assert.Equal(intType, vre.Selector.SelectorResultType);
         }
 
-        [Test]
+        [Fact]
         public void RecordSimple()
         {
             Module m = TestHelper.CompileString(
@@ -255,12 +254,12 @@ END Test.");
             var t = m.Block.LookupType("Demo");
             var intType = m.Block.LookupType("INTEGER");
             Assert.NotNull(t);
-            Assert.IsInstanceOf<RecordTypeDefinition>(t);
+            Assert.IsType<RecordTypeDefinition>(t);
             RecordTypeDefinition rtd = (RecordTypeDefinition)t;
-            Assert.AreEqual(1, rtd.Elements.Count);
+            Assert.Single(rtd.Elements);
             Declaration a = rtd.Elements.First();
-            Assert.AreEqual("a", a.Name);
-            Assert.AreEqual(intType, a.Type);
+            Assert.Equal("a", a.Name);
+            Assert.Equal(intType, a.Type);
         }
     }
 }

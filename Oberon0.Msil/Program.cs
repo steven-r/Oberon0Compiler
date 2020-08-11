@@ -40,16 +40,14 @@ namespace Oberon0.Msil
         {
             var rootCommand = new RootCommand("Compile an Oberon0 source file.")
             {
-                new Option<FileInfo>(
-                    new [] {"--input", "-i"},
-                    "The input file to be compiled.") { Argument = new Argument<FileInfo>().ExistingOnly()},
+                new Argument<FileInfo>("input file", "The input file to be compiled") {Arity = ArgumentArity.ExactlyOne}.ExistingOnly(),
                 new Option<bool>(
                     new[] {"-v", "--verbose"},
                     "Be verbose on parsing"
                     ),
             };
             rootCommand.Handler = CommandHandler.Create<ParseResult, FileInfo, bool, IConsole>(StartCompile);
-            return rootCommand.Invoke(args.Length == 0 ? new [] { "--help" } : args);
+            return rootCommand.Invoke(args);
         }
 
         private static int StartCompile(ParseResult result, FileSystemInfo input, bool verbose, IConsole console)

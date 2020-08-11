@@ -58,7 +58,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
 
             try
             {
-                Program.Main(new[] {"--input", "dummy-file.ob0"});
+                Program.Main(new[] {"dummy-file.ob0"});
             }
             finally
             {

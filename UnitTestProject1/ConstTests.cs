@@ -1,20 +1,19 @@
-﻿#region copyright
+#region copyright
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using NUnit.Framework;
+using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.TestSupport;
 
 namespace Oberon0.Compiler.Tests
 {
-    [TestFixture]
     public class ConstTests
     {
-        [Test]
+        [Fact]
         public void ConstConstExpr()
         {
             Module m = TestHelper.CompileString(
@@ -27,23 +26,23 @@ CONST
 
             var t = m.Block.LookupVar("Test");
             var t1 = m.Block.LookupVar("Test1");
-            Assert.IsNotNull(t);
-            Assert.IsNotNull(t1);
-            Assert.IsInstanceOf<ConstDeclaration>(t);
-            Assert.IsInstanceOf<ConstDeclaration>(t1);
+            Assert.NotNull(t);
+            Assert.NotNull(t1);
+            Assert.IsType<ConstDeclaration>(t);
+            Assert.IsType<ConstDeclaration>(t1);
             var tp = (ConstDeclaration)t;
             var tp1 = (ConstDeclaration)t1;
-            Assert.AreEqual("Test", tp.Name);
-            Assert.AreEqual(m.Block.LookupType("INTEGER"), tp.Type);
-            Assert.AreEqual(3, tp.Value.ToInt32());
+            Assert.Equal("Test", tp.Name);
+            Assert.Same(m.Block.LookupType("INTEGER"), tp.Type);
+            Assert.Equal(3, tp.Value.ToInt32());
 
-            Assert.AreEqual("Test1", tp1.Name);
-            Assert.AreEqual(m.Block.LookupType("INTEGER"), tp1.Type);
-            Assert.AreEqual(2, tp1.Value.ToInt32());
-            Assert.AreEqual("Const Test1 = 2", t1.ToString());
+            Assert.Equal("Test1", tp1.Name);
+            Assert.Same(m.Block.LookupType("INTEGER"), tp1.Type);
+            Assert.Equal(2, tp1.Value.ToInt32());
+            Assert.Equal("Const Test1 = 2", t1.ToString());
         }
 
-        [Test]
+        [Fact]
         public void ConstSimple()
         {
             Module m = TestHelper.CompileString(
@@ -54,15 +53,15 @@ CONST
  END Test.");
 
             var c = m.Block.LookupVar("Test");
-            Assert.IsNotNull(c);
-            Assert.IsInstanceOf<ConstDeclaration>(c);
+            Assert.NotNull(c);
+            Assert.IsType<ConstDeclaration>(c);
             var cp = (ConstDeclaration)c;
-            Assert.AreEqual("Test", cp.Name);
-            Assert.AreEqual(m.Block.LookupType("INTEGER"), cp.Type);
-            Assert.AreEqual(1, cp.Value.ToInt32());
+            Assert.Equal("Test", cp.Name);
+            Assert.Same(m.Block.LookupType("INTEGER"), cp.Type);
+            Assert.Equal(1, cp.Value.ToInt32());
         }
 
-        [Test]
+        [Fact]
         public void ConstSimpleExpr()
         {
             Module m = Oberon0Compiler.CompileString(
@@ -73,15 +72,15 @@ CONST
  END Test.");
 
             var c = m.Block.LookupVar("Test");
-            Assert.IsNotNull(c);
-            Assert.IsInstanceOf<ConstDeclaration>(c);
+            Assert.NotNull(c);
+            Assert.IsType<ConstDeclaration>(c);
             var cp = (ConstDeclaration)c;
-            Assert.AreEqual("Test", cp.Name);
-            Assert.AreEqual(m.Block.LookupType("INTEGER"), cp.Type);
-            Assert.AreEqual(2, cp.Value.ToInt32());
+            Assert.Equal("Test", cp.Name);
+            Assert.Equal(m.Block.LookupType("INTEGER"), cp.Type);
+            Assert.Equal(2, cp.Value.ToInt32());
         }
 
-        [Test]
+        [Fact]
         public void ConstSimpleFailDuplicate()
         {
             TestHelper.CompileString(
@@ -94,7 +93,7 @@ CONST
                 "A variable/constant with this name has been defined already");
         }
 
-        [Test]
+        [Fact]
         public void ConstSimpleFailVarReference()
         {
             TestHelper.CompileString(

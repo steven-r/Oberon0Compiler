@@ -1,11 +1,11 @@
-﻿#region copyright
+#region copyright
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using NUnit.Framework;
+using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
@@ -15,10 +15,9 @@ using Oberon0.TestSupport;
 
 namespace Oberon0.Compiler.Tests.Types
 {
-    [TestFixture]
     public class TypeTests
     {
-        [Test]
+        [Fact]
         public void LookupType()
         {
             Module m = TestHelper.CompileString(
@@ -31,7 +30,7 @@ END Test.");
             Assert.NotNull(m.Block.LookupType("Demo"));
         }
 
-        [Test]
+        [Fact]
         public void LookupTypeFail()
         {
             Module m = TestHelper.CompileString(
@@ -41,10 +40,10 @@ TYPE
 
 END Test.");
 
-            Assert.IsNull(m.Block.LookupType("?Unknown"));
+            Assert.Null(m.Block.LookupType("?Unknown"));
         }
 
-        [Test]
+        [Fact]
         public void SimpleType()
         {
             Module m = TestHelper.CompileString(
@@ -57,12 +56,12 @@ END Test.");
             var t = m.Block.LookupType("Demo");
             var intType = m.Block.LookupType("INTEGER");
             Assert.NotNull(t);
-            Assert.IsInstanceOf<SimpleTypeDefinition>(t);
+            Assert.IsType<SimpleTypeDefinition>(t);
             SimpleTypeDefinition std = (SimpleTypeDefinition)t;
-            Assert.AreEqual(intType.Type, std.Type);
+            Assert.Equal(intType.Type, std.Type);
         }
 
-        [Test]
+        [Fact]
         public void TypeDefinedTwiceError()
         {
             TestHelper.CompileString(
@@ -75,7 +74,7 @@ END Test.",
                 "Type Demo declared twice");
         }
 
-        [Test]
+        [Fact]
         public void TypeEquality()
         {
             Module m = TestHelper.CompileString(
@@ -96,18 +95,18 @@ END Test.");
             Assert.NotNull(i);
             var j = m.Block.LookupVar("j");
             Assert.NotNull(j);
-            Assert.AreEqual(6, m.Block.Statements.Count);
+            Assert.Equal(6, m.Block.Statements.Count);
             var s1 = m.Block.Statements[0];
             var s2 = m.Block.Statements[1];
-            Assert.IsInstanceOf<AssignmentStatement>(s1);
-            Assert.IsInstanceOf<AssignmentStatement>(s2);
+            Assert.IsType<AssignmentStatement>(s1);
+            Assert.IsType<AssignmentStatement>(s2);
             var as1 = (AssignmentStatement)s1;
             var as2 = (AssignmentStatement)s2;
-            Assert.IsInstanceOf<ConstantIntExpression>(as1.Expression);
-            Assert.IsInstanceOf<BinaryExpression>(as2.Expression);
-            Assert.AreEqual(as1.Expression.TargetType, as2.Expression.TargetType);
-            Assert.AreNotEqual(as1.Expression.TargetType, j.Type);
-            Assert.AreEqual(as1.Expression.TargetType.Type, j.Type.Type);
+            Assert.IsType<ConstantIntExpression>(as1.Expression);
+            Assert.IsType<BinaryExpression>(as2.Expression);
+            Assert.Equal(as1.Expression.TargetType, as2.Expression.TargetType);
+            Assert.NotEqual(as1.Expression.TargetType, j.Type);
+            Assert.Equal(as1.Expression.TargetType.Type, j.Type.Type);
         }
     }
 }
