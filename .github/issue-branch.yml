@@ -13,5 +13,5 @@ branches:
     prefix: feature/
   - label: bug
     prefix: bug/
-  - label: *
+  - label: '*'
     skip: true
