@@ -1,0 +1,17 @@
+mode: auto
+
+branchName: full
+
+silent: false
+
+autoCloseIssue: true
+
+branches:
+  - label: enhancement
+    prefix: feature/
+  - label: DevOps
+    prefix: feature/
+  - label: bug
+    prefix: bug/
+  - label: '*'
+    skip: true

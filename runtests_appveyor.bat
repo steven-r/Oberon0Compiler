@@ -1,1 +1,0 @@
-nunit3-console "%APPVEYOR_BUILD_FOLDER%\UnitTestProject1\bin\Debug\net462\Oberon0.Compiler.Tests.dll" "%APPVEYOR_BUILD_FOLDER%\Oberon0.Generator.Msil.Tests\bin\Debug\net462\Oberon0.Generator.Msil.Tests.dll" --result:TestReport.xml;format=nunit2
