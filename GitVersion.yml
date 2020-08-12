@@ -1,6 +1,9 @@
 assembly-versioning-scheme: MajorMinorPatch
+assembly-informational-format: '{Major}.{Minor}.{Patch}.{Sha}'
+mode: Mainline
 branches:
   master:
     tag: beta
 ignore:
   sha: []
+merge-message-formats: {}
