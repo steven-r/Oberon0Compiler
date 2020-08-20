@@ -9,9 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime;
-using JetBrains.Annotations;
 using Oberon0.Compiler.Expressions;
-using Oberon0.Compiler.Generator;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
 

@@ -31,21 +31,19 @@ namespace Oberon0.Generator.MsilBin
 
         private void GenerateComplexTypeMappings(Block block)
         {
-            List<Declaration> addDeclarations = new List<Declaration>();
-            int paramId = 0;
-            int varId = 0;
+            var addDeclarations = new List<Declaration>();
             foreach (ProcedureParameterDeclaration pp in block.Declarations.OfType<ProcedureParameterDeclaration>())
             {
                 if (pp.IsVar || pp.Type.Type.HasFlag(BaseTypes.Simple)) continue;
 
-                var name = pp.Name;
+                string name = pp.Name;
                 pp.Name = "__param__" + name;
-                pp.GeneratorInfo = new DeclarationGeneratorInfo(paramId++);
+                pp.GeneratorInfo = new DeclarationGeneratorInfo();
 
                 // rename parameter and create a new field
                 var field = new Declaration(name, pp.Type, block)
                 {
-                    GeneratorInfo = new DeclarationGeneratorInfo(varId++)
+                    GeneratorInfo = new DeclarationGeneratorInfo()
                 };
                 ((DeclarationGeneratorInfo)field.GeneratorInfo).OriginalField = pp;
                 ((DeclarationGeneratorInfo)pp.GeneratorInfo).ReplacedBy = field;

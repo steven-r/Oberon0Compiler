@@ -11,7 +11,6 @@ using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.IO;
 using JetBrains.Annotations;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Oberon0.Compiler;
@@ -24,9 +23,8 @@ namespace Oberon0.Msil
     /// The program.
     /// </summary>
     [UsedImplicitly]
-    public class Program
+    public static class Program
     {
-        private static string _fileName;
 
         /// <summary>
         /// The main.
@@ -59,7 +57,7 @@ namespace Oberon0.Msil
                 return 1;
             }
 
-            _fileName = Path.GetFileNameWithoutExtension(inputFile.FullName);
+            string fileName = Path.GetFileNameWithoutExtension(inputFile.FullName);
 
             var m = Oberon0Compiler.CompileString(File.ReadAllText(inputFile.FullName));
             if (m.CompilerInstance.HasError) return 1;
@@ -69,7 +67,7 @@ namespace Oberon0.Msil
             cg.GenerateIntermediateCode();
             string code = cg.IntermediateCode();
 
-            if (!CompileCode(code, _fileName, cg, verbose)) return 2;
+            if (!CompileCode(code, fileName, cg, verbose)) return 2;
 
             return 0;
         }

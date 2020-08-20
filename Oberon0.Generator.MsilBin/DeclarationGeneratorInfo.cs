@@ -12,13 +12,6 @@ namespace Oberon0.Generator.MsilBin
 {
     internal class DeclarationGeneratorInfo : IGeneratorInfo
     {
-        private int v;
-
-        public DeclarationGeneratorInfo(int v)
-        {
-            this.v = v;
-        }
-
         public ProcedureParameterDeclaration OriginalField { get; internal set; }
         public Declaration ReplacedBy { get; internal set; }
     }
