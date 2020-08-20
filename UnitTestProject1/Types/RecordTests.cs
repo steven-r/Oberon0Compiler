@@ -99,7 +99,7 @@ VAR
 BEGIN
     r.s := 1;
 END test.",
-                "Element not found in underlying type");
+                "Element not found in underlying type", "Left & right side do not match types");
         }
 
         [Fact]

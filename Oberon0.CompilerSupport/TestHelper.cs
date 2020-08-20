@@ -46,11 +46,27 @@ namespace Oberon0.TestSupport
 
         public static Module CompileString(string source, params string[] expectedErrors)
         {
-            List<CompilerError> errors = new List<CompilerError>();
-            Module m = CompileString(source, errors);
-            if (expectedErrors.Length == 0 && errors.Count > 0) Assert.Fail($"Expected no errors, actually found {errors.Count}");
+            void DumpErrors(List<CompilerError> compilerErrors)
+            {
+                foreach (var compilerError in compilerErrors)
+                {
+                    Assert.Warn($"[{compilerError.Line}/{compilerError.Column}] {compilerError.Message}");
+                }
+            }
 
-            if (expectedErrors.Length != errors.Count) Assert.Fail($"Expected {expectedErrors.Length} errors, actually found {errors.Count}");
+            var errors = new List<CompilerError>();
+            var m = CompileString(source, errors);
+            if (expectedErrors.Length == 0 && errors.Count > 0)
+            {
+                DumpErrors(errors);
+                Assert.Fail($"Expected no errors, actually found {errors.Count}");
+            }
+
+            if (expectedErrors.Length != errors.Count)
+            {
+                DumpErrors(errors);
+                Assert.Fail($"Expected {expectedErrors.Length} errors, actually found {errors.Count}");
+            }
 
             for (var i = 0; i < expectedErrors.Length; i++) Assert.AreEqual(expectedErrors[i], errors[i].Message);
 

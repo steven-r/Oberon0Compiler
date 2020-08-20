@@ -29,15 +29,6 @@ namespace Oberon0.Generator.MsilBin.Tests
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
-
-            if (assemblyLoadContextWeakRef.IsAlive)
-            {
-                Console.WriteLine("Unloading failed!");
-            }
-            else
-            {
-                Console.WriteLine("Unloading failed!");
-            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

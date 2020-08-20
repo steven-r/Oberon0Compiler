@@ -112,8 +112,6 @@ namespace Oberon0.Compiler.Definitions
         public TypeDefinition LookupType(string name)
         {
             var b = this;
-            //if (name.StartsWith("&", StringComparison.InvariantCulture))
-            //    name = name.Substring(1);
             while (b != null)
             {
                 var res = b.Types.FirstOrDefault(x => x.Name == name);
@@ -180,7 +178,7 @@ namespace Oberon0.Compiler.Definitions
         ///
         /// In the unlikely event of having more than 1000 parameters, this algorithm might fail.
         /// </remarks>
-        private int GenerateFunctionParameterScore(FunctionDeclaration func, IReadOnlyList<CallParameter> parameters)
+        private static int GenerateFunctionParameterScore(FunctionDeclaration func, IReadOnlyList<CallParameter> parameters)
         {
             int paramNo = 0;
             int score = 0;
@@ -188,6 +186,7 @@ namespace Oberon0.Compiler.Definitions
             if (parameters.Count != procParams.Length) return -1; // will never match
 
             foreach (var procedureParameter in procParams)
+            {
                 if (procedureParameter.IsVar)
                 {
                     if (parameters[paramNo].CanBeVarReference)
@@ -217,6 +216,9 @@ namespace Oberon0.Compiler.Definitions
                 {
                     score++; // match as assignable --> small increment
                 }
+
+                paramNo++;
+            }
 
             return score;
         }

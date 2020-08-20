@@ -38,6 +38,5 @@ END Test.");
             d.GeneratorInfo = new DummyGeneratorInfo();
             Assert.NotNull(d.GeneratorInfo);
         }
-
     }
 }

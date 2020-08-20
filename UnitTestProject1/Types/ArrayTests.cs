@@ -31,7 +31,7 @@ VAR
 BEGIN
     a[0] := 1;
 END test.",
-                "Array index out of bounds");
+                "Array index out of bounds", "Left & right side do not match types");
         }
 
         [Fact]
@@ -73,7 +73,7 @@ VAR
 BEGIN
     a[1] := 1;
 END test.",
-                "Array reference expected");
+                "Array reference expected", "Left & right side do not match types");
         }
 
         [Fact]
@@ -89,7 +89,7 @@ VAR
 BEGIN
     a[1.234] := 1;
 END test.",
-                "Array reference must be INTEGER");
+                "Array reference must be INTEGER", "Left & right side do not match types");
         }
 
         [Fact]

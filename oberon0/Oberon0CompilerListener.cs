@@ -342,7 +342,7 @@ namespace Oberon0.Compiler
             // variable not found
                 return;
 
-            VariableSelector vs = new VariableSelector(null);
+            var vs = new VariableSelector(null);
             vs.AddRange(context._i.Select(selElement => selElement.selRet));
             if (!vs.Any()) return;
 
@@ -352,17 +352,18 @@ namespace Oberon0.Compiler
                 return;
             }
 
-            TypeDefinition type = context.referenceId.Type;
-            TypeDefinition baseType = context.referenceId.Type;
+            var type = context.referenceId.Type;
             foreach (var v in vs)
             {
-                if (type == null)
-                // there has been an error before (wrong index, ...). Therefore we just pass out without setting vsRet
-                    return;
-
-                if (v is IdentifierSelector selector)
-                    selector.TypeDefinition = type = CheckRecordSelector(selector, type);
-                else if (v is IndexSelector indexSelector) indexSelector.TypeDefinition = type = CheckArrayIndexSelector(indexSelector, type);
+                switch (v)
+                {
+                    case IdentifierSelector selector:
+                        selector.TypeDefinition = type = CheckRecordSelector(selector, type);
+                        break;
+                    case IndexSelector indexSelector:
+                        indexSelector.TypeDefinition = type = CheckArrayIndexSelector(indexSelector, type);
+                        break;
+                }
             }
 
             vs.SelectorResultType = type;
@@ -464,14 +465,14 @@ namespace Oberon0.Compiler
             if (!(type is ArrayTypeDefinition arrayType))
             {
                 _parser.NotifyErrorListeners(indexSelector.Token, "Array reference expected", null);
-                return SimpleTypeDefinition.IntType;
+                return SimpleTypeDefinition.VoidType;
             }
 
             indexSelector.IndexDefinition = ConstantSolver.Solve(indexSelector.IndexDefinition, _parser.currentBlock);
             if (indexSelector.IndexDefinition.TargetType.Type != BaseTypes.Int)
             {
                 _parser.NotifyErrorListeners(indexSelector.Token, "Array reference must be INTEGER", null);
-                return SimpleTypeDefinition.IntType;
+                return SimpleTypeDefinition.VoidType;
             }
 
             if (indexSelector.IndexDefinition.IsConst)
@@ -481,7 +482,7 @@ namespace Oberon0.Compiler
                 if (index < 1 || index > arrayType.Size)
                 {
                     _parser.NotifyErrorListeners(indexSelector.Token, "Array index out of bounds", null);
-                    return SimpleTypeDefinition.IntType;
+                    return SimpleTypeDefinition.VoidType;
                 }
             }
 
@@ -496,7 +497,7 @@ namespace Oberon0.Compiler
                 return SimpleTypeDefinition.IntType;
             }
 
-            foreach (Declaration declaration in recordType.Elements)
+            foreach (var declaration in recordType.Elements)
                 if (declaration.Name == identifierSelector.Name)
                 {
                     identifierSelector.Element = declaration;
@@ -506,7 +507,7 @@ namespace Oberon0.Compiler
                 }
 
             _parser.NotifyErrorListeners(identifierSelector.Token, "Element not found in underlying type", null);
-            return SimpleTypeDefinition.IntType;
+            return SimpleTypeDefinition.VoidType;
         }
 
         private void CheckExportable(IToken exportElement, bool isExportable, bool checkParent = false)
