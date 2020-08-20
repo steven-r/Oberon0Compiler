@@ -48,7 +48,7 @@ namespace Oberon0.Generator.MsilBin
         /// Dump generated code as string
         /// </summary>
         /// <returns>a (hopefully) compilable string</returns>
-        public string DumpCode()
+        public string IntermediateCode()
         {
             return _compiledCode.ToFullString();
         }
@@ -57,7 +57,7 @@ namespace Oberon0.Generator.MsilBin
         /// Dump generated code to a <see cref="TextWriter"/>
         /// </summary>
         /// <param name="writer">The TextWriter to write to</param>
-        public void DumpCode(TextWriter writer)
+        public void WriteIntermediateCode(TextWriter writer)
         {
             _compiledCode.WriteTo(writer);
         }
@@ -65,9 +65,9 @@ namespace Oberon0.Generator.MsilBin
         /// <summary>
         /// Start code generation
         /// </summary>
-        public void Generate()
+        public void GenerateIntermediateCode()
         {
-            if (Module == null) throw new DataException("Please set Module before calling Generate()");
+            if (Module == null) throw new DataException("Please set Module before calling GenerateIntermediateCode()");
             StandardFunctionRepository.Initialize(Module);
 
             _compiledCode = SyntaxFactory.CompilationUnit();
@@ -121,7 +121,6 @@ namespace Oberon0.Generator.MsilBin
             // declarations
             foreach (var declaration in block.Declarations)
             {
-                if (declaration is ProcedureParameterDeclaration) continue;
                 _classDeclaration = _classDeclaration.AddMembers(GenerateFieldDeclaration(declaration, false));
             }
 
@@ -137,7 +136,7 @@ namespace Oberon0.Generator.MsilBin
 
             var mainBlock = new Block(block, Module);
             mainBlock.Statements.AddRange(block.Statements);
-            var mainFuncDecl = new FunctionDeclaration("__MAIN__" + Module.Name, mainBlock, SimpleTypeDefinition.VoidType, null);
+            var mainFuncDecl = new FunctionDeclaration("__MAIN__" + Module.Name, mainBlock, SimpleTypeDefinition.VoidType);
             _classDeclaration = _classDeclaration.AddMembers(GenerateFunctionOrProcedure(mainFuncDecl));
 
             _classDeclaration = _classDeclaration.AddMembers(SyntaxFactory.MethodDeclaration(

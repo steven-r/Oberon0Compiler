@@ -6,6 +6,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Compiler.Types
@@ -18,7 +19,7 @@ namespace Oberon0.Compiler.Types
             this.Elements = new List<Declaration>();
         }
 
-        public RecordTypeDefinition(string name)
+        private RecordTypeDefinition(string name)
             : base(BaseTypes.Record)
         {
             this.Name = name;
@@ -43,6 +44,12 @@ namespace Oberon0.Compiler.Types
                 return false;
 
             return Name == sourceType.Name;
+        }
+
+        [ExcludeFromCodeCoverage]
+        public override string ToString()
+        {
+            return $"RECORD {Name}";
         }
     }
 }

@@ -13,6 +13,7 @@ using System.IO;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 using Oberon0.Compiler;
 using Oberon0.Generator.MsilBin;
 using Oberon0.Shared;
@@ -40,7 +41,7 @@ namespace Oberon0.Msil
         {
             var rootCommand = new RootCommand("Compile an Oberon0 source file.")
             {
-                new Argument<FileInfo>("input file", "The input file to be compiled") {Arity = ArgumentArity.ExactlyOne}.ExistingOnly(),
+                new Argument<FileInfo>("input-file", "The input file to be compiled") {Arity = ArgumentArity.ExactlyOne}.ExistingOnly(),
                 new Option<bool>(
                     new[] {"-v", "--verbose"},
                     "Be verbose on parsing"
@@ -50,23 +51,23 @@ namespace Oberon0.Msil
             return rootCommand.Invoke(args);
         }
 
-        private static int StartCompile(ParseResult result, FileSystemInfo input, bool verbose, IConsole console)
+        private static int StartCompile(ParseResult result, FileSystemInfo inputFile, bool verbose, IConsole console)
         {
-            if (!input.Exists)
+            if (!inputFile.Exists)
             {
-                Console.Error.Write("Cannot find {0}", input.FullName);
+                Console.Error.Write("Cannot find {0}", inputFile.FullName);
                 return 1;
             }
 
-            _fileName = Path.GetFileNameWithoutExtension(input.FullName);
+            _fileName = Path.GetFileNameWithoutExtension(inputFile.FullName);
 
-            var m = Oberon0Compiler.CompileString(File.ReadAllText(input.FullName));
+            var m = Oberon0Compiler.CompileString(File.ReadAllText(inputFile.FullName));
             if (m.CompilerInstance.HasError) return 1;
 
             ICodeGenerator cg = new MsilBinGenerator() { Module = m };
 
-            cg.Generate();
-            string code = cg.DumpCode();
+            cg.GenerateIntermediateCode();
+            string code = cg.IntermediateCode();
 
             if (!CompileCode(code, _fileName, cg, verbose)) return 2;
 
@@ -77,7 +78,7 @@ namespace Oberon0.Msil
         {
             string assemblyName = Path.GetFileNameWithoutExtension(filename);
 
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
+            var syntaxTree = CSharpSyntaxTree.ParseText(source);
 
             if (syntaxTree == null)
                 throw new InvalidOperationException("Could not compile source code, please look at error report");
@@ -85,7 +86,7 @@ namespace Oberon0.Msil
             var compilationUnit = syntaxTree.CreateCompiledCSharpCode(assemblyName, cg);
 
             using var file = File.Create(filename + ".exe");
-            var result = compilationUnit.Emit(file);
+            var result = compilationUnit.Emit(file, options:new EmitOptions(true, includePrivateMembers: false));
             result.ThrowExceptionIfCompilationFailure(showWarnings);
             file.Flush(true);
             return true;

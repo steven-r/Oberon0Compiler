@@ -6,9 +6,11 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Oberon0.TestSupport
 {
+    [ExcludeFromCodeCoverage]
     public class CompilerError
     {
         public int Column { get; set; }

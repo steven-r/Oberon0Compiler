@@ -6,6 +6,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Operations.Internal
@@ -35,6 +36,7 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
 
         public BaseTypes ResultType { get; }
 
+        [ExcludeFromCodeCoverage]
         public bool Equals(ArithmeticOpKey other)
         {
             if (other == null) return false;
@@ -42,6 +44,7 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
                                                 && RightHandType == other.RightHandType;
         }
 
+        [ExcludeFromCodeCoverage]
         public override bool Equals(object obj)
         {
             if (obj == null) return false;

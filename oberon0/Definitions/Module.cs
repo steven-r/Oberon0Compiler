@@ -6,6 +6,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Generator;
@@ -25,7 +26,7 @@ namespace Oberon0.Compiler.Definitions
             this.ExternalReferences = new List<Assembly>();
 
             this.DeclareStandardTypes();
-            this.DeclareStandardConsts();
+            this.DeclareStandardConstants();
             this.DeclareStandardFunctions();
         }
 
@@ -50,6 +51,7 @@ namespace Oberon0.Compiler.Definitions
         /// </summary>
         /// <value>Generator information.</value>
         [UsedImplicitly]
+        [ExcludeFromCodeCoverage]
         public IGeneratorInfo GeneratorInfo { get; set; }
 
         /// <summary>

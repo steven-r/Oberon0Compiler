@@ -5,7 +5,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using Antlr4.Runtime;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions
@@ -20,10 +19,6 @@ namespace Oberon0.Compiler.Expressions
         {
             TargetType = targetType;
         }
-
-#pragma warning disable CS3003 // Type is not CLS-compliant
-        public IToken Token { get; set; }
-#pragma warning restore CS3003 // Type is not CLS-compliant
 
         public int Operator { get; set; }
 

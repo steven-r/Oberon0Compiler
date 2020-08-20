@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -31,23 +32,27 @@ namespace Oberon0.Shared
         /// <returns>An intermediate form (see <see cref="CSharpCompilation"/> for details)</returns>
         public static CSharpCompilation CreateCompiledCSharpCode(this SyntaxTree syntaxTree, string assemblyName, ICodeGenerator codeGenerator, bool isExecutable = true)
         {
-            var refs = new List<PortableExecutableReference>(
-                DependencyContext.Default.CompileLibraries
-                    .SelectMany(cl => cl.ResolveReferencePaths())
-                    .Select(asm => MetadataReference.CreateFromFile(asm))
-            )
+            var trustedAssembliesPaths = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")).Split(Path.PathSeparator);
+            var neededAssemblies = new[]
             {
-                MetadataReference.CreateFromFile(typeof(Oberon0ExportAttribute).Assembly
-                    .Location)
+                "System.Runtime",
+                "mscorlib",
+                "AnyClone",
             };
-
+            var references = trustedAssembliesPaths
+                //.Where(p => neededAssemblies.Contains(Path.GetFileNameWithoutExtension(p)) || p.Contains("\\System.") && !p.Contains("\\System.Private"))
+                .Select(p => MetadataReference.CreateFromFile(p))
+                .ToList();
+            references.Add(MetadataReference.CreateFromFile(typeof(Oberon0ExportAttribute).Assembly
+                .Location)
+            );
             var options = isExecutable
                 ? new CSharpCompilationOptions(OutputKind.ConsoleApplication, mainTypeName: codeGenerator.GetMainClassName())
                 : new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
             return CSharpCompilation.Create(
                 assemblyName + (isExecutable ? ".exe" : ".dll"),
                 new[] {syntaxTree},
-                refs,
+                references,
                 options);
         }
 

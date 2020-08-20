@@ -123,16 +123,14 @@ namespace Oberon0.Compiler
                         OberonGrammarLexer.MINUS,
                         context.e.expReturn,
                         null,
-                        _parser.currentBlock, 
-                        context.op);
+                        _parser.currentBlock);
                     break;
                 case OberonGrammarLexer.NOT:
                     context.expReturn = BinaryExpression.Create(
                         OberonGrammarLexer.NOT,
                         context.e.expReturn,
                         null,
-                        _parser.currentBlock,
-                        context.op);
+                        _parser.currentBlock);
                     break;
             }
         }
@@ -171,8 +169,7 @@ namespace Oberon0.Compiler
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
-                _parser.currentBlock,
-                context.op);
+                _parser.currentBlock);
         }
 
         public override void ExitExprMultPrecedence(OberonGrammarParser.ExprMultPrecedenceContext context)
@@ -181,8 +178,7 @@ namespace Oberon0.Compiler
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
-                _parser.currentBlock,
-                context.op);
+                _parser.currentBlock);
         }
 
         public override void ExitExprRelPrecedence(OberonGrammarParser.ExprRelPrecedenceContext context)
@@ -191,8 +187,7 @@ namespace Oberon0.Compiler
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
-                _parser.currentBlock,
-                context.op);
+                _parser.currentBlock);
         }
 
         public override void ExitExprFuncCall(OberonGrammarParser.ExprFuncCallContext context)
@@ -213,7 +208,6 @@ namespace Oberon0.Compiler
             context.expReturn = new FunctionCallExpression(
                 fp,
                 _parser.currentBlock,
-                context.Start,
                 parameters);
         }
 
@@ -366,7 +360,6 @@ namespace Oberon0.Compiler
                 // there has been an error before (wrong index, ...). Therefore we just pass out without setting vsRet
                     return;
 
-                v.BasicTypeDefinition = baseType;
                 if (v is IdentifierSelector selector)
                     selector.TypeDefinition = type = CheckRecordSelector(selector, type);
                 else if (v is IndexSelector indexSelector) indexSelector.TypeDefinition = type = CheckArrayIndexSelector(indexSelector, type);
@@ -448,8 +441,9 @@ namespace Oberon0.Compiler
 
         public override void ExitImportDefinition(OberonGrammarParser.ImportDefinitionContext context)
         {
-            var moduleName = context.id.Text;
-            if (_parser.module.ExternalReferences.Any(x => x.GetName().Name == moduleName)) _parser.NotifyErrorListeners(context.id, $"Module {moduleName} has already been imported", null);
+            string moduleName = context.id.Text;
+            if (_parser.module.ExternalReferences.Any(x => x.GetName().Name == moduleName))
+                _parser.NotifyErrorListeners(context.id, $"Module {moduleName} has already been imported", null);
 
             //TODO: Load Module
         }

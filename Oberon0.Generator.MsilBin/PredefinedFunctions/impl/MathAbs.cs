@@ -34,7 +34,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions.impl
                 .WithArgumentList(
                     SyntaxFactory.ArgumentList(
                         SyntaxFactory.SingletonSeparatedList(
-                            SyntaxFactory.Argument(codeGenerator.HandleExpression(parameters[0])))));
+                            SyntaxFactory.Argument(codeGenerator.CompileExpression<ExpressionSyntax>(parameters[0])))));
         }
     }
 }

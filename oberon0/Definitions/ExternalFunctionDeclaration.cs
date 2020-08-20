@@ -6,7 +6,8 @@
 #endregion
 
 using System;
-using System.Reflection;
+using System.Diagnostics;
+using JetBrains.Annotations;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
@@ -14,6 +15,7 @@ namespace Oberon0.Compiler.Definitions
     /// <summary>
     /// Function that has been declared outside the compiler structure (e.g. Oberon0System).
     /// </summary>
+    [DebuggerDisplay("<EXT> {ReturnType} {Name} -> {ClassName}.{MethodName}")]
     public class ExternalFunctionDeclaration : FunctionDeclaration
     {
         /// <summary>
@@ -22,26 +24,21 @@ namespace Oberon0.Compiler.Definitions
         /// <param name="name">The name of the function in Oberon0</param>
         /// <param name="block">The surrounding block</param>
         /// <param name="returnType">The return type</param>
-        /// <param name="methodName">The method info coming from .NET</param>
+        /// <param name="methodName">The method name</param>
         /// <param name="parameters">a list of parameters</param>
+        /// <param name="className">The class name</param>
         public ExternalFunctionDeclaration(
             string name,
             Block block,
-            TypeDefinition returnType,
-            MethodInfo methodName,
+            [NotNull] TypeDefinition returnType,
+            [NotNull] string className,
+            [NotNull] string methodName,
             params ProcedureParameterDeclaration[] parameters)
             : base(name, block, returnType, parameters)
         {
-            ClassName = methodName.DeclaringType?.FullName
-                        ?? throw new ArgumentNullException(nameof(methodName), "Declaring type not found");
-            MethodName = methodName.Name;
-            Assembly = methodName.DeclaringType?.Assembly;
+            ClassName = className ?? throw new ArgumentNullException(nameof(className));
+            MethodName = methodName ?? throw new ArgumentNullException(nameof(methodName));
         }
-
-        /// <summary>
-        /// Gets or sets the assembly providing the method
-        /// </summary>
-        public Assembly Assembly { get; }
 
         /// <summary>
         /// The class name this Method belongs to

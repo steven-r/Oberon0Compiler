@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Oberon0.Msil": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "D:\\Users\\StephenReindl\\Source\\Repos\\steven-r\\Oberon0Compiler\\Oberon0.Msil\\Tests\\Multiply.ob0"
     }
   }
 }

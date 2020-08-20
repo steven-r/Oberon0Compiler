@@ -69,14 +69,17 @@ namespace Oberon0.Compiler.Expressions.Operations
             ConstantExpression left,
             ConstantExpression right)
         {
-            bool res = operationParameters.Operation switch
+            if (operationParameters.Operation == OberonGrammarLexer.EQUAL)
             {
-                OberonGrammarLexer.EQUAL => left.ToBool() == right.ToBool(),
-                OberonGrammarLexer.NOTEQUAL => left.ToBool() != right.ToBool(),
-                _ => throw new NotImplementedException()
-            };
+                return left.ToBool() == right.ToBool();
+            }
 
-            return res;
+            if (operationParameters.Operation == OberonGrammarLexer.NOTEQUAL)
+            {
+                return left.ToBool() != right.ToBool();
+            }
+
+            return false;
         }
 
         private static bool HandleStandardRelop(

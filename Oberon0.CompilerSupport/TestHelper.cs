@@ -15,6 +15,7 @@ using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.TestSupport
 {
+    [ExcludeFromCodeCoverage]
     public static class TestHelper
     {
         private static readonly List<CompilerError> CompilerErrors = new List<CompilerError>();
@@ -43,7 +44,6 @@ namespace Oberon0.TestSupport
                     });
         }
 
-        [ExcludeFromCodeCoverage]
         public static Module CompileString(string source, params string[] expectedErrors)
         {
             List<CompilerError> errors = new List<CompilerError>();
@@ -55,6 +55,30 @@ namespace Oberon0.TestSupport
             for (var i = 0; i < expectedErrors.Length; i++) Assert.AreEqual(expectedErrors[i], errors[i].Message);
 
             return m;
+        }
+
+        /// <summary>
+        /// Helper to compile some code with a standard application surrounding
+        /// </summary>
+        /// <param name="operations"></param>
+        /// <param name="expectedErrors"></param>
+        /// <returns></returns>
+        public static Module CompileSingleStatement(string operations, params string[] expectedErrors)
+        {
+            return CompileString(
+                @$"
+MODULE test; 
+CONST 
+   true_ = TRUE; 
+   false_ = FALSE; 
+VAR 
+   a,b,c,d,e,f,g,h,x,y,z: BOOLEAN; 
+   i, j, k, l: INTEGER;
+   r, s, t: REAL;
+BEGIN 
+  {operations} 
+END test.",
+                expectedErrors);
         }
 
         internal class TestErrorListener : BaseErrorListener, IAntlrErrorListener<int>

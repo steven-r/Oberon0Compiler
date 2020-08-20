@@ -6,7 +6,6 @@
 #endregion
 
 using System.IO;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 
@@ -37,24 +36,24 @@ namespace Oberon0.Shared
         /// Dump generated (source) code to string
         /// </summary>
         /// <returns></returns>
-        string DumpCode();
+        string IntermediateCode();
 
         /// <summary>
         /// Dump generated source code to <see cref="TextWriter"/>
         /// </summary>
         /// <param name="writer"></param>
-        void DumpCode(TextWriter writer);
+        void WriteIntermediateCode(TextWriter writer);
 
         /// <summary>
         /// Starts code generation
         /// </summary>
-        void Generate();
+        void GenerateIntermediateCode();
 
         /// <summary>
         /// Expression compiler
         /// </summary>
-        /// <param name="compilerExpression"></param>
-        /// <returns></returns>
-        ExpressionSyntax HandleExpression(Expression compilerExpression);
+        /// <param name="compilerExpression">The expression on Oberon0 AST notation</param>
+        /// <returns>An expression in intermediate AST notation</returns>
+        T CompileExpression<T>(Expression compilerExpression) where T : class;
     }
 }

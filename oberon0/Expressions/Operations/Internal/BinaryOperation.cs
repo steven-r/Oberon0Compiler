@@ -14,11 +14,11 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
     internal abstract class BinaryOperation : IArithmeticOperation
     {
         /// <inheritdoc />
-        public Expression Operate(Expression e, Block block, IArithmeticOpMetadata operationParameters)
+        public Expression Operate(BinaryExpression e, Block block, IArithmeticOpMetadata operationParameters)
         {
             if (e == null) throw new ArgumentNullException(nameof(e));
-            if (!(e is BinaryExpression bin)) throw new InvalidCastException("Cannot cast expression to binary expression");
-            return BinaryOperate(bin, block, operationParameters);
+            if (block == null) throw new ArgumentNullException(nameof(block));
+            return BinaryOperate(e, block, operationParameters);
         }
 
         /// <summary>

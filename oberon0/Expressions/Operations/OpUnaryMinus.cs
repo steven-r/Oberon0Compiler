@@ -30,21 +30,21 @@ namespace Oberon0.Compiler.Expressions.Operations
             IArithmeticOpMetadata operationParameters)
         {
             if (bin.LeftHandSide.IsConst)
-                switch (bin.LeftHandSide.TargetType.Type)
+            {
+                if (bin.LeftHandSide.TargetType.Type == BaseTypes.Int)
                 {
-                    case BaseTypes.Int:
-                        ConstantIntExpression leftInt = (ConstantIntExpression)bin.LeftHandSide;
-                        leftInt.Value = -(int)leftInt.Value;
-                        return leftInt;
-
-                    case BaseTypes.Real:
-                        ConstantDoubleExpression leftDouble = (ConstantDoubleExpression)bin.LeftHandSide;
-                        leftDouble.Value = -(double)leftDouble.Value;
-                        return leftDouble;
-
-                    default:
-                        throw new ArgumentException($"Cannot perform unary minus on {bin.LeftHandSide.TargetType.Type}");
+                    var leftInt = (ConstantIntExpression) bin.LeftHandSide;
+                    leftInt.Value = -(int) leftInt.Value;
+                    return leftInt;
                 }
+
+                if (bin.LeftHandSide.TargetType.Type == BaseTypes.Real)
+                {
+                    var leftDouble = (ConstantDoubleExpression) bin.LeftHandSide;
+                    leftDouble.Value = -(double) leftDouble.Value;
+                    return leftDouble;
+                }
+            }
 
             return bin; // expression remains the same
         }

@@ -44,21 +44,22 @@ namespace Oberon0.Generator.MsilBin
             {OberonGrammarLexer.MOD, SyntaxKind.ModuloExpression}
         };
 
-        public ExpressionSyntax HandleExpression(Expression compilerExpression)
+        /// <inheritdoc />
+        public T CompileExpression<T>(Expression compilerExpression) where T: class
         {
             return compilerExpression switch
             {
                 UnaryExpression ua => SyntaxFactory.PrefixUnaryExpression(UnaryExpressionMapping[ua.Operator],
-                    HandleExpression(ua.LeftHandSide)),
+                    CompileExpression<ExpressionSyntax>(ua.LeftHandSide)) as T,
                 BinaryExpression be => SyntaxFactory.ParenthesizedExpression(SyntaxFactory.BinaryExpression(
                     BinaryExpressionMapping[be.Operator],
-                    HandleExpression(be.LeftHandSide),
-                    HandleExpression(be.RightHandSide))),
-                VariableReferenceExpression vre => GenerateVariableReference(vre.Declaration, vre.Selector),
-                ConstantExpression ce => GenerateConstantLiteral(ce),
+                    CompileExpression<ExpressionSyntax>(be.LeftHandSide),
+                    CompileExpression<ExpressionSyntax>(be.RightHandSide))) as T,
+                VariableReferenceExpression vre => GenerateVariableReference(vre.Declaration, vre.Selector) as T,
+                ConstantExpression ce => GenerateConstantLiteral(ce) as T,
                 StringExpression se => SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression,
-                    SyntaxFactory.Literal(se.Value)),
-                FunctionCallExpression fce => CallFunction(fce.FunctionDeclaration, fce.Parameters),
+                    SyntaxFactory.Literal(se.Value)) as T,
+                FunctionCallExpression fce => CallFunction(fce.FunctionDeclaration, fce.Parameters) as T,
                 _ => throw new ArgumentException("Cannot process exception type " + compilerExpression.GetType().Name,
                     nameof(compilerExpression))
             };
@@ -79,13 +80,13 @@ namespace Oberon0.Generator.MsilBin
                     case IndexSelector indexSelector:
                         // add a -1 to the selector (and compile) as c# arrays start at 0
                         var binaryExpression =  BinaryExpression.Create(OberonGrammarLexer.MINUS, indexSelector.IndexDefinition,
-                            new ConstantIntExpression(1), declaration.Block, null);
+                            new ConstantIntExpression(1), declaration.Block);
                         var solvedExpression = ConstantSolver.Solve(binaryExpression, declaration.Block);
                         var accessor = SyntaxFactory.ElementAccessExpression(
                             MapIdentifierName(declaration.Name),
                             SyntaxFactory.BracketedArgumentList(
                                 SyntaxFactory.SingletonSeparatedList(
-                                    SyntaxFactory.Argument(HandleExpression(solvedExpression)))));
+                                    SyntaxFactory.Argument(CompileExpression<ExpressionSyntax>(solvedExpression)))));
                         if (current == null)
                             current = accessor;
                         else

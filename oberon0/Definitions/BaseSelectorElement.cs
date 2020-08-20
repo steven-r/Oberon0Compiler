@@ -30,10 +30,5 @@ namespace Oberon0.Compiler.Definitions
         /// Gets or sets the type definition.
         /// </summary>
         public TypeDefinition TypeDefinition { get; set; }
-
-        /// <summary>
-        /// Gets or sets the basic type definition. The base type definition represents the root type.
-        /// </summary>
-        public TypeDefinition BasicTypeDefinition { get; set; }
     }
 }

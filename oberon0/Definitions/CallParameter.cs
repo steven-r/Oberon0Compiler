@@ -7,9 +7,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Types;
 
@@ -44,7 +44,7 @@ namespace Oberon0.Compiler.Definitions
         /// <returns>
         /// The <see cref="IReadOnlyList{T}"/>.
         /// </returns>
-        public static IReadOnlyList<CallParameter> FromExpressions(params Expression[] expressions)
+        public static IReadOnlyList<CallParameter> CreateFromExpressionList(params Expression[] expressions)
         {
             var list = new List<CallParameter>(expressions.Length);
             list.AddRange(expressions.Select(FromExpression));
@@ -62,8 +62,13 @@ namespace Oberon0.Compiler.Definitions
         /// <returns>
         /// The list of call parameters or <c>null</c> in case of error.
         /// </returns>
-        public static IReadOnlyList<CallParameter> FromExpressions([NotNull] Block block, string parameters = null)
+        /// <remarks>This functions is for testing only</remarks>
+        [ExcludeFromCodeCoverage]
+        internal static IReadOnlyList<CallParameter> CreateFromStringExpression([NotNull] Block block, string parameters = null)
         {
+#if !DEBUG
+            throw new InvalidOperationException("CreateFromStringExpression is only valid for test configurations");
+#else
             if (block == null) throw new ArgumentNullException(nameof(block));
 
             var resultList = new List<CallParameter>();
@@ -72,26 +77,18 @@ namespace Oberon0.Compiler.Definitions
             foreach (string element in parameters.Split(','))
             {
                 var callParameter = new CallParameter();
-                var matches = Regex.Match(
-                    element,
-                    "(?<ref>&)?(?<name>[A-Za-z][A-Za-z$0-9]*)(?<isarray>\\[(?<size>\\d+)\\])?");
-                if (!matches.Success) throw new ArgumentException($"{element} is not a valid type reference", nameof(parameters));
 
-                callParameter.CanBeVarReference = matches.Groups["ref"].Value == "&";
+                (var targetType, bool isVar) = Module.GetParameterDeclarationFromString(element, block);
 
-                var type = block.LookupType(matches.Groups["name"].Value);
-                if (type == null) throw new ArgumentException($"{element} is not a valid type reference", nameof(parameters));
-
-                callParameter.TargetType = matches.Groups["isarray"].Success
-                                               ? new ArrayTypeDefinition(int.Parse(matches.Groups["size"].Value), type)
-                                               : type;
-
+                callParameter.CanBeVarReference = isVar;
+                callParameter.TargetType = targetType;
                 callParameter.TypeName = callParameter.TargetType.Name;
 
                 resultList.Add(callParameter);
             }
 
             return resultList;
+#endif
         }
 
         /// <summary>

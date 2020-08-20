@@ -5,13 +5,17 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
 {
+    [DebuggerDisplay("{ReturnType} {Name}")]
     public class FunctionDeclaration
     {
         /// <summary>
@@ -32,6 +36,34 @@ namespace Oberon0.Compiler.Definitions
             if (parameters != null && parameters.Length > 0) this.Block.Declarations.AddRange(parameters);
 
             this.ReturnType = returnType;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FunctionDeclaration"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="block">The block.</param>
+        /// <param name="returnType">Type of the return.</param>
+        /// <param name="parameters">The parameters.</param>
+        internal FunctionDeclaration(
+            string name,
+            TypeDefinition returnType,
+            Block block,
+            params string[] parameters)
+        {
+            Name = name;
+            Block = block;
+            int i = 0;
+            if (parameters != null)
+            {
+                foreach (string parameter in parameters)
+                {
+                    Block.Declarations.Add(
+                        Module.GetProcedureParameterByName("__param__" + i++, parameter, Block));
+                }
+            }
+
+            ReturnType = returnType;
         }
 
         public Block Block { get; }
@@ -60,25 +92,13 @@ namespace Oberon0.Compiler.Definitions
         public static FunctionDeclaration AddHardwiredFunction(
             string name,
             Module module,
-            params ProcedureParameterDeclaration[] parameters)
-        {
-            var res = new FunctionDeclaration(name, new Block(module.Block, module), SimpleTypeDefinition.VoidType, parameters)
-                {
-                    IsInternal = true
-                };
-            return res;
-        }
-
-        public static FunctionDeclaration AddHardwiredFunction(
-            string name,
-            Module module,
             TypeDefinition returnType,
-            params ProcedureParameterDeclaration[] parameters)
+            params string[] parameters)
         {
-            var res = new FunctionDeclaration(name, new Block(module.Block, module), returnType, parameters)
-                {
-                    IsInternal = true
-                };
+            var res = new FunctionDeclaration(name, returnType, new Block(module.Block, module), parameters)
+            {
+                IsInternal = true
+            };
             return res;
         }
 
@@ -125,10 +145,10 @@ namespace Oberon0.Compiler.Definitions
                 sb.Append(string.Join(",", list));
                 sb.Append(')');
             }
-
             return sb.ToString();
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString()
         {
             var @params = string.Join(

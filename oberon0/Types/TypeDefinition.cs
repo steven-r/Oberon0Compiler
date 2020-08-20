@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
 using Oberon0.Compiler.Generator;
 
 namespace Oberon0.Compiler.Types
@@ -33,6 +34,7 @@ namespace Oberon0.Compiler.Types
         /// Gets or sets additional information used by the generator engine
         /// </summary>
         /// <value>Generator information.</value>
+        [ExcludeFromCodeCoverage]
         public IGeneratorInfo GeneratorInfo { get; set; }
 
         /// <summary>
@@ -40,7 +42,7 @@ namespace Oberon0.Compiler.Types
         /// </summary>
         public bool Exportable { get; set; }
 
-        public bool IsInternal { get; set; }
+        public bool IsInternal { get; }
 
         public string Name { get; set; }
 

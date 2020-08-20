@@ -46,11 +46,11 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions.impl
             FunctionDeclaration functionDeclaration,
             IReadOnlyList<Expression> parameters)
         {
-            VariableReferenceExpression reference = (VariableReferenceExpression)parameters[0];
+            var reference = (VariableReferenceExpression)parameters[0];
             // generates {reference} = System.{type}.Parse(Console.ReadLine())
             return SyntaxFactory.AssignmentExpression(
                 SyntaxKind.SimpleAssignmentExpression,
-                codeGenerator.HandleExpression(reference),
+                codeGenerator.CompileExpression<ExpressionSyntax>(reference),
                 SyntaxFactory.InvocationExpression(
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,

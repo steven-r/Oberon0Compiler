@@ -31,18 +31,18 @@ namespace Oberon0.Generator.MsilBin
                 {
                     case WhileStatement whileStatement:
                         statements = statements.Add(
-                            SyntaxFactory.WhileStatement(HandleExpression(whileStatement.Condition),
+                            SyntaxFactory.WhileStatement(CompileExpression<ExpressionSyntax>(whileStatement.Condition),
                                 SyntaxFactory.Block(GenerateBlockStatements(whileStatement.Block))));
                         break;
                     case IfStatement ifStatement:
-                        var current = SyntaxFactory.IfStatement(HandleExpression(ifStatement.Conditions[^1]),
+                        var current = SyntaxFactory.IfStatement(CompileExpression<ExpressionSyntax>(ifStatement.Conditions[^1]),
                             SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ThenParts[^1])));
                         if (ifStatement.ElsePart != null)
                             current = current.WithElse(SyntaxFactory.ElseClause(
                                 SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ElsePart))));
                         for (var i = ifStatement.Conditions.Count -2; i >= 0; i--)
                         {
-                            var expression = HandleExpression(ifStatement.Conditions[i]);
+                            var expression = CompileExpression<ExpressionSyntax>(ifStatement.Conditions[i]);
                             current = SyntaxFactory.IfStatement(default, expression,
                                 SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ThenParts[i])),
                                 SyntaxFactory.ElseClause(SyntaxFactory.Block(current)));
@@ -53,7 +53,7 @@ namespace Oberon0.Generator.MsilBin
                     case AssignmentStatement assignmentStatement:
                         var assignment = SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
                             GenerateVariableReference(assignmentStatement.Variable, assignmentStatement.Selector),
-                            HandleExpression(assignmentStatement.Expression));
+                            CompileExpression<ExpressionSyntax>(assignmentStatement.Expression));
                         statements = statements.Add(SyntaxFactory.ExpressionStatement(assignment));
                         break;
                     case ProcedureCallStatement procedureCallStatement:
@@ -74,12 +74,12 @@ namespace Oberon0.Generator.MsilBin
         private SyntaxList<StatementSyntax> HandleRepeatStatement(SyntaxList<StatementSyntax> statements, RepeatStatement repeatStatement)
         {
             var expression = BinaryExpression.Create(OberonGrammarLexer.NOT, repeatStatement.Condition, null,
-                repeatStatement.Block.Parent, null);
+                repeatStatement.Block.Parent);
             var compiled = ConstantSolver.Solve(expression, repeatStatement.Block.Parent);
             statements = statements.Add(
                 SyntaxFactory.DoStatement(
                     SyntaxFactory.Block(GenerateBlockStatements(repeatStatement.Block)),
-                    HandleExpression(compiled)));
+                    CompileExpression<ExpressionSyntax>(compiled)));
             return statements;
         }
 
@@ -99,7 +99,7 @@ namespace Oberon0.Generator.MsilBin
                 if (!first) argumentList = argumentList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
 
                 first = false;
-                var argument = SyntaxFactory.Argument(HandleExpression(parameter));
+                var argument = SyntaxFactory.Argument(CompileExpression<ExpressionSyntax>(parameter));
                 if (parameterDeclarations[i].IsVar) argument = argument.WithRefKindKeyword(SyntaxFactory.Token(SyntaxKind.RefKeyword));
                 argumentList = argumentList.Add(argument);
                 i++;

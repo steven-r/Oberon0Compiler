@@ -5,16 +5,13 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Oberon0.Compiler.Types
 {
     public class SimpleTypeDefinition : TypeDefinition
     {
-        public SimpleTypeDefinition(BaseTypes baseTypes)
-            : base(baseTypes)
-        {
-        }
-
-        public SimpleTypeDefinition(BaseTypes baseTypes, string name)
+        private SimpleTypeDefinition(BaseTypes baseTypes, string name)
             : base(baseTypes)
         {
             Name = name;
@@ -53,16 +50,17 @@ namespace Oberon0.Compiler.Types
 
         public override TypeDefinition Clone(string name)
         {
-            return new SimpleTypeDefinition(this.Type, name);
+            return new SimpleTypeDefinition(Type, name);
         }
 
         public override bool IsAssignable(TypeDefinition sourceType)
         {
-            return sourceType.Type == this.Type // same simple type
-                   || sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Real
-                   || sourceType.Type == BaseTypes.Int && this.Type == BaseTypes.Bool;
+            return sourceType.Type == Type // same simple type
+                   || sourceType.Type == BaseTypes.Int && Type == BaseTypes.Real
+                   || sourceType.Type == BaseTypes.Int && Type == BaseTypes.Bool;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString()
         {
             return Name;

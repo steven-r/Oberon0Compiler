@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Diagnostics;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
@@ -13,6 +14,7 @@ namespace Oberon0.Compiler.Definitions
     /// Define a procedure/function parameter
     /// </summary>
     /// <seealso cref="Declaration" />
+    [DebuggerDisplay("{Name}: {TypeName}")]
     public class ProcedureParameterDeclaration : Declaration
     {
         /// <summary>
@@ -32,12 +34,16 @@ namespace Oberon0.Compiler.Definitions
         /// Gets or sets a value indicating whether this parameter is referenced, not by value.
         /// </summary>
         /// <value><c>true</c> if this instance is variable; otherwise, <c>false</c>.</value>
-        public bool IsVar { get; set; }
+        public bool IsVar { get; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Return a string representation of the parameter type
+        /// </summary>
+        public string TypeName => $"{(IsVar ? "&" : string.Empty)}{Type.Name}";
+
         public override string ToString()
         {
-            return $"{Name}:{Type}{(IsVar ? "&" : string.Empty)}";
+            return $"{(IsVar ? "VAR ": string.Empty)}{Name}: {Type.Name}";
         }
     }
 }

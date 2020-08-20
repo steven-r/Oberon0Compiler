@@ -60,7 +60,7 @@ namespace Oberon0.Compiler.Expressions
         {
             var key = new ArithmeticOpKey(operation, left, right);
             if (!ArithmeticOperations.TryGetValue(key, out var op))
-                throw new InvalidOperationException($"Cannot find operation {OberonGrammarLexer.DefaultVocabulary.GetDisplayName(operation)} ({left:G}, {right:G})");
+                throw new ArgumentException($"Cannot find operation {OberonGrammarLexer.DefaultVocabulary.GetDisplayName(operation)} ({left:G}, {right:G})");
             return op;
         }
     }

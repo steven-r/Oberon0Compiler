@@ -51,9 +51,9 @@ namespace Oberon0.Generator.MsilBin.Tests
 
             ICodeGenerator cg = new MsilBinGenerator() { Module = m };
 
-            cg.Generate();
+            cg.GenerateIntermediateCode();
 
-            code = cg.DumpCode();
+            code = cg.IntermediateCode();
             outputHelper?.WriteLine(code);
             return cg;
         }

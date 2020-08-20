@@ -19,18 +19,11 @@ namespace Oberon0.Compiler.Tests.Expressions
 {
     public class RelationalExpressionsTests
     {
-        private Module CompileString(string operations, params string[] expectedErrors)
-        {
-            return TestHelper.CompileString(
-                $"MODULE test; CONST true_ = TRUE; false_ = FALSE; VAR a,b,c,d,e,f,g,h,x,y,z: BOOLEAN; BEGIN {operations} END test.",
-                expectedErrors);
-        }
-
         [Fact]
         public void ExpressionNot()
         {
             var m = new Module(null);
-            var e = BinaryExpression.Create(OberonGrammarLexer.NOT, new ConstantBoolExpression(true), null, m.Block, null);
+            var e = BinaryExpression.Create(OberonGrammarLexer.NOT, new ConstantBoolExpression(true), null, m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.False(result.ToBool());
@@ -45,8 +38,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.NOT,
                 VariableReferenceExpression.Create(m.Block.LookupVar("a"), null),
                 null,
-                m.Block, 
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as BinaryExpression;
             Assert.NotNull(result);
         }
@@ -59,8 +51,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.EQUAL,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block, 
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.True(result.ToBool());
@@ -74,8 +65,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.EQUAL,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block, 
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.False(result.ToBool());
@@ -89,8 +79,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GE,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(4),
-                m.Block, 
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.True(result.ToBool());
@@ -104,8 +93,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GE,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.True(result.ToBool());
@@ -119,8 +107,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GE,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.False(result.ToBool());
@@ -134,8 +121,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GT,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(4),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.True(result.ToBool());
@@ -149,8 +135,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GT,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.False(result.ToBool());
@@ -164,8 +149,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.GT,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.False(result.ToBool());
@@ -179,8 +163,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LE,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(4),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.False(result.ToBool());
@@ -194,8 +177,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LE,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.True(result.ToBool());
@@ -209,8 +191,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LT,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.True(result.ToBool());
@@ -224,8 +205,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LT,
                 ConstantExpression.Create(10),
                 ConstantExpression.Create(4),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.False(result.ToBool());
@@ -239,8 +219,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LT,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.False(result.ToBool());
@@ -254,8 +233,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.LT,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.True(result.ToBool());
@@ -269,8 +247,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.NOTEQUAL,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(4),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.False(result.ToBool());
@@ -284,8 +261,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.NOTEQUAL,
                 ConstantExpression.Create(4),
                 ConstantExpression.Create(10),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantBoolExpression;
             Assert.NotNull(result);
             Assert.True(result.ToBool());
@@ -300,8 +276,7 @@ namespace Oberon0.Compiler.Tests.Expressions
                 OberonGrammarLexer.NOTEQUAL,
                 VariableReferenceExpression.Create(m.Block.LookupVar("a"), null),
                 ConstantExpression.Create(10),
-                m.Block,
-                null);
+                m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as BinaryExpression;
             Assert.NotNull(result);
             Assert.False(result.IsConst);
@@ -320,7 +295,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Fact]
         public void TestAnd1()
         {
-            var m = CompileString("x := a & b");
+            var m = TestHelper.CompileSingleStatement("x := a & b");
             var assignment = m.Block.Statements.First() as AssignmentStatement;
             Assert.NotNull(assignment);
             var binExpr = assignment.Expression as BinaryExpression;
@@ -332,7 +307,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Fact]
         public void TestAnd2()
         {
-            var m = CompileString("x := a & TRUE");
+            var m = TestHelper.CompileSingleStatement("x := a & TRUE");
             var assignment = m.Block.Statements.First() as AssignmentStatement;
             Assert.NotNull(assignment);
             var binExpr = assignment.Expression as BinaryExpression;
@@ -343,14 +318,14 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Fact]
         public void TestAndConstError()
         {
-            var ex = Assert.Throws<InvalidOperationException>(() => CompileString("x := TRUE & 1"));
+            var ex = Assert.Throws<ArgumentException>(() => TestHelper.CompileSingleStatement("x := TRUE & 1"));
             Assert.Equal("Cannot find operation '&' (Bool, Int)", ex.Message);
         }
 
         [Fact]
         public void TestAndConstFalse()
         {
-            var m = CompileString("x := TRUE & FALSE");
+            var m = TestHelper.CompileSingleStatement("x := TRUE & FALSE");
             var assignment = m.Block.Statements.First() as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
@@ -361,7 +336,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Fact]
         public void TestAndConstTrue()
         {
-            var m = CompileString("x := TRUE & TRUE");
+            var m = TestHelper.CompileSingleStatement("x := TRUE & TRUE");
             var assignment = m.Block.Statements.First() as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
@@ -386,7 +361,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Fact]
         public void TestNotConst()
         {
-            var m = CompileString("x := ~false_");
+            var m = TestHelper.CompileSingleStatement("x := ~false_");
             var assignment = m.Block.Statements.First() as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
@@ -397,7 +372,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Fact]
         public void TestNotDirect()
         {
-            var m = CompileString("x := ~FALSE");
+            var m = TestHelper.CompileSingleStatement("x := ~FALSE");
             var assignment = m.Block.Statements.First() as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
@@ -408,7 +383,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Fact]
         public void TestNotVarFalse()
         {
-            var m = CompileString("a := FALSE; x := ~a");
+            var m = TestHelper.CompileSingleStatement("a := FALSE; x := ~a");
             Assert.Equal(2, m.Block.Statements.Count);
             var assignment = m.Block.Statements[1] as AssignmentStatement;
             Assert.NotNull(assignment);
@@ -423,7 +398,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Fact]
         public void TestOr1()
         {
-            var m = CompileString("x := a OR b");
+            var m = TestHelper.CompileSingleStatement("x := a OR b");
             var assignment = m.Block.Statements.First() as AssignmentStatement;
             Assert.NotNull(assignment);
             var binExpr = assignment.Expression as BinaryExpression;
@@ -434,7 +409,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Fact]
         public void TestOr2()
         {
-            var m = CompileString("x := a OR TRUE");
+            var m = TestHelper.CompileSingleStatement("x := a OR TRUE");
             var assignment = m.Block.Statements.First() as AssignmentStatement;
             Assert.NotNull(assignment);
             var binExpr = assignment.Expression as BinaryExpression;
@@ -445,12 +420,89 @@ namespace Oberon0.Compiler.Tests.Expressions
         [Fact]
         public void TestOrConstTrue()
         {
-            var m = CompileString("x := FALSE OR TRUE");
+            var m = TestHelper.CompileSingleStatement("x := FALSE OR TRUE");
             var assignment = m.Block.Statements.First() as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
             Assert.NotNull(boolExpression);
             Assert.True(boolExpression.ToBool());
+        }
+
+        [Fact]
+        public void ExpressionConstantStringReturnsIdentity()
+        {
+            const string test = "This is a test";
+
+            var m = new Module(null);
+            var e = new StringExpression(test);
+            var result = ConstantSolver.Solve(e, m.Block) as StringExpression;
+            Assert.NotNull(result);
+            Assert.True(result.IsConst);
+            Assert.Equal(test, result.Value);
+        }
+
+        [Fact]
+        public void TestEqConstFalseTrueFalse()
+        {
+            var m = TestHelper.CompileSingleStatement("x := FALSE = TRUE");
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var boolExpression = Assert.IsType<ConstantBoolExpression>(assignment.Expression);
+            Assert.False(boolExpression.ToBool());
+        }
+
+        [Fact]
+        public void TestEqConstFalseFalseTrue()
+        {
+            var m = TestHelper.CompileSingleStatement("x := FALSE = FALSE");
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var boolExpression = Assert.IsType<ConstantBoolExpression>(assignment.Expression);
+            Assert.True(boolExpression.ToBool());
+        }
+
+        [Fact]
+        public void TestNotEqConstFalseFalseFalse()
+        {
+            var m = TestHelper.CompileSingleStatement("x := FALSE # FALSE");
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var boolExpression = Assert.IsType<ConstantBoolExpression>(assignment.Expression);
+            Assert.False(boolExpression.ToBool());
+        }
+
+        [Fact]
+        public void TestNotEqConstFalseTrueTrue()
+        {
+            var m = TestHelper.CompileSingleStatement("x := FALSE # TRUE");
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var boolExpression = Assert.IsType<ConstantBoolExpression>(assignment.Expression);
+            Assert.True(boolExpression.ToBool());
+        }
+
+        [Fact]
+        public void TestModIntInt()
+        {
+            var m = TestHelper.CompileSingleStatement("i := 10 MOD 3");
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var intExpression = Assert.IsType<ConstantIntExpression>(assignment.Expression);
+            Assert.Equal(1, intExpression.ToInt32());
+        }
+
+        [Fact]
+        public void TestModIntDouble()
+        {
+            var m = TestHelper.CompileSingleStatement("r := 10.3 MOD 3");
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var result = Assert.IsType<ConstantDoubleExpression>(assignment.Expression);
+            Assert.True(Math.Abs(1.3 - result.ToDouble()) < double.Epsilon);
+        }
+
+        [Fact]
+        public void ConstantSolverReturnRegularExpression()
+        {
+            var m = TestHelper.CompileSingleStatement("s := 5.2; r := 10.3 MOD s");
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.Last());
+            var bin = Assert.IsType<BinaryExpression>(assignment.Expression);
+            Assert.Equal(OberonGrammarLexer.MOD, bin.Operator);
+            Assert.Equal("REAL", bin.TargetType.Name);
         }
     }
 }
