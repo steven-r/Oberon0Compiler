@@ -6,13 +6,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
-using Microsoft.Extensions.DependencyModel;
 using Oberon0System.Attributes;
 
 namespace Oberon0.Shared
@@ -33,12 +31,6 @@ namespace Oberon0.Shared
         public static CSharpCompilation CreateCompiledCSharpCode(this SyntaxTree syntaxTree, string assemblyName, ICodeGenerator codeGenerator, bool isExecutable = true)
         {
             var trustedAssembliesPaths = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")).Split(Path.PathSeparator);
-            var neededAssemblies = new[]
-            {
-                "System.Runtime",
-                "mscorlib",
-                "AnyClone",
-            };
             var references = trustedAssembliesPaths
                 //.Where(p => neededAssemblies.Contains(Path.GetFileNameWithoutExtension(p)) || p.Contains("\\System.") && !p.Contains("\\System.Private"))
                 .Select(p => MetadataReference.CreateFromFile(p))
