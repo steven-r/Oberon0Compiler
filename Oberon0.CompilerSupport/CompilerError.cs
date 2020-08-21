@@ -10,7 +10,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Oberon0.TestSupport
+namespace Oberon0.Test.Support
 {
     [ExcludeFromCodeCoverage]
     public class CompilerError

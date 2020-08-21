@@ -86,16 +86,38 @@ namespace Oberon0.Generator.MsilBin
         }
 
         /**
-         * Generate a class containing a RECORD definitions
-         * 
-         * @returns the class declaration containing all added records
-         */
+ * 
+ * 
+ * @returns the class declaration containing all added records
+ */
+
+        /// <summary>
+        /// Generate a class containing a RECORD definitions
+        /// </summary>
+        /// <param name="recordType">The record type definition to be processed.</param>
+        /// <returns>A roslyn intermediate structure of the record definition</returns>
+        /// <remarks>
+        /// There's a feature in Oberon0 that allows records to be anonymous. Please look at the following code example:
+        /// <example>
+        /// MODULE test;
+        ///   VAR foo: RECORD
+        ///     field: INTEGER;
+        ///     another: REAL
+        ///   END;
+        /// END test.
+        /// </example>
+        /// <para>
+        /// This code will create a variable a with a record as the data type. In this case the record does not have a name
+        /// as it is (legally) created as part of the variable declaration.
+        /// </para>
+        /// <para>
+        /// To create a structure that is valid for the intermediate code, those fields get a unique name <code>__internal__{id}</code>
+        /// where id is a increasing counter.
+        /// </para>
+        /// </remarks>
         private ClassDeclarationSyntax GenerateRecordType(RecordTypeDefinition recordType)
         {
             if (string.IsNullOrEmpty(recordType.Name))
-                // create artificial names for internal records. Internal records are created by using direct RECORDS:
-                // VAR a: RECORD b: INTEGER; END;
-
             {
                 recordType.Name = $"__internal__{++_internalCount}";
             }

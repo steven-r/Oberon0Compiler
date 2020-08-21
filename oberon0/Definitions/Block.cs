@@ -212,18 +212,8 @@ namespace Oberon0.Compiler.Definitions
             {
                 if (procedureParameter.IsVar)
                 {
-                    if (parameters[paramNo].CanBeVarReference)
+                    if (!GenerateVarParameterCount(parameters[paramNo], procedureParameter, ref score))
                     {
-                        if (!procedureParameter.Type.Equals(parameters[paramNo].TargetType))
-                            // VAR parameter need to have the same type as calling parameter
-                        {
-                            return -1;
-                        }
-
-                        score += 1000;
-                    } else
-                    {
-                        // VAR parameter cannot have expression as source
                         return -1;
                     }
                 } else if (procedureParameter.Type.Type.HasFlag(BaseTypes.Simple) &&
@@ -242,6 +232,26 @@ namespace Oberon0.Compiler.Definitions
             }
 
             return score;
+        }
+
+        private static bool GenerateVarParameterCount(CallParameter callParameter, Declaration procedureParameter, ref int score)
+        {
+            if (callParameter.CanBeVarReference)
+            {
+                if (!procedureParameter.Type.Equals(callParameter.TargetType))
+                {
+                    // VAR parameter need to have the same type as calling parameter
+                    return false;
+                }
+
+                score += 1000;
+            } else
+            {
+                // VAR parameter cannot have expression as source
+                return false;
+            }
+
+            return true;
         }
 
         private void InitLists()

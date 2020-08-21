@@ -13,7 +13,7 @@ using System.Linq;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
-using Oberon0.TestSupport;
+using Oberon0.Test.Support;
 using Oberon0System.Attributes;
 using Xunit;
 

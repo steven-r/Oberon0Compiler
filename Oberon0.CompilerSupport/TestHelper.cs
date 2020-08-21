@@ -17,7 +17,7 @@ using Oberon0.Compiler.Definitions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Oberon0.TestSupport
+namespace Oberon0.Test.Support
 {
     [ExcludeFromCodeCoverage]
     public static class TestHelper

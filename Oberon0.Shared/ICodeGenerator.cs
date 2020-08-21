@@ -49,5 +49,13 @@ namespace Oberon0.Shared
         ///     Starts code generation
         /// </summary>
         void GenerateIntermediateCode();
+
+
+        /// <summary>
+        /// Generate a final binary output (e.g. DLL or EXE) based on <see cref="Module"/> settings.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        //bool GenerateBinary(string filename = null);
     }
 }

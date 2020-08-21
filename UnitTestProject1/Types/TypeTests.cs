@@ -11,7 +11,7 @@ using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
-using Oberon0.TestSupport;
+using Oberon0.Test.Support;
 using Xunit;
 
 namespace Oberon0.Compiler.Tests.Types

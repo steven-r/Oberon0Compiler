@@ -9,7 +9,7 @@
 
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Types;
-using Oberon0.TestSupport;
+using Oberon0.Test.Support;
 using Xunit;
 
 namespace Oberon0.Compiler.Tests.Exports

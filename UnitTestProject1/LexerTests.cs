@@ -8,7 +8,7 @@
 #endregion
 
 using System.Collections.Generic;
-using Oberon0.TestSupport;
+using Oberon0.Test.Support;
 using Xunit;
 
 namespace Oberon0.Compiler.Tests
