@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.Globalization;
@@ -14,7 +16,7 @@ namespace Oberon0System
     public static partial class Oberon0System
     {
         /// <summary>
-        /// Convert INTEGER to STRING.
+        ///     Convert INTEGER to STRING.
         /// </summary>
         /// <param name="value">the value to convert</param>
         /// <returns>the converted string</returns>
@@ -26,7 +28,7 @@ namespace Oberon0System
         }
 
         /// <summary>
-        /// Convert REAL to STRING.
+        ///     Convert REAL to STRING.
         /// </summary>
         /// <param name="value">the value to convert</param>
         /// <returns>the converted string</returns>
@@ -38,7 +40,7 @@ namespace Oberon0System
         }
 
         /// <summary>
-        /// Convert BOOLEAN to STRING.
+        ///     Convert BOOLEAN to STRING.
         /// </summary>
         /// <param name="value">the value to convert</param>
         /// <returns>the converted string</returns>

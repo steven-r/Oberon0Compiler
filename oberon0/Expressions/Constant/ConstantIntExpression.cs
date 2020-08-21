@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
@@ -21,11 +23,11 @@ namespace Oberon0.Compiler.Expressions.Constant
         public ConstantIntExpression(int value)
             : base(SimpleTypeDefinition.IntType, value)
         {
-            this.Value = value;
+            Value = value;
         }
 
         /// <summary>
-        /// Gets standard Constant to represent a zero constant
+        ///     Gets standard Constant to represent a zero constant
         /// </summary>
         /// <value>The zero.</value>
         [NotNull]
@@ -33,12 +35,12 @@ namespace Oberon0.Compiler.Expressions.Constant
 
         public override string ToString()
         {
-            return ((int)Value).ToString("G");
+            return ((int) Value).ToString("G");
         }
 
         public override int ToInt32()
         {
-            return (int)Value;
+            return (int) Value;
         }
 
         public override double ToDouble()
@@ -48,7 +50,7 @@ namespace Oberon0.Compiler.Expressions.Constant
 
         public override bool ToBool()
         {
-            return (int)Value != 0;
+            return (int) Value != 0;
         }
     }
 }

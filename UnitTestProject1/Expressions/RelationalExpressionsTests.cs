@@ -1,19 +1,21 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
 using System.Linq;
-using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Solver;
 using Oberon0.Compiler.Statements;
 using Oberon0.TestSupport;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests.Expressions
 {

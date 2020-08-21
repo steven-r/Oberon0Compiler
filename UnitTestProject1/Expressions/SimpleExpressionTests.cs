@@ -1,18 +1,19 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
-using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
-using Oberon0.Compiler.Expressions.Operations;
 using Oberon0.Compiler.Solver;
 using Oberon0.Compiler.Types;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests.Expressions
 {
@@ -85,7 +86,7 @@ namespace Oberon0.Compiler.Tests.Expressions
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.DIV,
                 ConstantExpression.Create("10.0"),
-                ConstantIntExpression.Zero, 
+                ConstantIntExpression.Zero,
                 m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as ConstantDoubleExpression;
             Assert.NotNull(result);
@@ -235,7 +236,6 @@ namespace Oberon0.Compiler.Tests.Expressions
 
 
         [Fact]
-
         public void TestUnaryOpException()
         {
             var m = new Module(null);
@@ -243,10 +243,11 @@ namespace Oberon0.Compiler.Tests.Expressions
                 ConstantExpression.Create(false), null, m.Block));
             Assert.Equal("Cannot find operation '+' (Bool, Any)", e.Message);
         }
-        
+
         private class UnknownExpression : Expression
         {
-            public UnknownExpression(): base(SimpleTypeDefinition.IntType)
+            public UnknownExpression()
+                : base(SimpleTypeDefinition.IntType)
             {
             }
         }

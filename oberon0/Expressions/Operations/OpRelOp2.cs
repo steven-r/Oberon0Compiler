@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using JetBrains.Annotations;
@@ -18,12 +20,13 @@ namespace Oberon0.Compiler.Expressions.Operations
     [UsedImplicitly]
     internal class OpRelOp2 : BinaryOperation
     {
-        protected override Expression BinaryOperate(BinaryExpression bin, Block block, IArithmeticOpMetadata operationParameters)
+        protected override Expression BinaryOperate(BinaryExpression bin, Block block,
+                                                    IArithmeticOpMetadata operationParameters)
         {
             if (bin.LeftHandSide.IsConst && bin.RightHandSide.IsConst)
             {
-                var left = (ConstantExpression)bin.LeftHandSide;
-                var right = (ConstantExpression)bin.RightHandSide;
+                var left = (ConstantExpression) bin.LeftHandSide;
+                var right = (ConstantExpression) bin.RightHandSide;
                 bool res = false;
                 switch (operationParameters.Operation)
                 {

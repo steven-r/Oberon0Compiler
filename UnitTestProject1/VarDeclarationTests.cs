@@ -1,15 +1,16 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.Collections.Generic;
-using Xunit;
-using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Types;
 using Oberon0.TestSupport;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests
 {
@@ -30,7 +31,7 @@ VAR
         [Fact]
         public void ArrayOfArray()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   id: ARRAY 5 OF ARRAY 10 OF INTEGER;
@@ -41,12 +42,12 @@ VAR
             Assert.NotNull(id);
             Assert.IsType<ArrayTypeDefinition>(id.Type);
 
-            ArrayTypeDefinition atd = (ArrayTypeDefinition)id.Type;
+            var atd = (ArrayTypeDefinition) id.Type;
 
             Assert.Equal(5, atd.Size);
             Assert.IsType<ArrayTypeDefinition>(atd.ArrayType);
 
-            ArrayTypeDefinition atd1 = (ArrayTypeDefinition)atd.ArrayType;
+            var atd1 = (ArrayTypeDefinition) atd.ArrayType;
             Assert.Equal(10, atd1.Size);
             Assert.Equal(intType, atd1.ArrayType);
         }
@@ -54,7 +55,7 @@ VAR
         [Fact]
         public void OneVar()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   id: INTEGER;
@@ -67,7 +68,7 @@ VAR
         [Fact]
         public void SimpleArray()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   id: ARRAY 5 OF INTEGER;
@@ -78,7 +79,7 @@ VAR
             Assert.NotNull(id);
             Assert.IsType<ArrayTypeDefinition>(id.Type);
 
-            ArrayTypeDefinition atd = (ArrayTypeDefinition)id.Type;
+            var atd = (ArrayTypeDefinition) id.Type;
 
             Assert.Equal(5, atd.Size);
             Assert.Equal(intType, atd.ArrayType);
@@ -87,7 +88,7 @@ VAR
         [Fact]
         public void TwoVars1()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   id: INTEGER;
@@ -105,7 +106,7 @@ VAR
         [Fact]
         public void TwoVars2()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   id, id1: INTEGER;
@@ -158,7 +159,7 @@ VAR
         [Fact]
         public void VarWithoutId()
         {
-            List<CompilerError> errors = new List<CompilerError>();
+            var errors = new List<CompilerError>();
             TestHelper.CompileString(
                 @"MODULE Test; 
 VAR

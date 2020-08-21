@@ -1,10 +1,13 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
+using System;
 using System.IO;
 using Microsoft.CodeAnalysis;
 using Oberon0.Compiler;
@@ -15,7 +18,8 @@ namespace Oberon0.Generator.MsilBin.Tests
 {
     internal static class CompileHelper
     {
-        internal static byte[] CompileAndLoadAssembly(this SyntaxTree syntaxTree, ICodeGenerator codeGenerator, bool isExecutable = false)
+        internal static byte[] CompileAndLoadAssembly(this SyntaxTree syntaxTree, ICodeGenerator codeGenerator,
+                                                      bool isExecutable = false)
         {
             string assemblyName = Path.GetRandomFileName();
             var compilation = syntaxTree.CreateCompiledCSharpCode(assemblyName, codeGenerator, isExecutable);
@@ -27,11 +31,17 @@ namespace Oberon0.Generator.MsilBin.Tests
             return ms.ToArray();
         }
 
-        internal static ICodeGenerator CompileOberon0Code(string source, out string code, ITestOutputHelper outputHelper = null)
+        internal static ICodeGenerator CompileOberon0Code(string source, out string code,
+                                                          ITestOutputHelper outputHelper = null)
         {
             var m = Oberon0Compiler.CompileString(source);
 
-            ICodeGenerator cg = new MsilBinGenerator() { Module = m };
+            if (m.CompilerInstance.HasError)
+            {
+                throw new ArgumentException("Source code contains errors", nameof(source));
+            }
+
+            ICodeGenerator cg = new MsilBinGenerator {Module = m};
 
             cg.GenerateIntermediateCode();
 

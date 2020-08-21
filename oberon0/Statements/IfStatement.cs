@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.Collections.Generic;
@@ -15,22 +17,22 @@ namespace Oberon0.Compiler.Statements
     {
         public IfStatement()
         {
-            this.Conditions = new List<Expression>();
-            this.ThenParts = new List<Block>();
+            Conditions = new List<Expression>();
+            ThenParts = new List<Block>();
         }
 
         /// <summary>
-        /// Gets the conditions.
+        ///     Gets the conditions.
         /// </summary>
         public List<Expression> Conditions { get; }
 
         /// <summary>
-        /// Gets or sets the else part.
+        ///     Gets or sets the else part.
         /// </summary>
         public Block ElsePart { get; set; }
 
         /// <summary>
-        /// Gets the then parts.
+        ///     Gets the then parts.
         /// </summary>
         public List<Block> ThenParts { get; }
     }

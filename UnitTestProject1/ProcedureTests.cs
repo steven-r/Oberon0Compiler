@@ -1,21 +1,21 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
-using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
 using Oberon0.TestSupport;
 using Oberon0System.Attributes;
-using Assert = Xunit.Assert;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests
 {
@@ -39,7 +39,7 @@ END Test.",
         [Fact]
         public void Proc1()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 PROCEDURE Test1;
 
@@ -53,7 +53,7 @@ END Test.");
         [Fact]
         public void Proc2()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 PROCEDURE Test1 (a: INTEGER);
 
@@ -61,17 +61,17 @@ END Test1;
 
 END Test.");
 
-            FunctionDeclaration p = m.Block.LookupFunction("Test1", null, "INTEGER");
+            var p = m.Block.LookupFunction("Test1", null, "INTEGER");
             Assert.NotNull(p);
             Assert.Single(p.Block.Declarations);
             Assert.Equal("a", p.Block.Declarations[0].Name);
-            Assert.False(((ProcedureParameterDeclaration)p.Block.Declarations[0]).IsVar);
+            Assert.False(((ProcedureParameterDeclaration) p.Block.Declarations[0]).IsVar);
         }
 
         [Fact]
         public void Proc3()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 PROCEDURE Test1 (VAR a: INTEGER);
 
@@ -79,11 +79,11 @@ END Test1;
 
 END Test.");
 
-            FunctionDeclaration p = m.Block.LookupFunction("Test1", null, "&INTEGER");
+            var p = m.Block.LookupFunction("Test1", null, "&INTEGER");
             Assert.NotNull(p);
             Assert.Single(p.Block.Declarations);
             Assert.Equal("a", p.Block.Declarations[0].Name);
-            Assert.True(((ProcedureParameterDeclaration)p.Block.Declarations[0]).IsVar);
+            Assert.True(((ProcedureParameterDeclaration) p.Block.Declarations[0]).IsVar);
         }
 
         [Fact]
@@ -112,7 +112,7 @@ END Test.",
         [Fact]
         public void ProcCall()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 PROCEDURE TestProc;
 BEGIN
@@ -164,7 +164,7 @@ END Test.",
         [Fact]
         public void ProcGlobalVar()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR 
   x: INTEGER;
@@ -193,7 +193,7 @@ END Test.");
         [Fact]
         public void ProcLocalVar()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 PROCEDURE TestProc;
 VAR 
@@ -257,7 +257,8 @@ END Test.",
         public void AddExternalFunctionCallByValue()
         {
             var m = new Module(null);
-            var function = m.AddExternalFunctionDeclaration(new Oberon0ExportAttribute("__Test1", "INTEGER", "INTEGER"), "Test",
+            var function = m.AddExternalFunctionDeclaration(new Oberon0ExportAttribute("__Test1", "INTEGER", "INTEGER"),
+                "Test",
                 "__TEST");
             m.Block.Procedures.Add(function);
             var f = m.Block.LookupFunction("__Test1", null, "INTEGER");
@@ -269,7 +270,8 @@ END Test.",
         public void AddExternalFunctionCallByValueTwoParameters()
         {
             var m = new Module(null);
-            var function = m.AddExternalFunctionDeclaration(new Oberon0ExportAttribute("__Test1", "INTEGER", "INTEGER", "REAL"), "Test",
+            var function = m.AddExternalFunctionDeclaration(
+                new Oberon0ExportAttribute("__Test1", "INTEGER", "INTEGER", "REAL"), "Test",
                 "__TEST");
             m.Block.Procedures.Add(function);
             Assert.Throws<InvalidOperationException>(() => m.Block.LookupFunction("__Test1", null, "INTEGER"));
@@ -367,7 +369,6 @@ END Test.",
         [Fact]
         public void GetProcedureParameterByNameThrowMissingBlock()
         {
-            var m = new Module(null);
             var t = Assert.Throws<ArgumentNullException>(() =>
                 Module.GetProcedureParameterByName("isThere", "INTEGER", null!));
             Assert.Equal("block", t.ParamName);
@@ -386,7 +387,8 @@ END Test.",
         public void AddExternalFunctionCheckTypes()
         {
             var m = new Module(null);
-            var function = m.AddExternalFunctionDeclaration(new Oberon0ExportAttribute("__Test1", "INTEGER", "INTEGER"), "Test",
+            var function = m.AddExternalFunctionDeclaration(new Oberon0ExportAttribute("__Test1", "INTEGER", "INTEGER"),
+                "Test",
                 "__TEST");
             m.Block.Procedures.Add(function);
             var f = m.Block.LookupFunction("__Test1", null, "INTEGER");
@@ -413,48 +415,50 @@ END Test.",
         public void TestBuildPrototypeWithIntResultOneParam()
         {
             Assert.Equal("INTEGER TestFunction(INTEGER)",
-                BuildPrototypeTester("TestFunction", "INTEGER", new[] { ("a", "INTEGER") }));
+                BuildPrototypeTester("TestFunction", "INTEGER", ("a", "INTEGER")));
         }
 
         [Fact]
         public void TestBuildPrototypeWithIntResultTwoParamIncludingReference()
         {
             Assert.Equal("INTEGER TestFunction(INTEGER,&REAL)",
-                BuildPrototypeTester("TestFunction", "INTEGER", new[] { ("a", "INTEGER"), ("b", "&REAL") }));
+                BuildPrototypeTester("TestFunction", "INTEGER", ("a", "INTEGER"), ("b", "&REAL")));
         }
 
         [Fact]
         public void TestBuildPrototypeWithIntResultArray()
         {
             Assert.Equal("INTEGER TestFunction(INTEGER[5])",
-                BuildPrototypeTester("TestFunction", "INTEGER", new[] { ("a", "INTEGER[5]") }));
+                BuildPrototypeTester("TestFunction", "INTEGER", ("a", "INTEGER[5]")));
         }
 
         [Fact]
         public void TestBuildPrototypeWithIntResultArrayRef()
         {
             Assert.Equal("INTEGER TestFunction(&INTEGER[5])",
-                BuildPrototypeTester("TestFunction", "INTEGER", new[] { ("a", "VAR INTEGER[5]") }));
+                BuildPrototypeTester("TestFunction", "INTEGER", ("a", "VAR INTEGER[5]")));
         }
 
         [Fact]
         public void TestBuildPrototypeWithIntResultRecordFail()
         {
-            var e = Assert.Throws<ArgumentException>(() => BuildPrototypeTester("TestFunction", "INTEGER", new[] { ("a", "RECORD a: INTEGER END") }));
+            var e = Assert.Throws<ArgumentException>(() =>
+                BuildPrototypeTester("TestFunction", "INTEGER", ("a", "RECORD a: INTEGER END")));
             Assert.Equal("RECORD a: INTEGER END is not a valid type reference (Parameter 'typeString')", e.Message);
             Assert.Equal("typeString", e.ParamName);
         }
 
-        private string BuildPrototypeTester(string name, string returnTypeName,
-            params (string, string)[] parameters)
+        private static string BuildPrototypeTester(string name, string returnTypeName,
+                                                   params (string, string)[] parameters)
         {
             var m = new Module(null);
-            List<ProcedureParameterDeclaration> paramList = new List<ProcedureParameterDeclaration>();
+            var paramList = new List<ProcedureParameterDeclaration>();
             if (parameters != null)
             {
                 paramList.AddRange(parameters.Select(parameter =>
                     Module.GetProcedureParameterByName(parameter.Item1, parameter.Item2, m.Block)));
             }
+
             var f = new FunctionDeclaration(name, m.Block, m.Block.LookupType(returnTypeName), paramList.ToArray());
             string prototype = FunctionDeclaration.BuildPrototype(f.Name, f.ReturnType,
                 f.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray());

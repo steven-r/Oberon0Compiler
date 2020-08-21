@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
@@ -15,12 +17,12 @@ namespace Oberon0.Generator.MsilBin.Tests.Operations
 {
     public class OperationTests
     {
+        private readonly ITestOutputHelper _output;
+
         public OperationTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
         [Fact]
         public void TestAddConstConst()
@@ -30,7 +32,7 @@ BEGIN
   WriteInt(1+2);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -56,7 +58,7 @@ BEGIN
   WriteInt(2+a);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -82,7 +84,7 @@ BEGIN
   WriteInt(a+2);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -110,7 +112,7 @@ BEGIN
   WriteInt(b+a);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -138,7 +140,7 @@ BEGIN
   WriteInt(b+a);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -164,7 +166,7 @@ BEGIN
   WriteBool(b);
   WriteLn;
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -192,7 +194,7 @@ BEGIN
   WriteInt(b*a);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -218,7 +220,7 @@ BEGIN
   WriteInt(b);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -247,7 +249,7 @@ BEGIN
   WriteInt(-a);
   WriteLn;
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -270,7 +272,7 @@ BEGIN
   WriteReal(-2.5);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -299,7 +301,7 @@ BEGIN
   WriteReal(-a);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -328,7 +330,7 @@ BEGIN
   WriteBool(b);
   WriteLn;
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -338,7 +340,8 @@ END Array.";
             Assert.True(assembly != null);
 
             using var output = new StringWriter();
-            Runner.Execute(assembly, output, new StringReader("true" + Environment.NewLine + "false" + Environment.NewLine));
+            Runner.Execute(assembly, output,
+                new StringReader("true" + Environment.NewLine + "false" + Environment.NewLine));
             Assert.Equal($"{true}\n{false}\n", output.ToString().NlFix());
         }
 
@@ -355,7 +358,7 @@ BEGIN
   WriteInt(a);
   WriteLn;
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -366,7 +369,7 @@ END Array.";
 
             using var output = new StringWriter();
             Runner.Execute(assembly, output, new StringReader("12" + Environment.NewLine));
-            Assert.Equal($"12\n", output.ToString().NlFix());
+            Assert.Equal("12\n", output.ToString().NlFix());
         }
     }
 }

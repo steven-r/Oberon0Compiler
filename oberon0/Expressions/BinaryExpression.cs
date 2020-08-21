@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using Oberon0.Compiler.Definitions;
@@ -20,7 +22,7 @@ namespace Oberon0.Compiler.Expressions
         internal ArithmeticOperation Operation { get; private set; }
 
         /// <summary>
-        /// Creates the specified binary expression.
+        ///     Creates the specified binary expression.
         /// </summary>
         /// <param name="tokenType">Type of the token.</param>
         /// <param name="left">The left hand side.</param>
@@ -36,36 +38,38 @@ namespace Oberon0.Compiler.Expressions
                 // unary
                 op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.Type, BaseTypes.Any);
                 result = new UnaryExpression
-                    {
-                        LeftHandSide = left,
-                        Operator = tokenType,
-                        TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType),
-                        Operation = op
-                    };
+                {
+                    LeftHandSide = left,
+                    Operator = tokenType,
+                    TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType),
+                    Operation = op
+                };
                 return result;
             }
 
             op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.Type, right.TargetType.Type);
             result = new BinaryExpression
-                {
-                    LeftHandSide = left,
-                    RightHandSide = right,
-                    Operator = tokenType,
-                    TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType),
-                    Operation = op
+            {
+                LeftHandSide = left,
+                RightHandSide = right,
+                Operator = tokenType,
+                TargetType = block.LookupTypeByBaseType(op.Metadata.ResultType),
+                Operation = op
             };
             return result;
         }
 
         public override string ToString()
         {
-            if (this.RightHandSide == null)
-            // unary
+            if (RightHandSide == null)
+                // unary
+            {
                 return
-                    $"{OberonGrammarLexer.DefaultVocabulary.GetSymbolicName(this.Operator)} ({this.LeftHandSide.TargetType:G}) -> {this.TargetType}";
+                    $"{OberonGrammarLexer.DefaultVocabulary.GetSymbolicName(Operator)} ({LeftHandSide.TargetType:G}) -> {TargetType}";
+            }
 
             return
-                $"{OberonGrammarLexer.DefaultVocabulary.GetSymbolicName(this.Operator)} ({this.LeftHandSide.TargetType:G}, {this.RightHandSide.TargetType:G}) -> {this.TargetType}";
+                $"{OberonGrammarLexer.DefaultVocabulary.GetSymbolicName(Operator)} ({LeftHandSide.TargetType:G}, {RightHandSide.TargetType:G}) -> {TargetType}";
         }
     }
 }

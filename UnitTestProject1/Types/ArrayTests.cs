@@ -1,17 +1,19 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.Linq;
-using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
 using Oberon0.TestSupport;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests.Types
 {
@@ -37,7 +39,7 @@ END test.",
         [Fact]
         public void ArrayTestIndex5()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE test; 
 TYPE 
     aType= ARRAY 5 OF INTEGER;
@@ -50,14 +52,14 @@ END test.");
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
-            var statement = (AssignmentStatement)m.Block.Statements[0];
+            var statement = (AssignmentStatement) m.Block.Statements[0];
 
             Assert.NotNull(statement.Selector);
             Assert.IsType<IndexSelector>(statement.Selector.First());
 
-            var selector = (IndexSelector)statement.Selector.First();
+            var selector = (IndexSelector) statement.Selector.First();
             Assert.True(selector.IndexDefinition.IsConst);
-            Assert.Equal(5, ((ConstantExpression)selector.IndexDefinition).ToInt32());
+            Assert.Equal(5, ((ConstantExpression) selector.IndexDefinition).ToInt32());
         }
 
         [Fact]
@@ -95,7 +97,7 @@ END test.",
         [Fact]
         public void ArrayType()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"
 MODULE test; 
 TYPE 

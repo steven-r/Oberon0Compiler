@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
@@ -50,13 +52,16 @@ namespace Oberon0.Compiler.Expressions.Operations
         {
             if (bin.LeftHandSide.IsConst && bin.RightHandSide.IsConst)
             {
-                var left = (ConstantExpression)bin.LeftHandSide;
-                var right = (ConstantExpression)bin.RightHandSide;
+                var left = (ConstantExpression) bin.LeftHandSide;
+                var right = (ConstantExpression) bin.RightHandSide;
                 bool res;
                 if (left.TargetType.Type == BaseTypes.Bool && right.TargetType.Type == BaseTypes.Bool)
+                {
                     res = HandleBoolRelop(operationParameters, left, right);
-                else
+                } else
+                {
                     res = HandleStandardRelop(operationParameters, left, right);
+                }
 
                 return new ConstantBoolExpression(res);
             }
@@ -89,13 +94,13 @@ namespace Oberon0.Compiler.Expressions.Operations
         {
             bool res = operationParameters.Operation switch
             {
-                OberonGrammarLexer.GT => left.ToDouble() > right.ToDouble(),
-                OberonGrammarLexer.GE => left.ToDouble() >= right.ToDouble(),
-                OberonGrammarLexer.LT => left.ToDouble() < right.ToDouble(),
-                OberonGrammarLexer.LE => left.ToDouble() <= right.ToDouble(),
+                OberonGrammarLexer.GT       => left.ToDouble() > right.ToDouble(),
+                OberonGrammarLexer.GE       => left.ToDouble() >= right.ToDouble(),
+                OberonGrammarLexer.LT       => left.ToDouble() < right.ToDouble(),
+                OberonGrammarLexer.LE       => left.ToDouble() <= right.ToDouble(),
                 OberonGrammarLexer.NOTEQUAL => Math.Abs(left.ToDouble() - right.ToDouble()) > double.Epsilon,
-                OberonGrammarLexer.EQUAL => Math.Abs(left.ToDouble() - right.ToDouble()) < double.Epsilon,
-                _ => throw new InvalidOperationException("Unknown comparison")
+                OberonGrammarLexer.EQUAL    => Math.Abs(left.ToDouble() - right.ToDouble()) < double.Epsilon,
+                _                           => throw new InvalidOperationException("Unknown comparison")
             };
 
             return res;

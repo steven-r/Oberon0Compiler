@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
@@ -23,8 +25,7 @@ namespace Oberon0.Generator.MsilBin
         {
             {OberonGrammarLexer.MINUS, SyntaxKind.UnaryMinusExpression},
             {OberonGrammarLexer.PLUS, SyntaxKind.UnaryPlusExpression},
-            {OberonGrammarLexer.NOT, SyntaxKind.LogicalNotExpression},
-
+            {OberonGrammarLexer.NOT, SyntaxKind.LogicalNotExpression}
         };
 
         private static readonly Dictionary<int, SyntaxKind> BinaryExpressionMapping = new Dictionary<int, SyntaxKind>
@@ -44,70 +45,84 @@ namespace Oberon0.Generator.MsilBin
             {OberonGrammarLexer.MOD, SyntaxKind.ModuloExpression}
         };
 
-        /// <inheritdoc />
-        public T CompileExpression<T>(Expression compilerExpression) where T: class
+        public ExpressionSyntax CompileExpression(Expression compilerExpression)
         {
             return compilerExpression switch
             {
                 UnaryExpression ua => SyntaxFactory.PrefixUnaryExpression(UnaryExpressionMapping[ua.Operator],
-                    CompileExpression<ExpressionSyntax>(ua.LeftHandSide)) as T,
+                    CompileExpression(ua.LeftHandSide)),
                 BinaryExpression be => SyntaxFactory.ParenthesizedExpression(SyntaxFactory.BinaryExpression(
                     BinaryExpressionMapping[be.Operator],
-                    CompileExpression<ExpressionSyntax>(be.LeftHandSide),
-                    CompileExpression<ExpressionSyntax>(be.RightHandSide))) as T,
-                VariableReferenceExpression vre => GenerateVariableReference(vre.Declaration, vre.Selector) as T,
-                ConstantExpression ce => GenerateConstantLiteral(ce) as T,
+                    CompileExpression(be.LeftHandSide),
+                    CompileExpression(be.RightHandSide))),
+                VariableReferenceExpression vre => GenerateVariableReference(vre.Declaration, vre.Selector),
+                ConstantExpression ce           => GenerateConstantLiteral(ce),
                 StringExpression se => SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression,
-                    SyntaxFactory.Literal(se.Value)) as T,
-                FunctionCallExpression fce => CallFunction(fce.FunctionDeclaration, fce.Parameters) as T,
+                    SyntaxFactory.Literal(se.Value)),
+                FunctionCallExpression fce => CallFunction(fce.FunctionDeclaration, fce.Parameters),
                 _ => throw new ArgumentException("Cannot process exception type " + compilerExpression.GetType().Name,
                     nameof(compilerExpression))
             };
         }
 
         private ExpressionSyntax GenerateVariableReference(Declaration declaration, VariableSelector selector,
-            bool ignoreReplace = false)
+                                                           bool ignoreReplace = false)
         {
-            DeclarationGeneratorInfo dgi = (DeclarationGeneratorInfo)declaration.GeneratorInfo;
-            if (!ignoreReplace && dgi?.ReplacedBy != null) declaration = dgi.ReplacedBy;
+            var dgi = (DeclarationGeneratorInfo) declaration.GeneratorInfo;
+            if (!ignoreReplace && dgi?.ReplacedBy != null)
+            {
+                declaration = dgi.ReplacedBy;
+            }
 
-            if (selector == null) return MapIdentifierName(declaration.Name);
+            if (selector == null)
+            {
+                return MapIdentifierName(declaration.Name);
+            }
 
             ExpressionSyntax current = null;
             foreach (var selectorElement in selector)
+            {
                 switch (selectorElement)
                 {
                     case IndexSelector indexSelector:
                         // add a -1 to the selector (and compile) as c# arrays start at 0
-                        var binaryExpression =  BinaryExpression.Create(OberonGrammarLexer.MINUS, indexSelector.IndexDefinition,
+                        var binaryExpression = BinaryExpression.Create(OberonGrammarLexer.MINUS,
+                            indexSelector.IndexDefinition,
                             new ConstantIntExpression(1), declaration.Block);
                         var solvedExpression = ConstantSolver.Solve(binaryExpression, declaration.Block);
                         var accessor = SyntaxFactory.ElementAccessExpression(
                             MapIdentifierName(declaration.Name),
                             SyntaxFactory.BracketedArgumentList(
                                 SyntaxFactory.SingletonSeparatedList(
-                                    SyntaxFactory.Argument(CompileExpression<ExpressionSyntax>(solvedExpression)))));
+                                    SyntaxFactory.Argument(CompileExpression(solvedExpression)))));
                         if (current == null)
+                        {
                             current = accessor;
-                        else
+                        } else
+                        {
                             throw new OperationCanceledException("Cannot process nested selectors");
+                        }
 
                         break;
                     case IdentifierSelector identifierSelector:
-                        var identAccessor = 
+                        var identAccessor =
                             SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 MapIdentifierName(declaration.Name),
                                 MapIdentifierName(identifierSelector.Element.Name));
                         if (current == null)
+                        {
                             current = identAccessor;
-                        else
+                        } else
+                        {
                             throw new OperationCanceledException("Cannot process nested selectors");
+                        }
 
                         break;
                     default:
                         throw new InvalidOperationException("Cannot handle type " + selectorElement.GetType());
                 }
+            }
 
             return current;
         }

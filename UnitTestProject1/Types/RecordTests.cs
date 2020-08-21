@@ -1,18 +1,19 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.Collections.Generic;
 using System.Linq;
-using Xunit;
-using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
 using Oberon0.TestSupport;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests.Types
 {
@@ -22,7 +23,7 @@ namespace Oberon0.Compiler.Tests.Types
         public void RecordAssign()
         {
             var errors = new List<CompilerError>();
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 TYPE
   Demo = RECORD 
@@ -150,14 +151,14 @@ VAR a: RECORD
     b: INTEGER;
 BEGIN
   a := b;
-END Test.", 
+END Test.",
                 "Left & right side do not match types");
         }
 
         [Fact]
         public void RecordMany()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 TYPE
   Embedded = RECORD
@@ -179,9 +180,9 @@ END Test.");
             Assert.NotNull(embType);
             Assert.IsType<RecordTypeDefinition>(t);
             Assert.IsType<RecordTypeDefinition>(embType);
-            RecordTypeDefinition rtd = (RecordTypeDefinition)t;
+            var rtd = (RecordTypeDefinition) t;
             Assert.Equal(4, rtd.Elements.Count);
-            Declaration d = rtd.Elements.SingleOrDefault(x => x.Name == "d");
+            var d = rtd.Elements.SingleOrDefault(x => x.Name == "d");
             Assert.NotNull(d);
             Assert.Equal(embType, d.Type);
         }
@@ -206,7 +207,7 @@ END test.",
         [Fact]
         public void RecordSelector()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 TYPE
   Embedded = RECORD
@@ -230,10 +231,10 @@ END Test.");
             var s = m.Block.Statements[0];
             Assert.NotNull(s);
             Assert.IsType<ProcedureCallStatement>(s);
-            var pcs = (ProcedureCallStatement)s;
+            var pcs = (ProcedureCallStatement) s;
             Assert.Single(pcs.Parameters);
             Assert.IsType<VariableReferenceExpression>(pcs.Parameters[0]);
-            VariableReferenceExpression vre = (VariableReferenceExpression)pcs.Parameters[0];
+            var vre = (VariableReferenceExpression) pcs.Parameters[0];
             Assert.NotNull(vre.Selector);
             Assert.Equal(3, vre.Selector.Count);
             Assert.Equal(intType, vre.Selector.SelectorResultType);
@@ -242,7 +243,7 @@ END Test.");
         [Fact]
         public void RecordSimple()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 TYPE
   Demo = RECORD 
@@ -255,9 +256,9 @@ END Test.");
             var intType = m.Block.LookupType("INTEGER");
             Assert.NotNull(t);
             Assert.IsType<RecordTypeDefinition>(t);
-            RecordTypeDefinition rtd = (RecordTypeDefinition)t;
+            var rtd = (RecordTypeDefinition) t;
             Assert.Single(rtd.Elements);
-            Declaration a = rtd.Elements.First();
+            var a = rtd.Elements.First();
             Assert.Equal("a", a.Name);
             Assert.Equal(intType, a.Type);
         }

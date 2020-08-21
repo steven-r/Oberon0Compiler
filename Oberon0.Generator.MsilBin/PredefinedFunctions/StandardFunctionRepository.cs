@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
@@ -22,7 +24,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
             new List<StandardFunctionGeneratorListElement>();
 
         /// <summary>
-        /// Gets the specified operation.
+        ///     Gets the specified operation.
         /// </summary>
         /// <param name="function">The operation.</param>
         /// <returns>Lazy&lt;IArithmeticOperation, IArithmeticOpMetadata&gt;.</returns>
@@ -35,7 +37,10 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
 
             var func = _standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
             if (func == null)
+            {
                 throw new ArgumentException("Cannot find function " + function, nameof(function));
+            }
+
             return func;
         }
 

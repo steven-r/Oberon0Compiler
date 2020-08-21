@@ -25,7 +25,9 @@ namespace Oberon0.Compiler.Tests.Expressions
                 () => new OpRelOp().Operate(null, b, null));
             Assert.Equal("e", e.ParamName);
             var e1 = Assert.Throws<ArgumentNullException>(
-                () => new OpRelOp().Operate(BinaryExpression.Create(OberonGrammarLexer.PLUS, ConstantExpression.Create(0), ConstantExpression.Create(1),  b), null, null));
+                () => new OpRelOp().Operate(
+                    BinaryExpression.Create(OberonGrammarLexer.PLUS, ConstantExpression.Create(0),
+                        ConstantExpression.Create(1), b), null, null));
             Assert.Equal("block", e1.ParamName);
         }
     }

@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.Diagnostics;
@@ -15,13 +17,13 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
     internal class StandardFunctionGeneratorListElement : IStandardFunctionMetadata
     {
         /// <summary>
-        /// Gets or sets the instance handling the standard function
+        ///     Gets or sets the instance handling the standard function
         /// </summary>
         /// <value>The instance.</value>
         public IStandardFunctionGenerator Instance { get; set; }
 
         /// <summary>
-        /// Gets or sets the lookup key to find the appropriate function
+        ///     Gets or sets the lookup key to find the appropriate function
         /// </summary>
         /// <value>The instance key.</value>
         public string InstanceKey { get; set; }

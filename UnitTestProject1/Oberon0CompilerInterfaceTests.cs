@@ -19,9 +19,6 @@ END Test.", "no viable alternative at input 'Thisis'");
             Assert.True(m.CompilerInstance.HasError);
         }
 
-        private class DummyGeneratorInfo : IGeneratorInfo
-        { }
-
         [Fact]
         public void FixupGeneratorInfo()
         {
@@ -37,6 +34,10 @@ END Test.");
             Assert.Null(d.GeneratorInfo);
             d.GeneratorInfo = new DummyGeneratorInfo();
             Assert.NotNull(d.GeneratorInfo);
+        }
+
+        private class DummyGeneratorInfo : IGeneratorInfo
+        {
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.IO;
@@ -14,12 +16,12 @@ namespace Oberon0.Generator.MsilBin.Tests.Types
 {
     public class RealTests
     {
+        private readonly ITestOutputHelper _output;
+
         public RealTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
         private void CheckCodeReal(string sourceCode, string expectedResults)
         {

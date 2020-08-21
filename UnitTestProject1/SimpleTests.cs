@@ -1,13 +1,14 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
-using Xunit;
-using Oberon0.Compiler.Definitions;
 using Oberon0.TestSupport;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests
 {
@@ -16,7 +17,7 @@ namespace Oberon0.Compiler.Tests
         [Fact]
         public void EmptyApplication()
         {
-            Module m = Oberon0Compiler.CompileString("MODULE Test; END Test.");
+            var m = Oberon0Compiler.CompileString("MODULE Test; END Test.");
             Assert.Equal("Test", m.Name);
             Assert.Equal(3, m.Block.Declarations.Count);
         }
@@ -24,7 +25,7 @@ namespace Oberon0.Compiler.Tests
         [Fact]
         public void EmptyApplication2()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; BEGIN END Test.");
             Assert.Empty(m.Block.Statements);
         }

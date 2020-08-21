@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.IO;
@@ -14,12 +16,12 @@ namespace Oberon0.Generator.MsilBin.Tests.Types
 {
     public class VarTests
     {
+        private readonly ITestOutputHelper _output;
+
         public VarTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
         [Fact]
         public void TestReservedWordIssue23()
@@ -33,7 +35,7 @@ BEGIN
     WriteInt(int);
     WriteLn 
 END Test.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 

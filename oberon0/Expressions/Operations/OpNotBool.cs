@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using JetBrains.Annotations;
@@ -14,7 +16,7 @@ using Oberon0.Compiler.Types;
 namespace Oberon0.Compiler.Expressions.Operations
 {
     /// <summary>
-    /// Handle "~".
+    ///     Handle "~".
     /// </summary>
     /// <seealso cref="IArithmeticOperation" />
     /// <remarks>This function is some kind of exception as ~ usually takes one parameter. The second is handled as a dummy</remarks>
@@ -29,8 +31,8 @@ namespace Oberon0.Compiler.Expressions.Operations
         {
             if (bin.LeftHandSide.IsConst)
             {
-                var left = (ConstantBoolExpression)bin.LeftHandSide;
-                left.Value = !(bool)left.Value;
+                var left = (ConstantBoolExpression) bin.LeftHandSide;
+                left.Value = !(bool) left.Value;
                 return left;
             }
 

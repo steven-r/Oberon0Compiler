@@ -1,8 +1,10 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
@@ -42,7 +44,7 @@ namespace Oberon0.Compiler.Definitions
 #pragma warning restore CS3001 // Argument type is not CLS-compliant
         {
             var callParameters = CallParameter.CreateFromExpressionList(parameters);
-            return this.LookupFunction(name, token, callParameters);
+            return LookupFunction(name, token, callParameters);
         }
 
 #pragma warning disable CS3001 // Argument type is not CLS-compliant
@@ -50,11 +52,12 @@ namespace Oberon0.Compiler.Definitions
 #pragma warning restore CS3001 // Argument type is not CLS-compliant
         {
             var callParameters = CallParameter.CreateFromStringExpression(this, parameters);
-            return this.LookupFunction(name, token, callParameters);
+            return LookupFunction(name, token, callParameters);
         }
 
 #pragma warning disable CS3001 // Argument type is not CLS-compliant
-        private FunctionDeclaration LookupFunction(string procedureName, IToken token, IReadOnlyList<CallParameter> callParameters)
+        private FunctionDeclaration LookupFunction(string procedureName, IToken token,
+                                                   IReadOnlyList<CallParameter> callParameters)
 #pragma warning restore CS3001 // Argument type is not CLS-compliant
         {
             var b = this;
@@ -69,13 +72,19 @@ namespace Oberon0.Compiler.Definitions
                 {
                     int newScore = GenerateFunctionParameterScore(func, callParameters);
 
-                    if (newScore <= score) continue;
+                    if (newScore <= score)
+                    {
+                        continue;
+                    }
 
                     resFunc = func;
                     score = newScore;
                 }
 
-                if (score >= 0) break; // found
+                if (score >= 0)
+                {
+                    break; // found
+                }
 
                 b = b.Parent;
             }
@@ -83,13 +92,14 @@ namespace Oberon0.Compiler.Definitions
             if (resFunc == null)
             {
                 var parameterList = new List<ProcedureParameterDeclaration>(callParameters.Count);
-                var n = 0;
+                int n = 0;
 
                 parameterList.AddRange(
                     callParameters.Select(
-                        expression => new ProcedureParameterDeclaration("param_" + n++, this, expression.TargetType, false)));
+                        expression =>
+                            new ProcedureParameterDeclaration("param_" + n++, this, expression.TargetType, false)));
 
-                var prototype = FunctionDeclaration.BuildPrototype(
+                string prototype = FunctionDeclaration.BuildPrototype(
                     procedureName,
                     SimpleTypeDefinition.VoidType,
                     parameterList.ToArray());
@@ -99,8 +109,7 @@ namespace Oberon0.Compiler.Definitions
                         token,
                         $"No procedure/function with prototype '{prototype}' found",
                         null);
-                }
-                else
+                } else
                 {
                     throw new InvalidOperationException($"No procedure/function with prototype '{prototype}' found");
                 }
@@ -116,7 +125,10 @@ namespace Oberon0.Compiler.Definitions
             {
                 var res = b.Types.FirstOrDefault(x => x.Name == name);
                 if (res != null)
+                {
                     return res;
+                }
+
                 b = b.Parent;
             }
 
@@ -124,27 +136,30 @@ namespace Oberon0.Compiler.Definitions
         }
 
         /// <summary>
-        /// Lookups the type based on <see cref="BaseTypes"/>.
+        ///     Lookups the type based on <see cref="BaseTypes" />.
         /// </summary>
         /// <param name="baseTypes">The base type.</param>
-        /// <returns>The <see cref="TypeDefinition"/>.</returns>
+        /// <returns>The <see cref="TypeDefinition" />.</returns>
         public TypeDefinition LookupTypeByBaseType(BaseTypes baseTypes)
         {
-            Block b = this;
+            var b = this;
 
             // internal types are only available on level 0
-            while (b.Parent != null) b = b.Parent;
+            while (b.Parent != null)
+            {
+                b = b.Parent;
+            }
 
             var res = b.Types.FirstOrDefault(x => x.Type == baseTypes && x.IsInternal);
             return res;
         }
 
         /// <summary>
-        /// Lookups a variable.
+        ///     Lookups a variable.
         /// </summary>
         /// <param name="name">The variable name.</param>
         /// <param name="lookupParents">The parents</param>
-        /// <returns>The <see cref="Declaration"/>.</returns>
+        /// <returns>The <see cref="Declaration" />.</returns>
         internal Declaration LookupVar(string name, bool lookupParents = true)
         {
             var b = this;
@@ -152,8 +167,14 @@ namespace Oberon0.Compiler.Definitions
             {
                 var res = b.Declarations.FirstOrDefault(x => x.Name == name);
                 if (res != null)
+                {
                     return res;
-                if (!lookupParents) return null; // nothing in local env
+                }
+
+                if (!lookupParents)
+                {
+                    return null; // nothing in local env
+                }
 
                 b = b.Parent;
             }
@@ -162,28 +183,30 @@ namespace Oberon0.Compiler.Definitions
         }
 
         /// <summary>
-        /// Create a score to create a best fit for a function given a parameter list.
+        ///     Create a score to create a best fit for a function given a parameter list.
         /// </summary>
         /// <param name="func">The function to check the parameters for</param>
         /// <param name="parameters">The list of parameters</param>
         /// <returns>A score (see remarks). In case of -1 no match is possible (see cases in code)</returns>
         /// <remarks>
-        ///How the score is calculated:
-        ///
-        ///* Start with a score of 0
-        ///* For each parameter
-        ///** If IsVar and types match exactly --> +1000 (super match)
-        ///** If ByValue and types match exactly --> + 1000 (only checked for simple types)
-        ///** If ByValue and types are compatible (e.g. INTEGER can be assigned to REAL) --> +1
-        ///
-        /// In the unlikely event of having more than 1000 parameters, this algorithm might fail.
+        ///     How the score is calculated:
+        ///     * Start with a score of 0
+        ///     * For each parameter
+        ///     ** If IsVar and types match exactly --> +1000 (super match)
+        ///     ** If ByValue and types match exactly --> + 1000 (only checked for simple types)
+        ///     ** If ByValue and types are compatible (e.g. INTEGER can be assigned to REAL) --> +1
+        ///     In the unlikely event of having more than 1000 parameters, this algorithm might fail.
         /// </remarks>
-        private static int GenerateFunctionParameterScore(FunctionDeclaration func, IReadOnlyList<CallParameter> parameters)
+        private static int GenerateFunctionParameterScore(FunctionDeclaration func,
+                                                          IReadOnlyList<CallParameter> parameters)
         {
             int paramNo = 0;
             int score = 0;
             var procParams = func.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray();
-            if (parameters.Count != procParams.Length) return -1; // will never match
+            if (parameters.Count != procParams.Length)
+            {
+                return -1; // will never match
+            }
 
             foreach (var procedureParameter in procParams)
             {
@@ -193,26 +216,24 @@ namespace Oberon0.Compiler.Definitions
                     {
                         if (!procedureParameter.Type.Equals(parameters[paramNo].TargetType))
                             // VAR parameter need to have the same type as calling parameter
+                        {
                             return -1;
+                        }
 
                         score += 1000;
-                    }
-                    else
+                    } else
                     {
                         // VAR parameter cannot have expression as source
                         return -1;
                     }
-                }
-                else if (procedureParameter.Type.Type.HasFlag(BaseTypes.Simple) &&
-                         procedureParameter.Type.Name == parameters[paramNo].TypeName)
+                } else if (procedureParameter.Type.Type.HasFlag(BaseTypes.Simple) &&
+                    procedureParameter.Type.Name == parameters[paramNo].TypeName)
                 {
                     score += 1000;
-                }
-                else if (!procedureParameter.Type.IsAssignable(parameters[paramNo].TargetType))
+                } else if (!procedureParameter.Type.IsAssignable(parameters[paramNo].TargetType))
                 {
                     return -1;
-                }
-                else
+                } else
                 {
                     score++; // match as assignable --> small increment
                 }

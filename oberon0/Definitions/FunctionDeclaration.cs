@@ -1,11 +1,12 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -19,7 +20,7 @@ namespace Oberon0.Compiler.Definitions
     public class FunctionDeclaration
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FunctionDeclaration"/> class.
+        ///     Initializes a new instance of the <see cref="FunctionDeclaration" /> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="block">The block.</param>
@@ -31,15 +32,18 @@ namespace Oberon0.Compiler.Definitions
             TypeDefinition returnType,
             params ProcedureParameterDeclaration[] parameters)
         {
-            this.Name = name;
-            this.Block = block;
-            if (parameters != null && parameters.Length > 0) this.Block.Declarations.AddRange(parameters);
+            Name = name;
+            Block = block;
+            if (parameters != null && parameters.Length > 0)
+            {
+                Block.Declarations.AddRange(parameters);
+            }
 
-            this.ReturnType = returnType;
+            ReturnType = returnType;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FunctionDeclaration"/> class.
+        ///     Initializes a new instance of the <see cref="FunctionDeclaration" /> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="block">The block.</param>
@@ -69,23 +73,23 @@ namespace Oberon0.Compiler.Definitions
         public Block Block { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is internal (e.g. <c>WriteInt()</c>
+        ///     Gets a value indicating whether this instance is internal (e.g. <c>WriteInt()</c>
         /// </summary>
         /// <value><c>true</c> if this instance is internal; otherwise, <c>false</c>.</value>
         public bool IsInternal { get; private set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this procedure can be exported.
+        ///     Gets or sets a value indicating whether this procedure can be exported.
         /// </summary>
         public bool Exportable { get; set; }
 
         /// <summary>
-        /// Gets the name.
+        ///     Gets the name.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Gets the return type.
+        ///     Gets the return type.
         /// </summary>
         public TypeDefinition ReturnType { get; }
 
@@ -103,22 +107,22 @@ namespace Oberon0.Compiler.Definitions
         }
 
         /// <summary>
-        /// Builds a prototype definition for a function. 
+        ///     Builds a prototype definition for a function.
         /// </summary>
         /// <example>
-        /// An example prototype might look like:
-        /// <code>$$Void WriteInt(INTEGER)</code> or <code>$$VOID ReadInt(&amp;INTEGER);</code>
+        ///     An example prototype might look like:
+        ///     <code>$$Void WriteInt(INTEGER)</code> or <code>$$VOID ReadInt(&amp;INTEGER);</code>
         /// </example>
         /// <param name="name">The function/procedure</param>
         /// <param name="returnType">the return type</param>
-        /// <param name="parameters">A list of <see cref="ProcedureParameterDeclaration"/> entries.</param>
+        /// <param name="parameters">A list of <see cref="ProcedureParameterDeclaration" /> entries.</param>
         /// <returns>A valid prototype description</returns>
         public static string BuildPrototype(
             string name,
             TypeDefinition returnType,
             ProcedureParameterDeclaration[] parameters)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             if (returnType.Name != TypeDefinition.VoidTypeName)
             {
                 sb.Append(returnType.Name);
@@ -134,10 +138,15 @@ namespace Oberon0.Compiler.Definitions
                 {
                     string parameterName = parameter.IsVar ? "&" : string.Empty;
                     if (!string.IsNullOrWhiteSpace(parameter.Type.Name))
+                    {
                         parameterName += parameter.Type.Name;
-                    else if (parameter.Type is ArrayTypeDefinition array)
+                    } else if (parameter.Type is ArrayTypeDefinition array)
+                    {
                         parameterName += $"{array.ArrayType}[{array.Size}]";
-                    else if (parameter.Type is RecordTypeDefinition) parameterName += "RECORD {anonymous} END";
+                    } else if (parameter.Type is RecordTypeDefinition)
+                    {
+                        parameterName += "RECORD {anonymous} END";
+                    }
 
                     list.Add(parameterName);
                 }
@@ -145,16 +154,17 @@ namespace Oberon0.Compiler.Definitions
                 sb.Append(string.Join(",", list));
                 sb.Append(')');
             }
+
             return sb.ToString();
         }
 
         [ExcludeFromCodeCoverage]
         public override string ToString()
         {
-            var @params = string.Join(
+            string @params = string.Join(
                 ", ",
-                this.Block.Declarations.OfType<ProcedureParameterDeclaration>().Select(x => x.Type.Type.ToString("G")));
-            return $"{(this.IsInternal ? "internal " : string.Empty)}{this.ReturnType:G} {this.Name}(" + @params + ")";
+                Block.Declarations.OfType<ProcedureParameterDeclaration>().Select(x => x.Type.Type.ToString("G")));
+            return $"{(IsInternal ? "internal " : string.Empty)}{ReturnType:G} {Name}(" + @params + ")";
         }
     }
 }

@@ -1,18 +1,19 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.Collections.Generic;
 using System.Linq;
-using Xunit;
-using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.TestSupport;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests
 {
@@ -33,7 +34,7 @@ END Test.
         [Fact]
         public void SimpleAssignment()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   x: INTEGER;
@@ -44,17 +45,17 @@ END Test.
 ");
             Assert.Single(m.Block.Statements);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
-            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[0];
+            var ast = (AssignmentStatement) m.Block.Statements[0];
             Assert.Equal("x", ast.Variable.Name);
             Assert.IsAssignableFrom<ConstantIntExpression>(ast.Expression);
-            ConstantIntExpression cie = (ConstantIntExpression)ast.Expression;
+            var cie = (ConstantIntExpression) ast.Expression;
             Assert.Equal(1, cie.Value);
         }
 
         [Fact]
         public void SimpleRepeat()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   x: INTEGER;
@@ -68,14 +69,14 @@ END Test.
 ");
             Assert.Equal(2, m.Block.Statements.Count);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
-            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[0];
+            var ast = (AssignmentStatement) m.Block.Statements[0];
             Assert.Equal("x", ast.Variable.Name);
             Assert.IsAssignableFrom<ConstantIntExpression>(ast.Expression);
-            ConstantIntExpression cie = (ConstantIntExpression)ast.Expression;
+            var cie = (ConstantIntExpression) ast.Expression;
             Assert.Equal(1, cie.Value);
 
             Assert.IsAssignableFrom<RepeatStatement>(m.Block.Statements[1]);
-            RepeatStatement rs = (RepeatStatement)m.Block.Statements[1];
+            var rs = (RepeatStatement) m.Block.Statements[1];
             Assert.Empty(rs.Block.Statements);
         }
 
@@ -112,8 +113,8 @@ END Test.
 ");
             Assert.Equal(2, m.Block.Statements.Count);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
-            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[1];
-            BinaryExpression expr = ast.Expression as BinaryExpression;
+            var ast = (AssignmentStatement) m.Block.Statements[1];
+            var expr = ast.Expression as BinaryExpression;
             Assert.NotNull(expr);
             Assert.False(expr.IsUnary);
             Assert.False(expr.IsConst);
@@ -143,7 +144,7 @@ END Test.
         [Fact]
         public void TestAssignableBoolInt()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   x: BOOLEAN;
@@ -154,10 +155,10 @@ END Test.
 ");
             Assert.Single(m.Block.Statements);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
-            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[0];
+            var ast = (AssignmentStatement) m.Block.Statements[0];
             Assert.Equal("x", ast.Variable.Name);
             Assert.IsAssignableFrom<ConstantIntExpression>(ast.Expression);
-            ConstantIntExpression cie = (ConstantIntExpression)ast.Expression;
+            var cie = (ConstantIntExpression) ast.Expression;
             Assert.Equal(1, cie.Value);
         }
 
@@ -198,7 +199,7 @@ END Test.
         [Fact]
         public void TestAssignableUnaryInt()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   x: INTEGER;
@@ -210,8 +211,8 @@ END Test.
 ");
             Assert.Equal(2, m.Block.Statements.Count);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
-            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[1];
-            UnaryExpression expr = ast.Expression as UnaryExpression;
+            var ast = (AssignmentStatement) m.Block.Statements[1];
+            var expr = ast.Expression as UnaryExpression;
             Assert.NotNull(expr);
             Assert.True(expr.IsUnary);
             Assert.False(expr.IsConst);
@@ -246,7 +247,7 @@ VAR
 BEGIN 
     x := y;
 END Test.
-", 
+",
                 errors);
             Assert.Single(errors);
             Assert.Equal("Left & right side do not match types", errors.First().Message);
@@ -306,12 +307,12 @@ END Test.
         }
 
         /// <summary>
-        /// The two statements.
+        ///     The two statements.
         /// </summary>
         [Fact]
         public void TwoStatements()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   x: INTEGER;
@@ -323,17 +324,17 @@ END Test.
 ");
             Assert.Equal(2, m.Block.Statements.Count);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
-            AssignmentStatement ast = (AssignmentStatement)m.Block.Statements[0];
+            var ast = (AssignmentStatement) m.Block.Statements[0];
             Assert.Equal("x", ast.Variable.Name);
             Assert.IsAssignableFrom<ConstantIntExpression>(ast.Expression);
-            ConstantIntExpression cie = (ConstantIntExpression)ast.Expression;
+            var cie = (ConstantIntExpression) ast.Expression;
             Assert.Equal(1, cie.Value);
 
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
-            ast = (AssignmentStatement)m.Block.Statements[1];
+            ast = (AssignmentStatement) m.Block.Statements[1];
             Assert.Equal("x", ast.Variable.Name);
             Assert.IsAssignableFrom<ConstantIntExpression>(ast.Expression);
-            cie = (ConstantIntExpression)ast.Expression;
+            cie = (ConstantIntExpression) ast.Expression;
             Assert.Equal(2, cie.Value);
         }
     }

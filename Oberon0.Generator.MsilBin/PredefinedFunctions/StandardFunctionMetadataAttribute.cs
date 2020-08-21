@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
@@ -15,7 +17,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
     public class StandardFunctionMetadataAttribute : ExportAttribute, IStandardFunctionExportMetadata
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardFunctionMetadataAttribute"/> class.
+        ///     Initializes a new instance of the <see cref="StandardFunctionMetadataAttribute" /> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="returnType">Type of the return.</param>
@@ -29,7 +31,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardFunctionMetadataAttribute"/> class.
+        ///     Initializes a new instance of the <see cref="StandardFunctionMetadataAttribute" /> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="returnType">Type of the return.</param>

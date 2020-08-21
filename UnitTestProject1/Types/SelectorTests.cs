@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Oberon0.Compiler.Definitions;
+﻿using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;

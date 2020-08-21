@@ -1,13 +1,15 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
-using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.TestSupport;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests
 {
@@ -16,7 +18,7 @@ namespace Oberon0.Compiler.Tests
         [Fact]
         public void ConstConstExpr()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test;
 CONST
   Test1 = 2;
@@ -30,8 +32,8 @@ CONST
             Assert.NotNull(t1);
             Assert.IsType<ConstDeclaration>(t);
             Assert.IsType<ConstDeclaration>(t1);
-            var tp = (ConstDeclaration)t;
-            var tp1 = (ConstDeclaration)t1;
+            var tp = (ConstDeclaration) t;
+            var tp1 = (ConstDeclaration) t1;
             Assert.Equal("Test", tp.Name);
             Assert.Same(m.Block.LookupType("INTEGER"), tp.Type);
             Assert.Equal(3, tp.Value.ToInt32());
@@ -45,7 +47,7 @@ CONST
         [Fact]
         public void ConstSimple()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test;
 CONST
   Test = 1;
@@ -55,7 +57,7 @@ CONST
             var c = m.Block.LookupVar("Test");
             Assert.NotNull(c);
             Assert.IsType<ConstDeclaration>(c);
-            var cp = (ConstDeclaration)c;
+            var cp = (ConstDeclaration) c;
             Assert.Equal("Test", cp.Name);
             Assert.Same(m.Block.LookupType("INTEGER"), cp.Type);
             Assert.Equal(1, cp.Value.ToInt32());
@@ -64,7 +66,7 @@ CONST
         [Fact]
         public void ConstSimpleExpr()
         {
-            Module m = Oberon0Compiler.CompileString(
+            var m = Oberon0Compiler.CompileString(
                 @"MODULE Test;
 CONST
   Test = 1+1;
@@ -74,7 +76,7 @@ CONST
             var c = m.Block.LookupVar("Test");
             Assert.NotNull(c);
             Assert.IsType<ConstDeclaration>(c);
-            var cp = (ConstDeclaration)c;
+            var cp = (ConstDeclaration) c;
             Assert.Equal("Test", cp.Name);
             Assert.Equal(m.Block.LookupType("INTEGER"), cp.Type);
             Assert.Equal(2, cp.Value.ToInt32());

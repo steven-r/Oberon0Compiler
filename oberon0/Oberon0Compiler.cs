@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using Antlr4.Runtime;
@@ -11,7 +13,7 @@ using Oberon0.Compiler.Definitions;
 namespace Oberon0.Compiler
 {
     /// <summary>
-    /// The Oberon0 compiler core class.
+    ///     The Oberon0 compiler core class.
     /// </summary>
     public class Oberon0Compiler
     {
@@ -24,23 +26,23 @@ namespace Oberon0.Compiler
 #pragma warning restore CS3003 // Type is not CLS-compliant
 
         /// <summary>
-        /// Gets or sets a value indicating whether the module has at least one error.
+        ///     Gets or sets a value indicating whether the module has at least one error.
         /// </summary>
         public bool HasError { get; private set; }
 
         /// <summary>
-        /// Compile some source code
+        ///     Compile some source code
         /// </summary>
         /// <param name="source">The source file/code to compile</param>
-        /// <param name="options">Options which can be set (see <see cref="Oberon0CompilerOptions"/> for details)</param>
+        /// <param name="options">Options which can be set (see <see cref="Oberon0CompilerOptions" /> for details)</param>
         /// <returns>A compiled module containing the AST of the source file</returns>
         public static Module CompileString(string source, Oberon0CompilerOptions options = null)
         {
             var instance = new Oberon0Compiler();
 
-            AntlrInputStream input = new AntlrInputStream(source);
+            var input = new AntlrInputStream(source);
             instance.Lexer = new OberonGrammarLexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(instance.Lexer);
+            var tokens = new CommonTokenStream(instance.Lexer);
 
             options?.InitLexer?.Invoke(instance.Lexer);
 

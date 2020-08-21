@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.Data;
@@ -20,7 +22,7 @@ using Oberon0.Shared;
 namespace Oberon0.Generator.MsilBin
 {
     /// <summary>
-    /// Generator for MSIL output using Roslyn
+    ///     Generator for MSIL output using Roslyn
     /// </summary>
     public partial class MsilBinGenerator : ICodeGenerator
     {
@@ -30,22 +32,22 @@ namespace Oberon0.Generator.MsilBin
         private NamespaceDeclarationSyntax _namespace;
 
         /// <summary>
-        /// The main class being generated (usually <code>Oberon0.{module name}</code>)
+        ///     The main class being generated (usually <code>Oberon0.{module name}</code>)
         /// </summary>
         public string MainClassName { get; set; }
 
         /// <summary>
-        /// The name space for the main class (to be used for integration and testing)
+        ///     The name space for the main class (to be used for integration and testing)
         /// </summary>
         public string MainClassNamespace { get; set; }
 
         /// <summary>
-        /// The used compiler module
+        ///     The used compiler module
         /// </summary>
         public Module Module { get; set; }
 
         /// <summary>
-        /// Dump generated code as string
+        ///     Dump generated code as string
         /// </summary>
         /// <returns>a (hopefully) compilable string</returns>
         public string IntermediateCode()
@@ -54,7 +56,7 @@ namespace Oberon0.Generator.MsilBin
         }
 
         /// <summary>
-        /// Dump generated code to a <see cref="TextWriter"/>
+        ///     Dump generated code to a <see cref="TextWriter" />
         /// </summary>
         /// <param name="writer">The TextWriter to write to</param>
         public void WriteIntermediateCode(TextWriter writer)
@@ -63,11 +65,15 @@ namespace Oberon0.Generator.MsilBin
         }
 
         /// <summary>
-        /// Start code generation
+        ///     Start code generation
         /// </summary>
         public void GenerateIntermediateCode()
         {
-            if (Module == null) throw new DataException("Please set Module before calling GenerateIntermediateCode()");
+            if (Module == null)
+            {
+                throw new DataException("Please set Module before calling GenerateIntermediateCode()");
+            }
+
             StandardFunctionRepository.Initialize(Module);
 
             _compiledCode = SyntaxFactory.CompilationUnit();
@@ -77,7 +83,7 @@ namespace Oberon0.Generator.MsilBin
 
             // Create a namespace: (namespace CodeGenerationSample)
             _namespace = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(MainClassNamespace))
-                .NormalizeWhitespace();
+                                      .NormalizeWhitespace();
 
             // Add System using statement: (using System)
             _namespace = _namespace.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")),
@@ -103,7 +109,7 @@ namespace Oberon0.Generator.MsilBin
         private MethodDeclarationSyntax GenerateFunctionOrProcedure(FunctionDeclaration functionDeclaration)
         {
             GenerateComplexTypeMappings(functionDeclaration.Block);
-            MethodDeclarationSyntax function = StartFunction(functionDeclaration);
+            var function = StartFunction(functionDeclaration);
 
             var statements =
                 new SyntaxList<StatementSyntax>(GenerateLocalDefinitions(functionDeclaration));
@@ -129,35 +135,54 @@ namespace Oberon0.Generator.MsilBin
             {
                 // ignore system and external libraries
                 if (functionDeclaration.IsInternal || functionDeclaration is ExternalFunctionDeclaration)
+                {
                     continue;
+                }
+
                 var function = GenerateFunctionOrProcedure(functionDeclaration);
                 _classDeclaration = _classDeclaration.AddMembers(function);
             }
 
             var mainBlock = new Block(block, Module);
             mainBlock.Statements.AddRange(block.Statements);
-            var mainFuncDecl = new FunctionDeclaration("__MAIN__" + Module.Name, mainBlock, SimpleTypeDefinition.VoidType);
+            var mainFuncDecl =
+                new FunctionDeclaration("__MAIN__" + Module.Name, mainBlock, SimpleTypeDefinition.VoidType);
             _classDeclaration = _classDeclaration.AddMembers(GenerateFunctionOrProcedure(mainFuncDecl));
 
             _classDeclaration = _classDeclaration.AddMembers(SyntaxFactory.MethodDeclaration(
-                    SyntaxFactory.PredefinedType(
-                        SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                    MapIdentifier("Main"))
-                .WithModifiers(
-                    SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                        SyntaxFactory.Token(SyntaxKind.StaticKeyword)))
-                .WithBody(
-                    SyntaxFactory.Block(
-                        SyntaxFactory.SingletonList<StatementSyntax>(
-                            SyntaxFactory.ExpressionStatement(
-                                SyntaxFactory.InvocationExpression(
-                                    SyntaxFactory.MemberAccessExpression(
-                                        SyntaxKind.SimpleMemberAccessExpression,
-                                        SyntaxFactory.ObjectCreationExpression(
-                                                MapIdentifierName(MainClassName))
-                                            .WithArgumentList(
-                                                SyntaxFactory.ArgumentList()),
-                                        MapIdentifierName("__MAIN__" + Module.Name))))))));
+                                                                               SyntaxFactory.PredefinedType(
+                                                                                   SyntaxFactory.Token(SyntaxKind
+                                                                                      .VoidKeyword)),
+                                                                               MapIdentifier("Main"))
+                                                                          .WithModifiers(
+                                                                               SyntaxFactory.TokenList(
+                                                                                   SyntaxFactory.Token(SyntaxKind
+                                                                                      .PublicKeyword),
+                                                                                   SyntaxFactory.Token(SyntaxKind
+                                                                                      .StaticKeyword)))
+                                                                          .WithBody(
+                                                                               SyntaxFactory.Block(
+                                                                                   SyntaxFactory
+                                                                                      .SingletonList<StatementSyntax>(
+                                                                                           SyntaxFactory
+                                                                                              .ExpressionStatement(
+                                                                                                   SyntaxFactory
+                                                                                                      .InvocationExpression(
+                                                                                                           SyntaxFactory
+                                                                                                              .MemberAccessExpression(
+                                                                                                                   SyntaxKind
+                                                                                                                      .SimpleMemberAccessExpression,
+                                                                                                                   SyntaxFactory
+                                                                                                                      .ObjectCreationExpression(
+                                                                                                                           MapIdentifierName(
+                                                                                                                               MainClassName))
+                                                                                                                      .WithArgumentList(
+                                                                                                                           SyntaxFactory
+                                                                                                                              .ArgumentList()),
+                                                                                                                   MapIdentifierName(
+                                                                                                                       "__MAIN__" +
+                                                                                                                       Module
+                                                                                                                          .Name))))))));
         }
 
         /**
@@ -168,27 +193,37 @@ namespace Oberon0.Generator.MsilBin
             var method =
                 SyntaxFactory.MethodDeclaration(GetTypeName(functionDeclaration.ReturnType), functionDeclaration.Name);
 
-            if (!functionDeclaration.Block.Declarations.Any(x => x is ProcedureParameterDeclaration)) return method;
+            if (!functionDeclaration.Block.Declarations.Any(x => x is ProcedureParameterDeclaration))
+            {
+                return method;
+            }
 
             var list = new SyntaxNodeOrTokenList();
-            var first = true;
+            bool first = true;
             foreach (var declaration in functionDeclaration.Block.Declarations.OfType<ProcedureParameterDeclaration>())
             {
-                if (!first) list = list.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                if (!first)
+                {
+                    list = list.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                }
 
                 first = false;
                 var param = SyntaxFactory.Parameter(MapIdentifier(declaration.Name))
-                    .WithType(AddTypeSyntaxSpecification(declaration));
+                                         .WithType(AddTypeSyntaxSpecification(declaration));
                 if (declaration.IsVar)
+                {
                     param = param.WithModifiers(SyntaxFactory.TokenList(
                         SyntaxFactory.Token(SyntaxKind.RefKeyword)));
+                }
 
                 list = list.Add(param);
             }
 
             if (list.Any())
+            {
                 method = method.WithParameterList(SyntaxFactory.ParameterList(
                     SyntaxFactory.SeparatedList<ParameterSyntax>(list)));
+            }
 
             return method;
         }

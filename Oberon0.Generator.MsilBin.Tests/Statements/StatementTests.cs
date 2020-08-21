@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.IO;
@@ -14,12 +16,12 @@ namespace Oberon0.Generator.MsilBin.Tests.Statements
 {
     public class StatementTests
     {
+        private readonly ITestOutputHelper _output;
+
         public StatementTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
         [Fact]
         public void RepeatTest()
@@ -36,7 +38,7 @@ BEGIN
       i := i+1;
   UNTIL i > 5
 END Test.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -62,7 +64,7 @@ BEGIN
     IF (x) THEN WriteString('Yes') ELSE WriteString('No') END;
     WriteLn
 END Issue25.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -92,7 +94,7 @@ BEGIN
     WriteLn
 END Issue25.";
 
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -119,7 +121,7 @@ BEGIN
     WHILE x DO WriteString('No'); x := TRUE END;
     WriteLn
 END Issue25.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 

@@ -1,13 +1,14 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
-using Xunit;
-using Oberon0.Compiler.Definitions;
 using Oberon0.TestSupport;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests
 {
@@ -16,7 +17,7 @@ namespace Oberon0.Compiler.Tests
         [Fact]
         public void TestReadInt()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   Demo : INTEGER;
@@ -68,7 +69,7 @@ END Test.",
         [Fact]
         public void TestReadReal()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   Demo : REAL;

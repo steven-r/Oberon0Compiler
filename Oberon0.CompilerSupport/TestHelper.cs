@@ -1,17 +1,21 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Antlr4.Runtime;
-using NUnit.Framework;
+using JetBrains.Annotations;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace Oberon0.TestSupport
 {
@@ -26,31 +30,41 @@ namespace Oberon0.TestSupport
             return Oberon0Compiler.CompileString(
                 source,
                 new Oberon0CompilerOptions
+                {
+                    InitParser = parser =>
                     {
-                        InitParser = parser =>
-                            {
-                                parser.RemoveErrorListeners();
-                                parser.AddErrorListener(TestErrorListener.Instance);
-                            },
-                        InitLexer = lexer =>
-                            {
-                                lexer.RemoveErrorListeners();
-                                lexer.AddErrorListener(TestErrorListener.Instance);
-                            },
-                        AfterCompile = compiler =>
-                            {
-                                errors.AddRange(CompilerErrors);
-                            }
-                    });
+                        parser.RemoveErrorListeners();
+                        parser.AddErrorListener(TestErrorListener.Instance);
+                    },
+                    InitLexer = lexer =>
+                    {
+                        lexer.RemoveErrorListeners();
+                        lexer.AddErrorListener(TestErrorListener.Instance);
+                    },
+                    AfterCompile = compiler => { errors.AddRange(CompilerErrors); }
+                });
         }
 
         public static Module CompileString(string source, params string[] expectedErrors)
         {
-            void DumpErrors(List<CompilerError> compilerErrors)
+            return CompileString(source, null, expectedErrors);
+        }
+
+        public static Module CompileString(string source, [CanBeNull] ITestOutputHelper output,
+                                           params string[] expectedErrors)
+        {
+            void DumpErrors(IEnumerable<CompilerError> compilerErrors)
             {
                 foreach (var compilerError in compilerErrors)
                 {
-                    Assert.Warn($"[{compilerError.Line}/{compilerError.Column}] {compilerError.Message}");
+                    string message = $"[{compilerError.Line}/{compilerError.Column}] {compilerError.Message}";
+                    if (output == null)
+                    {
+                        Console.Error.WriteLine(message);
+                    } else
+                    {
+                        output.WriteLine(message);
+                    }
                 }
             }
 
@@ -59,22 +73,25 @@ namespace Oberon0.TestSupport
             if (expectedErrors.Length == 0 && errors.Count > 0)
             {
                 DumpErrors(errors);
-                Assert.Fail($"Expected no errors, actually found {errors.Count}");
+                Assert.True(false, $"Expected no errors, actually found {errors.Count}");
             }
 
             if (expectedErrors.Length != errors.Count)
             {
                 DumpErrors(errors);
-                Assert.Fail($"Expected {expectedErrors.Length} errors, actually found {errors.Count}");
+                Assert.True(false, $"Expected {expectedErrors.Length} errors, actually found {errors.Count}");
             }
 
-            for (var i = 0; i < expectedErrors.Length; i++) Assert.AreEqual(expectedErrors[i], errors[i].Message);
+            for (int i = 0; i < expectedErrors.Length; i++)
+            {
+                Assert.Equal(expectedErrors[i], errors[i].Message);
+            }
 
             return m;
         }
 
         /// <summary>
-        /// Helper to compile some code with a standard application surrounding
+        ///     Helper to compile some code with a standard application surrounding
         /// </summary>
         /// <param name="operations"></param>
         /// <param name="expectedErrors"></param>
@@ -110,7 +127,7 @@ END test.",
                 RecognitionException e)
             {
                 CompilerErrors.Add(
-                    new CompilerError { Column = charPositionInLine, Line = line, Message = msg, Exception = e });
+                    new CompilerError {Column = charPositionInLine, Line = line, Message = msg, Exception = e});
                 Console.WriteLine($"[{line}/{charPositionInLine}] - {msg}");
             }
 
@@ -123,7 +140,7 @@ END test.",
                 RecognitionException e)
             {
                 CompilerErrors.Add(
-                    new CompilerError { Column = charPositionInLine, Line = line, Message = msg, Exception = e });
+                    new CompilerError {Column = charPositionInLine, Line = line, Message = msg, Exception = e});
                 Console.WriteLine($"[{line}/{charPositionInLine}] - {msg}");
             }
         }

@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.IO;
@@ -12,15 +14,14 @@ using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Complex
 {
-
     public class FullExampleTests
     {
+        private readonly ITestOutputHelper _output;
+
         public FullExampleTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
         [Fact]
         public void FullExample1()
@@ -91,7 +92,7 @@ Div: 100/2= 50, rem 0
 Div: 100/3= 33, rem 1
 Div: 3/100= 0, rem 3
 ".NlFix();
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -106,4 +107,3 @@ Div: 3/100= 0, rem 3
         }
     }
 }
-

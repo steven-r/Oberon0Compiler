@@ -1,15 +1,17 @@
 #region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
-using Xunit;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.TestSupport;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests.Types
 {
@@ -57,7 +59,7 @@ END TestAssignment.
 ");
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
-            AssignmentStatement statement = m.Block.Statements[0] as AssignmentStatement;
+            var statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
             Assert.IsType<ConstantIntExpression>(statement.Expression);
             Assert.Equal("r:REAL := 1", statement.ToString());
@@ -77,7 +79,7 @@ BEGIN
 END TestAssignment.");
             Assert.NotNull(m);
             Assert.Equal(2, m.Block.Statements.Count);
-            AssignmentStatement statement = m.Block.Statements[1] as AssignmentStatement;
+            var statement = m.Block.Statements[1] as AssignmentStatement;
             Assert.NotNull(statement);
             Assert.Equal("r:REAL := i(INTEGER)", statement.ToString());
         }
@@ -94,10 +96,10 @@ BEGIN
 END TestAssignment.");
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
-            AssignmentStatement statement = m.Block.Statements[0] as AssignmentStatement;
+            var statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
             Assert.IsType<ConstantDoubleExpression>(statement.Expression);
-            Assert.Equal($"r:REAL := 3", statement.ToString());
+            Assert.Equal("r:REAL := 3", statement.ToString());
         }
 
         [Fact]
@@ -112,7 +114,7 @@ BEGIN
 END TestAssignment.");
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
-            AssignmentStatement statement = m.Block.Statements[0] as AssignmentStatement;
+            var statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
             Assert.IsType<ConstantDoubleExpression>(statement.Expression);
             Assert.Equal($"r:REAL := {1.234}", statement.ToString());
@@ -130,7 +132,7 @@ BEGIN
 END TestAssignment.");
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
-            AssignmentStatement statement = m.Block.Statements[0] as AssignmentStatement;
+            var statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
             Assert.IsType<ConstantDoubleExpression>(statement.Expression);
             Assert.Equal($"r:REAL := {-1.234}", statement.ToString());
@@ -149,7 +151,7 @@ BEGIN
 END TestAssignment.");
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
-            AssignmentStatement statement = m.Block.Statements[0] as AssignmentStatement;
+            var statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
             Assert.Equal($"r:REAL := {double.Epsilon}", statement.ToString());
         }
@@ -167,9 +169,9 @@ BEGIN
 END TestAssignment.");
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
-            AssignmentStatement statement = m.Block.Statements[0] as AssignmentStatement;
+            var statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
-            Assert.Equal($"r:REAL := 0", statement.ToString());
+            Assert.Equal("r:REAL := 0", statement.ToString());
         }
     }
 }

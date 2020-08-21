@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
@@ -20,30 +22,30 @@ using Oberon0.Shared;
 namespace Oberon0.Msil
 {
     /// <summary>
-    /// The program.
+    ///     The program.
     /// </summary>
     [UsedImplicitly]
     public static class Program
     {
-
         /// <summary>
-        /// The main.
+        ///     The main.
         /// </summary>
         /// <param name="args">
-        /// The args.
+        ///     The args.
         /// </param>
         /// <returns>
-        /// The return code.
+        ///     The return code.
         /// </returns>
         public static int Main(string[] args)
         {
             var rootCommand = new RootCommand("Compile an Oberon0 source file.")
             {
-                new Argument<FileInfo>("input-file", "The input file to be compiled") {Arity = ArgumentArity.ExactlyOne}.ExistingOnly(),
+                new Argument<FileInfo>("input-file", "The input file to be compiled") {Arity = ArgumentArity.ExactlyOne}
+                   .ExistingOnly(),
                 new Option<bool>(
                     new[] {"-v", "--verbose"},
                     "Be verbose on parsing"
-                    ),
+                )
             };
             rootCommand.Handler = CommandHandler.Create<ParseResult, FileInfo, bool, IConsole>(StartCompile);
             return rootCommand.Invoke(args);
@@ -60,14 +62,20 @@ namespace Oberon0.Msil
             string fileName = Path.GetFileNameWithoutExtension(inputFile.FullName);
 
             var m = Oberon0Compiler.CompileString(File.ReadAllText(inputFile.FullName));
-            if (m.CompilerInstance.HasError) return 1;
+            if (m.CompilerInstance.HasError)
+            {
+                return 1;
+            }
 
-            ICodeGenerator cg = new MsilBinGenerator() { Module = m };
+            ICodeGenerator cg = new MsilBinGenerator {Module = m};
 
             cg.GenerateIntermediateCode();
             string code = cg.IntermediateCode();
 
-            if (!CompileCode(code, fileName, cg, verbose)) return 2;
+            if (!CompileCode(code, fileName, cg, verbose))
+            {
+                return 2;
+            }
 
             return 0;
         }
@@ -79,12 +87,14 @@ namespace Oberon0.Msil
             var syntaxTree = CSharpSyntaxTree.ParseText(source);
 
             if (syntaxTree == null)
+            {
                 throw new InvalidOperationException("Could not compile source code, please look at error report");
+            }
 
             var compilationUnit = syntaxTree.CreateCompiledCSharpCode(assemblyName, cg);
 
             using var file = File.Create(filename + ".exe");
-            var result = compilationUnit.Emit(file, options:new EmitOptions(true, includePrivateMembers: false));
+            var result = compilationUnit.Emit(file, options: new EmitOptions(true, includePrivateMembers: false));
             result.ThrowExceptionIfCompilationFailure(showWarnings);
             file.Flush(true);
             return true;

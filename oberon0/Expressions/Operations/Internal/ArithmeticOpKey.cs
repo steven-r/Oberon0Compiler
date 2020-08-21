@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
@@ -12,7 +14,7 @@ using Oberon0.Compiler.Types;
 namespace Oberon0.Compiler.Expressions.Operations.Internal
 {
     /// <summary>
-    /// Helper class to create a dictionary of operations and it's left and right parameters
+    ///     Helper class to create a dictionary of operations and it's left and right parameters
     /// </summary>
     internal class ArithmeticOpKey : IArithmeticOpMetadata, IEquatable<ArithmeticOpKey>
     {
@@ -39,16 +41,24 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
         [ExcludeFromCodeCoverage]
         public bool Equals(ArithmeticOpKey other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return Operation == other.Operation && LeftHandType == other.LeftHandType
-                                                && RightHandType == other.RightHandType;
+             && RightHandType == other.RightHandType;
         }
 
         [ExcludeFromCodeCoverage]
         public override bool Equals(object obj)
         {
-            if (obj == null) return false;
-            return Equals((ArithmeticOpKey)obj);
+            if (obj == null)
+            {
+                return false;
+            }
+
+            return Equals((ArithmeticOpKey) obj);
         }
 
         public override int GetHashCode()

@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System;
@@ -13,13 +15,13 @@ using Oberon0.Compiler.Types;
 namespace Oberon0.Compiler.Definitions
 {
     /// <summary>
-    /// Function that has been declared outside the compiler structure (e.g. Oberon0System).
+    ///     Function that has been declared outside the compiler structure (e.g. Oberon0System).
     /// </summary>
     [DebuggerDisplay("<EXT> {ReturnType} {Name} -> {ClassName}.{MethodName}")]
     public class ExternalFunctionDeclaration : FunctionDeclaration
     {
         /// <summary>
-        /// Declare a new external function
+        ///     Declare a new external function
         /// </summary>
         /// <param name="name">The name of the function in Oberon0</param>
         /// <param name="block">The surrounding block</param>
@@ -41,12 +43,12 @@ namespace Oberon0.Compiler.Definitions
         }
 
         /// <summary>
-        /// The class name this Method belongs to
+        ///     The class name this Method belongs to
         /// </summary>
         public string ClassName { get; }
 
         /// <summary>
-        /// The name of the implementation method
+        ///     The name of the implementation method
         /// </summary>
         public string MethodName { get; }
     }

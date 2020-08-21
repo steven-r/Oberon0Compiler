@@ -1,8 +1,10 @@
 ﻿#region copyright
+
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
+
 #endregion
 
 using System.Collections.Generic;
@@ -17,9 +19,9 @@ namespace Oberon0.Compiler.Expressions
             Block block,
             params Expression[] parameters)
         {
-            this.FunctionDeclaration = functionDeclaration;
-            this.Parameters = new List<Expression>(parameters);
-            this.TargetType = block.LookupTypeByBaseType(functionDeclaration.ReturnType.Type);
+            FunctionDeclaration = functionDeclaration;
+            Parameters = new List<Expression>(parameters);
+            TargetType = block.LookupTypeByBaseType(functionDeclaration.ReturnType.Type);
         }
 
         public FunctionDeclaration FunctionDeclaration { get; }
