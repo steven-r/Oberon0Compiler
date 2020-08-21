@@ -42,10 +42,5 @@ namespace Oberon0.Compiler.Definitions
         ///     Return a string representation of the parameter type
         /// </summary>
         public string TypeName => $"{(IsVar ? "&" : string.Empty)}{Type.Name}";
-
-        public override string ToString()
-        {
-            return $"{(IsVar ? "VAR " : string.Empty)}{Name}: {Type.Name}";
-        }
     }
 }

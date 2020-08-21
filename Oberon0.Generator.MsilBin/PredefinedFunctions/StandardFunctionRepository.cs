@@ -7,7 +7,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
@@ -35,11 +34,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
             string key =
                 $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Block.Declarations.OfType<ProcedureParameterDeclaration>().Select(x => x.TypeName))}";
 
-            var func = _standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
-            if (func == null)
-            {
-                throw new ArgumentException("Cannot find function " + function, nameof(function));
-            }
+            var func = _standardFunctionList.First(x => x.InstanceKey == key);
 
             return func;
         }

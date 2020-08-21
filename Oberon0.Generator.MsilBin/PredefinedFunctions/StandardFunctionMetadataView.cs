@@ -19,11 +19,6 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
             
         }
 
-        public StandardFunctionMetadataView(string parameterTypes)
-        {
-            ParameterTypes = parameterTypes;
-        }
-
         /// <summary>
         ///     Gets or sets the name of the function.
         /// </summary>
