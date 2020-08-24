@@ -7,9 +7,20 @@
 
 #endregion
 
-namespace Oberon0.Msil
+using System;
+
+namespace Oberon0.Shared
 {
-    public class CSharpMsBuildCompiler
+    public class ProcessOutputReceivedEventArgs : EventArgs
     {
+        public ProcessOutputReceivedEventArgs(CreateBinaryOptions options, string data)
+        {
+            Options = options;
+            Data = data;
+        }
+
+        public CreateBinaryOptions Options { get; }
+
+        public string Data { get; }
     }
 }

@@ -8,6 +8,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -20,6 +21,7 @@ namespace Oberon0.Shared
     /// <summary>
     ///     Compile support functions
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class CompileSupportExtensions
     {
         /// <summary>

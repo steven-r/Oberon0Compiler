@@ -9,12 +9,13 @@
 
 using System;
 using System.CommandLine;
+using System.CommandLine.Binding;
 using System.CommandLine.Invocation;
+using System.CommandLine.IO;
 using System.CommandLine.Parsing;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using JetBrains.Annotations;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
 using Oberon0.Compiler;
 using Oberon0.Generator.MsilBin;
 using Oberon0.Shared;
@@ -42,25 +43,29 @@ namespace Oberon0.Msil
             {
                 new Argument<FileInfo>("input-file", "The input file to be compiled") {Arity = ArgumentArity.ExactlyOne}
                    .ExistingOnly(),
+                new Option<DirectoryInfo>(
+                    new[] {"--output-path", "-o"},
+                    "Output path where target files should be written to. Default: Current directory"
+                ),
                 new Option<bool>(
-                    new[] {"-v", "--verbose"},
-                    "Be verbose on parsing"
+                    new[] {"--verbose", "-v"},
+                    "Output more information"
+                ),
+                new Option<bool>(
+                    new[] {"--clean"},
+                    "Clean the build before running a new one."
+                ),
+                new Option<string>(
+                    new[] {"--project-name"},
+                    "Name the project different to module name."
                 )
             };
-            rootCommand.Handler = CommandHandler.Create<ParseResult, FileInfo, bool, IConsole>(StartCompile);
+            rootCommand.Handler = CommandHandler.Create<BindingContext, FileInfo, DirectoryInfo, string, bool, bool>(StartCompile);
             return rootCommand.Invoke(args);
         }
 
-        private static int StartCompile(ParseResult result, FileSystemInfo inputFile, bool verbose, IConsole console)
+        private static int StartCompile(BindingContext context, FileSystemInfo inputFile, DirectoryInfo outputPath, string projectName, bool clean, bool verbose)
         {
-            if (!inputFile.Exists)
-            {
-                Console.Error.Write("Cannot find {0}", inputFile.FullName);
-                return 1;
-            }
-
-            string fileName = Path.GetFileNameWithoutExtension(inputFile.FullName);
-
             var m = Oberon0Compiler.CompileString(File.ReadAllText(inputFile.FullName));
             if (m.CompilerInstance.HasError)
             {
@@ -70,34 +75,34 @@ namespace Oberon0.Msil
             ICodeGenerator cg = new MsilBinGenerator {Module = m};
 
             cg.GenerateIntermediateCode();
-            string code = cg.IntermediateCode();
 
-            if (!CompileCode(code, fileName, cg, verbose))
+            return cg.GenerateBinary(new CreateBinaryOptions()
             {
-                return 2;
-            }
-
-            return 0;
+                OutputPath = outputPath?.FullName ?? Path.GetDirectoryName(inputFile.FullName),
+                CleanSolution = clean,
+                OutputDataRetrieved = OutputDataRetrieved,
+                ErrorDataRetrieved = ErrorDataRetrieved,
+                ModuleName = projectName ?? m.Name,
+                Verbose = verbose,
+            }) ? 0 : 2;
         }
 
-        private static bool CompileCode(string source, string filename, ICodeGenerator cg, bool showWarnings = false)
+        // not possible from being caught in testing
+        [ExcludeFromCodeCoverage]
+        private static void ErrorDataRetrieved(object sender, ProcessOutputReceivedEventArgs e)
         {
-            string assemblyName = Path.GetFileNameWithoutExtension(filename);
-
-            var syntaxTree = CSharpSyntaxTree.ParseText(source);
-
-            if (syntaxTree == null)
+            if (e.Options.Verbose)
             {
-                throw new InvalidOperationException("Could not compile source code, please look at error report");
+                Console.Error.WriteLine(e.Data);
             }
+        }
 
-            var compilationUnit = syntaxTree.CreateCompiledCSharpCode(assemblyName, cg);
-
-            using var file = File.Create(filename + ".exe");
-            var result = compilationUnit.Emit(file, options: new EmitOptions(true, includePrivateMembers: false));
-            result.ThrowExceptionIfCompilationFailure(showWarnings);
-            file.Flush(true);
-            return true;
+        private static void OutputDataRetrieved(object sender, ProcessOutputReceivedEventArgs e)
+        {
+            if (e.Options.Verbose)
+            {
+                Console.Out.WriteLine(e.Data);
+            }
         }
     }
 }

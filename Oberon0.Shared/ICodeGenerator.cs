@@ -8,6 +8,7 @@
 #endregion
 
 using System.IO;
+using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Shared
@@ -54,8 +55,8 @@ namespace Oberon0.Shared
         /// <summary>
         /// Generate a final binary output (e.g. DLL or EXE) based on <see cref="Module"/> settings.
         /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        //bool GenerateBinary(string filename = null);
+        /// <param name="options">The options to be passed to binary creation</param>
+        /// <returns><code>true</code>, if generation was successfully.</returns>
+        bool GenerateBinary([CanBeNull] CreateBinaryOptions options = null);
     }
 }
