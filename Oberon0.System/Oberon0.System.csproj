@@ -4,7 +4,11 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
     <RootNamespace>Oberon0System</RootNamespace>
+    <CodeAnalysisRuleSet>..\.sonarlint\steven-r_oberon0compilercsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\.sonarlint\steven-r_oberon0compiler\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
   </ItemGroup>

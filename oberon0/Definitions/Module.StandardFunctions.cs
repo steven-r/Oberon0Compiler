@@ -6,7 +6,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Types;
@@ -15,108 +19,182 @@ using Oberon0System.Attributes;
 namespace Oberon0.Compiler.Definitions
 {
     /// <summary>
-    /// The module.
+    ///     The module.
     /// </summary>
     public partial class Module
     {
-        private void AddParameters(Oberon0ExportAttribute attr, int i, ProcedureParameterDeclaration[] procParameters)
+        /**
+         * <summary>
+         *     List of internal defined functions
+         * </summary>
+         */
+        private readonly HardwiredFunction[] _hardwiredFunctions =
         {
-            var isVar = false;
-            var paramType = attr.Parameters[i];
-            if (paramType.StartsWith("VAR ", StringComparison.InvariantCultureIgnoreCase))
+            new HardwiredFunction
             {
-                isVar = true;
-                paramType = paramType.Substring(4).Trim(); // skip "VAR "
-            }
-            else if (paramType.StartsWith("&"))
+                Name = "ABS", Type = "INTEGER",
+                ParameterTypes = new[] {"INTEGER"}
+            },
+            new HardwiredFunction
             {
-                isVar = true;
-                paramType = paramType.Substring(1).Trim();
+                Name = "ABS", Type = "REAL",
+                ParameterTypes = new[] {"REAL"}
+            },
+            new HardwiredFunction
+            {
+                Name = "WriteInt", Type = null,
+                ParameterTypes = new[] {"INTEGER"}
+            },
+            new HardwiredFunction
+            {
+                Name = "WriteBool", Type = null,
+                ParameterTypes = new[] {"BOOLEAN"}
+            },
+            new HardwiredFunction
+            {
+                Name = "WriteString", Type = null,
+                ParameterTypes = new[] {"STRING"}
+            },
+            new HardwiredFunction
+            {
+                Name = "WriteReal", Type = null,
+                ParameterTypes = new[] {"REAL"}
+            },
+            new HardwiredFunction
+            {
+                Name = "WriteLn", Type = null
+            },
+            new HardwiredFunction
+            {
+                Name = "ReadInt", Type = null,
+                ParameterTypes = new[] {"&INTEGER"}
+            },
+            new HardwiredFunction
+            {
+                Name = "ReadReal", Type = null,
+                ParameterTypes = new[] {"&REAL"}
+            },
+            new HardwiredFunction
+            {
+                Name = "ReadBool", Type = null,
+                ParameterTypes = new[] {"&BOOLEAN"}
             }
+        };
 
-            var paramName = "attr" + i;
-            TypeDefinition td = this.Block.LookupType(paramType);
-            if (td == null) throw new InvalidOperationException($"type {attr.Parameters[i]} not found");
-
-            procParameters[i] = new ProcedureParameterDeclaration(paramName, this.Block, td, isVar);
+        private void AddParameters(Oberon0ExportAttribute attr, int i,
+                                   IList<ProcedureParameterDeclaration> procParameters)
+        {
+            string paramName = "attr" + i;
+            procParameters[i] = GetProcedureParameterByName(paramName, attr.Parameters[i], Block);
         }
 
-        private void DeclareStandardConsts()
+        /// <summary>
+        ///     Get a <see cref="ProcedureParameterDeclaration" /> by passing name, type and surrounding block information
+        /// </summary>
+        /// <param name="parameterName">The name of the parameter</param>
+        /// <param name="parameterType">The type in textual form (see remarks)</param>
+        /// <param name="block">The block this parameter will be part of</param>
+        /// <returns>A <see cref="ProcedureParameterDeclaration" /> element</returns>
+        /// <remarks>
+        ///     <see cref="parameterType" /> can hold a simple type name. If you want to create a reference type, pretend the
+        ///     type-name with either <code>%amp;</code> or <code>VAR </code>
+        /// </remarks>
+        public static ProcedureParameterDeclaration GetProcedureParameterByName(
+            [NotNull] string parameterName, [NotNull] string parameterType, [NotNull] Block block)
         {
-            this.Block.Declarations.Add(
-                new ConstDeclaration("TRUE", this.Block.LookupType("BOOLEAN"), new ConstantBoolExpression(true)));
-            this.Block.Declarations.Add(
-                new ConstDeclaration("FALSE", this.Block.LookupType("BOOLEAN"), new ConstantBoolExpression(false)));
-            this.Block.Declarations.Add(
-                new ConstDeclaration("EPSILON", this.Block.LookupType("REAL"), new ConstantDoubleExpression(double.Epsilon)));
+            if (parameterName == null)
+            {
+                throw new ArgumentNullException(nameof(parameterName));
+            }
+
+            if (parameterType == null)
+            {
+                throw new ArgumentNullException(nameof(parameterType));
+            }
+
+            if (block == null)
+            {
+                throw new ArgumentNullException(nameof(block));
+            }
+
+            (var targetType, bool isVar) = GetParameterDeclarationFromString(parameterType, block);
+            return new ProcedureParameterDeclaration(parameterName, block, targetType, isVar);
+        }
+
+        /// <summary>
+        ///     Parses a type spec (e.g. "INTEGER", "&amp;REAL" or "BOOLEAN[10]"
+        /// </summary>
+        /// <param name="typeString"></param>
+        /// <param name="block"></param>
+        /// <returns></returns>
+        internal static (TypeDefinition, bool) GetParameterDeclarationFromString(
+            [NotNull] string typeString, [NotNull] Block block)
+        {
+            if (typeString == null)
+            {
+                throw new ArgumentNullException(nameof(typeString));
+            }
+
+            if (block == null)
+            {
+                throw new ArgumentNullException(nameof(block));
+            }
+
+            var matches = Regex.Match(
+                typeString,
+                "(?<ref>&|VAR\\s+)?(?<name>[A-Za-z][A-Za-z$0-9]*)(?<isarray>\\[(?<size>\\d+)\\])?");
+            if (!matches.Success)
+            {
+                throw new ArgumentException($"{typeString} is not a valid type reference", nameof(typeString));
+            }
+
+            string typeName = matches.Groups["name"].Value;
+            bool isVar = matches.Groups["ref"].Success;
+
+            var type = block.LookupType(typeName);
+            if (type == null)
+            {
+                throw new ArgumentException($"{typeString} is not a valid type reference", nameof(typeString));
+            }
+
+            var targetType = matches.Groups["isarray"].Success
+                ? new ArrayTypeDefinition(int.Parse(matches.Groups["size"].Value), type)
+                : type;
+            return (targetType, isVar);
+        }
+
+        private void DeclareStandardConstants()
+        {
+            Block.Declarations.Add(
+                new ConstDeclaration("TRUE", Block.LookupType("BOOLEAN"), new ConstantBoolExpression(true)));
+            Block.Declarations.Add(
+                new ConstDeclaration("FALSE", Block.LookupType("BOOLEAN"), new ConstantBoolExpression(false)));
+            Block.Declarations.Add(
+                new ConstDeclaration("EPSILON", Block.LookupType("REAL"),
+                    new ConstantDoubleExpression(double.Epsilon)));
         }
 
         private void DeclareStandardFunctions()
         {
-            // hardwired
-            this.Block.Procedures.Add(
-                FunctionDeclaration.AddHardwiredFunction(
-                    "ABS",
-                    this,
-                    SimpleTypeDefinition.IntType,
-                    new ProcedureParameterDeclaration("any", this.Block, SimpleTypeDefinition.IntType, false)));
-            this.Block.Procedures.Add(
-                FunctionDeclaration.AddHardwiredFunction(
-                    "ABS",
-                    this,
-                    Block.LookupType("REAL"),
-                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("REAL"), false)));
-            this.Block.Procedures.Add(
-                FunctionDeclaration.AddHardwiredFunction(
-                    "WriteInt",
-                    this,
-                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("INTEGER"), false)));
-            this.Block.Procedures.Add(
-                FunctionDeclaration.AddHardwiredFunction(
-                    "WriteBool",
-                    this,
-                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("BOOLEAN"), false)));
-            this.Block.Procedures.Add(
-                FunctionDeclaration.AddHardwiredFunction(
-                    "WriteString",
-                    this,
-                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("STRING"), false)));
-            this.Block.Procedures.Add(
-                FunctionDeclaration.AddHardwiredFunction(
-                    "WriteReal",
-                    this,
-                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("REAL"), false)));
-            this.Block.Procedures.Add(FunctionDeclaration.AddHardwiredFunction("WriteLn", this));
-            this.Block.Procedures.Add(
-                FunctionDeclaration.AddHardwiredFunction(
-                    "ReadInt",
-                    this,
-                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("INTEGER"), true)));
-            this.Block.Procedures.Add(
-                FunctionDeclaration.AddHardwiredFunction(
-                    "ReadBool",
-                    this,
-                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("BOOLEAN"), true)));
-            this.Block.Procedures.Add(
-                FunctionDeclaration.AddHardwiredFunction(
-                    "ReadReal",
-                    this,
-                    new ProcedureParameterDeclaration("any", this.Block, this.Block.LookupType("REAL"), true)));
+            foreach (var function in _hardwiredFunctions)
+            {
+                Block.Procedures.Add(FunctionDeclaration.AddHardwiredFunction(function.Name, this,
+                    function.Type == null ? SimpleTypeDefinition.VoidType : Block.LookupType(function.Type),
+                    function.ParameterTypes));
+            }
+
             Assembly asm = null;
 
-            try
-            {
-                var sysAsm = Assembly.Load("Oberon0.System");
-                asm = sysAsm; // reached only if no exception
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            var sysAsm = Assembly.Load("Oberon0.System");
+            asm = sysAsm; // reached only if no exception
 
-            if (asm != null)
-                foreach (var type in asm.GetExportedTypes())
-                    if (type.GetCustomAttribute<Oberon0LibraryAttribute>() != null) LoadLibraryMembers(type);
+            foreach (var type in asm.GetExportedTypes())
+            {
+                if (type.GetCustomAttribute<Oberon0LibraryAttribute>() != null)
+                {
+                    LoadLibraryMembers(type);
+                }
+            }
         }
 
         private void DeclareStandardTypes()
@@ -137,28 +215,75 @@ namespace Oberon0.Compiler.Definitions
         }
 
         /// <summary>
-        /// load all members with that are exported through <see cref="Oberon0ExportAttribute"/>
+        ///     load all members with that are exported through <see cref="Oberon0ExportAttribute" />
         /// </summary>
         /// <param name="type">The type.</param>
         private void LoadLibraryMembers(Type type)
         {
-            foreach (MethodInfo method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Static))
             {
                 var attr = method.GetCustomAttribute<Oberon0ExportAttribute>();
-                if (attr == null) continue; // this method is not officially exported
-                if (!method.IsStatic) throw new InvalidOperationException("method not static");
+                if (attr == null)
+                {
+                    continue; // this method is not officially exported
+                }
 
-                var rt = this.Block.LookupType(attr.ReturnType);
-                if (rt == null) throw new InvalidOperationException($"return type {attr.ReturnType} not found");
-
-                ProcedureParameterDeclaration[] procParameters = new ProcedureParameterDeclaration[attr.Parameters.Length];
-                for (int i = 0; i < attr.Parameters.Length; i++) this.AddParameters(attr, i, procParameters);
-
-                var fd = new ExternalFunctionDeclaration(attr.Name, new Block(this.Block, this), rt, method, procParameters);
-                this.Block.Procedures.Add(fd);
+                Debug.Assert(method.DeclaringType != null, "method.DeclaringType != null");
+                Block.Procedures.Add(AddExternalFunctionDeclaration(attr, method.DeclaringType.FullName!, method.Name));
             }
 
-            this.ExternalReferences.Add(type.Assembly);
+            ExternalReferences.Add(type.Assembly);
+        }
+
+        /// <summary>
+        ///     Add external function declaration
+        /// </summary>
+        /// <param name="attr">The <see cref="Oberon0ExportAttribute" /> structure</param>
+        /// <param name="className">The providing class</param>
+        /// <param name="methodName">The method name</param>
+        /// <returns>an <see cref="ExternalFunctionDeclaration " /> representing the function</returns>
+        // ReSharper disable once MemberCanBePrivate.Global
+        internal ExternalFunctionDeclaration AddExternalFunctionDeclaration([NotNull] Oberon0ExportAttribute attr,
+                                                                            [NotNull] string className,
+                                                                            [NotNull] string methodName)
+        {
+            if (attr == null)
+            {
+                throw new ArgumentNullException(nameof(attr));
+            }
+
+            if (className == null)
+            {
+                throw new ArgumentNullException(nameof(className));
+            }
+
+            if (methodName == null)
+            {
+                throw new ArgumentNullException(nameof(methodName));
+            }
+
+            var rt = Block.LookupType(attr.ReturnType);
+            if (rt == null)
+            {
+                throw new InvalidOperationException($"Return type {attr.ReturnType} not defined");
+            }
+
+            var procParameters = new ProcedureParameterDeclaration[attr.Parameters.Length];
+            for (int i = 0; i < attr.Parameters.Length; i++)
+            {
+                AddParameters(attr, i, procParameters);
+            }
+
+            return new ExternalFunctionDeclaration(attr.Name, new Block(Block, this), rt,
+                className, methodName, procParameters);
+        }
+
+        private class HardwiredFunction
+        {
+            public string Name { get; set; }
+            public string Type { get; set; }
+
+            public string[] ParameterTypes { get; set; }
         }
     }
 }

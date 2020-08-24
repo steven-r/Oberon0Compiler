@@ -6,12 +6,12 @@
 #endregion
 
 using System.Linq;
-using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
-using Oberon0.TestSupport;
+using Oberon0.Test.Support;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests.Types
 {
@@ -31,13 +31,13 @@ VAR
 BEGIN
     a[0] := 1;
 END test.",
-                "Array index out of bounds");
+                "Array index out of bounds", "Left & right side do not match types");
         }
 
         [Fact]
         public void ArrayTestIndex5()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE test; 
 TYPE 
     aType= ARRAY 5 OF INTEGER;
@@ -50,14 +50,14 @@ END test.");
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
-            var statement = (AssignmentStatement)m.Block.Statements[0];
+            var statement = (AssignmentStatement) m.Block.Statements[0];
 
             Assert.NotNull(statement.Selector);
             Assert.IsType<IndexSelector>(statement.Selector.First());
 
-            var selector = (IndexSelector)statement.Selector.First();
+            var selector = (IndexSelector) statement.Selector.First();
             Assert.True(selector.IndexDefinition.IsConst);
-            Assert.Equal(5, ((ConstantExpression)selector.IndexDefinition).ToInt32());
+            Assert.Equal(5, ((ConstantExpression) selector.IndexDefinition).ToInt32());
         }
 
         [Fact]
@@ -73,7 +73,7 @@ VAR
 BEGIN
     a[1] := 1;
 END test.",
-                "Array reference expected");
+                "Array reference expected", "Left & right side do not match types");
         }
 
         [Fact]
@@ -89,13 +89,13 @@ VAR
 BEGIN
     a[1.234] := 1;
 END test.",
-                "Array reference must be INTEGER");
+                "Array reference must be INTEGER", "Left & right side do not match types");
         }
 
         [Fact]
         public void ArrayType()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"
 MODULE test; 
 TYPE 

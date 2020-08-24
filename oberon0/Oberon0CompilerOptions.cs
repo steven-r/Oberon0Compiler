@@ -10,26 +10,26 @@ using System;
 namespace Oberon0.Compiler
 {
     /// <summary>
-    /// Oberon 0 compiler options.
+    ///     Oberon 0 compiler options.
     /// </summary>
     public class Oberon0CompilerOptions
     {
         /// <summary>
-        /// Gets or sets the after compile.
+        ///     Gets or sets the after compile.
         /// </summary>
         public Action<Oberon0Compiler> AfterCompile { get; set; }
 
 #pragma warning disable CS3003 // Type is not CLS-compliant
         /// <summary>
-                              /// Gets or sets the init lexer.
-                              /// </summary>
+        ///     Gets or sets the init lexer.
+        /// </summary>
         public Action<OberonGrammarLexer> InitLexer { get; set; }
 #pragma warning restore CS3003 // Type is not CLS-compliant
 
 #pragma warning disable CS3003 // Type is not CLS-compliant
         /// <summary>
-                              /// Gets or sets the init parser.
-                              /// </summary>
+        ///     Gets or sets the init parser.
+        /// </summary>
         public Action<OberonGrammarParser> InitParser { get; set; }
 #pragma warning restore CS3003 // Type is not CLS-compliant
     }

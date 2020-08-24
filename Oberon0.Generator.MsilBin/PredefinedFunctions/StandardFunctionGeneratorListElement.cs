@@ -15,13 +15,13 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
     internal class StandardFunctionGeneratorListElement : IStandardFunctionMetadata
     {
         /// <summary>
-        /// Gets or sets the instance handling the standard function
+        ///     Gets or sets the instance handling the standard function
         /// </summary>
         /// <value>The instance.</value>
         public IStandardFunctionGenerator Instance { get; set; }
 
         /// <summary>
-        /// Gets or sets the lookup key to find the appropriate function
+        ///     Gets or sets the lookup key to find the appropriate function
         /// </summary>
         /// <value>The instance key.</value>
         public string InstanceKey { get; set; }

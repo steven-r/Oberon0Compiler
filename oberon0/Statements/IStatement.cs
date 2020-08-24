@@ -8,7 +8,7 @@
 namespace Oberon0.Compiler.Statements
 {
     /// <summary>
-    /// Represent an statement.
+    ///     Represent an statement.
     /// </summary>
     public interface IStatement
     {}

@@ -14,12 +14,12 @@ namespace Oberon0.Generator.MsilBin.Tests.Types
 {
     public class RealTests
     {
+        private readonly ITestOutputHelper _output;
+
         public RealTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
         private void CheckCodeReal(string sourceCode, string expectedResults)
         {

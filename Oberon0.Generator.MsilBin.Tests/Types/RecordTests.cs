@@ -14,12 +14,12 @@ namespace Oberon0.Generator.MsilBin.Tests.Types
 {
     public class RecordTests
     {
+        private readonly ITestOutputHelper _output;
+
         public RecordTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
         [Fact]
         public void Test1()
@@ -39,7 +39,7 @@ BEGIN
   WriteInt(demo.a);
   WriteLn
 END Test.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 

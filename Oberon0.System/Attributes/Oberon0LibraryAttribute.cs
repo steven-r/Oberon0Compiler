@@ -10,7 +10,7 @@ using System;
 namespace Oberon0System.Attributes
 {
     /// <summary>
-    /// All libraries that
+    ///     All libraries that
     /// </summary>
     /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Class)]

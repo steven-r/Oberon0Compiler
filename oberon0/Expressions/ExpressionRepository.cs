@@ -41,7 +41,7 @@ namespace Oberon0.Compiler.Expressions
         }
 
         /// <summary>
-        /// Gets a singleton instance.
+        ///     Gets a singleton instance.
         /// </summary>
         /// <value>The instance.</value>
         public static ExpressionRepository Instance { get; } = _instance ??= new ExpressionRepository();
@@ -49,7 +49,7 @@ namespace Oberon0.Compiler.Expressions
         private Dictionary<ArithmeticOpKey, ArithmeticOperation> ArithmeticOperations { get; }
 
         /// <summary>
-        /// Gets the specified operation.
+        ///     Gets the specified operation.
         /// </summary>
         /// <param name="operation">The operation.</param>
         /// <param name="left">The left.</param>
@@ -60,7 +60,11 @@ namespace Oberon0.Compiler.Expressions
         {
             var key = new ArithmeticOpKey(operation, left, right);
             if (!ArithmeticOperations.TryGetValue(key, out var op))
-                throw new InvalidOperationException($"Cannot find operation {OberonGrammarLexer.DefaultVocabulary.GetDisplayName(operation)} ({left:G}, {right:G})");
+            {
+                throw new ArgumentException(
+                    $"Cannot find operation {OberonGrammarLexer.DefaultVocabulary.GetDisplayName(operation)} ({left:G}, {right:G})");
+            }
+
             return op;
         }
     }

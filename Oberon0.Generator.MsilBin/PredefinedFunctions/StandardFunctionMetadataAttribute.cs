@@ -7,6 +7,7 @@
 
 using System;
 using System.Composition;
+using JetBrains.Annotations;
 
 namespace Oberon0.Generator.MsilBin.PredefinedFunctions
 {
@@ -15,7 +16,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
     public class StandardFunctionMetadataAttribute : ExportAttribute, IStandardFunctionExportMetadata
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardFunctionMetadataAttribute"/> class.
+        ///     Initializes a new instance of the <see cref="StandardFunctionMetadataAttribute" /> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="returnType">Type of the return.</param>
@@ -29,7 +30,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardFunctionMetadataAttribute"/> class.
+        ///     Initializes a new instance of the <see cref="StandardFunctionMetadataAttribute" /> class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="returnType">Type of the return.</param>
@@ -41,12 +42,12 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
         }
 
         /// <inheritdoc />
-        public string Name { get; set; }
+        public string Name { get; [UsedImplicitly] set; }
 
         /// <inheritdoc />
-        public string ReturnType { get; set; }
+        public string ReturnType { get; [UsedImplicitly] set; }
 
         /// <inheritdoc />
-        public string ParameterTypes { get; set; }
+        public string ParameterTypes { get; [UsedImplicitly] set; }
     }
 }

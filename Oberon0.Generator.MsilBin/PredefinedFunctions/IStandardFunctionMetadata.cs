@@ -12,19 +12,19 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
 {
     public interface IStandardFunctionMetadata
     {
-        ///  <summary>
-        /// The name of the function.
+        /// <summary>
+        ///     The name of the function.
         /// </summary>
         /// <value>The name.</value>
         string Name { get; }
 
         /// <summary>
-        /// The name of the return type
+        ///     The name of the return type
         /// </summary>
         TypeDefinition ReturnType { get; }
 
         /// <summary>
-        /// The types of the parameter
+        ///     The types of the parameter
         /// </summary>
         /// <value>The parameter types.</value>
         ProcedureParameterDeclaration[] ParameterTypes { get; }

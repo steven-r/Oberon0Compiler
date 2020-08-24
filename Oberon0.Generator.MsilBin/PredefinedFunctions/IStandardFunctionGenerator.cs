@@ -10,26 +10,24 @@ using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
-using Oberon0.Shared;
 
 namespace Oberon0.Generator.MsilBin.PredefinedFunctions
 {
     /// <summary>
-    /// Interface used to generate code for a specific standard function
+    ///     Interface used to generate code for a specific standard function
     /// </summary>
     public interface IStandardFunctionGenerator
     {
         /// <summary>
-        /// Generates code for the given function/procedure
+        ///     Generates code for the given function/procedure
         /// </summary>
         /// <param name="metadata">The function metadata.</param>
         /// <param name="codeGenerator">Code generator</param>
         /// <param name="functionDeclaration">The function declaration</param>
         /// <param name="parameters">The list of parameters</param>
-        /// <param name="block">The block.</param>
         ExpressionSyntax Generate(
             [UsedImplicitly] IStandardFunctionMetadata metadata,
-            ICodeGenerator codeGenerator,
+            MsilBinGenerator codeGenerator,
             FunctionDeclaration functionDeclaration,
             IReadOnlyList<Expression> parameters);
     }

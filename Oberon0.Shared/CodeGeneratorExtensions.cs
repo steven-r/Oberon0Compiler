@@ -8,12 +8,12 @@
 namespace Oberon0.Shared
 {
     /// <summary>
-    /// Extension methods for <see cref="ICodeGenerator"/> being used in several parts
+    ///     Extension methods for <see cref="ICodeGenerator" /> being used in several parts
     /// </summary>
     public static class CodeGeneratorExtensions
     {
         /// <summary>
-        /// Generate a full qualified main class name
+        ///     Generate a full qualified main class name
         /// </summary>
         /// <param name="cg">The code generator class to be used</param>
         /// <returns>The fully qualified class name</returns>

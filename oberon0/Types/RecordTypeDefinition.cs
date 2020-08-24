@@ -6,6 +6,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Compiler.Types
@@ -15,14 +16,14 @@ namespace Oberon0.Compiler.Types
         public RecordTypeDefinition()
             : base(BaseTypes.Record)
         {
-            this.Elements = new List<Declaration>();
+            Elements = new List<Declaration>();
         }
 
-        public RecordTypeDefinition(string name)
+        private RecordTypeDefinition(string name)
             : base(BaseTypes.Record)
         {
-            this.Name = name;
-            this.Elements = new List<Declaration>();
+            Name = name;
+            Elements = new List<Declaration>();
         }
 
         public List<Declaration> Elements { get; }
@@ -30,19 +31,30 @@ namespace Oberon0.Compiler.Types
         public override TypeDefinition Clone(string name)
         {
             var r = new RecordTypeDefinition(name);
-            r.Elements.AddRange(this.Elements);
+            r.Elements.AddRange(Elements);
             return r;
         }
 
         public override bool IsAssignable(TypeDefinition sourceType)
         {
-            if (!(sourceType is RecordTypeDefinition rt)) return false;
+            if (!(sourceType is RecordTypeDefinition rt))
+            {
+                return false;
+            }
 
             if (Name == null || sourceType.Name == null
-                             || Elements.Count != rt.Elements.Count)
+             || Elements.Count != rt.Elements.Count)
+            {
                 return false;
+            }
 
             return Name == sourceType.Name;
+        }
+
+        [ExcludeFromCodeCoverage]
+        public override string ToString()
+        {
+            return $"RECORD {Name}";
         }
     }
 }

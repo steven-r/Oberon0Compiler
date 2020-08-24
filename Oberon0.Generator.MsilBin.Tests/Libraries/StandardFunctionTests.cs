@@ -16,12 +16,12 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
     [Collection("Sequential")]
     public class StandardFunctionTests
     {
+        private readonly ITestOutputHelper _output;
+
         public StandardFunctionTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
         [Fact]
         public void TestReadToRecord()
@@ -36,7 +36,7 @@ BEGIN
   WriteInt(s.a);
   WriteLn
 END ReadToRecord.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 

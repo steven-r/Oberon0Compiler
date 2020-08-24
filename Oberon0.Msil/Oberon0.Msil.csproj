@@ -6,6 +6,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
     <LibPath>bin\$(Configuration)\$(TargetFramework)</LibPath>
+    <CodeAnalysisRuleSet>..\.sonarlint\steven-r_oberon0compilercsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Oberon0.Generator.MsilBin\Oberon0.Generator.MsilBin.csproj" />
@@ -14,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <LibFiles Include="$(LibPath)\*.dll" Exclude="$(LibPath)\System.*.dll;$(LibPath)\netstandard*.dll" />
+    <AdditionalFiles Include="..\.sonarlint\steven-r_oberon0compiler\CSharp\SonarLint.xml" Link="SonarLint.xml" />
     <LibFiles Include="$(LibPath)\System.Composition.AttributedModel.dll" />
     <LibFiles Include="$(LibPath)\System.Composition.TypedParts.dll" />
     <LibFiles Include="$(LibPath)\System.Composition.Hosting.dll" />

@@ -19,9 +19,15 @@ namespace Oberon0.Compiler.Expressions
 
         public static Expression Create(Declaration declaration, VariableSelector s)
         {
-            if (declaration == null) return null;
+            if (declaration == null)
+            {
+                return null;
+            }
 
-            if (declaration is ConstDeclaration c) return c.Value;
+            if (declaration is ConstDeclaration c)
+            {
+                return c.Value;
+            }
 
             var e = new VariableReferenceExpression
             {

@@ -20,7 +20,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Oberon0.CompilerSupport\Oberon0.TestSupport.csproj" />
+    <ProjectReference Include="..\Oberon0.CompilerSupport\Oberon0.Test.Support.csproj" />
     <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj" />
   </ItemGroup>
 </Project>

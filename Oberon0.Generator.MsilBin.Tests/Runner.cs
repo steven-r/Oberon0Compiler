@@ -12,39 +12,33 @@ using System.Runtime.CompilerServices;
 namespace Oberon0.Generator.MsilBin.Tests
 {
     /// <summary>
-    /// Runner class to execute compiled assemblies in memory
+    ///     Runner class to execute compiled assemblies in memory
     /// </summary>
     /// <remarks>
-    /// When using <b>xcode</b> please ensure that tests are executed sequential. Please use <code>[Colletion("Sequential")]</code>
-    /// as a class attribute.
+    ///     When using <b>xcode</b> please ensure that tests are executed sequential. Please use
+    ///     <code>[Colletion("Sequential")]</code>
+    ///     as a class attribute.
     /// </remarks>
     internal static class Runner
     {
-        internal static void Execute(byte[] compiledAssembly, TextWriter output, TextReader input = null, TextWriter error = null, params string[] args)
+        internal static void Execute(byte[] compiledAssembly, TextWriter output, TextReader input = null,
+                                     TextWriter error = null, params string[] args)
         {
             var assemblyLoadContextWeakRef = LoadAndExecute(compiledAssembly, output, input, error, args);
 
-            for (var i = 0; i < 8 && assemblyLoadContextWeakRef.IsAlive; i++)
+            for (int i = 0; i < 8 && assemblyLoadContextWeakRef.IsAlive; i++)
             {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
-
-            if (assemblyLoadContextWeakRef.IsAlive)
-            {
-                Console.WriteLine("Unloading failed!");
-            }
-            else
-            {
-                Console.WriteLine("Unloading failed!");
-            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static WeakReference LoadAndExecute(byte[] compiledAssembly, TextWriter output, TextReader input = null, TextWriter error = null, params string[] args)
+        private static WeakReference LoadAndExecute(byte[] compiledAssembly, TextWriter output, TextReader input = null,
+                                                    TextWriter error = null, params string[] args)
         {
             var assemblyLoadContext = new SimpleUnloadableAssemblyLoadContext();
-            
+
             using var asm = new MemoryStream(compiledAssembly);
 
             var assembly = assemblyLoadContext.LoadFromStream(asm);
@@ -55,9 +49,20 @@ namespace Oberon0.Generator.MsilBin.Tests
 
             try
             {
-                if (error != null) Console.SetError(error);
-                if (input != null) Console.SetIn(input);
-                if (output != null) Console.SetOut(output);
+                if (error != null)
+                {
+                    Console.SetError(error);
+                }
+
+                if (input != null)
+                {
+                    Console.SetIn(input);
+                }
+
+                if (output != null)
+                {
+                    Console.SetOut(output);
+                }
 
                 var entry = assembly.EntryPoint;
 
@@ -77,7 +82,7 @@ namespace Oberon0.Generator.MsilBin.Tests
                 Console.SetIn(currentIn);
                 Console.SetOut(currentOut);
                 Console.SetError(currentError);
-            } 
+            }
 
             return new WeakReference(assemblyLoadContext);
         }

@@ -11,7 +11,8 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Operations.Internal
 {
-    [MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    [MetadataAttribute]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class ArithmeticOperationAttribute : ExportAttribute, IArithmeticOpMetadata
     {
         public ArithmeticOperationAttribute(

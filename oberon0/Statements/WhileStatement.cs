@@ -11,10 +11,10 @@ using Oberon0.Compiler.Expressions;
 namespace Oberon0.Compiler.Statements
 {
     /// <summary>
-    /// handle WHILE
+    ///     handle WHILE
     /// </summary>
     /// <seealso cref="IStatement" />
-    public class WhileStatement: IStatement
+    public class WhileStatement : IStatement
     {
         public WhileStatement(Block parent)
         {
@@ -22,13 +22,13 @@ namespace Oberon0.Compiler.Statements
         }
 
         /// <summary>
-        /// Gets or sets the condition.
+        ///     Gets or sets the condition.
         /// </summary>
         /// <value>The condition.</value>
         public Expression Condition { get; set; }
 
         /// <summary>
-        /// Gets or sets the block.
+        ///     Gets or sets the block.
         /// </summary>
         /// <value>The block.</value>
         public Block Block { get; }

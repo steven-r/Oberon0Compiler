@@ -22,27 +22,32 @@ namespace Oberon0.Generator.MsilBin
 {
     partial class MsilBinGenerator
     {
-        private SyntaxList<StatementSyntax> GenerateBlockStatements(Block block, SyntaxList<StatementSyntax>? givenStatements = null)
+        private SyntaxList<StatementSyntax> GenerateBlockStatements(Block block,
+                                                                    SyntaxList<StatementSyntax>? givenStatements = null)
         {
             var statements = new SyntaxList<StatementSyntax>(givenStatements);
 
             foreach (var blockStatement in block.Statements)
+            {
                 switch (blockStatement)
                 {
                     case WhileStatement whileStatement:
                         statements = statements.Add(
-                            SyntaxFactory.WhileStatement(HandleExpression(whileStatement.Condition),
+                            SyntaxFactory.WhileStatement(CompileExpression(whileStatement.Condition),
                                 SyntaxFactory.Block(GenerateBlockStatements(whileStatement.Block))));
                         break;
                     case IfStatement ifStatement:
-                        var current = SyntaxFactory.IfStatement(HandleExpression(ifStatement.Conditions[^1]),
+                        var current = SyntaxFactory.IfStatement(CompileExpression(ifStatement.Conditions[^1]),
                             SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ThenParts[^1])));
                         if (ifStatement.ElsePart != null)
+                        {
                             current = current.WithElse(SyntaxFactory.ElseClause(
                                 SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ElsePart))));
-                        for (var i = ifStatement.Conditions.Count -2; i >= 0; i--)
+                        }
+
+                        for (int i = ifStatement.Conditions.Count - 2; i >= 0; i--)
                         {
-                            var expression = HandleExpression(ifStatement.Conditions[i]);
+                            var expression = CompileExpression(ifStatement.Conditions[i]);
                             current = SyntaxFactory.IfStatement(default, expression,
                                 SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ThenParts[i])),
                                 SyntaxFactory.ElseClause(SyntaxFactory.Block(current)));
@@ -53,7 +58,7 @@ namespace Oberon0.Generator.MsilBin
                     case AssignmentStatement assignmentStatement:
                         var assignment = SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
                             GenerateVariableReference(assignmentStatement.Variable, assignmentStatement.Selector),
-                            HandleExpression(assignmentStatement.Expression));
+                            CompileExpression(assignmentStatement.Expression));
                         statements = statements.Add(SyntaxFactory.ExpressionStatement(assignment));
                         break;
                     case ProcedureCallStatement procedureCallStatement:
@@ -67,25 +72,30 @@ namespace Oberon0.Generator.MsilBin
                     default:
                         throw new NotImplementedException("Following not handled: " + blockStatement.GetType());
                 }
+            }
 
             return statements;
         }
 
-        private SyntaxList<StatementSyntax> HandleRepeatStatement(SyntaxList<StatementSyntax> statements, RepeatStatement repeatStatement)
+        private SyntaxList<StatementSyntax> HandleRepeatStatement(SyntaxList<StatementSyntax> statements,
+                                                                  RepeatStatement repeatStatement)
         {
             var expression = BinaryExpression.Create(OberonGrammarLexer.NOT, repeatStatement.Condition, null,
-                repeatStatement.Block.Parent, null);
+                repeatStatement.Block.Parent);
             var compiled = ConstantSolver.Solve(expression, repeatStatement.Block.Parent);
             statements = statements.Add(
                 SyntaxFactory.DoStatement(
                     SyntaxFactory.Block(GenerateBlockStatements(repeatStatement.Block)),
-                    HandleExpression(compiled)));
+                    CompileExpression(compiled)));
             return statements;
         }
 
         private ExpressionSyntax CallFunction(FunctionDeclaration functionDeclaration, List<Expression> parameters)
         {
-            if (functionDeclaration.IsInternal) return CallInternalFunction(functionDeclaration, parameters);
+            if (functionDeclaration.IsInternal)
+            {
+                return CallInternalFunction(functionDeclaration, parameters);
+            }
 
 
             var argumentList = new SyntaxNodeOrTokenList();
@@ -95,17 +105,26 @@ namespace Oberon0.Generator.MsilBin
                 functionDeclaration.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray();
             foreach (var parameter in parameters)
             {
-
-                if (!first) argumentList = argumentList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                if (!first)
+                {
+                    argumentList = argumentList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
+                }
 
                 first = false;
-                var argument = SyntaxFactory.Argument(HandleExpression(parameter));
-                if (parameterDeclarations[i].IsVar) argument = argument.WithRefKindKeyword(SyntaxFactory.Token(SyntaxKind.RefKeyword));
+                var argument = SyntaxFactory.Argument(CompileExpression(parameter));
+                if (parameterDeclarations[i].IsVar)
+                {
+                    argument = argument.WithRefKindKeyword(SyntaxFactory.Token(SyntaxKind.RefKeyword));
+                }
+
                 argumentList = argumentList.Add(argument);
                 i++;
             }
 
-            if (functionDeclaration is ExternalFunctionDeclaration efd) return CallExternalFunction(efd, argumentList);
+            if (functionDeclaration is ExternalFunctionDeclaration efd)
+            {
+                return CallExternalFunction(efd, argumentList);
+            }
 
             // local function/procedure
             return
@@ -116,25 +135,29 @@ namespace Oberon0.Generator.MsilBin
         }
 
         private static ExpressionSyntax CallExternalFunction(ExternalFunctionDeclaration efd,
-            SyntaxNodeOrTokenList argumentList)
+                                                             SyntaxNodeOrTokenList argumentList)
         {
-            string[] names = efd.ClassName.Split(".");
+            var names = efd.ClassName.Split(".");
             ExpressionSyntax current = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
                 MapIdentifierName(names[0]),
                 MapIdentifierName(names.Length > 1 ? names[1] : efd.MethodName));
 
             if (names.Length < 2)
-            // this case can be handled by a single MemberAccessExpression
+                // this case can be handled by a single MemberAccessExpression
+            {
                 return
                     SyntaxFactory.InvocationExpression(
                         current).WithArgumentList(
                         SyntaxFactory.ArgumentList(
                             SyntaxFactory.SeparatedList<ArgumentSyntax>(argumentList)));
+            }
 
             int index = names.Length - 1;
             while (index > 2)
+            {
                 current = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, current,
                     MapIdentifierName(names[index--]));
+            }
 
             current = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, current,
                 MapIdentifierName(efd.MethodName));
@@ -145,7 +168,8 @@ namespace Oberon0.Generator.MsilBin
                         SyntaxFactory.SeparatedList<ArgumentSyntax>(argumentList)));
         }
 
-        private ExpressionSyntax CallInternalFunction(FunctionDeclaration functionDeclaration, List<Expression> parameters)
+        private ExpressionSyntax CallInternalFunction(FunctionDeclaration functionDeclaration,
+                                                      List<Expression> parameters)
         {
             var func = StandardFunctionRepository.Get(functionDeclaration);
             return func.Instance.Generate(func, this, functionDeclaration,

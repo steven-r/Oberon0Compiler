@@ -5,12 +5,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System.Collections.Generic;
+using System;
 using System.IO;
-using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.Extensions.DependencyModel;
 using Oberon0.Compiler;
 using Oberon0.Shared;
 using Xunit.Abstractions;
@@ -19,23 +16,10 @@ namespace Oberon0.Generator.MsilBin.Tests
 {
     internal static class CompileHelper
     {
-        internal static byte[] CompileAndLoadAssembly(this SyntaxTree syntaxTree, ICodeGenerator codeGenerator, bool isExecutable = false)
+        internal static byte[] CompileAndLoadAssembly(this SyntaxTree syntaxTree, ICodeGenerator codeGenerator,
+                                                      bool isExecutable = false)
         {
             string assemblyName = Path.GetRandomFileName();
-
-            var refs = new List<PortableExecutableReference>(
-                DependencyContext.Default.CompileLibraries
-                    .SelectMany(cl => cl.ResolveReferencePaths())
-                    .Select(asm => MetadataReference.CreateFromFile(asm))
-            )
-            {
-                MetadataReference.CreateFromFile(typeof(Oberon0System.Attributes.Oberon0ExportAttribute).Assembly
-                    .Location)
-            };
-
-            var options = isExecutable
-                ? new CSharpCompilationOptions(OutputKind.ConsoleApplication, mainTypeName: codeGenerator.GetMainClassName())
-                : new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
             var compilation = syntaxTree.CreateCompiledCSharpCode(assemblyName, codeGenerator, isExecutable);
 
             using var ms = new MemoryStream();
@@ -45,15 +29,21 @@ namespace Oberon0.Generator.MsilBin.Tests
             return ms.ToArray();
         }
 
-        internal static ICodeGenerator CompileOberon0Code(string source, out string code, ITestOutputHelper outputHelper = null)
+        internal static ICodeGenerator CompileOberon0Code(string source, out string code,
+                                                          ITestOutputHelper outputHelper = null)
         {
             var m = Oberon0Compiler.CompileString(source);
 
-            ICodeGenerator cg = new MsilBinGenerator() { Module = m };
+            if (m.CompilerInstance.HasError)
+            {
+                throw new ArgumentException("Source code contains errors", nameof(source));
+            }
 
-            cg.Generate();
+            ICodeGenerator cg = new MsilBinGenerator {Module = m};
 
-            code = cg.DumpCode();
+            cg.GenerateIntermediateCode();
+
+            code = cg.IntermediateCode();
             outputHelper?.WriteLine(code);
             return cg;
         }

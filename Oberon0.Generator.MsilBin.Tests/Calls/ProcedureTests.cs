@@ -6,7 +6,6 @@
 #endregion
 
 using System.IO;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 using Xunit.Abstractions;
@@ -16,12 +15,12 @@ namespace Oberon0.Generator.MsilBin.Tests.Calls
     [Collection("Sequential")]
     public class ProcedureTests
     {
+        private readonly ITestOutputHelper _output;
+
         public ProcedureTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
 
         [Fact]
@@ -56,11 +55,11 @@ BEGIN
     WriteLn
 END ProcTest.
 ";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
@@ -99,11 +98,11 @@ BEGIN
     WriteLn
 END ProcTest.
 ";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
-            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);

@@ -32,19 +32,37 @@ namespace Oberon0.Compiler.Expressions.Constant
         internal static Expression Create(object value)
         {
             if (value is string stringVal)
-            { // from string
-                if (int.TryParse(stringVal, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out int intVal)) return new ConstantIntExpression(intVal);
+            {
+                // from string
+                if (int.TryParse(stringVal, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture,
+                    out int intVal))
+                {
+                    return new ConstantIntExpression(intVal);
+                }
 
-                if (double.TryParse(stringVal, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var doubleVal)) return new ConstantDoubleExpression(doubleVal);
+                if (double.TryParse(stringVal, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
+                    CultureInfo.InvariantCulture, out double doubleVal))
+                {
+                    return new ConstantDoubleExpression(doubleVal);
+                }
 
-                if (bool.TryParse(stringVal, out bool boolVal)) return new ConstantBoolExpression(boolVal);
+                if (bool.TryParse(stringVal, out bool boolVal))
+                {
+                    return new ConstantBoolExpression(boolVal);
+                }
 
                 throw new InvalidOperationException($"Unknown constant '{stringVal}'");
             }
 
-            if (value is float || value is double || value is decimal) return new ConstantDoubleExpression(Convert.ToDouble(value));
+            if (value is float || value is double || value is decimal)
+            {
+                return new ConstantDoubleExpression(Convert.ToDouble(value));
+            }
 
-            if (value is bool) return new ConstantBoolExpression(Convert.ToBoolean(value));
+            if (value is bool)
+            {
+                return new ConstantBoolExpression(Convert.ToBoolean(value));
+            }
 
             return new ConstantIntExpression(Convert.ToInt32(value));
         }

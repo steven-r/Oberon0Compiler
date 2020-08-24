@@ -6,12 +6,13 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Operations.Internal
 {
     /// <summary>
-    /// Helper class to create a dictionary of operations and it's left and right parameters
+    ///     Helper class to create a dictionary of operations and it's left and right parameters
     /// </summary>
     internal class ArithmeticOpKey : IArithmeticOpMetadata, IEquatable<ArithmeticOpKey>
     {
@@ -35,17 +36,27 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
 
         public BaseTypes ResultType { get; }
 
+        [ExcludeFromCodeCoverage]
         public bool Equals(ArithmeticOpKey other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return Operation == other.Operation && LeftHandType == other.LeftHandType
-                                                && RightHandType == other.RightHandType;
+             && RightHandType == other.RightHandType;
         }
 
+        [ExcludeFromCodeCoverage]
         public override bool Equals(object obj)
         {
-            if (obj == null) return false;
-            return Equals((ArithmeticOpKey)obj);
+            if (obj == null)
+            {
+                return false;
+            }
+
+            return Equals((ArithmeticOpKey) obj);
         }
 
         public override int GetHashCode()

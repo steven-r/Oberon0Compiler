@@ -11,7 +11,7 @@ using Oberon0.Compiler.Types;
 namespace Oberon0.Compiler.Definitions
 {
     /// <summary>
-    /// hold selector lists
+    ///     hold selector lists
     /// </summary>
     public class VariableSelector : List<BaseSelectorElement>
     {

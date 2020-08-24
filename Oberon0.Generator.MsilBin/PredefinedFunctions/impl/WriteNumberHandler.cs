@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Types;
-using Oberon0.Shared;
 
 namespace Oberon0.Generator.MsilBin.PredefinedFunctions.impl
 {
@@ -23,22 +22,21 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions.impl
     [UsedImplicitly]
     public class WriteHandler : IStandardFunctionGenerator
     {
-        public ExpressionSyntax Generate(
-            IStandardFunctionMetadata metadata,
-            ICodeGenerator codeGenerator,
-            FunctionDeclaration functionDeclaration,
-            IReadOnlyList<Expression> parameters)
+        public ExpressionSyntax Generate(IStandardFunctionMetadata metadata,
+                                         MsilBinGenerator codeGenerator,
+                                         FunctionDeclaration functionDeclaration,
+                                         IReadOnlyList<Expression> parameters)
         {
             return SyntaxFactory.InvocationExpression(
-                    SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        MsilBinGenerator.MapIdentifierName("Console"),
-                        MsilBinGenerator.MapIdentifierName("Write")))
-                .WithArgumentList(
-                    SyntaxFactory.ArgumentList(
-                        SyntaxFactory.SingletonSeparatedList(
-                            SyntaxFactory.Argument(
-                                codeGenerator.HandleExpression(parameters[0])))));
+                                     SyntaxFactory.MemberAccessExpression(
+                                         SyntaxKind.SimpleMemberAccessExpression,
+                                         MsilBinGenerator.MapIdentifierName("Console"),
+                                         MsilBinGenerator.MapIdentifierName("Write")))
+                                .WithArgumentList(
+                                     SyntaxFactory.ArgumentList(
+                                         SyntaxFactory.SingletonSeparatedList(
+                                             SyntaxFactory.Argument(
+                                                 codeGenerator.CompileExpression(parameters[0])))));
         }
     }
 }

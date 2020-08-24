@@ -5,6 +5,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
+using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Expressions.Operations.Internal;
@@ -16,6 +18,7 @@ namespace Oberon0.Compiler.Expressions.Operations
     [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Int, BaseTypes.Real, BaseTypes.Real)]
     [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Real, BaseTypes.Real, BaseTypes.Real)]
     [ArithmeticOperation(OberonGrammarLexer.MOD, BaseTypes.Real, BaseTypes.Int, BaseTypes.Real)]
+    [UsedImplicitly]
     internal class OpModNumber : BinaryOperation
     {
         protected override Expression BinaryOperate(
@@ -25,14 +28,16 @@ namespace Oberon0.Compiler.Expressions.Operations
         {
             if (bin.LeftHandSide.IsConst && bin.RightHandSide.IsConst)
             {
-                var left = (ConstantExpression)bin.LeftHandSide;
-                var right = (ConstantExpression)bin.RightHandSide;
+                var left = (ConstantExpression) bin.LeftHandSide;
+                var right = (ConstantExpression) bin.RightHandSide;
                 if (bin.LeftHandSide.TargetType.Type == BaseTypes.Int
-                    && bin.RightHandSide.TargetType.Type == BaseTypes.Int)
+                 && bin.RightHandSide.TargetType.Type == BaseTypes.Int)
+                {
                     return new ConstantIntExpression(left.ToInt32() % right.ToInt32());
+                }
 
-                var res = left.ToDouble() % right.ToDouble();
-                return new ConstantDoubleExpression(res);
+                decimal res = Convert.ToDecimal(left.ToDouble()) % Convert.ToDecimal(right.ToDouble());
+                return new ConstantDoubleExpression(Convert.ToDouble(res));
             }
 
             return bin; // expression remains the same

@@ -16,24 +16,36 @@ namespace Oberon0.Generator.MsilBin
 {
     partial class MsilBinGenerator
     {
-        private static TypeSyntax GetTypeName (TypeDefinition typeDefinition)
+        private static TypeSyntax GetTypeName(TypeDefinition typeDefinition)
         {
-            if (typeDefinition.Type.HasFlag(BaseTypes.Simple)) return GetSimpleTypeSyntaxName(typeDefinition);
+            while (true)
+            {
+                if (typeDefinition.Type.HasFlag(BaseTypes.Simple))
+                {
+                    return GetSimpleTypeSyntaxName(typeDefinition);
+                }
 
-            if (typeDefinition is ArrayTypeDefinition atd) return GetTypeName(atd.ArrayType);
-            return SyntaxFactory.ParseTypeName(typeDefinition.Name);
+                if (typeDefinition is ArrayTypeDefinition atd)
+                {
+                    typeDefinition = atd.ArrayType;
+                    continue;
+                }
+
+                return SyntaxFactory.ParseTypeName(typeDefinition.Name);
+            }
         }
 
         private static TypeSyntax GetSimpleTypeSyntaxName(TypeDefinition typeDefinition)
         {
             return typeDefinition.Type switch
             {
-                BaseTypes.Int => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
-                BaseTypes.Bool => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
-                BaseTypes.Real => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DoubleKeyword)),
+                BaseTypes.Int    => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                BaseTypes.Bool   => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
+                BaseTypes.Real   => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DoubleKeyword)),
                 BaseTypes.String => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword)),
-                BaseTypes.Void => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                _ => throw new InvalidDataException("provided type is not simple " + Enum.GetName(typeof(BaseTypes), typeDefinition.Type)),
+                BaseTypes.Void   => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                _ => throw new InvalidDataException("provided type is not simple " +
+                    Enum.GetName(typeof(BaseTypes), typeDefinition.Type))
             };
         }
 
@@ -51,7 +63,7 @@ namespace Oberon0.Generator.MsilBin
         private static string MapReservedWordName(string identifier)
         {
             bool isAnyKeyword = SyntaxFacts.GetKeywordKind(identifier) != SyntaxKind.None
-                                || SyntaxFacts.GetContextualKeywordKind(identifier) != SyntaxKind.None;
+             || SyntaxFacts.GetContextualKeywordKind(identifier) != SyntaxKind.None;
             return isAnyKeyword ? "@" + identifier : identifier;
         }
     }

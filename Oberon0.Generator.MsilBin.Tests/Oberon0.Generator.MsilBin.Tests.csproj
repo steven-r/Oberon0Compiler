@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Oberon0.CompilerSupport\Oberon0.TestSupport.csproj" />
+    <ProjectReference Include="..\Oberon0.CompilerSupport\Oberon0.Test.Support.csproj" />
     <ProjectReference Include="..\Oberon0.Generator.MsilBin\Oberon0.Generator.MsilBin.csproj" />
     <ProjectReference Include="..\Oberon0.Msil\Oberon0.Msil.csproj" />
     <ProjectReference Include="..\Oberon0.System\Oberon0.System.csproj" />

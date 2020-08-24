@@ -15,20 +15,20 @@ namespace Oberon0.Compiler.Definitions
         public ConstDeclaration(string name, TypeDefinition type, ConstantExpression value)
             : base(name, type)
         {
-            this.Value = value;
+            Value = value;
         }
 
         public ConstDeclaration(string name, TypeDefinition type, ConstantExpression value, Block block)
             : base(name, type, block)
         {
-            this.Value = value;
+            Value = value;
         }
 
         public ConstantExpression Value { get; }
 
         public override string ToString()
         {
-            return $"Const {this.Name} = {this.Value}";
+            return $"Const {Name} = {Value}";
         }
     }
 }

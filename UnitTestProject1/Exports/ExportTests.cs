@@ -5,10 +5,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using Xunit;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Types;
-using Oberon0.TestSupport;
+using Oberon0.Test.Support;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests.Exports
 {
@@ -17,7 +17,7 @@ namespace Oberon0.Compiler.Tests.Exports
         [Fact]
         public void ModuleExportConst()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test;
 CONST
   TestConst* = 1;
@@ -30,11 +30,11 @@ END Test.");
             var c = m.Block.LookupVar("TestConst");
             Assert.NotNull(c);
             Assert.IsType<ConstDeclaration>(c);
-            var cp = (ConstDeclaration)c;
+            var cp = (ConstDeclaration) c;
             Assert.True(cp.Exportable);
             c = m.Block.LookupVar("LocalConst");
             Assert.IsType<ConstDeclaration>(c);
-            cp = (ConstDeclaration)c;
+            cp = (ConstDeclaration) c;
             Assert.False(cp.Exportable);
             Assert.True(m.HasExports);
         }
@@ -102,7 +102,7 @@ END Test.",
         [Fact]
         public void ModuleExportTest()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test;
 
 END Test.");
@@ -112,7 +112,7 @@ END Test.");
         [Fact]
         public void ModuleExportType()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test;
 TYPE
   ExportType* = RECORD a: INTEGER END;
@@ -124,7 +124,7 @@ END Test.");
             var t = m.Block.LookupType("ExportType");
             Assert.NotNull(t);
             Assert.IsType<RecordTypeDefinition>(t);
-            var cp = (RecordTypeDefinition)t;
+            var cp = (RecordTypeDefinition) t;
             Assert.True(cp.Exportable);
             t = m.Block.LookupType("ExportSimple");
             Assert.IsAssignableFrom<TypeDefinition>(t);
@@ -159,7 +159,7 @@ END Test.",
         [Fact]
         public void ModuleExportVar()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test;
 VAR
   TestVar* : INTEGER;
@@ -175,7 +175,7 @@ END Test.");
         [Fact]
         public void ModuleExportVarMult()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test;
 VAR
   a, TestVar*, c : INTEGER;
@@ -214,7 +214,7 @@ END Test.",
         [Fact]
         public void ProcExportTest()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test;
 PROCEDURE TestProc*;
 BEGIN

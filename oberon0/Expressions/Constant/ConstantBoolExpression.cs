@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Constant
@@ -18,17 +19,17 @@ namespace Oberon0.Compiler.Expressions.Constant
 
         public override int ToInt32()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override double ToDouble()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override bool ToBool()
         {
-            return (bool)Value;
+            return (bool) Value;
         }
 
         public override string ToString()

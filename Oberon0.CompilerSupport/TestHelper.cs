@@ -9,12 +9,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Antlr4.Runtime;
-using NUnit.Framework;
+using JetBrains.Annotations;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
+using Xunit;
+using Xunit.Abstractions;
 
-namespace Oberon0.TestSupport
+namespace Oberon0.Test.Support
 {
+    [ExcludeFromCodeCoverage]
     public static class TestHelper
     {
         private static readonly List<CompilerError> CompilerErrors = new List<CompilerError>();
@@ -25,36 +28,88 @@ namespace Oberon0.TestSupport
             return Oberon0Compiler.CompileString(
                 source,
                 new Oberon0CompilerOptions
+                {
+                    InitParser = parser =>
                     {
-                        InitParser = parser =>
-                            {
-                                parser.RemoveErrorListeners();
-                                parser.AddErrorListener(TestErrorListener.Instance);
-                            },
-                        InitLexer = lexer =>
-                            {
-                                lexer.RemoveErrorListeners();
-                                lexer.AddErrorListener(TestErrorListener.Instance);
-                            },
-                        AfterCompile = compiler =>
-                            {
-                                errors.AddRange(CompilerErrors);
-                            }
-                    });
+                        parser.RemoveErrorListeners();
+                        parser.AddErrorListener(TestErrorListener.Instance);
+                    },
+                    InitLexer = lexer =>
+                    {
+                        lexer.RemoveErrorListeners();
+                        lexer.AddErrorListener(TestErrorListener.Instance);
+                    },
+                    AfterCompile = compiler => { errors.AddRange(CompilerErrors); }
+                });
         }
 
-        [ExcludeFromCodeCoverage]
         public static Module CompileString(string source, params string[] expectedErrors)
         {
-            List<CompilerError> errors = new List<CompilerError>();
-            Module m = CompileString(source, errors);
-            if (expectedErrors.Length == 0 && errors.Count > 0) Assert.Fail($"Expected no errors, actually found {errors.Count}");
+            return CompileString(source, null, expectedErrors);
+        }
 
-            if (expectedErrors.Length != errors.Count) Assert.Fail($"Expected {expectedErrors.Length} errors, actually found {errors.Count}");
+        public static Module CompileString(string source, [CanBeNull] ITestOutputHelper output,
+                                           params string[] expectedErrors)
+        {
+            void DumpErrors(IEnumerable<CompilerError> compilerErrors)
+            {
+                foreach (var compilerError in compilerErrors)
+                {
+                    string message = $"[{compilerError.Line}/{compilerError.Column}] {compilerError.Message}";
+                    if (output == null)
+                    {
+                        Console.Error.WriteLine(message);
+                    } else
+                    {
+                        output.WriteLine(message);
+                    }
+                }
+            }
 
-            for (var i = 0; i < expectedErrors.Length; i++) Assert.AreEqual(expectedErrors[i], errors[i].Message);
+            var errors = new List<CompilerError>();
+            var m = CompileString(source, errors);
+            if (expectedErrors.Length == 0 && errors.Count > 0)
+            {
+                DumpErrors(errors);
+                Assert.True(false, $"Expected no errors, actually found {errors.Count}");
+            }
+
+            if (expectedErrors.Length != errors.Count)
+            {
+                DumpErrors(errors);
+                Assert.True(false, $"Expected {expectedErrors.Length} errors, actually found {errors.Count}");
+            }
+
+            for (int i = 0; i < expectedErrors.Length; i++)
+            {
+                Assert.Equal(expectedErrors[i], errors[i].Message);
+            }
 
             return m;
+        }
+
+        /// <summary>
+        ///     Helper to compile some code with a standard application surrounding
+        /// </summary>
+        /// <param name="operations"></param>
+        /// <param name="expectedErrors"></param>
+        /// <returns></returns>
+        public static Module CompileSingleStatement(string operations, params string[] expectedErrors)
+        {
+            return CompileString(
+                @$"
+MODULE test; 
+CONST 
+   true_ = TRUE; 
+   false_ = FALSE; 
+VAR 
+   a,b,c,d,e,f,g,h,x,y,z: BOOLEAN; 
+   i, j, k, l: INTEGER;
+   r, s, t: REAL;
+BEGIN 
+  {operations} 
+END test.",
+                expectedErrors);
         }
 
         internal class TestErrorListener : BaseErrorListener, IAntlrErrorListener<int>
@@ -70,7 +125,7 @@ namespace Oberon0.TestSupport
                 RecognitionException e)
             {
                 CompilerErrors.Add(
-                    new CompilerError { Column = charPositionInLine, Line = line, Message = msg, Exception = e });
+                    new CompilerError {Column = charPositionInLine, Line = line, Message = msg, Exception = e});
                 Console.WriteLine($"[{line}/{charPositionInLine}] - {msg}");
             }
 
@@ -83,7 +138,7 @@ namespace Oberon0.TestSupport
                 RecognitionException e)
             {
                 CompilerErrors.Add(
-                    new CompilerError { Column = charPositionInLine, Line = line, Message = msg, Exception = e });
+                    new CompilerError {Column = charPositionInLine, Line = line, Message = msg, Exception = e});
                 Console.WriteLine($"[{line}/{charPositionInLine}] - {msg}");
             }
         }

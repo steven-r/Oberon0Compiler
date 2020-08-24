@@ -5,7 +5,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System.Runtime.InteropServices;
 using Xunit;
 
 // In SDK-style projects such as this one, several assembly attributes that were historically

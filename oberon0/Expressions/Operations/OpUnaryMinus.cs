@@ -5,7 +5,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Constant;
@@ -15,7 +14,7 @@ using Oberon0.Compiler.Types;
 namespace Oberon0.Compiler.Expressions.Operations
 {
     /// <summary>
-    /// Handle "~".
+    ///     Handle "~".
     /// </summary>
     /// <seealso cref="IArithmeticOperation" />
     /// <remarks>This function is some kind of exception as - usually takes one parameter. The second is handled as a dummy</remarks>
@@ -30,21 +29,21 @@ namespace Oberon0.Compiler.Expressions.Operations
             IArithmeticOpMetadata operationParameters)
         {
             if (bin.LeftHandSide.IsConst)
-                switch (bin.LeftHandSide.TargetType.Type)
+            {
+                if (bin.LeftHandSide.TargetType.Type == BaseTypes.Int)
                 {
-                    case BaseTypes.Int:
-                        ConstantIntExpression leftInt = (ConstantIntExpression)bin.LeftHandSide;
-                        leftInt.Value = -(int)leftInt.Value;
-                        return leftInt;
-
-                    case BaseTypes.Real:
-                        ConstantDoubleExpression leftDouble = (ConstantDoubleExpression)bin.LeftHandSide;
-                        leftDouble.Value = -(double)leftDouble.Value;
-                        return leftDouble;
-
-                    default:
-                        throw new ArgumentException($"Cannot perform unary minus on {bin.LeftHandSide.TargetType.Type}");
+                    var leftInt = (ConstantIntExpression) bin.LeftHandSide;
+                    leftInt.Value = -(int) leftInt.Value;
+                    return leftInt;
                 }
+
+                if (bin.LeftHandSide.TargetType.Type == BaseTypes.Real)
+                {
+                    var leftDouble = (ConstantDoubleExpression) bin.LeftHandSide;
+                    leftDouble.Value = -(double) leftDouble.Value;
+                    return leftDouble;
+                }
+            }
 
             return bin; // expression remains the same
         }

@@ -19,7 +19,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Complex
 
         public RealWorldTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
 
         [Theory]
@@ -79,21 +79,18 @@ BEGIN
  WriteLn
 END DivisionTest.
 ";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output = new StringWriter();
             Runner.Execute(assembly, output, new StringReader($"{a}{Environment.NewLine}{b}{Environment.NewLine}"));
-            if (div0)
-                Assert.Equal("DIV0\n", output.ToString().NlFix());
-            else
-                Assert.Equal($"{res}/{rem}\n", output.ToString().NlFix());
+            Assert.Equal(div0 ? "DIV0\n" : $"{res}/{rem}\n", output.ToString().NlFix());
         }
 
         [Theory]
@@ -136,7 +133,7 @@ BEGIN
  WriteLn
 END MultiplyTest.
 ";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 

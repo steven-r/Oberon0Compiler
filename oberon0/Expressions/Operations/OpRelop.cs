@@ -50,13 +50,16 @@ namespace Oberon0.Compiler.Expressions.Operations
         {
             if (bin.LeftHandSide.IsConst && bin.RightHandSide.IsConst)
             {
-                var left = (ConstantExpression)bin.LeftHandSide;
-                var right = (ConstantExpression)bin.RightHandSide;
+                var left = (ConstantExpression) bin.LeftHandSide;
+                var right = (ConstantExpression) bin.RightHandSide;
                 bool res;
                 if (left.TargetType.Type == BaseTypes.Bool && right.TargetType.Type == BaseTypes.Bool)
+                {
                     res = HandleBoolRelop(operationParameters, left, right);
-                else
+                } else
+                {
                     res = HandleStandardRelop(operationParameters, left, right);
+                }
 
                 return new ConstantBoolExpression(res);
             }
@@ -69,14 +72,17 @@ namespace Oberon0.Compiler.Expressions.Operations
             ConstantExpression left,
             ConstantExpression right)
         {
-            bool res = operationParameters.Operation switch
+            if (operationParameters.Operation == OberonGrammarLexer.EQUAL)
             {
-                OberonGrammarLexer.EQUAL => left.ToBool() == right.ToBool(),
-                OberonGrammarLexer.NOTEQUAL => left.ToBool() != right.ToBool(),
-                _ => throw new NotImplementedException()
-            };
+                return left.ToBool() == right.ToBool();
+            }
 
-            return res;
+            if (operationParameters.Operation == OberonGrammarLexer.NOTEQUAL)
+            {
+                return left.ToBool() != right.ToBool();
+            }
+
+            return false;
         }
 
         private static bool HandleStandardRelop(
@@ -86,13 +92,13 @@ namespace Oberon0.Compiler.Expressions.Operations
         {
             bool res = operationParameters.Operation switch
             {
-                OberonGrammarLexer.GT => left.ToDouble() > right.ToDouble(),
-                OberonGrammarLexer.GE => left.ToDouble() >= right.ToDouble(),
-                OberonGrammarLexer.LT => left.ToDouble() < right.ToDouble(),
-                OberonGrammarLexer.LE => left.ToDouble() <= right.ToDouble(),
+                OberonGrammarLexer.GT       => left.ToDouble() > right.ToDouble(),
+                OberonGrammarLexer.GE       => left.ToDouble() >= right.ToDouble(),
+                OberonGrammarLexer.LT       => left.ToDouble() < right.ToDouble(),
+                OberonGrammarLexer.LE       => left.ToDouble() <= right.ToDouble(),
                 OberonGrammarLexer.NOTEQUAL => Math.Abs(left.ToDouble() - right.ToDouble()) > double.Epsilon,
-                OberonGrammarLexer.EQUAL => Math.Abs(left.ToDouble() - right.ToDouble()) < double.Epsilon,
-                _ => throw new InvalidOperationException("Unknown comparison")
+                OberonGrammarLexer.EQUAL    => Math.Abs(left.ToDouble() - right.ToDouble()) < double.Epsilon,
+                _                           => throw new InvalidOperationException("Unknown comparison")
             };
 
             return res;

@@ -15,12 +15,12 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
     [Collection("Sequential")]
     public class SystemTests
     {
+        private readonly ITestOutputHelper _output;
+
         public SystemTests(ITestOutputHelper output)
         {
-            this._output = output;
+            _output = output;
         }
-
-        private readonly ITestOutputHelper _output;
 
         [Fact]
         public void SystemToStringBool()
@@ -34,7 +34,7 @@ BEGIN
   WriteString(s);
   WriteLn
 END ToStringTest.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -60,7 +60,7 @@ BEGIN
   WriteString(s);
   WriteLn
 END ToStringTest.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
@@ -86,7 +86,7 @@ BEGIN
   WriteString(s);
   WriteLn
 END ToStringTest.";
-            var cg = CompileHelper.CompileOberon0Code(source, out var code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 

@@ -5,13 +5,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using Xunit;
-using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
-using Oberon0.TestSupport;
+using Oberon0.Test.Support;
+using Xunit;
 
 namespace Oberon0.Compiler.Tests.Types
 {
@@ -20,7 +19,7 @@ namespace Oberon0.Compiler.Tests.Types
         [Fact]
         public void LookupType()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 TYPE
   Demo = INTEGER;
@@ -33,7 +32,7 @@ END Test.");
         [Fact]
         public void LookupTypeFail()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 TYPE
   Demo = INTEGER;
@@ -46,7 +45,7 @@ END Test.");
         [Fact]
         public void SimpleType()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 TYPE
   Demo = INTEGER;
@@ -57,7 +56,7 @@ END Test.");
             var intType = m.Block.LookupType("INTEGER");
             Assert.NotNull(t);
             Assert.IsType<SimpleTypeDefinition>(t);
-            SimpleTypeDefinition std = (SimpleTypeDefinition)t;
+            var std = (SimpleTypeDefinition) t;
             Assert.Equal(intType.Type, std.Type);
         }
 
@@ -77,7 +76,7 @@ END Test.",
         [Fact]
         public void TypeEquality()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 TYPE
   Demo = INTEGER;
@@ -100,8 +99,8 @@ END Test.");
             var s2 = m.Block.Statements[1];
             Assert.IsType<AssignmentStatement>(s1);
             Assert.IsType<AssignmentStatement>(s2);
-            var as1 = (AssignmentStatement)s1;
-            var as2 = (AssignmentStatement)s2;
+            var as1 = (AssignmentStatement) s1;
+            var as2 = (AssignmentStatement) s2;
             Assert.IsType<ConstantIntExpression>(as1.Expression);
             Assert.IsType<BinaryExpression>(as2.Expression);
             Assert.Equal(as1.Expression.TargetType, as2.Expression.TargetType);

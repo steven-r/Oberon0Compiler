@@ -5,9 +5,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using Oberon0.Test.Support;
 using Xunit;
-using Oberon0.Compiler.Definitions;
-using Oberon0.TestSupport;
 
 namespace Oberon0.Compiler.Tests
 {
@@ -16,7 +15,7 @@ namespace Oberon0.Compiler.Tests
         [Fact]
         public void TestReadInt()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   Demo : INTEGER;
@@ -68,7 +67,7 @@ END Test.",
         [Fact]
         public void TestReadReal()
         {
-            Module m = TestHelper.CompileString(
+            var m = TestHelper.CompileString(
                 @"MODULE Test; 
 VAR
   Demo : REAL;

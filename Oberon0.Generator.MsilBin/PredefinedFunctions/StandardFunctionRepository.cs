@@ -5,14 +5,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
 using System.Linq;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
-using Oberon0.Compiler.Types;
 
 namespace Oberon0.Generator.MsilBin.PredefinedFunctions
 {
@@ -23,7 +21,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
             new List<StandardFunctionGeneratorListElement>();
 
         /// <summary>
-        /// Gets the specified operation.
+        ///     Gets the specified operation.
         /// </summary>
         /// <param name="function">The operation.</param>
         /// <returns>Lazy&lt;IArithmeticOperation, IArithmeticOpMetadata&gt;.</returns>
@@ -32,11 +30,10 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
         public static StandardFunctionGeneratorListElement Get(FunctionDeclaration function)
         {
             string key =
-                $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Block.Declarations.OfType<ProcedureParameterDeclaration>().Select(GetFunctionName))}";
+                $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Block.Declarations.OfType<ProcedureParameterDeclaration>().Select(x => x.TypeName))}";
 
-            var func = _standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
-            if (func == null)
-                throw new InvalidOperationException("Cannot find function " + function);
+            var func = _standardFunctionList.First(x => x.InstanceKey == key);
+
             return func;
         }
 
@@ -51,36 +48,27 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
 
             foreach (var mefFunction in exports)
             {
-                StandardFunctionGeneratorListElement element = new StandardFunctionGeneratorListElement
-                                                                   {
-                                                                       Instance = mefFunction.CreateExport().Value,
-                                                                       Name = mefFunction.Metadata.Name,
-                                                                       ReturnType = module.Block.LookupType(
-                                                                           mefFunction.Metadata.ReturnType)
-                                                                   };
+                var element = new StandardFunctionGeneratorListElement
+                {
+                    Instance = mefFunction.CreateExport().Value,
+                    Name = mefFunction.Metadata.Name,
+                    ReturnType = module.Block.LookupType(
+                        mefFunction.Metadata.ReturnType)
+                };
 
                 var parameters = mefFunction.Metadata.ParameterTypes?.Split(',') ?? new string[0];
                 element.ParameterTypes = new ProcedureParameterDeclaration[parameters.Length];
 
                 for (int j = 0; j < parameters.Length; j++)
                 {
-                    TypeDefinition td = module.Block.LookupType(parameters[j]);
-                    element.ParameterTypes[j] = new ProcedureParameterDeclaration(
-                        parameters[j],
-                        module.Block,
-                        td,
-                        parameters[j].StartsWith("&", StringComparison.InvariantCulture));
+                    element.ParameterTypes[j] =
+                        Module.GetProcedureParameterByName("__param__" + j, parameters[j], module.Block);
                 }
 
                 element.InstanceKey =
-                    $"{element.Name}/{element.ReturnType.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.Name))}";
+                    $"{element.Name}/{element.ReturnType.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.TypeName))}";
                 _standardFunctionList.Add(element);
             }
-        }
-
-        private static object GetFunctionName(ProcedureParameterDeclaration parameter)
-        {
-            return $"{(parameter.IsVar ? "&" : string.Empty)}{parameter.Type.Name}";
         }
     }
 }
