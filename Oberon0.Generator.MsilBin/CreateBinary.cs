@@ -7,7 +7,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -79,7 +78,7 @@ namespace Oberon0.Generator.MsilBin
 
         private static string GetFileHashPath(string path)
         {
-            using var sha256Hash = SHA256.Create();
+            using var sha256Hash = new SHA256Managed();
             string hash = GetHash(sha256Hash, path);
             return Path.Combine(hash.Substring(0, 2), hash);
         }

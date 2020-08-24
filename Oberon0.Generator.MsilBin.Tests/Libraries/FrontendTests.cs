@@ -1,10 +1,8 @@
 ﻿#region copyright
-
 // --------------------------------------------------------------------------------------------------------------------
 // Copyright (c) Stephen Reindl. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 // --------------------------------------------------------------------------------------------------------------------
-
 #endregion
 
 using System;
@@ -195,7 +193,11 @@ END TestCompileAndViewOutput.
             var p = new Process {StartInfo = processStart};
             p.OutputDataReceived += (sender, e) =>
             {
-                if (string.IsNullOrWhiteSpace(e.Data)) return;
+                if (string.IsNullOrWhiteSpace(e.Data))
+                {
+                    return;
+                }
+
                 if (outputIndex < expectedOutput.Length)
                 {
                     Assert.Equal(expectedOutput[outputIndex], e.Data);
@@ -205,7 +207,11 @@ END TestCompileAndViewOutput.
             };
             p.ErrorDataReceived += (sender, e) =>
             {
-                if (string.IsNullOrWhiteSpace(e.Data)) return;
+                if (string.IsNullOrWhiteSpace(e.Data))
+                {
+                    return;
+                }
+
                 if (outputIndex < expectedOutput.Length)
                 {
                     Assert.Equal(expectedOutput[outputIndex], e.Data);
