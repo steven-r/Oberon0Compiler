@@ -30,7 +30,9 @@ namespace Oberon0.Generator.MsilBin
             _options = SetOptions(options ?? new CreateBinaryOptions());
             if (!Directory.Exists(_options.OutputPath))
             {
+#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one 
                 throw new ArgumentException("Output path does not exist", nameof(options.OutputPath));
+#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one 
             }
         }
 
@@ -110,7 +112,9 @@ namespace Oberon0.Generator.MsilBin
             var directoryInfo = new DirectoryInfo(_options.SolutionPath!);
             if (_options.CleanSolution && directoryInfo.Exists)
             {
+#pragma warning disable S1215 // "GC.Collect" should not be called
                 GC.Collect(); // try to unload blocking resources
+#pragma warning restore S1215 // "GC.Collect" should not be called
                 Directory.Delete(_options.SolutionPath, true);
             }
 

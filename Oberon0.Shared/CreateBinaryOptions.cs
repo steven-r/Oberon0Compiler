@@ -6,7 +6,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
@@ -21,14 +20,14 @@ namespace Oberon0.Shared
         /// <summary>
         /// IF set, retrieves all error output from the processes
         /// </summary>
-        public Action<object, ProcessOutputReceivedEventArgs> ErrorDataRetrieved;
+        public Action<object, ProcessOutputReceivedEventArgs> ErrorDataRetrieved { get; set; }
 
         // events
 
         /// <summary>
         /// If handled, retrieve any output from the process(es)
         /// </summary>
-        public Action<object, ProcessOutputReceivedEventArgs> OutputDataRetrieved;
+        public Action<object, ProcessOutputReceivedEventArgs> OutputDataRetrieved { get; set; }
 
         /// <summary>
         /// Gets ot sets the information if the existing information on the binary generation should be deleted.
