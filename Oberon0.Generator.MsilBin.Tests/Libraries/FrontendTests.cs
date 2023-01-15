@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using Oberon0.Msil;
 using Xunit;
 using Xunit.Abstractions;
@@ -69,7 +70,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
             }
 
             _output.WriteLine(sw.ToString());
-            Assert.Contains("File does not exist: dummy-file.ob0", sw.ToString());
+            Assert.StartsWith("File does not exist: 'dummy-file.ob0'.", sw.ToString());
         }
 
         [Fact]
@@ -112,7 +113,6 @@ END TestCompileAndViewOutput.
 
             Directory.CreateDirectory(dirName);
 
-
             File.WriteAllText(sourceFileName, code);
 
             using var sw = new StringWriter();
@@ -127,7 +127,12 @@ END TestCompileAndViewOutput.
                     _output.WriteLine(sw.ToString());
                 }
 
-                CheckProcessOutput(Path.Combine(dirName, "Multiply.exe"), null, "150");
+                string execName = Path.Combine(dirName, "Multiply");
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    execName += ".exe";
+                }
+                CheckProcessOutput(execName, null, "150");
                 Assert.Equal(0, res);
             }
             finally

@@ -8,6 +8,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Build.Locator;
@@ -34,6 +35,16 @@ namespace Oberon0.Generator.MsilBin
                 throw new ArgumentException("Output path does not exist", nameof(options.OutputPath));
 #pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one 
             }
+        }
+
+        private string getDotnetExe ()
+        {
+            string execName = "dotnet";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                execName += ".exe";
+            }
+            return execName;
         }
 
         private CreateBinaryOptions SetOptions(CreateBinaryOptions options)
@@ -68,21 +79,23 @@ namespace Oberon0.Generator.MsilBin
 
         private bool PublishFileToCurrentFolder()
         {
-            return ExecuteProcess("dotnet.exe", $"publish --output \"{_options.OutputPath}\"");
+            return ExecuteProcess(getDotnetExe(), $"publish --output \"{_options.OutputPath}\"");
         }
 
         private bool DropFileAndCompile()
         {
             string code = _codeGenerator.IntermediateCode();
             File.WriteAllText(Path.Combine(_options.SolutionPath!, "Program.cs"), code, Encoding.UTF8);
-            return ExecuteProcess("dotnet.exe", "build --force");
+            return ExecuteProcess(getDotnetExe(), "build --force");
         }
 
         private static string GetFileHashPath(string path)
         {
-            using var sha256Hash = new SHA256Managed();
-            string hash = GetHash(sha256Hash, path);
-            return Path.Combine(hash.Substring(0, 2), hash);
+            using (var sha256Hash = SHA256.Create())
+            {
+                string hash = GetHash(sha256Hash, path);
+                return Path.Combine(hash.Substring(0, 2), hash);
+            }
         }
 
         // from https://docs.microsoft.com/de-de/dotnet/api/system.security.cryptography.hashalgorithm.computehash?view=netcore-3.1
@@ -134,9 +147,10 @@ namespace Oberon0.Generator.MsilBin
                 "--framework", _options.FrameworkVersion
             };
 
-            return ExecuteProcess("dotnet.exe", string.Join(' ', parameters)) &&
+            string execName = getDotnetExe();
+            return ExecuteProcess(execName, string.Join(' ', parameters)) &&
                 // add AnyClone
-                ExecuteProcess("dotnet.exe", "add package AnyClone");
+                ExecuteProcess(execName, "add package AnyClone");
         }
 
         private bool ExecuteProcess(string command, string parameters)

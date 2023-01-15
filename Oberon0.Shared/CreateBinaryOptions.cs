@@ -47,10 +47,7 @@ namespace Oberon0.Shared
         /// <summary>
         /// The framework to be used
         /// </summary>
-        /// <remarks>
-        /// <bold>Please note: </bold> Only .NET core 3.1 has been tested
-        /// </remarks>
-        public string FrameworkVersion { get; [UsedImplicitly] set; } = "netcoreapp3.1";
+        public string FrameworkVersion { get; [UsedImplicitly] set; } = "net7.0";
 
         /// <summary>
         /// Gets or sets the output path where the application will be stored at. 

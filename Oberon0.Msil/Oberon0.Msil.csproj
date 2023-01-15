@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RuntimeEnvironment>win-x64</RuntimeEnvironment>
+    <TargetFramework>net7.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
     <LibPath>bin\$(Configuration)\$(TargetFramework)</LibPath>
     <CodeAnalysisRuleSet>..\.sonarlint\steven-r_oberon0compilercsharp.ruleset</CodeAnalysisRuleSet>
+    <ProjectGuid>{9F54EACE-13EA-4586-9C11-925AEDF8F65C}</ProjectGuid>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Oberon0.Generator.MsilBin\Oberon0.Generator.MsilBin.csproj" />
@@ -14,15 +15,10 @@
     <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <LibFiles Include="$(LibPath)\*.dll" Exclude="$(LibPath)\System.*.dll;$(LibPath)\netstandard*.dll" />
     <AdditionalFiles Include="..\.sonarlint\steven-r_oberon0compiler\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-    <LibFiles Include="$(LibPath)\System.Composition.AttributedModel.dll" />
-    <LibFiles Include="$(LibPath)\System.Composition.TypedParts.dll" />
-    <LibFiles Include="$(LibPath)\System.Composition.Hosting.dll" />
-    <LibFiles Include="$(LibPath)\System.Composition.Runtime.dll" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.6" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="7.0.0" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
 </Project>
