@@ -241,7 +241,7 @@ END TestCompileAndViewOutput.
                 Assert.Equal(expectedOutput.Length, outputIndex);
             } else
             {
-                Assert.True(false, "Process could not start");
+                Assert.Fail("Process could not start");
             }
         }
     }

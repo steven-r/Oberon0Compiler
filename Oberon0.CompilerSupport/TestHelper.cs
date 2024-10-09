@@ -71,13 +71,13 @@ namespace Oberon0.Test.Support
             if (expectedErrors.Length == 0 && errors.Count > 0)
             {
                 DumpErrors(errors);
-                Assert.True(false, $"Expected no errors, actually found {errors.Count}");
+                Assert.Fail($"Expected no errors, actually found {errors.Count}");
             }
 
             if (expectedErrors.Length != errors.Count)
             {
                 DumpErrors(errors);
-                Assert.True(false, $"Expected {expectedErrors.Length} errors, actually found {errors.Count}");
+                Assert.Fail($"Expected {expectedErrors.Length} errors, actually found {errors.Count}");
             }
 
             for (int i = 0; i < expectedErrors.Length; i++)
