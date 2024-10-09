@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Antlr4.Runtime;
 using JetBrains.Annotations;
 using Oberon0.Compiler;
@@ -20,7 +21,7 @@ namespace Oberon0.Test.Support
     [ExcludeFromCodeCoverage]
     public static class TestHelper
     {
-        private static readonly List<CompilerError> CompilerErrors = new List<CompilerError>();
+        private static readonly List<CompilerError> CompilerErrors = [];
 
         public static Module CompileString(string source, List<CompilerError> errors)
         {
@@ -32,14 +33,14 @@ namespace Oberon0.Test.Support
                     InitParser = parser =>
                     {
                         parser.RemoveErrorListeners();
-                        parser.AddErrorListener(TestErrorListener.Instance);
+                        parser.AddErrorListener(new TestErrorListener<IToken>(CompilerErrors));
                     },
                     InitLexer = lexer =>
                     {
                         lexer.RemoveErrorListeners();
-                        lexer.AddErrorListener(TestErrorListener.Instance);
+                        lexer.AddErrorListener(new TestErrorListener<int>(CompilerErrors));
                     },
-                    AfterCompile = compiler => { errors.AddRange(CompilerErrors); }
+                    AfterCompile = _ => { errors.AddRange(CompilerErrors); }
                 });
         }
 
@@ -112,32 +113,18 @@ END test.",
                 expectedErrors);
         }
 
-        internal class TestErrorListener : BaseErrorListener, IAntlrErrorListener<int>
+        internal class TestErrorListener<TSymbol>(List<CompilerError> compilerErrors) : IAntlrErrorListener<TSymbol>
         {
-            public static readonly TestErrorListener Instance = new TestErrorListener();
-
             public void SyntaxError(
+                TextWriter output,
                 IRecognizer recognizer,
-                int offendingSymbol,
+                TSymbol offendingSymbol,
                 int line,
                 int charPositionInLine,
                 string msg,
                 RecognitionException e)
             {
-                CompilerErrors.Add(
-                    new CompilerError {Column = charPositionInLine, Line = line, Message = msg, Exception = e});
-                Console.WriteLine($"[{line}/{charPositionInLine}] - {msg}");
-            }
-
-            public override void SyntaxError(
-                IRecognizer recognizer,
-                IToken offendingSymbol,
-                int line,
-                int charPositionInLine,
-                string msg,
-                RecognitionException e)
-            {
-                CompilerErrors.Add(
+                compilerErrors.Add(
                     new CompilerError {Column = charPositionInLine, Line = line, Message = msg, Exception = e});
                 Console.WriteLine($"[{line}/{charPositionInLine}] - {msg}");
             }

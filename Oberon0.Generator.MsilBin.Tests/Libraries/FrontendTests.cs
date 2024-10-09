@@ -37,7 +37,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
 
             try
             {
-                Program.Main(new string[0]);
+                Program.Main([]);
             }
             finally
             {
@@ -61,7 +61,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
 
             try
             {
-                Program.Main(new[] {"dummy-file.ob0"});
+                Program.Main(["dummy-file.ob0"]);
             }
             finally
             {
@@ -121,7 +121,7 @@ END TestCompileAndViewOutput.
 
             try
             {
-                int res = Program.Main(new[] { sourceFileName, "--verbose", "--clean", "--project-name", "Multiply" });
+                int res = Program.Main([sourceFileName, "--verbose", "--clean", "--project-name", "Multiply"]);
                 if (res == 1)
                 {
                     _output.WriteLine(sw.ToString());
@@ -167,7 +167,7 @@ END TestCompileAndViewOutput.
 
             try
             {
-                int res = Program.Main(new[] { sourceFileName, "--verbose", "--clean", "--project-name", "Multiply" });
+                int res = Program.Main([sourceFileName, "--verbose", "--clean", "--project-name", "Multiply"]);
                 if (res == 1)
                 {
                     _output.WriteLine(sw.ToString());

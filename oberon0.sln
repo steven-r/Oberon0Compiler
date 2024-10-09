@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30204.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oberon0Compiler", "oberon0\Oberon0Compiler.csproj", "{FE7E3848-F08B-45EA-8083-353BDA6BCC92}"
 EndProject
@@ -12,13 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		antlr-runtime-4.5.3.jar = antlr-runtime-4.5.3.jar
+		antlr-runtime-4.13.2.jar = antlr-runtime-4.13.2.jar
 		coverlet.runsettings = coverlet.runsettings
 		GitVersion.yml = GitVersion.yml
+		global.json = global.json
 		LICENSE.md = LICENSE.md
 		MakeRelease.ps1 = MakeRelease.ps1
 		README.md = README.md
-		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{6485043F-55F6-48B1-AC01-C178B0F2C167}"
