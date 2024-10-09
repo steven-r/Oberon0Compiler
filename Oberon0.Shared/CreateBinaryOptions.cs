@@ -47,7 +47,7 @@ namespace Oberon0.Shared
         /// <summary>
         /// The framework to be used
         /// </summary>
-        public string FrameworkVersion { get; [UsedImplicitly] set; } = "net7.0";
+        public string FrameworkVersion { get; [UsedImplicitly] set; } = "net8.0";
 
         /// <summary>
         /// Gets or sets the output path where the application will be stored at. 
