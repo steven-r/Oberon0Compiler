@@ -10,6 +10,6 @@
     <AdditionalFiles Include="..\.sonarlint\steven-r_oberon0compiler\CSharp\SonarLint.xml" Link="SonarLint.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
+    <PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
   </ItemGroup>
 </Project>
