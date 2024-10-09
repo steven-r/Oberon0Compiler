@@ -16,14 +16,11 @@
        "matchUpdateTypes": ["major"],
        "dependencyDashboardApproval": true,
        "labels": ["major-upgrade"]
-     },
-     {
-      	 "groupName": "Mend: high confidence patch dependency updates",
-      	 "matchUpdateTypes": ["patch"],
-      	 "matchConfidence": ["very high", "high"],
-         "labels": [
-            "grouped-dependencies"
-         ]
      }
-  ]
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": true,
+    "assignees": ["@steven-r"]
+  }
 }
