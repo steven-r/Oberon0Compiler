@@ -1,6 +1,29 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    "schedule:nonOfficeHours",
+    ":semanticCommits",
+    ":enableVulnerabilityAlerts",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigests",
+    ":pinDevDependencies"
+  ],
+  "timezone": "Europe/Berlin",
+  "packageRules": [
+     {
+       "groupName": "Require approval for major updates",
+       "matchUpdateTypes": ["major"],
+       "dependencyDashboardApproval": true,
+       "labels": ["major-upgrade"]
+     },
+     {
+      	 "groupName": "Mend: high confidence patch dependency updates",
+      	 "matchUpdateTypes": ["patch"],
+      	 "matchConfidence": ["very high", "high"],
+         "labels": [
+            "grouped-dependencies"
+         ]
+     }
   ]
 }
