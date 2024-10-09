@@ -7,7 +7,6 @@
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Binding;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using JetBrains.Annotations;
@@ -38,19 +37,19 @@ namespace Oberon0.Msil
             var fileArg = new Argument<FileInfo>("input-file", "The input file to be compiled") { Arity = ArgumentArity.ExactlyOne }
                    .ExistingOnly();
             var outputPathOpt = new Option<DirectoryInfo>(
-                    new[] { "--output-path", "-o" },
+                ["--output-path", "-o"],
                     "Output path where target files should be written to. Default: Current directory"
                 );
             var verboseOpt = new Option<bool>(
-                    new[] { "--verbose", "-v" },
+                ["--verbose", "-v"],
                     "Output more information"
                 );
             var cleanOpt = new Option<bool>(
-                    new[] { "--clean" },
+                ["--clean"],
                     "Clean the build before running a new one."
                 );
             var projectNameOpt = new Option<string>(
-                    new[] { "--project-name" },
+                ["--project-name"],
                     "Name the project different to module name."
                 );
             var rootCommand = new RootCommand("Compile an Oberon0 source file.")
@@ -81,7 +80,7 @@ namespace Oberon0.Msil
                 return 1;
             }
 
-            ICodeGenerator cg = new MsilBinGenerator {Module = m};
+            var cg = new MsilBinGenerator { Module = m };
 
             cg.GenerateIntermediateCode();
 
