@@ -24,22 +24,24 @@ namespace Oberon0.Generator.MsilBin.Tests.Types
         [Fact]
         public void TestReservedWordIssue23()
         {
-            const string source = @"MODULE Test; 
-VAR 
-    int: INTEGER; 
+            const string source = """
+                                  MODULE Test; 
+                                  VAR 
+                                      int: INTEGER; 
 
-BEGIN
-    int := 1;
-    WriteInt(int);
-    WriteLn 
-END Test.";
+                                  BEGIN
+                                      int := 1;
+                                      WriteInt(int);
+                                      WriteLn 
+                                  END Test.
+                                  """;
             var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
 
             Assert.NotEmpty(code);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-            var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+            byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
             using var output = new StringWriter();

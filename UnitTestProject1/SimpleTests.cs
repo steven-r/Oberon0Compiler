@@ -24,7 +24,7 @@ namespace Oberon0.Compiler.Tests
         public void EmptyApplication2()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; BEGIN END Test.");
+                "MODULE Test; BEGIN END Test.");
             Assert.Empty(m.Block.Statements);
         }
 
@@ -32,7 +32,7 @@ namespace Oberon0.Compiler.Tests
         public void ModuleMissingDot()
         {
             TestHelper.CompileString(
-                @"MODULE Test; END Test",
+                "MODULE Test; END Test",
                 "missing '.' at '<EOF>'");
         }
 
@@ -40,7 +40,7 @@ namespace Oberon0.Compiler.Tests
         public void ModuleMissingId()
         {
             TestHelper.CompileString(
-                @"MODULE ; BEGIN END Test.",
+                "MODULE ; BEGIN END Test.",
                 "missing ID at ';'",
                 "The name of the module does not match the end node");
         }

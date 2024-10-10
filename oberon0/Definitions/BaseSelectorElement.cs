@@ -10,25 +10,16 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
 {
-    public abstract class BaseSelectorElement
+    public abstract class BaseSelectorElement(IToken tokenStart)
     {
-#pragma warning disable CS3001 // Argument type is not CLS-compliant
-        protected BaseSelectorElement(IToken tokenStart)
-#pragma warning restore CS3001 // Argument type is not CLS-compliant
-        {
-            Token = tokenStart;
-        }
-
-#pragma warning disable CS3003 // Type is not CLS-compliant
         /// <summary>
         ///     Gets the token or available.
         /// </summary>
-        public IToken Token { get; }
-#pragma warning restore CS3003 // Type is not CLS-compliant
+        public IToken Token { get; } = tokenStart;
 
         /// <summary>
         ///     Gets or sets the type definition.
         /// </summary>
-        public TypeDefinition TypeDefinition { get; set; }
+        public TypeDefinition TypeDefinition { get; set; } = null!;
     }
 }

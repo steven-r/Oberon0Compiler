@@ -24,12 +24,14 @@ namespace Oberon0.Compiler.Tests
         {
             TestHelper.CompileString(
                 // ReSharper disable once StringLiteralTypo
-                @"MODULE Test; 
-VAR
-  a: INTEGER;
-BEGIN
-    a := NOTFOUND() 
-END Test.",
+                """
+                MODULE Test; 
+                VAR
+                  a: INTEGER;
+                BEGIN
+                    a := NOTFOUND() 
+                END Test.
+                """,
                 // ReSharper disable once StringLiteralTypo
                 "No procedure/function with prototype 'NOTFOUND()' found");
         }
@@ -38,28 +40,32 @@ END Test.",
         public void Proc1()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-PROCEDURE Test1;
+                """
+                MODULE Test; 
+                PROCEDURE Test1;
 
-END Test1;
+                END Test1;
 
-END Test.");
+                END Test.
+                """);
 
-            Assert.NotNull(m.Block.LookupFunction("Test1", null));
+            Assert.NotNull(m.Block.LookupFunction("Test1"));
         }
 
         [Fact]
         public void Proc2()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-PROCEDURE Test1 (a: INTEGER);
+                """
+                MODULE Test; 
+                PROCEDURE Test1 (a: INTEGER);
 
-END Test1;
+                END Test1;
 
-END Test.");
+                END Test.
+                """);
 
-            var p = m.Block.LookupFunction("Test1", null, "INTEGER");
+            var p = m.Block.LookupFunction("Test1", "INTEGER");
             Assert.NotNull(p);
             Assert.Single(p.Block.Declarations);
             Assert.Equal("a", p.Block.Declarations[0].Name);
@@ -70,14 +76,16 @@ END Test.");
         public void Proc3()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-PROCEDURE Test1 (VAR a: INTEGER);
+                """
+                MODULE Test; 
+                PROCEDURE Test1 (VAR a: INTEGER);
 
-END Test1;
+                END Test1;
 
-END Test.");
+                END Test.
+                """);
 
-            var p = m.Block.LookupFunction("Test1", null, "&INTEGER");
+            var p = m.Block.LookupFunction("Test1", "&INTEGER");
             Assert.NotNull(p);
             Assert.Single(p.Block.Declarations);
             Assert.Equal("a", p.Block.Declarations[0].Name);
@@ -88,22 +96,24 @@ END Test.");
         public void ProcArrayCallByValue()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR 
-    arr: ARRAY 5 OF INTEGER; 
+                """
+                MODULE Test; 
+                VAR 
+                    arr: ARRAY 5 OF INTEGER; 
+                
+                    PROCEDURE TestArray(a: ARRAY 5 OF INTEGER);
+                    BEGIN
+                        IF (a[1] # 1) THEN WriteString('a is 0') END;
+                        a[1] := 2
+                    END TestArray;
 
-    PROCEDURE TestArray(a: ARRAY 5 OF INTEGER);
-    BEGIN
-        IF (a[1] # 1) THEN WriteString('a is 0') END;
-        a[1] := 2
-    END TestArray;
-
-BEGIN
-    arr[1] := 1;
-    TestArray(arr);
-    WriteBool(arr[1] = 1);
-    WriteLn 
-END Test.",
+                BEGIN
+                    arr[1] := 1;
+                    TestArray(arr);
+                    WriteBool(arr[1] = 1);
+                    WriteLn 
+                END Test.
+                """,
                 "No procedure/function with prototype 'TestArray(INTEGER[5])' found");
         }
 
@@ -111,16 +121,18 @@ END Test.",
         public void ProcCall()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-PROCEDURE TestProc;
-BEGIN
-END TestProc;
+                """
+                MODULE Test; 
+                PROCEDURE TestProc;
+                BEGIN
+                END TestProc;
 
-BEGIN
-  TestProc
-END Test.");
+                BEGIN
+                  TestProc
+                END Test.
+                """);
             Assert.NotNull(m);
-            var proc = m.Block.LookupFunction("TestProc", null);
+            var proc = m.Block.LookupFunction("TestProc");
             Assert.NotNull(proc);
             Assert.Equal("TestProc", proc.Name);
             Assert.Single(m.Block.Statements);
@@ -133,15 +145,17 @@ END Test.");
         public void ProcDifferentName()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR 
-  x: INTEGER;
-PROCEDURE TestProc;
-BEGIN
-  x := 0;
-END FailProc;
+                """
+                MODULE Test; 
+                VAR 
+                  x: INTEGER;
+                PROCEDURE TestProc;
+                BEGIN
+                  x := 0;
+                END FailProc;
 
-END Test.",
+                END Test.
+                """,
                 "The name of the procedure does not match the name after END");
         }
 
@@ -149,12 +163,14 @@ END Test.",
         public void ProcDuplicateParameterFail()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-PROCEDURE Test1 (VAR a: INTEGER; a: INTEGER);
+                """
+                MODULE Test; 
+                PROCEDURE Test1 (VAR a: INTEGER; a: INTEGER);
 
-END Test1;
+                END Test1;
 
-END Test.",
+                END Test.
+                """,
                 "Duplicate parameter",
                 "Duplicate parameter");
         }
@@ -163,17 +179,19 @@ END Test.",
         public void ProcGlobalVar()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR 
-  x: INTEGER;
-PROCEDURE TestProc;
-BEGIN
-  x := 0;
-END TestProc;
+                """
+                MODULE Test; 
+                VAR 
+                  x: INTEGER;
+                PROCEDURE TestProc;
+                BEGIN
+                  x := 0;
+                END TestProc;
 
-END Test.");
+                END Test.
+                """);
             Assert.NotNull(m);
-            var proc = m.Block.LookupFunction("TestProc", null);
+            var proc = m.Block.LookupFunction("TestProc");
             Assert.NotNull(proc);
             Assert.Equal("TestProc", proc.Name);
             Assert.Empty(proc.Block.Declarations.OfType<ProcedureParameterDeclaration>());
@@ -192,17 +210,19 @@ END Test.");
         public void ProcLocalVar()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-PROCEDURE TestProc;
-VAR 
-  x: INTEGER;
-BEGIN
-  x := 0;
-END TestProc;
+                """
+                MODULE Test; 
+                PROCEDURE TestProc;
+                VAR 
+                  x: INTEGER;
+                BEGIN
+                  x := 0;
+                END TestProc;
 
-END Test.");
+                END Test.
+                """);
             Assert.NotNull(m);
-            var proc = m.Block.LookupFunction("TestProc", null);
+            var proc = m.Block.LookupFunction("TestProc");
             Assert.NotNull(proc);
             Assert.Equal("TestProc", proc.Name);
             Assert.Empty(proc.Block.Declarations.OfType<ProcedureParameterDeclaration>());
@@ -219,18 +239,20 @@ END Test.");
         public void ProcMissingByRefExpression()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR 
-  x: INTEGER;
+                """
+                MODULE Test; 
+                VAR 
+                  x: INTEGER;
 
-PROCEDURE TestProc(VAR x: INTEGER);
-BEGIN
-  x := 0
-END TestProc;
+                PROCEDURE TestProc(VAR x: INTEGER);
+                BEGIN
+                  x := 0
+                END TestProc;
 
-BEGIN
-  TestProc(x +1);
-END Test.",
+                BEGIN
+                  TestProc(x +1);
+                END Test.
+                """,
                 "No procedure/function with prototype 'TestProc(INTEGER)' found");
         }
 
@@ -238,15 +260,17 @@ END Test.",
         public void ProcMissingEndName()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR 
-  x: INTEGER;
-PROCEDURE TestProc;
-BEGIN
-  x := 0;
-END ;
+                """
+                MODULE Test; 
+                VAR 
+                  x: INTEGER;
+                PROCEDURE TestProc;
+                BEGIN
+                  x := 0;
+                END ;
 
-END Test.",
+                END Test.
+                """,
                 "missing ID at ';'",
                 "The name of the procedure does not match the name after END");
         }
@@ -259,7 +283,7 @@ END Test.",
                 "Test",
                 "__TEST");
             m.Block.Procedures.Add(function);
-            var f = m.Block.LookupFunction("__Test1", null, "INTEGER");
+            var f = m.Block.LookupFunction("__Test1", "INTEGER");
             Assert.NotNull(f);
             Assert.IsType<ExternalFunctionDeclaration>(f);
         }
@@ -272,13 +296,14 @@ END Test.",
                 new Oberon0ExportAttribute("__Test1", "INTEGER", "INTEGER", "REAL"), "Test",
                 "__TEST");
             m.Block.Procedures.Add(function);
-            Assert.Throws<InvalidOperationException>(() => m.Block.LookupFunction("__Test1", null, "INTEGER"));
-            var f = m.Block.LookupFunction("__Test1", null, "INTEGER,REAL");
+            Assert.Throws<InvalidOperationException>(() => m.Block.LookupFunction("__Test1", "INTEGER"));
+            var f = m.Block.LookupFunction("__Test1", "INTEGER,REAL");
             Assert.NotNull(f);
             var externalFunction = Assert.IsAssignableFrom<ExternalFunctionDeclaration>(f);
             var paramList = externalFunction.Block.Declarations.OfType<ProcedureParameterDeclaration>();
             var parameters = paramList as ProcedureParameterDeclaration[] ?? paramList.ToArray();
-            Assert.Equal(2, parameters.Count());
+            Assert.NotNull(parameters);
+            Assert.Equal(2, parameters.Length);
             Assert.Equal(SimpleTypeDefinition.IntType.Name, parameters[0].Type.Name);
             Assert.False(parameters[0].IsVar);
             Assert.Equal(SimpleTypeDefinition.RealType.Name, parameters[1].Type.Name);
@@ -292,7 +317,7 @@ END Test.",
             var function = m.AddExternalFunctionDeclaration(new Oberon0ExportAttribute("__Test1", "INTEGER"), "Test",
                 "__TEST");
             m.Block.Procedures.Add(function);
-            var f = m.Block.LookupFunction("__Test1", null);
+            var f = m.Block.LookupFunction("__Test1");
             Assert.NotNull(f);
             var externalFunction = Assert.IsAssignableFrom<ExternalFunctionDeclaration>(f);
             var paramList = externalFunction.Block.Declarations.OfType<ProcedureParameterDeclaration>();
@@ -389,7 +414,7 @@ END Test.",
                 "Test",
                 "__TEST");
             m.Block.Procedures.Add(function);
-            var f = m.Block.LookupFunction("__Test1", null, "INTEGER");
+            var f = m.Block.LookupFunction("__Test1", "INTEGER");
             Assert.NotNull(f);
             var ext = Assert.IsType<ExternalFunctionDeclaration>(f);
             Assert.Equal("Test", ext.ClassName);
@@ -457,7 +482,9 @@ END Test.",
                     Module.GetProcedureParameterByName(parameter.Item1, parameter.Item2, m.Block)));
             }
 
-            var f = new FunctionDeclaration(name, m.Block, m.Block.LookupType(returnTypeName), paramList.ToArray());
+            var type = m.Block.LookupType(returnTypeName);
+            Assert.NotNull(type);
+            var f = new FunctionDeclaration(name, m.Block, type, paramList.ToArray());
             string prototype = FunctionDeclaration.BuildPrototype(f.Name, f.ReturnType,
                 f.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray());
             return prototype;

@@ -14,23 +14,18 @@ namespace Oberon0.Compiler.Statements
     ///     handle WHILE
     /// </summary>
     /// <seealso cref="IStatement" />
-    public class WhileStatement : IStatement
+    public class WhileStatement(Block parent) : IStatement
     {
-        public WhileStatement(Block parent)
-        {
-            Block = new Block(parent, parent.Module);
-        }
-
         /// <summary>
         ///     Gets or sets the condition.
         /// </summary>
         /// <value>The condition.</value>
-        public Expression Condition { get; set; }
+        public Expression Condition { get; set; } = null!;
 
         /// <summary>
         ///     Gets or sets the block.
         /// </summary>
         /// <value>The block.</value>
-        public Block Block { get; }
+        public Block Block { get; } = new(parent, parent.Module);
     }
 }

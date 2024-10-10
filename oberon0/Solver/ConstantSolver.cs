@@ -46,7 +46,7 @@ namespace Oberon0.Compiler.Solver
         {
             switch (expression)
             {
-                case VariableReferenceExpression _:
+                case VariableReferenceExpression:
                     return expression;
                 case BinaryExpression bin:
                 {
@@ -55,7 +55,7 @@ namespace Oberon0.Compiler.Solver
                         bin.LeftHandSide = Calculate(bin.LeftHandSide, block);
                     }
 
-                    if (bin.RightHandSide != null && !bin.IsConst)
+                    if (bin is { RightHandSide: not null, IsConst: false })
                     {
                         bin.RightHandSide = Calculate(bin.RightHandSide, block);
                     }
@@ -65,9 +65,9 @@ namespace Oberon0.Compiler.Solver
                 case ConstantExpression c:
                     return c;
                 // ignore string expressions
-                case StringExpression _:
+                case StringExpression:
                     return expression;
-                case FunctionCallExpression _:
+                case FunctionCallExpression:
                     return expression;
                 default:
                     throw new InvalidOperationException(

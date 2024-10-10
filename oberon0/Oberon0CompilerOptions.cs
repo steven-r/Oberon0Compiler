@@ -17,20 +17,20 @@ namespace Oberon0.Compiler
         /// <summary>
         ///     Gets or sets the after compile.
         /// </summary>
-        public Action<Oberon0Compiler> AfterCompile { get; set; }
+        public required Action<Oberon0Compiler> AfterCompile { get; set; }
 
-#pragma warning disable CS3003 // Type is not CLS-compliant
         /// <summary>
         ///     Gets or sets the init lexer.
         /// </summary>
-        public Action<OberonGrammarLexer> InitLexer { get; set; }
-#pragma warning restore CS3003 // Type is not CLS-compliant
+#pragma warning disable CS3003 // Typ ist nicht CLS-kompatibel
+        public required Action<OberonGrammarLexer> InitLexer { get; set; }
+#pragma warning restore CS3003 // Typ ist nicht CLS-kompatibel
 
-#pragma warning disable CS3003 // Type is not CLS-compliant
         /// <summary>
         ///     Gets or sets the init parser.
         /// </summary>
-        public Action<OberonGrammarParser> InitParser { get; set; }
-#pragma warning restore CS3003 // Type is not CLS-compliant
+#pragma warning disable CS3003 // Typ ist nicht CLS-kompatibel
+        public required Action<OberonGrammarParser> InitParser { get; set; }
+#pragma warning restore CS3003 // Typ ist nicht CLS-kompatibel
     }
 }

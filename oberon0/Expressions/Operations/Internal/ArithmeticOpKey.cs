@@ -12,32 +12,25 @@ using Oberon0.Compiler.Types;
 namespace Oberon0.Compiler.Expressions.Operations.Internal
 {
     /// <summary>
-    ///     Helper class to create a dictionary of operations and it's left and right parameters
+    ///     Helper class to create a dictionary of operations, and it's left and right parameters
     /// </summary>
-    internal class ArithmeticOpKey : IArithmeticOpMetadata, IEquatable<ArithmeticOpKey>
+    internal class ArithmeticOpKey(
+        int operation,
+        BaseTypes leftHandType,
+        BaseTypes rightHandType,
+        BaseTypes targetTypes = BaseTypes.Any)
+        : IArithmeticOpMetadata, IEquatable<ArithmeticOpKey>
     {
-        public ArithmeticOpKey(
-            int operation,
-            BaseTypes leftHandType,
-            BaseTypes rightHandType,
-            BaseTypes targetTypes = BaseTypes.Any)
-        {
-            Operation = operation;
-            LeftHandType = leftHandType;
-            RightHandType = rightHandType;
-            ResultType = targetTypes;
-        }
+        public BaseTypes LeftHandType { get; } = leftHandType;
 
-        public BaseTypes LeftHandType { get; }
+        public BaseTypes RightHandType { get; } = rightHandType;
 
-        public BaseTypes RightHandType { get; }
+        public int Operation { get; } = operation;
 
-        public int Operation { get; }
-
-        public BaseTypes ResultType { get; }
+        public BaseTypes ResultType { get; } = targetTypes;
 
         [ExcludeFromCodeCoverage]
-        public bool Equals(ArithmeticOpKey other)
+        public bool Equals(ArithmeticOpKey? other)
         {
             if (other == null)
             {
@@ -49,14 +42,9 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
         }
 
         [ExcludeFromCodeCoverage]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (obj == null)
-            {
-                return false;
-            }
-
-            return Equals((ArithmeticOpKey) obj);
+            return obj != null && Equals((ArithmeticOpKey) obj);
         }
 
         public override int GetHashCode()

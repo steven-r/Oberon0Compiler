@@ -11,6 +11,5 @@ namespace Oberon0.Compiler.Generator
     ///     This interface is a placeholder for information used by the
     ///     generator interfaces
     /// </summary>
-    public interface IGeneratorInfo
-    {}
+    public interface IGeneratorInfo;
 }

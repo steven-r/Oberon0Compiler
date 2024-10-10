@@ -22,19 +22,21 @@ namespace Oberon0.Compiler.Tests.Types
         {
             var errors = new List<CompilerError>();
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Demo = RECORD 
-    a: INTEGER
-  END;
-VAR
-  r1: Demo;
-  r2: Demo;
+                """
+                MODULE Test; 
+                TYPE
+                  Demo = RECORD 
+                    a: INTEGER
+                  END;
+                VAR
+                  r1: Demo;
+                  r2: Demo;
 
-BEGIN
-  r1.a := 42;
-  r2 := r1;
-END Test.",
+                BEGIN
+                  r1.a := 42;
+                  r2 := r1;
+                END Test.
+                """,
                 errors);
 
             Assert.NotNull(m);
@@ -46,21 +48,23 @@ END Test.",
         {
             var errors = new List<CompilerError>();
             TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Demo = RECORD 
-    a: INTEGER
-  END;
-VAR
-  r1: Demo;
-  r2: RECORD 
-    a: INTEGER
-  END;
+                """
+                MODULE Test; 
+                TYPE
+                  Demo = RECORD 
+                    a: INTEGER
+                  END;
+                VAR
+                  r1: Demo;
+                  r2: RECORD 
+                    a: INTEGER
+                  END;
 
-BEGIN
-  r1.a := 42;
-  r2 := r1;
-END Test.",
+                BEGIN
+                  r1.a := 42;
+                  r2 := r1;
+                END Test.
+                """,
                 errors);
 
             Assert.Single(errors);
@@ -71,16 +75,18 @@ END Test.",
         public void RecordConstRecordSelectorError()
         {
             TestHelper.CompileString(
-                @"MODULE test; 
-CONST 
-  ci = 12;
+                """
+                MODULE test; 
+                CONST 
+                  ci = 12;
 
-VAR 
-  a : INTEGER;
-                
-BEGIN
-    a := ci.s;
-END test.",
+                VAR 
+                  a : INTEGER;
+                                
+                BEGIN
+                    a := ci.s;
+                END test.
+                """,
                 "Simple variables or constants do not allow any selector");
         }
 
@@ -88,16 +94,18 @@ END test.",
         public void RecordElementNotFoundError()
         {
             TestHelper.CompileString(
-                @"MODULE test; 
-TYPE 
-    rType = RECORD a: INTEGER END;
+                """
+                MODULE test; 
+                TYPE 
+                    rType = RECORD a: INTEGER END;
 
-VAR 
-  r : rType;
-                
-BEGIN
-    r.s := 1;
-END test.",
+                VAR 
+                  r : rType;
+                                
+                BEGIN
+                    r.s := 1;
+                END test.
+                """,
                 "Element not found in underlying type", "Left & right side do not match types");
         }
 
@@ -105,14 +113,16 @@ END test.",
         public void RecordFail1()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Demo = RECORD 
-    a: INTEGER;
-    a: REAL
-  END;
+                """
+                MODULE Test; 
+                TYPE
+                  Demo = RECORD 
+                    a: INTEGER;
+                    a: REAL
+                  END;
 
-END Test.",
+                END Test.
+                """,
                 "Element a defined more than once");
         }
 
@@ -120,20 +130,22 @@ END Test.",
         public void RecordFailElement()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE 
-t = RECORD
-   a: INTEGER
-END;
-t2 = RECORD
-   a: INTEGER
-END;
+                """
+                MODULE Test; 
+                TYPE 
+                t = RECORD
+                   a: INTEGER
+                END;
+                t2 = RECORD
+                   a: INTEGER
+                END;
 
-VAR a: t;
-    b: t2;
-BEGIN
-  a := b;
-END Test.",
+                VAR a: t;
+                    b: t2;
+                BEGIN
+                  a := b;
+                END Test.
+                """,
                 "Left & right side do not match types");
         }
 
@@ -141,15 +153,17 @@ END Test.",
         public void RecordFailSimple()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
+                """
+                MODULE Test; 
 
-VAR a: RECORD
-      b: INTEGER
-    END;
-    b: INTEGER;
-BEGIN
-  a := b;
-END Test.",
+                VAR a: RECORD
+                      b: INTEGER
+                    END;
+                    b: INTEGER;
+                BEGIN
+                  a := b;
+                END Test.
+                """,
                 "Left & right side do not match types");
         }
 
@@ -157,20 +171,22 @@ END Test.",
         public void RecordMany()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Embedded = RECORD
-     emb: INTEGER;
-     arr: ARRAY 6 OF INTEGER
-  END;
-  Demo = RECORD 
-    a: INTEGER;
-    b: STRING;
-    c: REAL;
-    d: Embedded
-  END;
+                """
+                MODULE Test; 
+                TYPE
+                  Embedded = RECORD
+                     emb: INTEGER;
+                     arr: ARRAY 6 OF INTEGER
+                  END;
+                  Demo = RECORD 
+                    a: INTEGER;
+                    b: STRING;
+                    c: REAL;
+                    d: Embedded
+                  END;
 
-END Test.");
+                END Test.
+                """);
 
             var t = m.Block.LookupType("Demo");
             var embType = m.Block.LookupType("Embedded");
@@ -189,16 +205,18 @@ END Test.");
         public void RecordNoRecordTypeSelectorError()
         {
             TestHelper.CompileString(
-                @"MODULE test; 
-TYPE 
-    aType= ARRAY 5 OF INTEGER;
+                """
+                MODULE test; 
+                TYPE 
+                    aType= ARRAY 5 OF INTEGER;
 
-VAR 
-  a : aType;
-                
-BEGIN
-    a.s := 1;
-END test.",
+                VAR 
+                  a : aType;
+                                
+                BEGIN
+                    a.s := 1;
+                END test.
+                """,
                 "Record reference expected");
         }
 
@@ -206,24 +224,26 @@ END test.",
         public void RecordSelector()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Embedded = RECORD
-     emb: INTEGER;
-     arr: ARRAY 6 OF INTEGER
-  END;
-  Demo = RECORD 
-    a: INTEGER;
-    b: STRING;
-    c: REAL;
-    d: Embedded
-  END;
-VAR 
-  test: Demo;
+                """
+                MODULE Test; 
+                TYPE
+                  Embedded = RECORD
+                     emb: INTEGER;
+                     arr: ARRAY 6 OF INTEGER
+                  END;
+                  Demo = RECORD 
+                    a: INTEGER;
+                    b: STRING;
+                    c: REAL;
+                    d: Embedded
+                  END;
+                VAR 
+                  test: Demo;
 
-BEGIN
-  WriteInt(test.d.arr[3])
-END Test.");
+                BEGIN
+                  WriteInt(test.d.arr[3])
+                END Test.
+                """);
 
             var intType = m.Block.LookupType("INTEGER");
             var s = m.Block.Statements[0];
@@ -242,13 +262,15 @@ END Test.");
         public void RecordSimple()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Demo = RECORD 
-    a: INTEGER
-  END;
+                """
+                MODULE Test; 
+                TYPE
+                  Demo = RECORD 
+                    a: INTEGER
+                  END;
 
-END Test.");
+                END Test.
+                """);
 
             var t = m.Block.LookupType("Demo");
             var intType = m.Block.LookupType("INTEGER");

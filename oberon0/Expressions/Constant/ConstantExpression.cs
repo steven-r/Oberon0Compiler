@@ -11,15 +11,9 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Constant
 {
-    public abstract class ConstantExpression : Expression
+    public abstract class ConstantExpression(object value) : Expression
     {
-        protected ConstantExpression(TypeDefinition baseType, object value)
-            : base(baseType)
-        {
-            Value = value;
-        }
-
-        public object Value { get; set; }
+        public object Value { get; set; } = value;
 
         public override bool IsConst => true;
 
@@ -54,7 +48,7 @@ namespace Oberon0.Compiler.Expressions.Constant
                 throw new InvalidOperationException($"Unknown constant '{stringVal}'");
             }
 
-            if (value is float || value is double || value is decimal)
+            if (value is float or double or decimal)
             {
                 return new ConstantDoubleExpression(Convert.ToDouble(value));
             }

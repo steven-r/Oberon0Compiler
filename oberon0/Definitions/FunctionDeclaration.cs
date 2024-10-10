@@ -28,11 +28,11 @@ namespace Oberon0.Compiler.Definitions
             string name,
             Block block,
             TypeDefinition returnType,
-            params ProcedureParameterDeclaration[] parameters)
+            params ProcedureParameterDeclaration[]? parameters)
         {
             Name = name;
             Block = block;
-            if (parameters != null && parameters.Length > 0)
+            if (parameters is { Length: > 0 })
             {
                 Block.Declarations.AddRange(parameters);
             }
@@ -51,7 +51,7 @@ namespace Oberon0.Compiler.Definitions
             string name,
             TypeDefinition returnType,
             Block block,
-            params string[] parameters)
+            params string[]? parameters)
         {
             Name = name;
             Block = block;
@@ -74,7 +74,7 @@ namespace Oberon0.Compiler.Definitions
         ///     Gets a value indicating whether this instance is internal (e.g. <c>WriteInt()</c>
         /// </summary>
         /// <value><c>true</c> if this instance is internal; otherwise, <c>false</c>.</value>
-        public bool IsInternal { get; private set; }
+        public bool IsInternal { get; private init; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether this procedure can be exported.
@@ -118,7 +118,7 @@ namespace Oberon0.Compiler.Definitions
         public static string BuildPrototype(
             string name,
             TypeDefinition returnType,
-            ProcedureParameterDeclaration[] parameters)
+            ProcedureParameterDeclaration[]? parameters)
         {
             var sb = new StringBuilder();
             if (returnType.Name != TypeDefinition.VoidTypeName)

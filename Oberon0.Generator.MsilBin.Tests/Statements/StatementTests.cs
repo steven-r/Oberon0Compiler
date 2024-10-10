@@ -12,15 +12,8 @@ using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Statements
 {
-    public class StatementTests
+    public class StatementTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public StatementTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Fact]
         public void RepeatTest()
         {
@@ -36,7 +29,7 @@ BEGIN
       i := i+1;
   UNTIL i > 5
 END Test.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -45,9 +38,9 @@ END Test.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("1\n2\n3\n4\n5\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("1\n2\n3\n4\n5\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -62,7 +55,7 @@ BEGIN
     IF (x) THEN WriteString('Yes') ELSE WriteString('No') END;
     WriteLn
 END Issue25.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -71,9 +64,9 @@ END Issue25.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("Yes\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("Yes\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -92,7 +85,7 @@ BEGIN
     WriteLn
 END Issue25.";
 
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -101,9 +94,9 @@ END Issue25.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("Yes\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("Yes\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -119,7 +112,7 @@ BEGIN
     WHILE x DO WriteString('No'); x := TRUE END;
     WriteLn
 END Issue25.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -128,9 +121,9 @@ END Issue25.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("Yes\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("Yes\n", output1.ToString().NlFix());
         }
     }
 }

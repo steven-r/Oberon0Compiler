@@ -16,12 +16,14 @@ namespace Oberon0.Compiler.Tests
         public void TestReadInt()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  Demo : INTEGER;
-BEGIN
-  ReadInt(Demo)
-END Test.");
+                """
+                MODULE Test; 
+                VAR
+                  Demo : INTEGER;
+                BEGIN
+                  ReadInt(Demo)
+                END Test.
+                """);
             Assert.Single(m.Block.Statements);
         }
 
@@ -29,12 +31,14 @@ END Test.");
         public void TestReadIntFailBoolType()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  Demo : BOOLEAN;
-BEGIN
-  ReadInt(Demo)
-END Test.",
+                """
+                MODULE Test; 
+                VAR
+                  Demo : BOOLEAN;
+                BEGIN
+                  ReadInt(Demo)
+                END Test.
+                """,
                 "No procedure/function with prototype 'ReadInt(BOOLEAN)' found");
         }
 
@@ -42,12 +46,14 @@ END Test.",
         public void TestReadIntFailNumber()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  Demo : BOOLEAN;
-BEGIN
-  ReadInt(1)
-END Test.",
+                """
+                MODULE Test; 
+                VAR
+                  Demo : BOOLEAN;
+                BEGIN
+                  ReadInt(1)
+                END Test.
+                """,
                 "No procedure/function with prototype 'ReadInt(INTEGER)' found");
         }
 
@@ -55,12 +61,14 @@ END Test.",
         public void TestReadIntFailString()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  Demo : STRING;
-BEGIN
-  ReadInt(Demo)
-END Test.",
+                """
+                MODULE Test; 
+                VAR
+                  Demo : STRING;
+                BEGIN
+                  ReadInt(Demo)
+                END Test.
+                """,
                 "No procedure/function with prototype 'ReadInt(STRING)' found");
         }
 
@@ -68,12 +76,14 @@ END Test.",
         public void TestReadReal()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  Demo : REAL;
-BEGIN
-  ReadReal(Demo)
-END Test.");
+                """
+                MODULE Test; 
+                VAR
+                  Demo : REAL;
+                BEGIN
+                  ReadReal(Demo)
+                END Test.
+                """);
             Assert.Single(m.Block.Statements);
         }
 
@@ -81,12 +91,14 @@ END Test.");
         public void TestReadRealFailIntType()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  Demo : INTEGER;
-BEGIN
-  ReadReal(Demo)
-END Test.",
+                """
+                MODULE Test; 
+                VAR
+                  Demo : INTEGER;
+                BEGIN
+                  ReadReal(Demo)
+                END Test.
+                """,
                 "No procedure/function with prototype 'ReadReal(INTEGER)' found");
         }
     }

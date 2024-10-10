@@ -12,26 +12,20 @@ using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Types
 {
-    public class ArrayTests
+    public class ArrayTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public ArrayTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
-
         [Fact]
         public void SimpleArrayDefinition()
         {
-            const string source = @"MODULE Array;
-VAR 
-  a: ARRAY 32 OF INTEGER;
-  b: ARRAY 32 OF BOOLEAN;
+            const string source = """
+                                  MODULE Array;
+                                  VAR 
+                                    a: ARRAY 32 OF INTEGER;
+                                    b: ARRAY 32 OF BOOLEAN;
 
-END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+                                  END Array.
+                                  """;
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -43,29 +37,31 @@ END Array.";
         [Fact]
         public void SimpleArrayDefinitionLocal()
         {
-            const string source = @"MODULE Array;
-VAR 
-  a: ARRAY 32 OF INTEGER;
-  b: ARRAY 32 OF INTEGER;
-  i: INTEGER;
-  s: INTEGER;
+            const string source = """
+                                  MODULE Array;
+                                  VAR 
+                                    a: ARRAY 32 OF INTEGER;
+                                    b: ARRAY 32 OF INTEGER;
+                                    i: INTEGER;
+                                    s: INTEGER;
 
-BEGIN
-  i := 1;
-  WHILE (i <= 32) DO
-    a[i] := i;
-    b[i] := 32-i;
-    i := i+1
-  END;
-  i := 1;
-  WHILE (i <= 32) DO
-    s := s + a[i] + b[i];
-    i := i+1
-  END;
-  WriteInt(s);
-  WriteLn
-END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+                                  BEGIN
+                                    i := 1;
+                                    WHILE (i <= 32) DO
+                                      a[i] := i;
+                                      b[i] := 32-i;
+                                      i := i+1
+                                    END;
+                                    i := 1;
+                                    WHILE (i <= 32) DO
+                                      s := s + a[i] + b[i];
+                                      i := i+1
+                                    END;
+                                    WriteInt(s);
+                                    WriteLn
+                                  END Array.
+                                  """;
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -74,26 +70,28 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("1024\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("1024\n", output1.ToString().NlFix());
         }
 
         [Fact]
         public void SimpleArraySetAndGetValueGlobal()
         {
-            const string source = @"MODULE Array3;
-VAR 
-  a: ARRAY 32 OF INTEGER;
-  n: INTEGER;
+            const string source = """
+                                  MODULE Array3;
+                                  VAR 
+                                    a: ARRAY 32 OF INTEGER;
+                                    n: INTEGER;
 
-BEGIN
-  a[1] := 1;
-  n := a[1];
-  WriteInt(n);
-  WriteLn
-END Array3.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+                                  BEGIN
+                                    a[1] := 1;
+                                    n := a[1];
+                                    WriteInt(n);
+                                    WriteLn
+                                  END Array3.
+                                  """;
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -102,9 +100,9 @@ END Array3.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("1\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("1\n", output1.ToString().NlFix());
         }
     }
 }

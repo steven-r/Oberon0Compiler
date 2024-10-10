@@ -13,103 +13,98 @@ using Xunit.Abstractions;
 namespace Oberon0.Generator.MsilBin.Tests.Calls
 {
     [Collection("Sequential")]
-    public class ProcedureTests
+    public class ProcedureTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public ProcedureTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
-
         [Fact]
         public void TestProcedureBoolean()
         {
-            string source = @"
-MODULE ProcTest;
-CONST
-  true_ = TRUE;
+            const string source = """
 
-VAR
-  x, y: BOOLEAN;
-  i, j: BOOLEAN;
+                                  MODULE ProcTest;
+                                  CONST
+                                    true_ = TRUE;
 
-  PROCEDURE Test(x: BOOLEAN; y: BOOLEAN; VAR a: BOOLEAN; b: BOOLEAN);
-  BEGIN
-    x := FALSE; y := true_;
-    a := TRUE; b := FALSE;
-  END Test;
+                                  VAR
+                                    x, y: BOOLEAN;
+                                    i, j: BOOLEAN;
+                                  
+                                    PROCEDURE Test(x: BOOLEAN; y: BOOLEAN; VAR a: BOOLEAN; b: BOOLEAN);
+                                    BEGIN
+                                      x := FALSE; y := true_;
+                                      a := TRUE; b := FALSE;
+                                    END Test;
 
-BEGIN
-    x := TRUE; y := x = true_;
-    i := FALSE; j := FALSE;
-    Test(y, x, i, j);
-    WriteBool(x);
-    WriteString(', ');
-    WriteBool(y);
-    WriteString(', ');
-    WriteBool(i);
-    WriteString(', ');
-    WriteBool(j);
-    WriteLn
-END ProcTest.
-";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+                                  BEGIN
+                                      x := TRUE; y := x = true_;
+                                      i := FALSE; j := FALSE;
+                                      Test(y, x, i, j);
+                                      WriteBool(x);
+                                      WriteString(', ');
+                                      WriteBool(y);
+                                      WriteString(', ');
+                                      WriteBool(i);
+                                      WriteString(', ');
+                                      WriteBool(j);
+                                      WriteLn
+                                  END ProcTest.
+
+                                  """;
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-            var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+            byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal($"{true}, {true}, {true}, {false}\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal($"{true}, {true}, {true}, {false}\n", output1.ToString().NlFix());
         }
 
         [Fact]
         public void TestProcedureInteger()
         {
-            string source = @"
-MODULE ProcTest;
-VAR
-  x, y: INTEGER;
-  i, j: INTEGER;
+            const string source = """
+                                  MODULE ProcTest;
+                                  VAR
+                                    x, y: INTEGER;
+                                    i, j: INTEGER;
+                                  
+                                    PROCEDURE Test(x: INTEGER; y: INTEGER; VAR a: INTEGER; b: INTEGER);
+                                    BEGIN
+                                      x := 0; y := -1;
+                                      a := 10; b := 20;
+                                    END Test;
 
-  PROCEDURE Test(x: INTEGER; y: INTEGER; VAR a: INTEGER; b: INTEGER);
-  BEGIN
-    x := 0; y := -1;
-    a := 10; b := 20;
-  END Test;
+                                  BEGIN
+                                      x := 42; y := 1;
+                                      i := 2; j := 0;
+                                      Test(y, x, i, j);
+                                      WriteBool(x = 42);
+                                      WriteString(', ');
+                                      WriteBool(y = 1);
+                                      WriteString(', ');
+                                      WriteBool(i = 10);
+                                      WriteString(', ');
+                                      WriteBool(j = 0);
+                                      WriteLn
+                                  END ProcTest.
+                                  """;
 
-BEGIN
-    x := 42; y := 1;
-    i := 2; j := 0;
-    Test(y, x, i, j);
-    WriteBool(x = 42);
-    WriteString(', ');
-    WriteBool(y = 1);
-    WriteString(', ');
-    WriteBool(i = 10);
-    WriteString(', ');
-    WriteBool(j = 0);
-    WriteLn
-END ProcTest.
-";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-            var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+            byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal($"{true}, {true}, {true}, {true}\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal($"{true}, {true}, {true}, {true}\n", output1.ToString().NlFix());
         }
     }
 }

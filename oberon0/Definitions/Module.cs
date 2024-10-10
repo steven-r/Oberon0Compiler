@@ -18,12 +18,12 @@ namespace Oberon0.Compiler.Definitions
     /// </summary>
     public partial class Module
     {
-        public Module(Oberon0Compiler compilerInstance)
+        public Module(Oberon0Compiler? compilerInstance)
         {
             CompilerInstance = compilerInstance;
 
             Block = new Block(null, this);
-            ExternalReferences = new List<Assembly>();
+            ExternalReferences = [];
 
             DeclareStandardTypes();
             DeclareStandardConstants();
@@ -33,7 +33,7 @@ namespace Oberon0.Compiler.Definitions
         /// <summary>
         ///     Gets the compiler instance this Module has been build with
         /// </summary>
-        public Oberon0Compiler CompilerInstance { get; set; }
+        public Oberon0Compiler? CompilerInstance { get; set; }
 
         /// <summary>
         ///     Gets the block.
@@ -52,12 +52,12 @@ namespace Oberon0.Compiler.Definitions
         /// <value>Generator information.</value>
         [UsedImplicitly]
         [ExcludeFromCodeCoverage]
-        public IGeneratorInfo GeneratorInfo { get; set; }
+        public IGeneratorInfo? GeneratorInfo { get; set; }
 
         /// <summary>
         ///     Gets or sets the name.
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether the module contains export statements. In this case the output will be a

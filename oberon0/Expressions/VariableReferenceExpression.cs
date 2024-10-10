@@ -11,13 +11,13 @@ namespace Oberon0.Compiler.Expressions
 {
     public class VariableReferenceExpression : Expression
     {
-        public Declaration Declaration { get; private set; }
+        public required Declaration Declaration { get; init; }
 
-        public VariableSelector Selector { get; private set; }
+        public VariableSelector? Selector { get; init; }
 
-        private string Name { get; set; }
+        public required string Name { get; init; }
 
-        public static Expression Create(Declaration declaration, VariableSelector s)
+        public static Expression? Create(Declaration? declaration, VariableSelector? s)
         {
             if (declaration == null)
             {

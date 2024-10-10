@@ -12,7 +12,7 @@ namespace Oberon0.Generator.MsilBin
 {
     internal class DeclarationGeneratorInfo : IGeneratorInfo
     {
-        public ProcedureParameterDeclaration OriginalField { get; internal set; }
-        public Declaration ReplacedBy { get; internal set; }
+        public ProcedureParameterDeclaration OriginalField { get; internal set; } = null!;
+        public Declaration ReplacedBy { get; internal set; } = null!;
     }
 }

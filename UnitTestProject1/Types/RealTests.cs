@@ -19,13 +19,15 @@ namespace Oberon0.Compiler.Tests.Types
         public void TestAssignmentBoolFail()
         {
             TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: REAL;
+                """
+                MODULE TestAssignment;
+                VAR r: REAL;
 
-BEGIN
-    r := FALSE;
-END TestAssignment.
-",
+                BEGIN
+                    r := FALSE;
+                END TestAssignment.
+
+                """,
                 "Left & right side do not match types");
         }
 
@@ -33,14 +35,16 @@ END TestAssignment.
         public void TestAssignmentBoolVarFail()
         {
             TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: REAL;
-   i: BOOLEAN;
+                """
+                MODULE TestAssignment;
+                VAR r: REAL;
+                   i: BOOLEAN;
 
-BEGIN
-    i := TRUE;
-    r := i;
-END TestAssignment.",
+                BEGIN
+                    i := TRUE;
+                    r := i;
+                END TestAssignment.
+                """,
                 "Left & right side do not match types");
         }
 
@@ -48,13 +52,15 @@ END TestAssignment.",
         public void TestAssignmentInt()
         {
             var m = TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: REAL;
+                """
+                MODULE TestAssignment;
+                VAR r: REAL;
 
-BEGIN
-    r := 1;
-END TestAssignment.
-");
+                BEGIN
+                    r := 1;
+                END TestAssignment.
+
+                """);
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             var statement = m.Block.Statements[0] as AssignmentStatement;
@@ -67,14 +73,16 @@ END TestAssignment.
         public void TestAssignmentIntVar()
         {
             var m = TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: REAL;
-   i: INTEGER;
+                """
+                MODULE TestAssignment;
+                VAR r: REAL;
+                   i: INTEGER;
 
-BEGIN
-    i := 1;
-    r := i;
-END TestAssignment.");
+                BEGIN
+                    i := 1;
+                    r := i;
+                END TestAssignment.
+                """);
             Assert.NotNull(m);
             Assert.Equal(2, m.Block.Statements.Count);
             var statement = m.Block.Statements[1] as AssignmentStatement;
@@ -86,12 +94,14 @@ END TestAssignment.");
         public void TestAssignmentMult()
         {
             var m = TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: REAL;
+                """
+                MODULE TestAssignment;
+                VAR r: REAL;
 
-BEGIN
-    r := 2 * 1.5;
-END TestAssignment.");
+                BEGIN
+                    r := 2 * 1.5;
+                END TestAssignment.
+                """);
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             var statement = m.Block.Statements[0] as AssignmentStatement;
@@ -104,12 +114,14 @@ END TestAssignment.");
         public void TestAssignmentReal()
         {
             var m = TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: REAL;
+                """
+                MODULE TestAssignment;
+                VAR r: REAL;
 
-BEGIN
-    r := 1.234;
-END TestAssignment.");
+                BEGIN
+                    r := 1.234;
+                END TestAssignment.
+                """);
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             var statement = m.Block.Statements[0] as AssignmentStatement;
@@ -122,12 +134,14 @@ END TestAssignment.");
         public void TestAssignmentRealNeg()
         {
             var m = TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: REAL;
+                """
+                MODULE TestAssignment;
+                VAR r: REAL;
 
-BEGIN
-    r := -1.234;
-END TestAssignment.");
+                BEGIN
+                    r := -1.234;
+                END TestAssignment.
+                """);
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             var statement = m.Block.Statements[0] as AssignmentStatement;
@@ -141,12 +155,14 @@ END TestAssignment.");
         public void TestEpsilon()
         {
             var m = TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: REAL;
+                """
+                MODULE TestAssignment;
+                VAR r: REAL;
 
-BEGIN
-    r := EPSILON;
-END TestAssignment.");
+                BEGIN
+                    r := EPSILON;
+                END TestAssignment.
+                """);
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             var statement = m.Block.Statements[0] as AssignmentStatement;
@@ -159,12 +175,14 @@ END TestAssignment.");
         public void TestEpsilonDiv2()
         {
             var m = TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: REAL;
+                """
+                MODULE TestAssignment;
+                VAR r: REAL;
 
-BEGIN
-    r := EPSILON DIV 2;
-END TestAssignment.");
+                BEGIN
+                    r := EPSILON DIV 2;
+                END TestAssignment.
+                """);
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             var statement = m.Block.Statements[0] as AssignmentStatement;

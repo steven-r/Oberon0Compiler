@@ -34,12 +34,20 @@ namespace Oberon0.Generator.MsilBin.Tests
         {
             var m = Oberon0Compiler.CompileString(source);
 
+            if (m.CompilerInstance == null)
+            {
+                throw new NullReferenceException(nameof(m.CompilerInstance));
+            }
             if (m.CompilerInstance.HasError)
             {
                 throw new ArgumentException("Source code contains errors", nameof(source));
             }
 
-            ICodeGenerator cg = new MsilBinGenerator {Module = m};
+            var cg = new MsilBinGenerator {Module = m};
+            if (cg == null)
+            {
+                throw new NullReferenceException(nameof(cg));
+            }
 
             cg.GenerateIntermediateCode();
 

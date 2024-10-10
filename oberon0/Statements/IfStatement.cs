@@ -13,25 +13,19 @@ namespace Oberon0.Compiler.Statements
 {
     public class IfStatement : IStatement
     {
-        public IfStatement()
-        {
-            Conditions = new List<Expression>();
-            ThenParts = new List<Block>();
-        }
-
         /// <summary>
         ///     Gets the conditions.
         /// </summary>
-        public List<Expression> Conditions { get; }
+        public List<Expression> Conditions { get; } = [];
 
         /// <summary>
         ///     Gets or sets the else part.
         /// </summary>
-        public Block ElsePart { get; set; }
+        public Block? ElsePart { get; set; }
 
         /// <summary>
         ///     Gets the then parts.
         /// </summary>
-        public List<Block> ThenParts { get; }
+        public List<Block> ThenParts { get; } = [];
     }
 }

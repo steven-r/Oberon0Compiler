@@ -20,11 +20,13 @@ namespace Oberon0.Compiler.Tests.Types
         public void LookupType()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Demo = INTEGER;
+                """
+                MODULE Test; 
+                TYPE
+                  Demo = INTEGER;
 
-END Test.");
+                END Test.
+                """);
 
             Assert.NotNull(m.Block.LookupType("Demo"));
         }
@@ -33,11 +35,13 @@ END Test.");
         public void LookupTypeFail()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Demo = INTEGER;
+                """
+                MODULE Test; 
+                TYPE
+                  Demo = INTEGER;
 
-END Test.");
+                END Test.
+                """);
 
             Assert.Null(m.Block.LookupType("?Unknown"));
         }
@@ -46,15 +50,18 @@ END Test.");
         public void SimpleType()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Demo = INTEGER;
+                """
+                MODULE Test; 
+                TYPE
+                  Demo = INTEGER;
 
-END Test.");
+                END Test.
+                """);
 
             var t = m.Block.LookupType("Demo");
-            var intType = m.Block.LookupType("INTEGER");
             Assert.NotNull(t);
+            var intType = m.Block.LookupType("INTEGER");
+            Assert.NotNull(intType);
             Assert.IsType<SimpleTypeDefinition>(t);
             var std = (SimpleTypeDefinition) t;
             Assert.Equal(intType.Type, std.Type);
@@ -64,12 +71,14 @@ END Test.");
         public void TypeDefinedTwiceError()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Demo = INTEGER;
-  Demo = INTEGER;
+                """
+                MODULE Test; 
+                TYPE
+                  Demo = INTEGER;
+                  Demo = INTEGER;
 
-END Test.",
+                END Test.
+                """,
                 "Type Demo declared twice");
         }
 
@@ -77,18 +86,20 @@ END Test.",
         public void TypeEquality()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  Demo = INTEGER;
-VAR
-  i: INTEGER;
-  j: Demo;
+                """
+                MODULE Test; 
+                TYPE
+                  Demo = INTEGER;
+                VAR
+                  i: INTEGER;
+                  j: Demo;
 
-BEGIN
-  i := 0;
-  j := i+1;
-  WriteInt(i); WriteString(', '); WriteInt(j); WriteLn
-END Test.");
+                BEGIN
+                  i := 0;
+                  j := i+1;
+                  WriteInt(i); WriteString(', '); WriteInt(j); WriteLn
+                END Test.
+                """);
 
             var i = m.Block.LookupVar("i");
             Assert.NotNull(i);

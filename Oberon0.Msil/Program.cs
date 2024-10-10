@@ -64,9 +64,9 @@ namespace Oberon0.Msil
             {
                 var file = context.ParseResult.GetValueForArgument(fileArg);
                 var outputPath = context.ParseResult.GetValueForOption(outputPathOpt);
-                var verbose = context.ParseResult.GetValueForOption(verboseOpt);
-                var clean = context.ParseResult.GetValueForOption(cleanOpt);
-                var projectName = context.ParseResult.GetValueForOption(projectNameOpt);
+                bool verbose = context.ParseResult.GetValueForOption(verboseOpt);
+                bool clean = context.ParseResult.GetValueForOption(cleanOpt);
+                string projectName = context.ParseResult.GetValueForOption(projectNameOpt);
                 return Task.FromResult(StartCompile(file, outputPath, projectName, clean, verbose));
             });
             return rootCommand.Invoke(args);

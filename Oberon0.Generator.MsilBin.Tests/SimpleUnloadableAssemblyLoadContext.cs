@@ -12,13 +12,8 @@ using System.Runtime.Loader;
 
 namespace Oberon0.Generator.MsilBin.Tests
 {
-    internal class SimpleUnloadableAssemblyLoadContext : AssemblyLoadContext
+    internal class SimpleUnloadableAssemblyLoadContext() : AssemblyLoadContext(true)
     {
-        public SimpleUnloadableAssemblyLoadContext()
-            : base(true)
-        {
-        }
-
         protected override Assembly Load(AssemblyName assemblyName)
         {
             return null;

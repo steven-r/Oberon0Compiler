@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
@@ -19,14 +18,14 @@ namespace Oberon0.Generator.MsilBin
 {
     partial class MsilBinGenerator
     {
-        private static readonly Dictionary<int, SyntaxKind> UnaryExpressionMapping = new Dictionary<int, SyntaxKind>
+        private static readonly Dictionary<int, SyntaxKind> UnaryExpressionMapping = new()
         {
             {OberonGrammarLexer.MINUS, SyntaxKind.UnaryMinusExpression},
             {OberonGrammarLexer.PLUS, SyntaxKind.UnaryPlusExpression},
             {OberonGrammarLexer.NOT, SyntaxKind.LogicalNotExpression}
         };
 
-        private static readonly Dictionary<int, SyntaxKind> BinaryExpressionMapping = new Dictionary<int, SyntaxKind>
+        private static readonly Dictionary<int, SyntaxKind> BinaryExpressionMapping = new()
         {
             {OberonGrammarLexer.EQUAL, SyntaxKind.EqualsExpression},
             {OberonGrammarLexer.AND, SyntaxKind.LogicalAndExpression},
@@ -86,7 +85,7 @@ namespace Oberon0.Generator.MsilBin
                         // add a -1 to the selector (and compile) as c# arrays start at 0
                         var binaryExpression = BinaryExpression.Create(OberonGrammarLexer.MINUS,
                             indexSelector.IndexDefinition,
-                            new ConstantIntExpression(1), declaration.Block);
+                            new ConstantIntExpression(1), declaration.Block!);
                         var solvedExpression = ConstantSolver.Solve(binaryExpression, declaration.Block);
                         var accessor = SyntaxFactory.ElementAccessExpression(
                             MapIdentifierName(declaration.Name),
@@ -125,21 +124,18 @@ namespace Oberon0.Generator.MsilBin
             return current;
         }
 
-        private ExpressionSyntax GenerateConstantLiteral(ConstantExpression constantExpression)
+        private static ExpressionSyntax GenerateConstantLiteral(ConstantExpression constantExpression) => constantExpression switch
         {
-            return constantExpression switch
-            {
-                ConstantIntExpression cie => SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,
-                    SyntaxFactory.Literal(cie.ToInt32())),
-                ConstantBoolExpression cbe => SyntaxFactory.LiteralExpression(cbe.ToBool()
-                    ? SyntaxKind.TrueLiteralExpression
-                    : SyntaxKind.FalseLiteralExpression),
-                ConstantDoubleExpression cde => SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,
-                    SyntaxFactory.Literal(cde.ToDouble())),
-                _ => throw new ArgumentException(
-                    "Cannot process constant expression type " + constantExpression.GetType().Name,
-                    nameof(constantExpression))
-            };
-        }
+            ConstantIntExpression cie => SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,
+                SyntaxFactory.Literal(cie.ToInt32())),
+            ConstantBoolExpression cbe => SyntaxFactory.LiteralExpression(cbe.ToBool()
+                ? SyntaxKind.TrueLiteralExpression
+                : SyntaxKind.FalseLiteralExpression),
+            ConstantDoubleExpression cde => SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression,
+                SyntaxFactory.Literal(cde.ToDouble())),
+            _ => throw new ArgumentException(
+                "Cannot process constant expression type " + constantExpression.GetType().Name,
+                nameof(constantExpression))
+        };
     }
 }

@@ -15,11 +15,6 @@ namespace Oberon0.Compiler.Definitions
     /// </summary>
     public class VariableSelector : List<BaseSelectorElement>
     {
-        public VariableSelector(TypeDefinition resultType)
-        {
-            SelectorResultType = resultType;
-        }
-
-        public TypeDefinition SelectorResultType { get; set; }
+        public TypeDefinition SelectorResultType { get; set; } = null!;
     }
 }

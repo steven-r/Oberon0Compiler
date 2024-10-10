@@ -245,8 +245,8 @@ namespace Oberon0.Compiler.Tests.Expressions
         private class UnknownExpression : Expression
         {
             public UnknownExpression()
-                : base(SimpleTypeDefinition.IntType)
             {
+                TargetType = SimpleTypeDefinition.IntType;
             }
         }
     }

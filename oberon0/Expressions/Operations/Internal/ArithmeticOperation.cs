@@ -7,15 +7,9 @@
 
 namespace Oberon0.Compiler.Expressions.Operations.Internal
 {
-    internal class ArithmeticOperation
+    public class ArithmeticOperation(IArithmeticOperation operation, IArithmeticOpMetadata metadata)
     {
-        public ArithmeticOperation(IArithmeticOperation operation, IArithmeticOpMetadata metadata)
-        {
-            Operation = operation;
-            Metadata = metadata;
-        }
-
-        public IArithmeticOperation Operation { get; }
-        public IArithmeticOpMetadata Metadata { get; }
+        public IArithmeticOperation Operation { get; } = operation;
+        public IArithmeticOpMetadata Metadata { get; } = metadata;
     }
 }

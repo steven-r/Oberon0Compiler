@@ -26,27 +26,27 @@ namespace Oberon0.Compiler.Types
         /// <summary>
         ///     Gets or sets the global reference to "BOOLEAN".
         /// </summary>
-        public static TypeDefinition BoolType { get; set; }
+        public static TypeDefinition BoolType { get; set; } = null!;
 
         /// <summary>
         ///     Gets or sets the global reference to "INTEGER".
         /// </summary>
-        public static TypeDefinition IntType { get; set; }
+        public static TypeDefinition IntType { get; set; } = null!;
 
         /// <summary>
         ///     Gets or sets the global reference to "REAL".
         /// </summary>
-        public static TypeDefinition RealType { get; set; }
+        public static TypeDefinition RealType { get; set; } = null!;
 
         /// <summary>
         ///     Gets or sets the global reference to "STRING".
         /// </summary>
-        public static TypeDefinition StringType { get; set; }
+        public static TypeDefinition StringType { get; set; } = null!;
 
         /// <summary>
         ///     Gets or sets the global reference to "VOID".
         /// </summary>
-        public static TypeDefinition VoidType { get; set; }
+        public static TypeDefinition VoidType { get; set; } = null!;
 
         public override TypeDefinition Clone(string name)
         {
@@ -63,7 +63,7 @@ namespace Oberon0.Compiler.Types
         [ExcludeFromCodeCoverage]
         public override string ToString()
         {
-            return Name;
+            return Name ?? "<unset>";
         }
     }
 }

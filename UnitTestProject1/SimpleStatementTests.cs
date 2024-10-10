@@ -21,11 +21,13 @@ namespace Oberon0.Compiler.Tests
         public void InvalidParameterCount()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-BEGIN 
-    WriteInt
-END Test.
-",
+                """
+                MODULE Test; 
+                BEGIN 
+                    WriteInt
+                END Test.
+
+                """,
                 "No procedure/function with prototype 'WriteInt()' found");
         }
 
@@ -33,14 +35,16 @@ END Test.
         public void SimpleAssignment()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: INTEGER;
+                """
+                MODULE Test; 
+                VAR
+                  x: INTEGER;
 
-BEGIN 
-    x := 1
-END Test.
-");
+                BEGIN 
+                    x := 1
+                END Test.
+
+                """);
             Assert.Single(m.Block.Statements);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
             var ast = (AssignmentStatement) m.Block.Statements[0];
@@ -54,17 +58,19 @@ END Test.
         public void SimpleRepeat()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: INTEGER;
+                """
+                MODULE Test; 
+                VAR
+                  x: INTEGER;
 
-BEGIN 
-    x := 1;
-    REPEAT
-        
-    UNTIL x > 0
-END Test.
-");
+                BEGIN 
+                    x := 1;
+                    REPEAT
+                        
+                    UNTIL x > 0
+                END Test.
+
+                """);
             Assert.Equal(2, m.Block.Statements.Count);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
             var ast = (AssignmentStatement) m.Block.Statements[0];
@@ -82,17 +88,19 @@ END Test.
         public void SimpleRepeatFailCondition()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: INTEGER;
+                """
+                MODULE Test; 
+                VAR
+                  x: INTEGER;
 
-BEGIN 
-    x := 1;
-    REPEAT
-        
-    UNTIL 0
-END Test.
-",
+                BEGIN 
+                    x := 1;
+                    REPEAT
+                        
+                    UNTIL 0
+                END Test.
+
+                """,
                 "The condition needs to return a logical condition");
         }
 
@@ -100,15 +108,17 @@ END Test.
         public void TestAssignableAddVars()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x, y: INTEGER;
+                """
+                MODULE Test; 
+                VAR
+                  x, y: INTEGER;
 
-BEGIN 
-    x := 2;
-    y := x + y
-END Test.
-");
+                BEGIN 
+                    x := 2;
+                    y := x + y
+                END Test.
+
+                """);
             Assert.Equal(2, m.Block.Statements.Count);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
             var ast = (AssignmentStatement) m.Block.Statements[1];
@@ -123,19 +133,21 @@ END Test.
         public void TestAssignableArraySimpleFail()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-TYPE
-  t = RECORD a: INTEGER END;
-  a = ARRAY 5 OF INTEGER;
+                """
+                MODULE Test; 
+                TYPE
+                  t = RECORD a: INTEGER END;
+                  a = ARRAY 5 OF INTEGER;
 
-VAR
-  x : t;
-  y : a;
+                VAR
+                  x : t;
+                  y : a;
 
-BEGIN 
-    y := x
-END Test.
-",
+                BEGIN 
+                    y := x
+                END Test.
+
+                """,
                 "Left & right side do not match types");
         }
 
@@ -143,14 +155,16 @@ END Test.
         public void TestAssignableBoolInt()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: BOOLEAN;
+                """
+                MODULE Test; 
+                VAR
+                  x: BOOLEAN;
 
-BEGIN 
-    x := 1;
-END Test.
-");
+                BEGIN 
+                    x := 1;
+                END Test.
+
+                """);
             Assert.Single(m.Block.Statements);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
             var ast = (AssignmentStatement) m.Block.Statements[0];
@@ -165,14 +179,16 @@ END Test.
         {
             var errors = new List<CompilerError>();
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: BOOLEAN;
+                """
+                MODULE Test; 
+                VAR
+                  x: BOOLEAN;
 
-BEGIN 
-    x := 1.234;
-END Test.
-",
+                BEGIN 
+                    x := 1.234;
+                END Test.
+
+                """,
                 errors);
             Assert.Single(errors);
             Assert.Equal("Left & right side do not match types", errors.First().Message);
@@ -182,14 +198,16 @@ END Test.
         public void TestAssignableFailSymbol()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: ARRAY 5 OF INTEGER;
+                """
+                MODULE Test; 
+                VAR
+                  x: ARRAY 5 OF INTEGER;
 
-BEGIN 
-    x[1] = 2
-END Test.
-",
+                BEGIN 
+                    x[1] = 2
+                END Test.
+
+                """,
                 "mismatched input '=' expecting ':='",
                 "Cannot parse right side of assignment");
         }
@@ -198,15 +216,17 @@ END Test.
         public void TestAssignableUnaryInt()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: INTEGER;
+                """
+                MODULE Test; 
+                VAR
+                  x: INTEGER;
 
-BEGIN 
-    x := 0;
-    x := -x;
-END Test.
-");
+                BEGIN 
+                    x := 0;
+                    x := -x;
+                END Test.
+
+                """);
             Assert.Equal(2, m.Block.Statements.Count);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
             var ast = (AssignmentStatement) m.Block.Statements[1];
@@ -221,14 +241,16 @@ END Test.
         public void TestAssignableVarNotFound()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: INTEGER;
+                """
+                MODULE Test; 
+                VAR
+                  x: INTEGER;
 
-BEGIN 
-    x := y
-END Test.
-",
+                BEGIN 
+                    x := y
+                END Test.
+
+                """,
                 "Unknown identifier: y");
         }
 
@@ -237,15 +259,17 @@ END Test.
         {
             var errors = new List<CompilerError>();
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: ARRAY 5 OF INTEGER;
-  y: ARRAY 5 OF INTEGER;
+                """
+                MODULE Test; 
+                VAR
+                  x: ARRAY 5 OF INTEGER;
+                  y: ARRAY 5 OF INTEGER;
 
-BEGIN 
-    x := y;
-END Test.
-",
+                BEGIN 
+                    x := y;
+                END Test.
+
+                """,
                 errors);
             Assert.Single(errors);
             Assert.Equal("Left & right side do not match types", errors.First().Message);
@@ -255,14 +279,16 @@ END Test.
         public void TestAssignFailVarNotFound()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: INTEGER;
+                """
+                MODULE Test; 
+                VAR
+                  x: INTEGER;
 
-BEGIN 
-    y := 2
-END Test.
-",
+                BEGIN 
+                    y := 2
+                END Test.
+
+                """,
                 "Variable y not known");
         }
 
@@ -270,11 +296,13 @@ END Test.
         public void TestIfNotBool()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-BEGIN 
-    IF 1+1 THEN WriteString('Yes') ELSE WriteString ('No') END
-END Test.
-",
+                """
+                MODULE Test; 
+                BEGIN 
+                    IF 1+1 THEN WriteString('Yes') ELSE WriteString ('No') END
+                END Test.
+
+                """,
                 "The condition needs to return a logical condition");
         }
 
@@ -282,12 +310,14 @@ END Test.
         public void TestRepeatNotBool()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-BEGIN 
-    REPEAT
-    UNTIL 1+1
-END Test.
-",
+                """
+                MODULE Test; 
+                BEGIN 
+                    REPEAT
+                    UNTIL 1+1
+                END Test.
+
+                """,
                 "The condition needs to return a logical condition");
         }
 
@@ -295,12 +325,14 @@ END Test.
         public void TestWhileNotBool()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-BEGIN 
-    WHILE 1+1 DO
-    END
-END Test.
-",
+                """
+                MODULE Test; 
+                BEGIN 
+                    WHILE 1+1 DO
+                    END
+                END Test.
+
+                """,
                 "The condition needs to return a logical condition");
         }
 
@@ -311,15 +343,17 @@ END Test.
         public void TwoStatements()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  x: INTEGER;
+                """
+                MODULE Test; 
+                VAR
+                  x: INTEGER;
 
-BEGIN 
-    x := 1;
-    x := 2
-END Test.
-");
+                BEGIN 
+                    x := 1;
+                    x := 2
+                END Test.
+
+                """);
             Assert.Equal(2, m.Block.Statements.Count);
             Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
             var ast = (AssignmentStatement) m.Block.Statements[0];

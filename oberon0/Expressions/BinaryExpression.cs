@@ -13,11 +13,11 @@ namespace Oberon0.Compiler.Expressions
 {
     public class BinaryExpression : Expression
     {
-        public Expression LeftHandSide { get; set; }
+        public required Expression LeftHandSide { get; set; }
 
-        public Expression RightHandSide { get; set; }
+        public Expression? RightHandSide { get; set; }
 
-        internal ArithmeticOperation Operation { get; private set; }
+        public required ArithmeticOperation Operation { get; set; }
 
         /// <summary>
         ///     Creates the specified binary expression.
@@ -27,7 +27,7 @@ namespace Oberon0.Compiler.Expressions
         /// <param name="right">The right hand side.</param>
         /// <param name="block">The block to handle.</param>
         /// <returns>A binary expression.</returns>
-        public static BinaryExpression Create(int tokenType, Expression left, Expression right, Block block)
+        public static BinaryExpression Create(int tokenType, Expression left, Expression? right, Block block)
         {
             ArithmeticOperation op;
             BinaryExpression result;
@@ -59,15 +59,10 @@ namespace Oberon0.Compiler.Expressions
 
         public override string ToString()
         {
-            if (RightHandSide == null)
+            return RightHandSide == null
                 // unary
-            {
-                return
-                    $"{OberonGrammarLexer.DefaultVocabulary.GetSymbolicName(Operator)} ({LeftHandSide.TargetType:G}) -> {TargetType}";
-            }
-
-            return
-                $"{OberonGrammarLexer.DefaultVocabulary.GetSymbolicName(Operator)} ({LeftHandSide.TargetType:G}, {RightHandSide.TargetType:G}) -> {TargetType}";
+                ? $"{OberonGrammarLexer.DefaultVocabulary.GetSymbolicName(Operator)} ({LeftHandSide.TargetType:G}) -> {TargetType}" 
+                : $"{OberonGrammarLexer.DefaultVocabulary.GetSymbolicName(Operator)} ({LeftHandSide.TargetType:G}, {RightHandSide.TargetType:G}) -> {TargetType}";
         }
     }
 }

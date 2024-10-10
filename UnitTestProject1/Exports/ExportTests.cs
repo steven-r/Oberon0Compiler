@@ -18,14 +18,16 @@ namespace Oberon0.Compiler.Tests.Exports
         public void ModuleExportConst()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test;
-CONST
-  TestConst* = 1;
-  LocalConst = 2;
+                """
+                MODULE Test;
+                CONST
+                  TestConst* = 1;
+                  LocalConst = 2;
 
-BEGIN
-    WriteInt(TestConst)
-END Test.");
+                BEGIN
+                    WriteInt(TestConst)
+                END Test.
+                """);
 
             var c = m.Block.LookupVar("TestConst");
             Assert.NotNull(c);
@@ -43,12 +45,14 @@ END Test.");
         public void ModuleExportGlobalFail()
         {
             TestHelper.CompileString(
-                @"MODULE Test;
-PROCEDURE TestProc(VAR x*: INTEGER);
-BEGIN
-END TestProc;
+                """
+                MODULE Test;
+                PROCEDURE TestProc(VAR x*: INTEGER);
+                BEGIN
+                END TestProc;
 
-END Test.",
+                END Test.
+                """,
                 "no viable alternative at input 'VARx*'",
                 "extraneous input ')' expecting ';'",
                 "Exportable elements can only be defined as global");
@@ -58,14 +62,16 @@ END Test.",
         public void ModuleExportGlobalFailConst()
         {
             TestHelper.CompileString(
-                @"MODULE Test;
-PROCEDURE TestProc;
-CONST
-    x* = 21;
-BEGIN
-END TestProc;
+                """
+                MODULE Test;
+                PROCEDURE TestProc;
+                CONST
+                    x* = 21;
+                BEGIN
+                END TestProc;
 
-END Test.",
+                END Test.
+                """,
                 "Exportable elements can only be defined as global");
         }
 
@@ -73,14 +79,16 @@ END Test.",
         public void ModuleExportGlobalFailType()
         {
             TestHelper.CompileString(
-                @"MODULE Test;
-PROCEDURE TestProc;
-TYPE
-    t* = INTEGER;
-BEGIN
-END TestProc;
+                """
+                MODULE Test;
+                PROCEDURE TestProc;
+                TYPE
+                    t* = INTEGER;
+                BEGIN
+                END TestProc;
 
-END Test.",
+                END Test.
+                """,
                 "Exportable elements can only be defined as global");
         }
 
@@ -88,14 +96,16 @@ END Test.",
         public void ModuleExportGlobalFailVar()
         {
             TestHelper.CompileString(
-                @"MODULE Test;
-PROCEDURE TestProc;
-VAR
-    x*: INTEGER;
-BEGIN
-END TestProc;
+                """
+                MODULE Test;
+                PROCEDURE TestProc;
+                VAR
+                    x*: INTEGER;
+                BEGIN
+                END TestProc;
 
-END Test.",
+                END Test.
+                """,
                 "Exportable elements can only be defined as global");
         }
 
@@ -103,9 +113,11 @@ END Test.",
         public void ModuleExportTest()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test;
+                """
+                MODULE Test;
 
-END Test.");
+                END Test.
+                """);
             Assert.False(m.HasExports);
         }
 
@@ -113,13 +125,15 @@ END Test.");
         public void ModuleExportType()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test;
-TYPE
-  ExportType* = RECORD a: INTEGER END;
-  ExportSimple* = INTEGER; (* check if integer is changed as well *)
-  LocalSimple = INTEGER;
+                """
+                MODULE Test;
+                TYPE
+                  ExportType* = RECORD a: INTEGER END;
+                  ExportSimple* = INTEGER; (* check if integer is changed as well *)
+                  LocalSimple = INTEGER;
 
-END Test.");
+                END Test.
+                """);
 
             var t = m.Block.LookupType("ExportType");
             Assert.NotNull(t);
@@ -142,17 +156,19 @@ END Test.");
         public void ModuleExportTypeExportCheck()
         {
             TestHelper.CompileString(
-                @"MODULE Test;
-TYPE
-  TestType = INTEGER;
-  ExportType* = INTEGER;
+                """
+                MODULE Test;
+                TYPE
+                  TestType = INTEGER;
+                  ExportType* = INTEGER;
 
-VAR
-  TestVar* : TestType;
-  TestVar2* : ExportType;
-  ExportVar2* : INTEGER;
+                VAR
+                  TestVar* : TestType;
+                  TestVar2* : ExportType;
+                  ExportVar2* : INTEGER;
 
-END Test.",
+                END Test.
+                """,
                 "Non-basic type (TestType) need to be exportable if used on exportable elements.");
         }
 
@@ -160,11 +176,13 @@ END Test.",
         public void ModuleExportVar()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test;
-VAR
-  TestVar* : INTEGER;
+                """
+                MODULE Test;
+                VAR
+                  TestVar* : INTEGER;
 
-END Test.");
+                END Test.
+                """);
 
             var c = m.Block.LookupVar("TestVar");
             Assert.NotNull(c);
@@ -176,11 +194,13 @@ END Test.");
         public void ModuleExportVarMult()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test;
-VAR
-  a, TestVar*, c : INTEGER;
+                """
+                MODULE Test;
+                VAR
+                  a, TestVar*, c : INTEGER;
 
-END Test.");
+                END Test.
+                """);
 
             var c = m.Block.LookupVar("TestVar");
             Assert.NotNull(c);
@@ -198,16 +218,18 @@ END Test.");
         public void NestedProcFailTest()
         {
             TestHelper.CompileString(
-                @"MODULE Test;
-PROCEDURE TestProc;
-    PROCEDURE Fail*;
-    BEGIN  
-    END Fail;
+                """
+                MODULE Test;
+                PROCEDURE TestProc;
+                    PROCEDURE Fail*;
+                    BEGIN  
+                    END Fail;
 
-BEGIN
-END TestProc;
+                BEGIN
+                END TestProc;
 
-END Test.",
+                END Test.
+                """,
                 "Exportable elements can only be defined as global");
         }
 
@@ -215,14 +237,16 @@ END Test.",
         public void ProcExportTest()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test;
-PROCEDURE TestProc*;
-BEGIN
-END TestProc;
+                """
+                MODULE Test;
+                PROCEDURE TestProc*;
+                BEGIN
+                END TestProc;
 
-END Test.");
+                END Test.
+                """);
 
-            var p = m.Block.LookupFunction("TestProc", null);
+            var p = m.Block.LookupFunction("TestProc");
             Assert.NotNull(p);
             Assert.True(p.Exportable);
             Assert.True(m.HasExports);

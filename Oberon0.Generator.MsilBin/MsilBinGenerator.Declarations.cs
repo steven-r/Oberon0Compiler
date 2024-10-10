@@ -110,7 +110,7 @@ namespace Oberon0.Generator.MsilBin
         /// </para>
         /// <para>
         /// To create a structure that is valid for the intermediate code, those fields get a unique name <code>__internal__{id}</code>
-        /// where id is a increasing counter.
+        /// where id is an increasing counter.
         /// </para>
         /// </remarks>
         private ClassDeclarationSyntax GenerateRecordType(RecordTypeDefinition recordType)
@@ -178,11 +178,12 @@ namespace Oberon0.Generator.MsilBin
                 return GenerateSimpleVariableDeclaration(declaration);
             }
 
+            // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
             return declaration.Type.Type switch
             {
-                BaseTypes.Array  => GenerateArrayVariableDefinition(declaration),
-                BaseTypes.Record => GenerateRecordVariableDeclaration(declaration),
-                _                => throw new NotImplementedException()
+                BaseTypes.Array   => GenerateArrayVariableDefinition(declaration),
+                BaseTypes.Record  => GenerateRecordVariableDeclaration(declaration),
+                _                 => throw new NotImplementedException()
             };
         }
 
