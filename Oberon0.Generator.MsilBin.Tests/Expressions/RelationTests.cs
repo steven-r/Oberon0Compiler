@@ -11,97 +11,89 @@ using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Oberon0.Generator.MsilBin.Tests.Expressions
+namespace Oberon0.Generator.MsilBin.Tests.Expressions;
+
+public class RelationTests(ITestOutputHelper output)
 {
-    public class RelationTests
+    [Fact]
+    public void TestGreaterEqual()
     {
-        private readonly ITestOutputHelper _output;
+        const string source = """
+                              MODULE TestGreaterEqual;
+                              VAR
+                                x, y: INTEGER;
+                                res: BOOLEAN;
 
-        public RelationTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
+                              BEGIN
+                                  ReadInt(x);
+                                  ReadInt(y);
+                                  IF (x >= y) THEN res := TRUE ELSE res := FALSE END;
+                                  WriteBool(res);
+                                  WriteLn
+                              END TestGreaterEqual.
+                              """;
+        var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
-        [Fact]
-        public void TestGreaterEqual()
-        {
-            const string source = @"
-MODULE TestGreaterEqual;
-VAR
-  x, y: INTEGER;
-  res: BOOLEAN;
+        Assert.NotEmpty(code);
 
-BEGIN
-    ReadInt(x);
-    ReadInt(y);
-    IF (x >= y) THEN res := TRUE ELSE res := FALSE END;
-    WriteBool(res);
-    WriteLn
-END TestGreaterEqual.
-";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-            Assert.NotEmpty(code);
+        var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+        Assert.True(assembly != null);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        using var output1 = new StringWriter();
+        Runner.Execute(assembly, output1, new StringReader("5" + Environment.NewLine + "3"));
+        Assert.Equal($"{true}\n", output1.ToString().NlFix());
 
-            var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+        var sb = output1.GetStringBuilder();
+        sb.Remove(0, sb.Length);
+        Runner.Execute(assembly, output1, new StringReader("3" + Environment.NewLine + "5"));
+        Assert.Equal($"{false}\n", output1.ToString().NlFix());
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output, new StringReader("5" + Environment.NewLine + "3"));
-            Assert.Equal($"{true}\n", output.ToString().NlFix());
+        sb = output1.GetStringBuilder();
+        sb.Remove(0, sb.Length);
+        Runner.Execute(assembly, output1, new StringReader("5" + Environment.NewLine + "5"));
+        Assert.Equal($"{true}\n", output1.ToString().NlFix());
+    }
 
-            var sb = output.GetStringBuilder();
-            sb.Remove(0, sb.Length);
-            Runner.Execute(assembly, output, new StringReader("3" + Environment.NewLine + "5"));
-            Assert.Equal($"{false}\n", output.ToString().NlFix());
+    [Fact]
+    public void TestLessEqual()
+    {
+        const string source = """
+                              MODULE TestLessEqual;
+                              VAR
+                                x, y: INTEGER;
+                                res: BOOLEAN;
 
-            sb = output.GetStringBuilder();
-            sb.Remove(0, sb.Length);
-            Runner.Execute(assembly, output, new StringReader("5" + Environment.NewLine + "5"));
-            Assert.Equal($"{true}\n", output.ToString().NlFix());
-        }
+                              BEGIN
+                                  ReadInt(x);
+                                  ReadInt(y);
+                                  IF (x <= y) THEN res := TRUE ELSE res := FALSE END;
+                                  WriteBool(res);
+                                  WriteLn
+                              END TestLessEqual.
+                              """;
+        var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
-        [Fact]
-        public void TestLessEqual()
-        {
-            const string source = @"
-MODULE TestLessEqual;
-VAR
-  x, y: INTEGER;
-  res: BOOLEAN;
+        Assert.NotEmpty(code);
 
-BEGIN
-    ReadInt(x);
-    ReadInt(y);
-    IF (x <= y) THEN res := TRUE ELSE res := FALSE END;
-    WriteBool(res);
-    WriteLn
-END TestLessEqual.
-";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-            Assert.NotEmpty(code);
+        var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+        Assert.True(assembly != null);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        using var output1 = new StringWriter();
+        Runner.Execute(assembly, output1, new StringReader("5" + Environment.NewLine + "3"));
+        Assert.Equal($"{false}\n", output1.ToString().NlFix());
 
-            var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+        var sb = output1.GetStringBuilder();
+        sb.Remove(0, sb.Length);
+        Runner.Execute(assembly, output1, new StringReader("5" + Environment.NewLine + "5"));
+        Assert.Equal($"{true}\n", output1.ToString().NlFix());
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output, new StringReader("5" + Environment.NewLine + "3"));
-            Assert.Equal($"{false}\n", output.ToString().NlFix());
-
-            var sb = output.GetStringBuilder();
-            sb.Remove(0, sb.Length);
-            Runner.Execute(assembly, output, new StringReader("5" + Environment.NewLine + "5"));
-            Assert.Equal($"{true}\n", output.ToString().NlFix());
-
-            sb = output.GetStringBuilder();
-            sb.Remove(0, sb.Length);
-            Runner.Execute(assembly, output, new StringReader("3" + Environment.NewLine + "5"));
-            Assert.Equal($"{true}\n", output.ToString().NlFix());
-        }
+        sb = output1.GetStringBuilder();
+        sb.Remove(0, sb.Length);
+        Runner.Execute(assembly, output1, new StringReader("3" + Environment.NewLine + "5"));
+        Assert.Equal($"{true}\n", output1.ToString().NlFix());
     }
 }

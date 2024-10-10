@@ -7,7 +7,6 @@
 
 using System;
 using System.Diagnostics;
-using JetBrains.Annotations;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
@@ -30,9 +29,9 @@ namespace Oberon0.Compiler.Definitions
         public ExternalFunctionDeclaration(
             string name,
             Block block,
-            [NotNull] TypeDefinition returnType,
-            [NotNull] string className,
-            [NotNull] string methodName,
+            TypeDefinition returnType,
+            string className,
+            string methodName,
             params ProcedureParameterDeclaration[] parameters)
             : base(name, block, returnType, parameters)
         {

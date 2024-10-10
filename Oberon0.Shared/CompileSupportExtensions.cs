@@ -23,7 +23,7 @@ namespace Oberon0.Shared
     public static class CompileSupportExtensions
     {
         /// <summary>
-        ///     Create a intermediate structure containing the compiled c# code which can be emitted afterwards to memory/disk
+        ///     Create an intermediate structure containing the compiled c# code which can be emitted afterward to memory/disk
         /// </summary>
         /// <param name="syntaxTree">The C# AST</param>
         /// <param name="assemblyName">The target assembly name. The file extension depends on <see cref="isExecutable" />.</param>
@@ -33,8 +33,8 @@ namespace Oberon0.Shared
         public static CSharpCompilation CreateCompiledCSharpCode(this SyntaxTree syntaxTree, string assemblyName,
                                                                  ICodeGenerator codeGenerator, bool isExecutable = true)
         {
-            var trustedAssembliesPaths =
-                ((string) AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")).Split(Path.PathSeparator);
+            string[] trustedAssembliesPaths =
+                ((string) AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))?.Split(Path.PathSeparator) ?? [];
             var references = trustedAssembliesPaths
                              //.Where(p => neededAssemblies.Contains(Path.GetFileNameWithoutExtension(p)) || p.Contains("\\System.") && !p.Contains("\\System.Private"))
                             .Select(p => MetadataReference.CreateFromFile(p))

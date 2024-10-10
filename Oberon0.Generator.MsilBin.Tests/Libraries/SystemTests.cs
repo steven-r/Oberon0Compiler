@@ -13,28 +13,23 @@ using Xunit.Abstractions;
 namespace Oberon0.Generator.MsilBin.Tests.Libraries
 {
     [Collection("Sequential")]
-    public class SystemTests
+    public class SystemTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public SystemTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Fact]
         public void SystemToStringBool()
         {
-            const string source = @"MODULE ToStringTest;
-VAR
-  s: STRING;
+            const string source = """
+                                  MODULE ToStringTest;
+                                  VAR
+                                    s: STRING;
 
-BEGIN
-  s := ToString(TRUE);
-  WriteString(s);
-  WriteLn
-END ToStringTest.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+                                  BEGIN
+                                    s := ToString(TRUE);
+                                    WriteString(s);
+                                    WriteLn
+                                  END ToStringTest.
+                                  """;
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -43,24 +38,26 @@ END ToStringTest.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("True\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("True\n", output1.ToString().NlFix());
         }
 
         [Fact]
         public void SystemToStringInt()
         {
-            const string source = @"MODULE ToStringTest;
-VAR
-  s: STRING;
+            const string source = """
+                                  MODULE ToStringTest;
+                                  VAR
+                                    s: STRING;
 
-BEGIN
-  s := ToString(12);
-  WriteString(s);
-  WriteLn
-END ToStringTest.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+                                  BEGIN
+                                    s := ToString(12);
+                                    WriteString(s);
+                                    WriteLn
+                                  END ToStringTest.
+                                  """;
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -69,24 +66,26 @@ END ToStringTest.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("12\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("12\n", output1.ToString().NlFix());
         }
 
         [Fact]
         public void SystemToStringReal()
         {
-            const string source = @"MODULE ToStringTest;
-VAR
-  s: STRING;
+            const string source = """
+                                  MODULE ToStringTest;
+                                  VAR
+                                    s: STRING;
 
-BEGIN
-  s := ToString(12.5);
-  WriteString(s);
-  WriteLn
-END ToStringTest.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+                                  BEGIN
+                                    s := ToString(12.5);
+                                    WriteString(s);
+                                    WriteLn
+                                  END ToStringTest.
+                                  """;
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -95,9 +94,9 @@ END ToStringTest.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("12.5\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("12.5\n", output1.ToString().NlFix());
         }
     }
 }

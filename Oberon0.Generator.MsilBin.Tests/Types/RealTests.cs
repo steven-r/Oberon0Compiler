@@ -12,22 +12,22 @@ using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Types
 {
-    public class RealTests
+    public class RealTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public RealTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         private void CheckCodeReal(string sourceCode, string expectedResults)
         {
             // ReSharper disable once StringLiteralTypo
-            string source = $@"MODULE Test; CONST c = 1.2; i = 42; VAR r, s, t, x, y, z: REAL; 
-BEGIN {sourceCode} IF isinfinity(z) THEN WriteString('Infinity') ELSE WriteReal(z) END; WriteLn END Test.";
+            string source = $"""
+                             MODULE Test; 
+                                CONST c = 1.2; i = 42; 
+                                VAR r, s, t, x, y, z: REAL; 
+                             BEGIN {sourceCode} 
+                                IF isinfinity(z) THEN WriteString('Infinity') ELSE WriteReal(z) END; 
+                                WriteLn
+                             END Test.
+                             """;
 
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
             Assert.NotEmpty(code);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
@@ -35,33 +35,35 @@ BEGIN {sourceCode} IF isinfinity(z) THEN WriteString('Infinity') ELSE WriteReal(
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal(expectedResults, output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal(expectedResults, output1.ToString().NlFix());
         }
 
         [Fact]
         public void TestEpsilon()
         {
-            string source = @"MODULE Test; 
-CONST 
-    expected = 10.8511834932;
-VAR 
-    r, s, z: REAL; 
-    b, c: BOOLEAN;
+            const string source = """
+                                  MODULE Test; 
+                                  CONST 
+                                      expected = 10.8511834932;
+                                  VAR 
+                                      r, s, z: REAL; 
+                                      b, c: BOOLEAN;
 
-BEGIN
-    r := 1.5;
-    s := 7.2341223288;
-    z := r * s;
-    b := (r - expected) < EPSILON;
-    c := r = expected;
-    WriteBool(b);
-    WriteString(',');
-    WriteBool(c);
-    WriteLn 
-END Test.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+                                  BEGIN
+                                      r := 1.5;
+                                      s := 7.2341223288;
+                                      z := r * s;
+                                      b := (r - expected) < EPSILON;
+                                      c := r = expected;
+                                      WriteBool(b);
+                                      WriteString(',');
+                                      WriteBool(c);
+                                      WriteLn 
+                                  END Test.
+                                  """;
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
             Assert.NotEmpty(code);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
@@ -69,9 +71,9 @@ END Test.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal($"{true},{false}\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal($"{true},{false}\n", output1.ToString().NlFix());
         }
 
         [Fact]

@@ -16,7 +16,7 @@ namespace Oberon0.Generator.MsilBin.Tests
     /// </summary>
     /// <remarks>
     ///     When using <b>xcode</b> please ensure that tests are executed sequential. Please use
-    ///     <code>[Colletion("Sequential")]</code>
+    ///     <code>[Collection("Sequential")]</code>
     ///     as a class attribute.
     /// </remarks>
     internal static class Runner

@@ -350,7 +350,7 @@ namespace Oberon0.Compiler
                 return;
             }
 
-            var vs = new VariableSelector(null);
+            var vs = new VariableSelector();
             vs.AddRange(context._i.Select(selElement => selElement.selRet));
             if (!vs.Any())
             {
@@ -520,22 +520,19 @@ namespace Oberon0.Compiler
                 return SimpleTypeDefinition.IntType;
             }
 
-            foreach (var declaration in recordType.Elements)
+            foreach (var declaration in recordType.Elements.Where(declaration => declaration.Name == identifierSelector.Name))
             {
-                if (declaration.Name == identifierSelector.Name)
-                {
-                    identifierSelector.Element = declaration;
+                identifierSelector.Element = declaration;
 
-                    // found
-                    return declaration.Type;
-                }
+                // found
+                return declaration.Type;
             }
 
             parser.NotifyErrorListeners(identifierSelector.Token, "Element not found in underlying type", null);
             return SimpleTypeDefinition.VoidType;
         }
 
-        private void CheckExportable(IToken exportElement, bool isExportable, bool checkParent = false)
+        private void CheckExportable(IToken? exportElement, bool isExportable, bool checkParent = false)
         {
             if (isExportable && (parser.currentBlock.Parent != null && !checkParent ||
                 checkParent && parser.currentBlock.Parent?.Parent != null))

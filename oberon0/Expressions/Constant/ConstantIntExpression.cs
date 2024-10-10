@@ -6,7 +6,6 @@
 #endregion
 
 using System;
-using JetBrains.Annotations;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Constant
@@ -19,8 +18,9 @@ namespace Oberon0.Compiler.Expressions.Constant
         }
 
         public ConstantIntExpression(int value)
-            : base(SimpleTypeDefinition.IntType, value)
+            : base(value)
         {
+            TargetType = SimpleTypeDefinition.IntType;
             Value = value;
         }
 
@@ -28,7 +28,6 @@ namespace Oberon0.Compiler.Expressions.Constant
         ///     Gets standard Constant to represent a zero constant
         /// </summary>
         /// <value>The zero.</value>
-        [NotNull]
         public static ConstantIntExpression Zero { get; }
 
         public override string ToString()

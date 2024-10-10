@@ -18,7 +18,7 @@ namespace Oberon0.Compiler.Expressions
             params Expression[] parameters)
         {
             FunctionDeclaration = functionDeclaration;
-            Parameters = new List<Expression>(parameters);
+            Parameters = [..parameters];
             TargetType = block.LookupTypeByBaseType(functionDeclaration.ReturnType.Type);
         }
 

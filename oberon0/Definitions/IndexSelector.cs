@@ -10,16 +10,8 @@ using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Definitions
 {
-    public class IndexSelector : BaseSelectorElement
+    public class IndexSelector(Expression index, IToken tokenStart) : BaseSelectorElement(tokenStart)
     {
-#pragma warning disable CS3001 // Argument type is not CLS-compliant
-        public IndexSelector(Expression index, IToken tokenStart)
-            : base(tokenStart)
-#pragma warning restore CS3001 // Argument type is not CLS-compliant
-        {
-            IndexDefinition = index;
-        }
-
-        public Expression IndexDefinition { get; set; }
+        public Expression IndexDefinition { get; set; } = index;
     }
 }

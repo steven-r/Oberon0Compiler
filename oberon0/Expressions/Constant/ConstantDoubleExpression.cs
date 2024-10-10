@@ -6,29 +6,27 @@
 #endregion
 
 using System;
-using JetBrains.Annotations;
-using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Types;
 
-namespace Oberon0.Compiler.Expressions
+namespace Oberon0.Compiler.Expressions.Constant
 {
     public class ConstantDoubleExpression : ConstantExpression
     {
+        public ConstantDoubleExpression(double value)
+            : base(value)
+        {
+            TargetType = SimpleTypeDefinition.RealType;
+        }
+
         static ConstantDoubleExpression()
         {
             Zero = new ConstantDoubleExpression(0);
-        }
-
-        public ConstantDoubleExpression(double value)
-            : base(SimpleTypeDefinition.RealType, value)
-        {
         }
 
         /// <summary>
         ///     Gets the standard Constant to represent a zero constant
         /// </summary>
         /// <value>The zero.</value>
-        [NotNull]
         public static ConstantDoubleExpression Zero { get; }
 
         public override string ToString()

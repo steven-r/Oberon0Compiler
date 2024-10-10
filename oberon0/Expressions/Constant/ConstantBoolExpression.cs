@@ -13,8 +13,9 @@ namespace Oberon0.Compiler.Expressions.Constant
     public class ConstantBoolExpression : ConstantExpression
     {
         public ConstantBoolExpression(bool value)
-            : base(SimpleTypeDefinition.BoolType, value)
+            : base(value)
         {
+            TargetType = SimpleTypeDefinition.BoolType;
         }
 
         public override int ToInt32()
@@ -34,7 +35,7 @@ namespace Oberon0.Compiler.Expressions.Constant
 
         public override string ToString()
         {
-            return Value.ToString();
+            return Value.ToString() ?? "FALSE";
         }
     }
 }

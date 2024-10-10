@@ -12,34 +12,29 @@ using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Types
 {
-    public class RecordTests
+    public class RecordTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public RecordTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Fact]
         public void Test1()
         {
-            const string source = @"MODULE Test; 
-TYPE 
-  rType = RECORD
-    a: INTEGER;
-    b: STRING
-  END;
+            const string source = """
+                                  MODULE Test; 
+                                  TYPE 
+                                    rType = RECORD
+                                      a: INTEGER;
+                                      b: STRING
+                                    END;
 
-VAR 
-  demo: rType;
+                                  VAR 
+                                    demo: rType;
 
-BEGIN
-  demo.a := 1;
-  WriteInt(demo.a);
-  WriteLn
-END Test.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+                                  BEGIN
+                                    demo.a := 1;
+                                    WriteInt(demo.a);
+                                    WriteLn
+                                  END Test.
+                                  """;
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -48,9 +43,9 @@ END Test.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("1\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("1\n", output1.ToString().NlFix());
         }
     }
 }

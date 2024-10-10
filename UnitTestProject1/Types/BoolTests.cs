@@ -22,13 +22,15 @@ namespace Oberon0.Compiler.Tests.Types
         public void TestAssignCheat()
         {
             var m = TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: BOOLEAN;
+                """
+                MODULE TestAssignment;
+                VAR r: BOOLEAN;
 
-BEGIN
-    r := TRUE;
-END TestAssignment.
-");
+                BEGIN
+                    r := TRUE;
+                END TestAssignment.
+
+                """);
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             var statement = m.Block.Statements[0] as AssignmentStatement;
@@ -45,13 +47,15 @@ END TestAssignment.
         public void TestAssignConst()
         {
             var m = TestHelper.CompileString(
-                @"MODULE TestAssignment;
-VAR r: BOOLEAN;
+                """
+                MODULE TestAssignment;
+                VAR r: BOOLEAN;
 
-BEGIN
-    r := TRUE;
-END TestAssignment.
-");
+                BEGIN
+                    r := TRUE;
+                END TestAssignment.
+
+                """);
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             var statement = m.Block.Statements[0] as AssignmentStatement;

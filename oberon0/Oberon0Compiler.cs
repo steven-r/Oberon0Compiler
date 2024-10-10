@@ -16,11 +16,11 @@ namespace Oberon0.Compiler
     public class Oberon0Compiler
     {
 #pragma warning disable CS3003 // Type is not CLS-compliant
-        private OberonGrammarLexer Lexer { get; set; }
+        private OberonGrammarLexer Lexer { get; set; } = null!;
 #pragma warning restore CS3003 // Type is not CLS-compliant
 
 #pragma warning disable CS3003 // Type is not CLS-compliant
-        public OberonGrammarParser Parser { get; private set; }
+        public OberonGrammarParser Parser { get; private set; } = null!;
 #pragma warning restore CS3003 // Type is not CLS-compliant
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Oberon0.Compiler
         /// <param name="source">The source file/code to compile</param>
         /// <param name="options">Options which can be set (see <see cref="Oberon0CompilerOptions" /> for details)</param>
         /// <returns>A compiled module containing the AST of the source file</returns>
-        public static Module CompileString(string source, Oberon0CompilerOptions options = null)
+        public static Module CompileString(string source, Oberon0CompilerOptions? options = null)
         {
             var instance = new Oberon0Compiler();
 

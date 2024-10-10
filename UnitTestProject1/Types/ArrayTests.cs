@@ -21,16 +21,18 @@ namespace Oberon0.Compiler.Tests.Types
         public void ArrayFail1TestIndex0()
         {
             TestHelper.CompileString(
-                @"
-MODULE test; 
-TYPE 
-    aType= ARRAY 5 OF INTEGER;
-VAR 
-  a : aType;
-                
-BEGIN
-    a[0] := 1;
-END test.",
+                """
+
+                MODULE test; 
+                TYPE 
+                    aType= ARRAY 5 OF INTEGER;
+                VAR 
+                  a : aType;
+                                
+                BEGIN
+                    a[0] := 1;
+                END test.
+                """,
                 "Array index out of bounds", "Left & right side do not match types");
         }
 
@@ -38,15 +40,17 @@ END test.",
         public void ArrayTestIndex5()
         {
             var m = TestHelper.CompileString(
-                @"MODULE test; 
-TYPE 
-    aType= ARRAY 5 OF INTEGER;
-VAR 
-  a : aType;
-                
-BEGIN
-    a[5] := 1;
-END test.");
+                """
+                MODULE test; 
+                TYPE 
+                    aType= ARRAY 5 OF INTEGER;
+                VAR 
+                  a : aType;
+                                
+                BEGIN
+                    a[5] := 1;
+                END test.
+                """);
             Assert.NotNull(m);
             Assert.Single(m.Block.Statements);
             Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
@@ -64,15 +68,17 @@ END test.");
         public void ArrayTestIndexArraySimple()
         {
             TestHelper.CompileString(
-                @"MODULE test; 
-TYPE 
-    aType= ARRAY 5 OF INTEGER;
-VAR 
-  a : RECORD b: INTEGER END;
-                
-BEGIN
-    a[1] := 1;
-END test.",
+                """
+                MODULE test; 
+                TYPE 
+                    aType= ARRAY 5 OF INTEGER;
+                VAR 
+                  a : RECORD b: INTEGER END;
+                                
+                BEGIN
+                    a[1] := 1;
+                END test.
+                """,
                 "Array reference expected", "Left & right side do not match types");
         }
 
@@ -80,15 +86,17 @@ END test.",
         public void ArrayTestIndexRealFail()
         {
             TestHelper.CompileString(
-                @"MODULE test; 
-TYPE 
-    aType= ARRAY 5 OF INTEGER;
-VAR 
-  a : aType;
-                
-BEGIN
-    a[1.234] := 1;
-END test.",
+                """
+                MODULE test; 
+                TYPE 
+                    aType= ARRAY 5 OF INTEGER;
+                VAR 
+                  a : aType;
+                                
+                BEGIN
+                    a[1.234] := 1;
+                END test.
+                """,
                 "Array reference must be INTEGER", "Left & right side do not match types");
         }
 
@@ -96,14 +104,16 @@ END test.",
         public void ArrayType()
         {
             var m = TestHelper.CompileString(
-                @"
-MODULE test; 
-TYPE 
-    aType= ARRAY 5 OF INTEGER;
-VAR 
-  a : aType;
-                
-END test.");
+                """
+
+                MODULE test; 
+                TYPE 
+                    aType= ARRAY 5 OF INTEGER;
+                VAR 
+                  a : aType;
+                                
+                END test.
+                """);
             var type = m.Block.LookupType("aType");
             Assert.NotNull(type);
             var arrayType = type as ArrayTypeDefinition;

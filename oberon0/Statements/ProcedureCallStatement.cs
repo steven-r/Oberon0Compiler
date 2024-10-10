@@ -11,16 +11,11 @@ using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Statements
 {
-    public class ProcedureCallStatement : IStatement
+    public class ProcedureCallStatement(FunctionDeclaration functionDeclaration, List<Expression> parameters)
+        : IStatement
     {
-        public ProcedureCallStatement(FunctionDeclaration functionDeclaration, List<Expression> parameters)
-        {
-            FunctionDeclaration = functionDeclaration;
-            Parameters = parameters;
-        }
+        public List<Expression> Parameters { get; } = parameters;
 
-        public List<Expression> Parameters { get; }
-
-        public FunctionDeclaration FunctionDeclaration { get; }
+        public FunctionDeclaration FunctionDeclaration { get; } = functionDeclaration;
     }
 }

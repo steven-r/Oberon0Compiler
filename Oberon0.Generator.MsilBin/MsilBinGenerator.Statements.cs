@@ -11,7 +11,6 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Solver;
@@ -81,7 +80,7 @@ namespace Oberon0.Generator.MsilBin
                                                                   RepeatStatement repeatStatement)
         {
             var expression = BinaryExpression.Create(OberonGrammarLexer.NOT, repeatStatement.Condition, null,
-                repeatStatement.Block.Parent);
+                repeatStatement.Block.Parent!);
             var compiled = ConstantSolver.Solve(expression, repeatStatement.Block.Parent);
             statements = statements.Add(
                 SyntaxFactory.DoStatement(
@@ -137,7 +136,7 @@ namespace Oberon0.Generator.MsilBin
         private static ExpressionSyntax CallExternalFunction(ExternalFunctionDeclaration efd,
                                                              SyntaxNodeOrTokenList argumentList)
         {
-            var names = efd.ClassName.Split(".");
+            string[] names = efd.ClassName.Split(".");
             ExpressionSyntax current = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
                 MapIdentifierName(names[0]),
                 MapIdentifierName(names.Length > 1 ? names[1] : efd.MethodName));

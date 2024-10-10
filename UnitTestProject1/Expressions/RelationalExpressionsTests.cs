@@ -33,10 +33,10 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void ExpressionNot2()
         {
             var m = new Module(null);
-            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")));
+            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")!));
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.NOT,
-                VariableReferenceExpression.Create(m.Block.LookupVar("a"), null),
+                VariableReferenceExpression.Create(m.Block.LookupVar("a")!, null)!,
                 null,
                 m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as BinaryExpression;
@@ -271,10 +271,10 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void ExpressionRelVar()
         {
             var m = new Module(null);
-            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("INTEGER")));
+            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("INTEGER")!));
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.NOTEQUAL,
-                VariableReferenceExpression.Create(m.Block.LookupVar("a"), null),
+                VariableReferenceExpression.Create(m.Block.LookupVar("a"), null)!,
                 ConstantExpression.Create(10),
                 m.Block);
             var result = ConstantSolver.Solve(e, m.Block) as BinaryExpression;
@@ -286,7 +286,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void ExpressionVarNotFound()
         {
             var m = new Module(null);
-            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")));
+            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")!));
             var var = VariableReferenceExpression.Create(m.Block.LookupVar("b"), null);
             Assert.Null(var);
         }

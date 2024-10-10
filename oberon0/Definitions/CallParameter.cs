@@ -22,17 +22,17 @@ namespace Oberon0.Compiler.Definitions
         /// <summary>
         ///     Gets a value indicating whether the parameter can be used as a var reference.
         /// </summary>
-        public bool CanBeVarReference { get; private set; }
+        public bool CanBeVarReference { get; init; }
 
         /// <summary>
         ///     Gets the target type.
         /// </summary>
-        public TypeDefinition TargetType { get; private set; }
+        public required TypeDefinition TargetType { get; init; }
 
         /// <summary>
         ///     Gets the type name.
         /// </summary>
-        public string TypeName { get; private set; }
+        public required string TypeName { get; init; }
 
         /// <summary>
         ///     Create a parameter list from a list of expressions.
@@ -61,18 +61,15 @@ namespace Oberon0.Compiler.Definitions
         /// <returns>
         ///     The list of call parameters or <c>null</c> in case of error.
         /// </returns>
-        /// <remarks>This functions is for testing only</remarks>
+        /// <remarks>This function is for testing only</remarks>
         [ExcludeFromCodeCoverage]
         internal static IReadOnlyList<CallParameter> CreateFromStringExpression(
-            [NotNull] Block block, string parameters = null)
+            Block block, string? parameters = null)
         {
 #if !DEBUG
             throw new InvalidOperationException("CreateFromStringExpression is only valid for test configurations");
 #else
-            if (block == null)
-            {
-                throw new ArgumentNullException(nameof(block));
-            }
+            ArgumentNullException.ThrowIfNull(block);
 
             var resultList = new List<CallParameter>();
             if (parameters == null)
@@ -82,13 +79,13 @@ namespace Oberon0.Compiler.Definitions
 
             foreach (string element in parameters.Split(','))
             {
-                var callParameter = new CallParameter();
-
                 (var targetType, bool isVar) = Module.GetParameterDeclarationFromString(element, block);
-
-                callParameter.CanBeVarReference = isVar;
-                callParameter.TargetType = targetType;
-                callParameter.TypeName = callParameter.TargetType.Name;
+                var callParameter = new CallParameter()
+                {
+                    CanBeVarReference = isVar,
+                    TargetType = targetType,
+                    TypeName = targetType.Name ?? "<unset>"
+                };
 
                 resultList.Add(callParameter);
             }
@@ -112,7 +109,7 @@ namespace Oberon0.Compiler.Definitions
             {
                 CanBeVarReference = expression is VariableReferenceExpression,
                 TargetType = expression.TargetType,
-                TypeName = expression.TargetType.Name
+                TypeName = expression.TargetType.Name ?? "<unset>"
             };
         }
     }

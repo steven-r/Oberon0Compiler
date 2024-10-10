@@ -6,6 +6,7 @@
     <AssemblyName>Oberon0.Compiler</AssemblyName>
     <Configurations>Debug;Release;Test</Configurations>
     <CodeAnalysisRuleSet>..\.sonarlint\steven-r_oberon0compilercsharp.ruleset</CodeAnalysisRuleSet>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="OberonGrammar.g4" />
@@ -25,5 +26,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Oberon0.System\Oberon0.System.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>

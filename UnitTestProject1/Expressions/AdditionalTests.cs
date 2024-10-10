@@ -21,7 +21,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void ConstantSolverNullInputExceptionForExpression()
         {
             Assert.Throws<ArgumentNullException>(
-                () => ConstantSolver.Solve(null, new Block(null, new Module(null))));
+                () => ConstantSolver.Solve(null!, new Block(null, new Module(null))));
         }
 
         [Fact]
@@ -29,12 +29,12 @@ namespace Oberon0.Compiler.Tests.Expressions
         {
             var b = new Module(null).Block;
             var e = Assert.Throws<ArgumentNullException>(
-                () => new OpRelOp().Operate(null, b, null));
+                () => new OpRelOp().Operate(null!, b, null!));
             Assert.Equal("e", e.ParamName);
             var e1 = Assert.Throws<ArgumentNullException>(
                 () => new OpRelOp().Operate(
                     BinaryExpression.Create(OberonGrammarLexer.PLUS, ConstantExpression.Create(0),
-                        ConstantExpression.Create(1), b), null, null));
+                        ConstantExpression.Create(1), b), null!, null!));
             Assert.Equal("block", e1.ParamName);
         }
     }

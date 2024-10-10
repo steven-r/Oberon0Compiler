@@ -9,19 +9,10 @@ using Antlr4.Runtime;
 
 namespace Oberon0.Compiler.Definitions
 {
-    public class IdentifierSelector : BaseSelectorElement
+    public class IdentifierSelector(string name, IToken tokenStart) : BaseSelectorElement(tokenStart)
     {
-#pragma warning disable CS3001 // Argument type is not CLS-compliant
+        public Declaration Element { get; set; } = null!;
 
-        public IdentifierSelector(string name, IToken tokenStart)
-#pragma warning restore CS3001 // Argument type is not CLS-compliant
-            : base(tokenStart)
-        {
-            Name = name;
-        }
-
-        public Declaration Element { get; set; }
-
-        public string Name { get; }
+        public string Name { get; } = name;
     }
 }

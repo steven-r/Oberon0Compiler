@@ -12,11 +12,11 @@ namespace Oberon0.Compiler.Statements
 {
     public class AssignmentStatement : IStatement
     {
-        public Declaration Variable { get; set; }
+        public required Declaration Variable { get; init; }
 
-        public Expression Expression { get; set; }
+        public required Expression Expression { get; init; }
 
-        public VariableSelector Selector { get; set; }
+        public VariableSelector? Selector { get; set; }
 
         public override string ToString()
         {

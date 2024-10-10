@@ -14,40 +14,35 @@ using Xunit.Abstractions;
 namespace Oberon0.Generator.MsilBin.Tests.Libraries
 {
     [Collection("Sequential")]
-    public class StandardFunctionTests
+    public class StandardFunctionTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public StandardFunctionTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Fact]
         public void TestReadToRecord()
         {
-            const string source = @"MODULE ReadToRecord;
-VAR
-  s: RECORD a : INTEGER END;
+            const string source = """
+                                  MODULE ReadToRecord;
+                                  VAR
+                                    s: RECORD a : INTEGER END;
 
-BEGIN
-  ReadInt(s.a);
-  s.a := s.a + 1;
-  WriteInt(s.a);
-  WriteLn
-END ReadToRecord.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+                                  BEGIN
+                                    ReadInt(s.a);
+                                    s.a := s.a + 1;
+                                    WriteInt(s.a);
+                                    WriteLn
+                                  END ReadToRecord.
+                                  """;
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-            var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+            byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output, new StringReader("12" + Environment.NewLine));
-            Assert.Equal("13\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1, new StringReader("12" + Environment.NewLine));
+            Assert.Equal("13\n", output1.ToString().NlFix());
         }
     }
 }

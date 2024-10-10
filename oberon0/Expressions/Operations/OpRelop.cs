@@ -48,7 +48,7 @@ namespace Oberon0.Compiler.Expressions.Operations
             Block block,
             IArithmeticOpMetadata operationParameters)
         {
-            if (bin.LeftHandSide.IsConst && bin.RightHandSide.IsConst)
+            if (bin.LeftHandSide.IsConst && bin.RightHandSide!.IsConst)
             {
                 var left = (ConstantExpression) bin.LeftHandSide;
                 var right = (ConstantExpression) bin.RightHandSide;

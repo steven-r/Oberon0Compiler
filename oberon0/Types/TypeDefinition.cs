@@ -6,11 +6,12 @@
 #endregion
 
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using Oberon0.Compiler.Generator;
 
 namespace Oberon0.Compiler.Types
 {
-    public abstract class TypeDefinition
+    public abstract class TypeDefinition(BaseTypes baseTypes, bool isInternal)
     {
         /// <summary>
         ///     The name for the type "VOID"
@@ -18,33 +19,28 @@ namespace Oberon0.Compiler.Types
         public const string VoidTypeName = "$$VOID";
 
         protected TypeDefinition(BaseTypes baseTypes)
+            : this(baseTypes, false)
         {
-            Type = baseTypes;
         }
 
-        protected TypeDefinition(BaseTypes baseTypes, bool isInternal)
-        {
-            Type = baseTypes;
-            IsInternal = isInternal;
-        }
-
-        public BaseTypes Type { get; }
+        public BaseTypes Type { get; } = baseTypes;
 
         /// <summary>
         ///     Gets or sets additional information used by the generator engine
         /// </summary>
         /// <value>Generator information.</value>
         [ExcludeFromCodeCoverage]
-        public IGeneratorInfo GeneratorInfo { get; set; }
+        [UsedImplicitly]
+        public IGeneratorInfo? GeneratorInfo { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether the given type declaration is exportable.
         /// </summary>
         public bool Exportable { get; set; }
 
-        public bool IsInternal { get; }
+        public bool IsInternal { get; } = isInternal;
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         ///     Clones the current type and name it <see cref="name" />.

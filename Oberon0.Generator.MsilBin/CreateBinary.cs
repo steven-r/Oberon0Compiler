@@ -24,20 +24,20 @@ namespace Oberon0.Generator.MsilBin
         private readonly ICodeGenerator _codeGenerator;
         private readonly CreateBinaryOptions _options;
 
-        public CreateBinary([JetBrains.Annotations.NotNull] ICodeGenerator codeGenerator, CreateBinaryOptions options = null)
+        public CreateBinary(ICodeGenerator codeGenerator, CreateBinaryOptions? options = null)
         {
+            ArgumentNullException.ThrowIfNull(codeGenerator);
+
             MSBuildLocator.RegisterDefaults();
             _codeGenerator = codeGenerator ?? throw new ArgumentNullException(nameof(codeGenerator));
             _options = SetOptions(options ?? new CreateBinaryOptions());
             if (!Directory.Exists(_options.OutputPath))
             {
-#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one 
-                throw new ArgumentException("Output path does not exist", nameof(options.OutputPath));
-#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one 
+                throw new ArgumentException("Output path does not exist", nameof(options));
             }
         }
 
-        private string getDotnetExe ()
+        private static string GetDotnetExe ()
         {
             string execName = "dotnet";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -79,23 +79,21 @@ namespace Oberon0.Generator.MsilBin
 
         private bool PublishFileToCurrentFolder()
         {
-            return ExecuteProcess(getDotnetExe(), $"publish --output \"{_options.OutputPath}\"");
+            return ExecuteProcess(GetDotnetExe(), $"publish --output \"{_options.OutputPath}\"");
         }
 
         private bool DropFileAndCompile()
         {
             string code = _codeGenerator.IntermediateCode();
             File.WriteAllText(Path.Combine(_options.SolutionPath!, "Program.cs"), code, Encoding.UTF8);
-            return ExecuteProcess(getDotnetExe(), "build --force");
+            return ExecuteProcess(GetDotnetExe(), "build --force");
         }
 
         private static string GetFileHashPath(string path)
         {
-            using (var sha256Hash = SHA256.Create())
-            {
-                string hash = GetHash(sha256Hash, path);
-                return Path.Combine(hash.Substring(0, 2), hash);
-            }
+            using var sha256Hash = SHA256.Create();
+            string hash = GetHash(sha256Hash, path);
+            return Path.Combine(hash[..2], hash);
         }
 
         // from https://docs.microsoft.com/de-de/dotnet/api/system.security.cryptography.hashalgorithm.computehash?view=netcore-3.1
@@ -103,7 +101,7 @@ namespace Oberon0.Generator.MsilBin
         {
 
             // Convert the input string to a byte array and compute the hash.
-            var data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+            byte[] data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
 
             // Create a new string builder to collect the bytes
             // and create a string.
@@ -128,7 +126,7 @@ namespace Oberon0.Generator.MsilBin
 #pragma warning disable S1215 // "GC.Collect" should not be called
                 GC.Collect(); // try to unload blocking resources
 #pragma warning restore S1215 // "GC.Collect" should not be called
-                Directory.Delete(_options.SolutionPath, true);
+                Directory.Delete(_options.SolutionPath!, true);
             }
 
             if (File.Exists(Path.Combine(_options.SolutionPath!, "Program.cs")))
@@ -136,18 +134,18 @@ namespace Oberon0.Generator.MsilBin
                 throw new InvalidDataException("Target directory is not empty");
             }
 
-            Directory.CreateDirectory(_options.SolutionPath);
+            Directory.CreateDirectory(_options.SolutionPath!);
 
             // add new project
             string[] parameters =
-            {
+            [
                 "new",
                 // ReSharper disable once StringLiteralTypo
                 _codeGenerator.Module.HasExports ? "classlib" : "console",
                 "--framework", _options.FrameworkVersion
-            };
+            ];
 
-            string execName = getDotnetExe();
+            string execName = GetDotnetExe();
             return ExecuteProcess(execName, string.Join(' ', parameters)) &&
                 // add AnyClone
                 ExecuteProcess(execName, "add package AnyClone");

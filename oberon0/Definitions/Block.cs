@@ -9,57 +9,65 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Antlr4.Runtime;
+using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
 {
-    public class Block
+    public class Block(Block? parent, Module module)
     {
-        public Block(Block parent, Module module)
-        {
-            Module = module;
-            InitLists();
-            Parent = parent;
-        }
+        public Module Module { get; } = module;
 
-        public Module Module { get; }
-
-        public List<Declaration> Declarations { get; private set; }
+        public List<Declaration> Declarations { get; } = [];
 
 
-        public Block Parent { get; }
+        public Block? Parent { get; } = parent;
 
-        public List<FunctionDeclaration> Procedures { get; private set; }
+        public List<FunctionDeclaration> Procedures { get; } = [];
 
-        public List<IStatement> Statements { get; private set; }
+        public List<IStatement> Statements { get; } = [];
 
-        public List<TypeDefinition> Types { get; private set; }
+        public List<TypeDefinition> Types { get; } = [];
 
-#pragma warning disable CS3001 // Argument type is not CLS-compliant
-        public FunctionDeclaration LookupFunction(string name, IToken token, params Expression[] parameters)
-#pragma warning restore CS3001 // Argument type is not CLS-compliant
+        public FunctionDeclaration? LookupFunction(string name, IToken token, params Expression[] parameters)
         {
             var callParameters = CallParameter.CreateFromExpressionList(parameters);
             return LookupFunction(name, token, callParameters);
         }
 
-#pragma warning disable CS3001 // Argument type is not CLS-compliant
-        public FunctionDeclaration LookupFunction(string name, IToken token, string parameters)
-#pragma warning restore CS3001 // Argument type is not CLS-compliant
+        // test only
+        public FunctionDeclaration? LookupFunction(string name)
+        {
+            return LookupFunction(name, new CommonToken(0), new List<CallParameter>());
+        }
+
+        // test only
+        public FunctionDeclaration? LookupFunction(string name, IToken token)
+        {
+            return LookupFunction(name, token, new List<CallParameter>());
+        }
+
+        // test only
+        public FunctionDeclaration? LookupFunction(string name, IToken token, string parameters)
         {
             var callParameters = CallParameter.CreateFromStringExpression(this, parameters);
             return LookupFunction(name, token, callParameters);
         }
 
-#pragma warning disable CS3001 // Argument type is not CLS-compliant
-        private FunctionDeclaration LookupFunction(string procedureName, IToken token,
-                                                   IReadOnlyList<CallParameter> callParameters)
-#pragma warning restore CS3001 // Argument type is not CLS-compliant
+        // test only
+        public FunctionDeclaration? LookupFunction(string name, string parameters)
+        {
+            var callParameters = CallParameter.CreateFromStringExpression(this, parameters);
+            return LookupFunction(name, new CommonToken(0), callParameters);
+        }
+
+        private FunctionDeclaration? LookupFunction(string procedureName, IToken token,
+                                                    IReadOnlyList<CallParameter> callParameters)
         {
             var b = this;
-            FunctionDeclaration resFunc = null;
+            FunctionDeclaration? resFunc = null;
             // try to find the function with the best match (score) (e.g. ABS(REAL) and ABS(INTEGER) share the same function name
             // of not found on current block level, move up (until root) to find something appropriate.
             int score = -1;
@@ -87,36 +95,38 @@ namespace Oberon0.Compiler.Definitions
                 b = b.Parent;
             }
 
-            if (resFunc == null)
+            if (resFunc != null)
             {
-                var parameterList = new List<ProcedureParameterDeclaration>(callParameters.Count);
-                int n = 0;
+                return resFunc;
+            }
 
-                parameterList.AddRange(
-                    callParameters.Select(
-                        expression =>
-                            new ProcedureParameterDeclaration("param_" + n++, this, expression.TargetType, false)));
+            var parameterList = new List<ProcedureParameterDeclaration>(callParameters.Count);
+            int n = 0;
 
-                string prototype = FunctionDeclaration.BuildPrototype(
-                    procedureName,
-                    SimpleTypeDefinition.VoidType,
-                    parameterList.ToArray());
-                if (Module.CompilerInstance != null)
-                {
-                    Module.CompilerInstance.Parser.NotifyErrorListeners(
-                        token,
-                        $"No procedure/function with prototype '{prototype}' found",
-                        null);
-                } else
-                {
-                    throw new InvalidOperationException($"No procedure/function with prototype '{prototype}' found");
-                }
+            parameterList.AddRange(
+                callParameters.Select(
+                    expression =>
+                        new ProcedureParameterDeclaration("param_" + n++, this, expression.TargetType, false)));
+
+            string prototype = FunctionDeclaration.BuildPrototype(
+                procedureName,
+                SimpleTypeDefinition.VoidType,
+                parameterList.ToArray());
+            if (Module.CompilerInstance != null)
+            {
+                Module.CompilerInstance.Parser.NotifyErrorListeners(
+                    token,
+                    $"No procedure/function with prototype '{prototype}' found",
+                    null);
+            } else
+            {
+                throw new InvalidOperationException($"No procedure/function with prototype '{prototype}' found");
             }
 
             return resFunc;
         }
 
-        public TypeDefinition LookupType(string name)
+        public TypeDefinition? LookupType(string name)
         {
             var b = this;
             while (b != null)
@@ -149,6 +159,11 @@ namespace Oberon0.Compiler.Definitions
             }
 
             var res = b.Types.FirstOrDefault(x => x.Type == baseTypes && x.IsInternal);
+            if (res == null)
+            {
+                throw new InternalCompilerException($"LookupTypeByBaseType: Cannot lookup type {baseTypes:G}");
+            }
+
             return res;
         }
 
@@ -158,7 +173,7 @@ namespace Oberon0.Compiler.Definitions
         /// <param name="name">The variable name.</param>
         /// <param name="lookupParents">The parents</param>
         /// <returns>The <see cref="Declaration" />.</returns>
-        internal Declaration LookupVar(string name, bool lookupParents = true)
+        internal Declaration? LookupVar(string name, bool lookupParents = true)
         {
             var b = this;
             while (b != null)
@@ -181,7 +196,7 @@ namespace Oberon0.Compiler.Definitions
         }
 
         /// <summary>
-        ///     Create a score to create a best fit for a function given a parameter list.
+        ///     Create a score to create the best fit for a function given a parameter list.
         /// </summary>
         /// <param name="func">The function to check the parameters for</param>
         /// <param name="parameters">The list of parameters</param>
@@ -250,14 +265,6 @@ namespace Oberon0.Compiler.Definitions
             }
 
             return true;
-        }
-
-        private void InitLists()
-        {
-            Declarations = new List<Declaration>();
-            Types = new List<TypeDefinition>();
-            Statements = new List<IStatement>();
-            Procedures = new List<FunctionDeclaration>();
         }
     }
 }

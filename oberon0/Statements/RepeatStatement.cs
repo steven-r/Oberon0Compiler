@@ -10,15 +10,10 @@ using Oberon0.Compiler.Expressions;
 
 namespace Oberon0.Compiler.Statements
 {
-    public class RepeatStatement : IStatement
+    public class RepeatStatement(Block parent) : IStatement
     {
-        public RepeatStatement(Block parent)
-        {
-            Block = new Block(parent, parent.Module);
-        }
+        public Expression Condition { get; set; } = null!;
 
-        public Expression Condition { get; set; }
-
-        public Block Block { get; set; }
+        public Block Block { get; set; } = new(parent, parent.Module);
     }
 }

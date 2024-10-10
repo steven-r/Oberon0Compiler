@@ -17,12 +17,14 @@ namespace Oberon0.Compiler.Tests
         public void ConstConstExpr()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test;
-CONST
-  Test1 = 2;
-  Test = 1+Test1;
-
- END Test.");
+                """
+                MODULE Test;
+                CONST
+                  Test1 = 2;
+                  Test = 1+Test1;
+                
+                 END Test.
+                """);
 
             var t = m.Block.LookupVar("Test");
             var t1 = m.Block.LookupVar("Test1");
@@ -46,11 +48,13 @@ CONST
         public void ConstSimple()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test;
-CONST
-  Test = 1;
-
- END Test.");
+                """
+                MODULE Test;
+                CONST
+                  Test = 1;
+                
+                 END Test.
+                """);
 
             var c = m.Block.LookupVar("Test");
             Assert.NotNull(c);
@@ -65,11 +69,13 @@ CONST
         public void ConstSimpleExpr()
         {
             var m = Oberon0Compiler.CompileString(
-                @"MODULE Test;
-CONST
-  Test = 1+1;
-
- END Test.");
+                """
+                MODULE Test;
+                CONST
+                  Test = 1+1;
+                
+                 END Test.
+                """);
 
             var c = m.Block.LookupVar("Test");
             Assert.NotNull(c);
@@ -84,12 +90,14 @@ CONST
         public void ConstSimpleFailDuplicate()
         {
             TestHelper.CompileString(
-                @"MODULE Test;
-CONST
-  Test = 1;
-  Test = 2;
-
- END Test.",
+                """
+                MODULE Test;
+                CONST
+                  Test = 1;
+                  Test = 2;
+                
+                 END Test.
+                """,
                 "A variable/constant with this name has been defined already");
         }
 
@@ -97,13 +105,15 @@ CONST
         public void ConstSimpleFailVarReference()
         {
             TestHelper.CompileString(
-                @"MODULE Test;
-VAR
-  Test : INTEGER;
-CONST
-  Test1 = 2+Test;
-
- END Test.",
+                """
+                MODULE Test;
+                VAR
+                  Test : INTEGER;
+                CONST
+                  Test1 = 2+Test;
+                
+                 END Test.
+                """,
                 "A constant must resolve during compile time");
         }
     }

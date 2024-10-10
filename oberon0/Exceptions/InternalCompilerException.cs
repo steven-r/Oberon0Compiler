@@ -5,10 +5,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-namespace Oberon0.Compiler.Statements
-{
-    /// <summary>
-    ///     Represent an statement.
-    /// </summary>
-    public interface IStatement;
-}
+using System;
+
+namespace Oberon0.Compiler.Exceptions;
+
+public class InternalCompilerException(string message) : Exception(message);

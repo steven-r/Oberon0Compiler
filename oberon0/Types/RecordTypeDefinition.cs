@@ -16,17 +16,15 @@ namespace Oberon0.Compiler.Types
         public RecordTypeDefinition()
             : base(BaseTypes.Record)
         {
-            Elements = new List<Declaration>();
         }
 
         private RecordTypeDefinition(string name)
             : base(BaseTypes.Record)
         {
             Name = name;
-            Elements = new List<Declaration>();
         }
 
-        public List<Declaration> Elements { get; }
+        public List<Declaration> Elements { get; } = [];
 
         public override TypeDefinition Clone(string name)
         {
@@ -37,7 +35,7 @@ namespace Oberon0.Compiler.Types
 
         public override bool IsAssignable(TypeDefinition sourceType)
         {
-            if (!(sourceType is RecordTypeDefinition rt))
+            if (sourceType is not RecordTypeDefinition rt)
             {
                 return false;
             }

@@ -20,55 +20,60 @@ namespace Oberon0.Compiler.Tests.Types
         public void SelectorArrayAccess()
         {
             TestHelper.CompileString(
-                @"
-MODULE test; 
-TYPE 
-    aType= ARRAY 5 OF INTEGER;
-VAR 
-  a : aType;
-                
-BEGIN
-    a[1] := 1;
-END test.");
+                """
+                MODULE test; 
+                TYPE 
+                    aType= ARRAY 5 OF INTEGER;
+                VAR 
+                  a : aType;
+                                
+                BEGIN
+                    a[1] := 1;
+                END test.
+                """);
         }
 
         [Fact]
         public void SelectorFailSimpleTypeArrayAccess()
         {
             TestHelper.CompileString(
-                @"
-MODULE test; 
-TYPE 
-    aType= ARRAY 5 OF INTEGER;
-VAR 
-  a : INTEGER;
-                
-BEGIN
-    a[1] := 1;
-END test.", "Simple variables or constants do not allow any selector");
+                """
+                MODULE test; 
+                TYPE 
+                    aType= ARRAY 5 OF INTEGER;
+                VAR 
+                  a : INTEGER;
+                                
+                BEGIN
+                    a[1] := 1;
+                END test.
+                """, "Simple variables or constants do not allow any selector");
         }
 
         [Fact]
         public void SelectorNestedArrayRecord()
         {
             var m = TestHelper.CompileString(
-                @"
-MODULE test; 
-TYPE 
-    rType = RECORD
-       field1: INTEGER;
-       field2: REAL
-    END;
-    aType= ARRAY 5 OF rType;
-VAR 
-  a : aType;
-                
-BEGIN
-    a[1].field1 := 1;
-    a[2].field2 := 1.23;
-END test.");
+                """
+
+                MODULE test; 
+                TYPE 
+                    rType = RECORD
+                       field1: INTEGER;
+                       field2: REAL
+                    END;
+                    aType= ARRAY 5 OF rType;
+                VAR 
+                  a : aType;
+                                
+                BEGIN
+                    a[1].field1 := 1;
+                    a[2].field2 := 1.23;
+                END test.
+                """);
             Assert.Equal(2, m.Block.Statements.Count);
             var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
+            Assert.NotNull(assignment.Selector);
             Assert.Equal(2, assignment.Selector.Count);
             Assert.IsType<ArrayTypeDefinition>(assignment.Variable.Type);
             var index = Assert.IsType<IndexSelector>(assignment.Selector[0]);
@@ -77,6 +82,7 @@ END test.");
             var record = Assert.IsType<IdentifierSelector>(assignment.Selector[1]);
             Assert.Equal("field1", record.Name);
             assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements[1]);
+            Assert.NotNull(assignment.Selector);
             index = Assert.IsType<IndexSelector>(assignment.Selector[0]);
             intExpression = Assert.IsType<ConstantIntExpression>(index.IndexDefinition);
             Assert.Equal(2, intExpression.ToInt32());
@@ -88,20 +94,22 @@ END test.");
         public void SelectorFailNestedArrayRecordWrongElement()
         {
             TestHelper.CompileString(
-                @"
-MODULE test; 
-TYPE 
-    rType = RECORD
-       field1: INTEGER;
-       field2: REAL
-    END;
-    aType= ARRAY 5 OF rType;
-VAR 
-  a : aType;
-  b: INTEGER;                
-BEGIN
-    a[12].b := 1.23;
-END test.", "Array index out of bounds", "Record reference expected", "Left & right side do not match types");
+                """
+
+                MODULE test; 
+                TYPE 
+                    rType = RECORD
+                       field1: INTEGER;
+                       field2: REAL
+                    END;
+                    aType= ARRAY 5 OF rType;
+                VAR 
+                  a : aType;
+                  b: INTEGER;                
+                BEGIN
+                    a[12].b := 1.23;
+                END test.
+                """, "Array index out of bounds", "Record reference expected", "Left & right side do not match types");
         }
     }
 }

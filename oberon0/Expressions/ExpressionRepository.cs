@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
-using JetBrains.Annotations;
 using Oberon0.Compiler.Expressions.Operations.Internal;
 using Oberon0.Compiler.Types;
 
@@ -17,7 +16,7 @@ namespace Oberon0.Compiler.Expressions
 {
     internal class ExpressionRepository
     {
-        private static ExpressionRepository _instance;
+        private static ExpressionRepository? _instance;
 
         private ExpressionRepository()
         {
@@ -55,7 +54,6 @@ namespace Oberon0.Compiler.Expressions
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>Lazy&lt;IArithmeticOperation, IArithmeticOpMetadata&gt;.</returns>
-        [NotNull]
         public ArithmeticOperation Get(int operation, BaseTypes left, BaseTypes right)
         {
             var key = new ArithmeticOpKey(operation, left, right);

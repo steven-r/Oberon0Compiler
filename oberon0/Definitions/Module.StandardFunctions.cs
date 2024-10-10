@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Types;
@@ -29,57 +28,58 @@ namespace Oberon0.Compiler.Definitions
          * </summary>
          */
         private readonly HardwiredFunction[] _hardwiredFunctions =
-        {
-            new HardwiredFunction
+        [
+            new()
             {
                 Name = "ABS", Type = "INTEGER",
-                ParameterTypes = new[] {"INTEGER"}
+                ParameterTypes = ["INTEGER"]
             },
-            new HardwiredFunction
+            new()
             {
                 Name = "ABS", Type = "REAL",
-                ParameterTypes = new[] {"REAL"}
+                ParameterTypes = ["REAL"]
             },
-            new HardwiredFunction
+            new()
             {
-                Name = "WriteInt", Type = null,
-                ParameterTypes = new[] {"INTEGER"}
+                Name = "WriteInt",
+                ParameterTypes = ["INTEGER"]
             },
-            new HardwiredFunction
+            new()
             {
-                Name = "WriteBool", Type = null,
-                ParameterTypes = new[] {"BOOLEAN"}
+                Name = "WriteBool",
+                ParameterTypes = ["BOOLEAN"]
             },
-            new HardwiredFunction
+            new()
             {
-                Name = "WriteString", Type = null,
-                ParameterTypes = new[] {"STRING"}
+                Name = "WriteString",
+                ParameterTypes = ["STRING"]
             },
-            new HardwiredFunction
+            new()
             {
-                Name = "WriteReal", Type = null,
-                ParameterTypes = new[] {"REAL"}
+                Name = "WriteReal",
+                ParameterTypes = ["REAL"]
             },
-            new HardwiredFunction
+            new()
             {
-                Name = "WriteLn", Type = null
+                Name = "WriteLn",
+                ParameterTypes = []
             },
-            new HardwiredFunction
+            new()
             {
-                Name = "ReadInt", Type = null,
-                ParameterTypes = new[] {"&INTEGER"}
+                Name = "ReadInt",
+                ParameterTypes = ["&INTEGER"]
             },
-            new HardwiredFunction
+            new()
             {
-                Name = "ReadReal", Type = null,
-                ParameterTypes = new[] {"&REAL"}
+                Name = "ReadReal",
+                ParameterTypes = ["&REAL"]
             },
-            new HardwiredFunction
+            new()
             {
-                Name = "ReadBool", Type = null,
-                ParameterTypes = new[] {"&BOOLEAN"}
+                Name = "ReadBool",
+                ParameterTypes = ["&BOOLEAN"]
             }
-        };
+        ];
 
         private void AddParameters(Oberon0ExportAttribute attr, int i,
                                    IList<ProcedureParameterDeclaration> procParameters)
@@ -100,26 +100,18 @@ namespace Oberon0.Compiler.Definitions
         ///     type-name with either <code>%amp;</code> or <code>VAR </code>
         /// </remarks>
         public static ProcedureParameterDeclaration GetProcedureParameterByName(
-            [NotNull] string parameterName, [NotNull] string parameterType, [NotNull] Block block)
+            string parameterName, string parameterType, Block block)
         {
-            if (parameterName == null)
-            {
-                throw new ArgumentNullException(nameof(parameterName));
-            }
-
-            if (parameterType == null)
-            {
-                throw new ArgumentNullException(nameof(parameterType));
-            }
-
-            if (block == null)
-            {
-                throw new ArgumentNullException(nameof(block));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(parameterName);
+            ArgumentException.ThrowIfNullOrEmpty(parameterType);
+            ArgumentNullException.ThrowIfNull(block);
 
             (var targetType, bool isVar) = GetParameterDeclarationFromString(parameterType, block);
             return new ProcedureParameterDeclaration(parameterName, block, targetType, isVar);
         }
+
+        [GeneratedRegex(@"(?<ref>&|VAR\s+)?(?<name>[A-Za-z][A-Za-z$0-9]*)(?<isarray>\[(?<size>\d+)\])?")]
+        internal static partial Regex ParameterDeclarationRegex();
 
         /// <summary>
         ///     Parses a type spec (e.g. "INTEGER", "&amp;REAL" or "BOOLEAN[10]"
@@ -128,21 +120,12 @@ namespace Oberon0.Compiler.Definitions
         /// <param name="block"></param>
         /// <returns></returns>
         internal static (TypeDefinition, bool) GetParameterDeclarationFromString(
-            [NotNull] string typeString, [NotNull] Block block)
+            string typeString, Block block)
         {
-            if (typeString == null)
-            {
-                throw new ArgumentNullException(nameof(typeString));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(typeString);
+            ArgumentNullException.ThrowIfNull(block);
 
-            if (block == null)
-            {
-                throw new ArgumentNullException(nameof(block));
-            }
-
-            var matches = Regex.Match(
-                typeString,
-                "(?<ref>&|VAR\\s+)?(?<name>[A-Za-z][A-Za-z$0-9]*)(?<isarray>\\[(?<size>\\d+)\\])?");
+            var matches = ParameterDeclarationRegex().Match(typeString);
             if (!matches.Success)
             {
                 throw new ArgumentException($"{typeString} is not a valid type reference", nameof(typeString));
@@ -166,11 +149,11 @@ namespace Oberon0.Compiler.Definitions
         private void DeclareStandardConstants()
         {
             Block.Declarations.Add(
-                new ConstDeclaration("TRUE", Block.LookupType("BOOLEAN"), new ConstantBoolExpression(true)));
+                new ConstDeclaration("TRUE", Block.LookupType("BOOLEAN")!, new ConstantBoolExpression(true)));
             Block.Declarations.Add(
-                new ConstDeclaration("FALSE", Block.LookupType("BOOLEAN"), new ConstantBoolExpression(false)));
+                new ConstDeclaration("FALSE", Block.LookupType("BOOLEAN")!, new ConstantBoolExpression(false)));
             Block.Declarations.Add(
-                new ConstDeclaration("EPSILON", Block.LookupType("REAL"),
+                new ConstDeclaration("EPSILON", Block.LookupType("REAL")!,
                     new ConstantDoubleExpression(double.Epsilon)));
         }
 
@@ -178,17 +161,14 @@ namespace Oberon0.Compiler.Definitions
         {
             foreach (var function in _hardwiredFunctions)
             {
-                Block.Procedures.Add(FunctionDeclaration.AddHardwiredFunction(function.Name, this,
-                    function.Type == null ? SimpleTypeDefinition.VoidType : Block.LookupType(function.Type),
+                var type = function.Type == null ? SimpleTypeDefinition.VoidType : Block.LookupType(function.Type)!;
+                Block.Procedures.Add(FunctionDeclaration.AddHardwiredFunction(function.Name, this, type, 
                     function.ParameterTypes));
             }
 
-            Assembly asm = null;
-
             var sysAsm = Assembly.Load("Oberon0.System");
-            asm = sysAsm; // reached only if no exception
 
-            foreach (var type in asm.GetExportedTypes())
+            foreach (var type in sysAsm.GetExportedTypes())
             {
                 if (type.GetCustomAttribute<Oberon0LibraryAttribute>() != null)
                 {
@@ -243,24 +223,13 @@ namespace Oberon0.Compiler.Definitions
         /// <param name="methodName">The method name</param>
         /// <returns>an <see cref="ExternalFunctionDeclaration " /> representing the function</returns>
         // ReSharper disable once MemberCanBePrivate.Global
-        internal ExternalFunctionDeclaration AddExternalFunctionDeclaration([NotNull] Oberon0ExportAttribute attr,
-                                                                            [NotNull] string className,
-                                                                            [NotNull] string methodName)
+        internal ExternalFunctionDeclaration AddExternalFunctionDeclaration(Oberon0ExportAttribute attr,
+                                                                            string className,
+                                                                            string methodName)
         {
-            if (attr == null)
-            {
-                throw new ArgumentNullException(nameof(attr));
-            }
-
-            if (className == null)
-            {
-                throw new ArgumentNullException(nameof(className));
-            }
-
-            if (methodName == null)
-            {
-                throw new ArgumentNullException(nameof(methodName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(className);
+            ArgumentNullException.ThrowIfNull(attr);
+            ArgumentException.ThrowIfNullOrEmpty(methodName);
 
             var rt = Block.LookupType(attr.ReturnType);
             if (rt == null)
@@ -280,10 +249,10 @@ namespace Oberon0.Compiler.Definitions
 
         private class HardwiredFunction
         {
-            public string Name { get; set; }
-            public string Type { get; set; }
+            public required string Name { get; init; }
+            public string? Type { get; init; }
 
-            public string[] ParameterTypes { get; set; }
+            public required string[] ParameterTypes { get; init; }
         }
     }
 }

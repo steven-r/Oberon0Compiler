@@ -7,33 +7,26 @@
 
 using System;
 using System.Composition;
+using JetBrains.Annotations;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Operations.Internal
 {
     [MetadataAttribute]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ArithmeticOperationAttribute : ExportAttribute, IArithmeticOpMetadata
+    public class ArithmeticOperationAttribute(
+        int operation,
+        BaseTypes leftHandType,
+        BaseTypes rightHandType,
+        BaseTypes resultType)
+        : ExportAttribute(typeof(IArithmeticOperation)), IArithmeticOpMetadata
     {
-        public ArithmeticOperationAttribute(
-            int operation,
-            BaseTypes leftHandType,
-            BaseTypes rightHandType,
-            BaseTypes resultType)
-            : base(typeof(IArithmeticOperation))
-        {
-            Operation = operation;
-            LeftHandType = leftHandType;
-            RightHandType = rightHandType;
-            ResultType = resultType;
-        }
+        [UsedImplicitly] public BaseTypes LeftHandType { get; set; } = leftHandType;
 
-        public BaseTypes LeftHandType { get; set; }
+        [UsedImplicitly] public BaseTypes RightHandType { get; set; } = rightHandType;
 
-        public BaseTypes RightHandType { get; set; }
+        public int Operation { get; set; } = operation;
 
-        public int Operation { get; set; }
-
-        public BaseTypes ResultType { get; set; }
+        public BaseTypes ResultType { get; set; } = resultType;
     }
 }

@@ -11,18 +11,9 @@ namespace Oberon0.Compiler.Expressions
 {
     public abstract class Expression
     {
-        protected Expression()
-        {
-        }
-
-        protected Expression(TypeDefinition targetType)
-        {
-            TargetType = targetType;
-        }
-
         public int Operator { get; set; }
 
-        public TypeDefinition TargetType { get; set; }
+        public TypeDefinition TargetType { get; set; } = null!;
 
         /// <summary>
         ///     Gets a value indicating whether this expression is constant.

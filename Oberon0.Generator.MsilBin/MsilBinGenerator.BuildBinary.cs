@@ -12,7 +12,7 @@ namespace Oberon0.Generator.MsilBin
     public partial class MsilBinGenerator
     {
         /// <inheritdoc />
-        public bool GenerateBinary(CreateBinaryOptions options = null)
+        public bool GenerateBinary(CreateBinaryOptions? options = null)
         {
             var binary = new CreateBinary(this, options);
             return binary.Execute();

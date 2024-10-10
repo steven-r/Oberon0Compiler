@@ -18,11 +18,13 @@ namespace Oberon0.Compiler.Tests
         public void ArrayFailBooleanIndex()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
+                """
+                MODULE Test; 
 
-VAR
-  id: ARRAY TRUE OF INTEGER;
- END Test.",
+                VAR
+                  id: ARRAY TRUE OF INTEGER;
+                 END Test.
+                """,
                 "The array size must return a constant integer expression");
         }
 
@@ -30,10 +32,12 @@ VAR
         public void ArrayOfArray()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  id: ARRAY 5 OF ARRAY 10 OF INTEGER;
- END Test.");
+                """
+                MODULE Test; 
+                VAR
+                  id: ARRAY 5 OF ARRAY 10 OF INTEGER;
+                 END Test.
+                """);
 
             var id = m.Block.LookupVar("id");
             var intType = m.Block.LookupType("INTEGER");
@@ -54,23 +58,28 @@ VAR
         public void OneVar()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  id: INTEGER;
- END Test.");
+                """
+                MODULE Test; 
+                VAR
+                  id: INTEGER;
+                 END Test.
+                """);
 
-            Assert.NotNull(m.Block.LookupVar("id"));
-            Assert.Equal(BaseTypes.Int, m.Block.LookupVar("id").Type.Type);
+            var v = m.Block.LookupVar("id");
+            Assert.NotNull(v);
+            Assert.Equal(BaseTypes.Int, v.Type.Type);
         }
 
         [Fact]
         public void SimpleArray()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  id: ARRAY 5 OF INTEGER;
- END Test.");
+                """
+                MODULE Test; 
+                VAR
+                  id: ARRAY 5 OF INTEGER;
+                 END Test.
+                """);
 
             var id = m.Block.LookupVar("id");
             var intType = m.Block.LookupType("INTEGER");
@@ -87,11 +96,13 @@ VAR
         public void TwoVars1()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  id: INTEGER;
-  id1: INTEGER;
- END Test.");
+                """
+                MODULE Test; 
+                VAR
+                  id: INTEGER;
+                  id1: INTEGER;
+                 END Test.
+                """);
 
             var id = m.Block.LookupVar("id");
             Assert.NotNull(id);
@@ -105,10 +116,12 @@ VAR
         public void TwoVars2()
         {
             var m = TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  id, id1: INTEGER;
- END Test.");
+                """
+                MODULE Test; 
+                VAR
+                  id, id1: INTEGER;
+                 END Test.
+                """);
 
             var id = m.Block.LookupVar("id");
             var id1 = m.Block.LookupVar("id1");
@@ -122,11 +135,13 @@ VAR
         public void TwoVarsFail1()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  id: INTEGER;
-  id: INTEGER;
- END Test.",
+                """
+                MODULE Test; 
+                VAR
+                  id: INTEGER;
+                  id: INTEGER;
+                 END Test.
+                """,
                 "Variable declared twice");
         }
 
@@ -134,10 +149,12 @@ VAR
         public void TwoVarsFail2()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-  id, id: INTEGER;
- END Test.",
+                """
+                MODULE Test; 
+                VAR
+                  id, id: INTEGER;
+                 END Test.
+                """,
                 "Variable declared twice");
         }
 
@@ -145,12 +162,14 @@ VAR
         public void VarArrayNotConst()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-    id: INTEGER;
-    arr: ARRAY id OF INTEGER;
-
- END Test.",
+                """
+                MODULE Test; 
+                VAR
+                    id: INTEGER;
+                    arr: ARRAY id OF INTEGER;
+                
+                 END Test.
+                """,
                 "The array size must return a constant integer expression");
         }
 
@@ -159,9 +178,11 @@ VAR
         {
             var errors = new List<CompilerError>();
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
- END Test.",
+                """
+                MODULE Test; 
+                VAR
+                 END Test.
+                """,
                 errors);
             Assert.Equal(3, errors.Count);
         }
@@ -170,11 +191,13 @@ VAR
         public void VarWithoutWrongType()
         {
             TestHelper.CompileString(
-                @"MODULE Test; 
-VAR
-    id: DUMMY;
-
- END Test.",
+                """
+                MODULE Test; 
+                VAR
+                    id: DUMMY;
+                
+                 END Test.
+                """,
                 "Type not known");
         }
     }
