@@ -28,7 +28,7 @@ namespace Oberon0.Generator.MsilBin
          * This is done by creating a copy of the original parameter (which comes as a reference) and as a starting point of the method
          * all call by value parameters are copied to their local parts by deep copy.
          */
-        private void GenerateComplexTypeMappings(Block block)
+        private static void GenerateComplexTypeMappings(Block block)
         {
             var addDeclarations = new List<Declaration>();
             foreach (var pp in block.Declarations.OfType<ProcedureParameterDeclaration>())
@@ -313,7 +313,7 @@ namespace Oberon0.Generator.MsilBin
             return variable;
         }
 
-        private IReadOnlyList<StatementSyntax> GenerateLocalDefinitions(FunctionDeclaration functionDeclaration)
+        private static IReadOnlyList<StatementSyntax> GenerateLocalDefinitions(FunctionDeclaration functionDeclaration)
         {
             var statements =
                 new SyntaxList<StatementSyntax>();

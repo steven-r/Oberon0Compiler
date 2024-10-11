@@ -12,9 +12,12 @@ namespace Oberon0.Compiler.Expressions.Constant
 {
     public class ConstantDoubleExpression : ConstantExpression
     {
-        public ConstantDoubleExpression(double value)
+        public bool MightBeInt { get; }
+
+        public ConstantDoubleExpression(double value, bool mightBeInt = false)
             : base(value)
         {
+            MightBeInt = mightBeInt;
             TargetType = SimpleTypeDefinition.RealType;
         }
 

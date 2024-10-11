@@ -5,7 +5,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.Test.Support;

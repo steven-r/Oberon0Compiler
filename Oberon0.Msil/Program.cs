@@ -75,7 +75,7 @@ namespace Oberon0.Msil
         private static int StartCompile(FileSystemInfo inputFile, DirectoryInfo outputPath, string projectName, bool clean, bool verbose)
         {
             var m = Oberon0Compiler.CompileString(File.ReadAllText(inputFile.FullName));
-            if (m.CompilerInstance.HasError)
+            if (m.CompilerInstance?.HasError ?? true)
             {
                 return 1;
             }

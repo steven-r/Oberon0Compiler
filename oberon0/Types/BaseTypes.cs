@@ -5,11 +5,14 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
+
 namespace Oberon0.Compiler.Types
 {
     /// <summary>
     ///     Standard types
     /// </summary>
+    [Flags]
     public enum BaseTypes
     {
         /// <summary>
@@ -25,17 +28,22 @@ namespace Oberon0.Compiler.Types
         /// <summary>
         ///     The REAL type
         /// </summary>
-        Real = Simple + 3,
+        Real = Simple + 4,
+
+        /// <summary>
+        /// Generic number type
+        /// </summary>
+        Number = Real | Int,
 
         /// <summary>
         ///     The bool type
         /// </summary>
-        Bool = Simple + 4,
+        Bool = Simple + 8,
 
         /// <summary>
         ///     a "non" type. This means no value (like an empty return value for a function)
         /// </summary>
-        Void = Simple + 5,
+        Void = Simple + 16,
 
         /// <summary>
         ///     record type

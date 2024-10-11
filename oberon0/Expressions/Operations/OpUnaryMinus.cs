@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Constant;
@@ -30,18 +31,33 @@ namespace Oberon0.Compiler.Expressions.Operations
         {
             if (bin.LeftHandSide.IsConst)
             {
-                if (bin.LeftHandSide.TargetType.Type == BaseTypes.Int)
+                // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+                switch (bin.LeftHandSide.TargetType.Type)
                 {
-                    var leftInt = (ConstantIntExpression) bin.LeftHandSide;
-                    leftInt.Value = -(int) leftInt.Value;
-                    return leftInt;
-                }
-
-                if (bin.LeftHandSide.TargetType.Type == BaseTypes.Real)
-                {
-                    var leftDouble = (ConstantDoubleExpression) bin.LeftHandSide;
-                    leftDouble.Value = -(double) leftDouble.Value;
-                    return leftDouble;
+                    case BaseTypes.Int:
+                    {
+                        var leftInt = (ConstantIntExpression) bin.LeftHandSide;
+                        leftInt.Value = -(int) leftInt.Value;
+                        return leftInt;
+                    }
+                    case BaseTypes.Real:
+                    {
+                        var leftDouble = (ConstantDoubleExpression) bin.LeftHandSide;
+                        leftDouble.Value = -(double) leftDouble.Value;
+                        if (leftDouble.MightBeInt)
+                        {
+                            try
+                            {
+                                int intVal = Convert.ToInt32((double)leftDouble.Value);
+                                return new ConstantIntExpression(intVal); // converted to integer
+                            }
+                            catch (OverflowException)
+                            {
+                                // ignore value at it is too large
+                            }
+                        }
+                        return leftDouble;
+                    }
                 }
             }
 

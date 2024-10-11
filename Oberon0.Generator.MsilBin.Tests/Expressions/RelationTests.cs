@@ -39,7 +39,7 @@ public class RelationTests(ITestOutputHelper output)
         var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
         var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-        Assert.True(assembly != null);
+        Assert.NotNull(assembly);
 
         using var output1 = new StringWriter();
         Runner.Execute(assembly, output1, new StringReader("5" + Environment.NewLine + "3"));
@@ -80,7 +80,7 @@ public class RelationTests(ITestOutputHelper output)
         var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
         var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-        Assert.True(assembly != null);
+        Assert.NotNull(assembly);
 
         using var output1 = new StringWriter();
         Runner.Execute(assembly, output1, new StringReader("5" + Environment.NewLine + "3"));

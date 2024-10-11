@@ -5,10 +5,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
 using System.Data;
 using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -24,25 +24,25 @@ namespace Oberon0.Generator.MsilBin
     /// </summary>
     public partial class MsilBinGenerator : ICodeGenerator
     {
-        private ClassDeclarationSyntax _classDeclaration;
-        private CompilationUnitSyntax _compiledCode;
+        private ClassDeclarationSyntax? _classDeclaration;
+        private CompilationUnitSyntax? _compiledCode;
         private int _internalCount;
-        private NamespaceDeclarationSyntax _namespace;
+        private NamespaceDeclarationSyntax? _namespace;
 
         /// <summary>
         ///     The main class being generated (usually <code>Oberon0.{module name}</code>)
         /// </summary>
-        public string MainClassName { get; set; }
+        public string MainClassName { get; set; } = null!;
 
         /// <summary>
         ///     The name space for the main class (to be used for integration and testing)
         /// </summary>
-        public string MainClassNamespace { get; set; }
+        public string MainClassNamespace { get; set; } = null!;
 
         /// <summary>
         ///     The used compiler module
         /// </summary>
-        public Module Module { get; set; }
+        public Module Module { get; set; } = null!;
 
         /// <summary>
         ///     Dump generated code as string
@@ -50,7 +50,7 @@ namespace Oberon0.Generator.MsilBin
         /// <returns>a (hopefully) compilable string</returns>
         public string IntermediateCode()
         {
-            return _compiledCode.ToFullString();
+            return _compiledCode!.ToFullString();
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Oberon0.Generator.MsilBin
         /// <param name="writer">The TextWriter to write to</param>
         public void WriteIntermediateCode(TextWriter writer)
         {
-            _compiledCode.WriteTo(writer);
+            _compiledCode!.WriteTo(writer);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Oberon0.Generator.MsilBin
 
             GenerateClass();
 
-            _namespace = _namespace.AddMembers(_classDeclaration);
+            _namespace = _namespace.AddMembers(_classDeclaration!);
 
             _compiledCode = _compiledCode.AddMembers(_namespace).NormalizeWhitespace();
         }
@@ -119,6 +119,10 @@ namespace Oberon0.Generator.MsilBin
 
         private void ProcessMainBlock(Block block)
         {
+            if (_classDeclaration == null)
+            {
+                throw new InvalidOperationException("Please call GenerateClass() before ProcessMainBlock()");
+            }
             _classDeclaration = GenerateRecordDeclarations(_classDeclaration, block);
             GenerateComplexTypeMappings(block);
 
@@ -186,7 +190,7 @@ namespace Oberon0.Generator.MsilBin
         /**
          * start a new procedure/function
          */
-        private static MethodDeclarationSyntax StartFunction([NotNull] FunctionDeclaration functionDeclaration)
+        private static MethodDeclarationSyntax StartFunction(FunctionDeclaration functionDeclaration)
         {
             var method =
                 SyntaxFactory.MethodDeclaration(GetTypeName(functionDeclaration.ReturnType), functionDeclaration.Name);

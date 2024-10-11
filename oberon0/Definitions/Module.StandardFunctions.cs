@@ -103,7 +103,7 @@ namespace Oberon0.Compiler.Definitions
             string parameterName, string parameterType, Block block)
         {
             ArgumentException.ThrowIfNullOrEmpty(parameterName);
-            ArgumentException.ThrowIfNullOrEmpty(parameterType);
+            ArgumentNullException.ThrowIfNull(parameterType);
             ArgumentNullException.ThrowIfNull(block);
 
             (var targetType, bool isVar) = GetParameterDeclarationFromString(parameterType, block);
@@ -134,11 +134,7 @@ namespace Oberon0.Compiler.Definitions
             string typeName = matches.Groups["name"].Value;
             bool isVar = matches.Groups["ref"].Success;
 
-            var type = block.LookupType(typeName);
-            if (type == null)
-            {
-                throw new ArgumentException($"{typeString} is not a valid type reference", nameof(typeString));
-            }
+            var type = block.LookupType(typeName) ?? throw new ArgumentException($"{typeString} is not a valid type reference", nameof(typeString));
 
             var targetType = matches.Groups["isarray"].Success
                 ? new ArrayTypeDefinition(int.Parse(matches.Groups["size"].Value), type)
@@ -231,11 +227,7 @@ namespace Oberon0.Compiler.Definitions
             ArgumentNullException.ThrowIfNull(attr);
             ArgumentException.ThrowIfNullOrEmpty(methodName);
 
-            var rt = Block.LookupType(attr.ReturnType);
-            if (rt == null)
-            {
-                throw new InvalidOperationException($"Return type {attr.ReturnType} not defined");
-            }
+            var rt = Block.LookupType(attr.ReturnType) ?? throw new InvalidOperationException($"Return type {attr.ReturnType} not defined");
 
             var procParameters = new ProcedureParameterDeclaration[attr.Parameters.Length];
             for (int i = 0; i < attr.Parameters.Length; i++)

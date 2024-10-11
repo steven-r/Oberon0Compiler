@@ -16,15 +16,8 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
         /// <inheritdoc />
         public Expression Operate(BinaryExpression e, Block block, IArithmeticOpMetadata operationParameters)
         {
-            if (e == null)
-            {
-                throw new ArgumentNullException(nameof(e));
-            }
-
-            if (block == null)
-            {
-                throw new ArgumentNullException(nameof(block));
-            }
+            ArgumentNullException.ThrowIfNull(e);
+            ArgumentNullException.ThrowIfNull(block);
 
             return BinaryOperate(e, block, operationParameters);
         }

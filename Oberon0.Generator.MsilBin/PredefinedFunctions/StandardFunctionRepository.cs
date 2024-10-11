@@ -17,8 +17,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
     [UsedImplicitly]
     internal static class StandardFunctionRepository
     {
-        private static List<StandardFunctionGeneratorListElement> _standardFunctionList =
-            new List<StandardFunctionGeneratorListElement>();
+        private static List<StandardFunctionGeneratorListElement> _standardFunctionList = [];
 
         /// <summary>
         ///     Gets the specified operation.
@@ -44,7 +43,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
             var exports =
                 container.GetExports<ExportFactory<IStandardFunctionGenerator, StandardFunctionMetadataView>>();
 
-            _standardFunctionList = new List<StandardFunctionGeneratorListElement>();
+            _standardFunctionList = [];
 
             foreach (var mefFunction in exports)
             {
@@ -56,7 +55,11 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
                         mefFunction.Metadata.ReturnType)
                 };
 
-                var parameters = mefFunction.Metadata.ParameterTypes?.Split(',') ?? new string[0];
+                string[] parameters = [];
+                if (!string.IsNullOrWhiteSpace(mefFunction.Metadata.ParameterTypes))
+                {
+                    parameters = mefFunction.Metadata.ParameterTypes.Split(',');
+                }
                 element.ParameterTypes = new ProcedureParameterDeclaration[parameters.Length];
 
                 for (int j = 0; j < parameters.Length; j++)
@@ -66,7 +69,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
                 }
 
                 element.InstanceKey =
-                    $"{element.Name}/{element.ReturnType.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.TypeName))}";
+                    $"{element.Name}/{element.ReturnType!.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.TypeName))}";
                 _standardFunctionList.Add(element);
             }
         }

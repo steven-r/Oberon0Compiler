@@ -39,6 +39,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
         {
             Name = name;
             ReturnType = returnType;
+            ParameterTypes = string.Empty;
         }
 
         /// <inheritdoc />

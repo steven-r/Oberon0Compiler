@@ -7,33 +7,26 @@
 
 namespace Oberon0.Compiler.Types
 {
-    public class ArrayTypeDefinition : TypeDefinition
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ArrayTypeDefinition" /> class.
+    /// </summary>
+    /// <param name="size">
+    ///     The size.
+    /// </param>
+    /// <param name="baseType">
+    ///     The base type.
+    /// </param>
+    public class ArrayTypeDefinition(int size, TypeDefinition baseType) : TypeDefinition(BaseTypes.Array)
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ArrayTypeDefinition" /> class.
-        /// </summary>
-        /// <param name="size">
-        ///     The size.
-        /// </param>
-        /// <param name="baseType">
-        ///     The base type.
-        /// </param>
-        public ArrayTypeDefinition(int size, TypeDefinition baseType)
-            : base(BaseTypes.Array)
-        {
-            Size = size;
-            ArrayType = baseType;
-        }
-
         /// <summary>
         ///     Gets the array type.
         /// </summary>
-        public TypeDefinition ArrayType { get; }
+        public TypeDefinition ArrayType { get; } = baseType;
 
         /// <summary>
         ///     Gets the array size
         /// </summary>
-        public int Size { get; }
+        public int Size { get; } = size;
 
         public override TypeDefinition Clone(string name)
         {

@@ -213,15 +213,15 @@ if_statement
 // Expressions
 expression
 	returns[Expression expReturn]
-	: op=(NOT | MINUS) e=expression		#exprNotExpression
+	: op=(NOT | MINUS) e=expression											#exprNotExpression
 	| l=expression op=(STAR | DIV | MOD | AND) r=expression					#exprMultPrecedence
 	| l=expression op=('+' | '-' | OR)  r=expression						#exprFactPrecedence
 	| l=expression op=('<' | '<=' | '>' | '>=' | '=' | '#') r=expression	#exprRelPrecedence
-	| id=ID 
-		s=selector[currentBlock.LookupVar($id.text)]						#exprSingleId
+	| id=ID s=selector[currentBlock.LookupVar($id.text)]					#exprSingleId
 	| id=ID '(' cp=callParameters? ')'										#exprFuncCall
 	| '(' e=expression ')'													#exprEmbeddedExpression
-	| c=Constant															#exprConstant
+	| int_n=IntegerNumber													#exprIntegerNumber
+	| int_r=FloatingNumber													#exprFloatingNumber
 	| s=STRING_LITERAL														#exprStringLiteral
 	;
 
@@ -243,21 +243,15 @@ STRING_LITERAL
    : '\'' ('\'\'' | ~ ('\''))* '\''
    ;
 
-Constant
-	:   IntegerConstant
-	|   FloatingConstant
-	;
+IntegerNumber: DigitSequence;
 
-IntegerConstant: DigitSequence;
-
-fragment
-FloatingConstant
-	:   FractionalConstant ExponentPart? 
+FloatingNumber
+	:   FractionalNumber ExponentPart? 
 	|   DigitSequence ExponentPart 
 	;
 
 fragment
-FractionalConstant
+FractionalNumber
 	:   DigitSequence? '.' DigitSequence
 	|   DigitSequence '.'
 	;
