@@ -17,18 +17,20 @@ namespace Oberon0.Generator.MsilBin.Tests.Statements
         [Fact]
         public void RepeatTest()
         {
-            const string source = @"MODULE Test; 
-VAR 
-  i: INTEGER;
+            const string source = """
+                                  MODULE Test; 
+                                  VAR 
+                                    i: INTEGER;
 
-BEGIN
-  i := 1;
-  REPEAT
-      WriteInt(i);
-      WriteLn;
-      i := i+1;
-  UNTIL i > 5
-END Test.";
+                                  BEGIN
+                                    i := 1;
+                                    REPEAT
+                                        WriteInt(i);
+                                        WriteLn;
+                                        i := i+1;
+                                    UNTIL i > 5
+                                  END Test.
+                                  """;
             var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
@@ -46,15 +48,17 @@ END Test.";
         [Fact]
         public void TestIssue25If()
         {
-            const string source = @"MODULE Issue25; 
-VAR 
-  x: BOOLEAN;
+            const string source = """
+                                  MODULE Issue25; 
+                                  VAR 
+                                    x: BOOLEAN;
 
-BEGIN
-    x := TRUE;
-    IF (x) THEN WriteString('Yes') ELSE WriteString('No') END;
-    WriteLn
-END Issue25.";
+                                  BEGIN
+                                      x := TRUE;
+                                      IF (x) THEN WriteString('Yes') ELSE WriteString('No') END;
+                                      WriteLn
+                                  END Issue25.
+                                  """;
             var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
@@ -72,18 +76,20 @@ END Issue25.";
         [Fact]
         public void TestIssue25Repeat()
         {
-            const string source = @"MODULE Issue25; 
-VAR 
-  x: BOOLEAN;
+            const string source = """
+                                  MODULE Issue25; 
+                                  VAR 
+                                    x: BOOLEAN;
 
-BEGIN
-    x := FALSE;
-    REPEAT
-        WriteString('Yes'); 
-        x := TRUE
-    UNTIL x;
-    WriteLn
-END Issue25.";
+                                  BEGIN
+                                      x := FALSE;
+                                      REPEAT
+                                          WriteString('Yes'); 
+                                          x := TRUE
+                                      UNTIL x;
+                                      WriteLn
+                                  END Issue25.
+                                  """;
 
             var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
@@ -102,16 +108,18 @@ END Issue25.";
         [Fact]
         public void TestIssue25While()
         {
-            const string source = @"MODULE Issue25; 
-VAR 
-  x: BOOLEAN;
+            const string source = """
+                                  MODULE Issue25; 
+                                  VAR 
+                                    x: BOOLEAN;
 
-BEGIN
-    x := FALSE;
-    WriteString('Yes');
-    WHILE x DO WriteString('No'); x := TRUE END;
-    WriteLn
-END Issue25.";
+                                  BEGIN
+                                      x := FALSE;
+                                      WriteString('Yes');
+                                      WHILE x DO WriteString('No'); x := TRUE END;
+                                      WriteLn
+                                  END Issue25.
+                                  """;
             var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);

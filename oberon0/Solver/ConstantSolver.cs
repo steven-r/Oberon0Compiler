@@ -34,10 +34,8 @@ namespace Oberon0.Compiler.Solver
         /// </exception>
         public static Expression Solve(Expression expression, Block block)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            ArgumentNullException.ThrowIfNull(expression);
+            ArgumentNullException.ThrowIfNull(block);
 
             return Calculate(expression, block);
         }
@@ -48,7 +46,8 @@ namespace Oberon0.Compiler.Solver
             {
                 case VariableReferenceExpression:
                     return expression;
-                case BinaryExpression bin:
+
+                case BinaryExpression bin: // includes unary operations
                 {
                     if (!bin.LeftHandSide.IsConst)
                     {

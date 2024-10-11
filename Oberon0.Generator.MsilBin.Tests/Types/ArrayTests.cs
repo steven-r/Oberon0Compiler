@@ -31,7 +31,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types
 
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-            Assert.True(syntaxTree.CompileAndLoadAssembly(cg) != null);
+            Assert.NotNull(syntaxTree.CompileAndLoadAssembly(cg));
         }
 
         [Fact]
@@ -68,7 +68,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -98,7 +98,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);

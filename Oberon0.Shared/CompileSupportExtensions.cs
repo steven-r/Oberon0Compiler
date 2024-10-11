@@ -34,7 +34,7 @@ namespace Oberon0.Shared
                                                                  ICodeGenerator codeGenerator, bool isExecutable = true)
         {
             string[] trustedAssembliesPaths =
-                ((string) AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))?.Split(Path.PathSeparator) ?? [];
+                ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)?.Split(Path.PathSeparator) ?? [];
             var references = trustedAssembliesPaths
                              //.Where(p => neededAssemblies.Contains(Path.GetFileNameWithoutExtension(p)) || p.Contains("\\System.") && !p.Contains("\\System.Private"))
                             .Select(p => MetadataReference.CreateFromFile(p))
@@ -48,7 +48,7 @@ namespace Oberon0.Shared
                 : new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
             return CSharpCompilation.Create(
                 assemblyName + (isExecutable ? ".exe" : ".dll"),
-                new[] {syntaxTree},
+                [syntaxTree],
                 references,
                 options);
         }
@@ -79,7 +79,7 @@ namespace Oberon0.Shared
                                                diagnostic.IsWarningAsError ||
                                                diagnostic.Severity == DiagnosticSeverity.Error)
                                           .ToList();
-            if (!compilationErrors.Any())
+            if (compilationErrors.Count == 0)
             {
                 return;
             }

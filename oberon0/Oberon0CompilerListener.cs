@@ -18,7 +18,7 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler
 {
-    internal class Oberon0CompilerListener(OberonGrammarParser parser) : OberonGrammarBaseListener
+    internal partial class Oberon0CompilerListener(OberonGrammarParser parser) : OberonGrammarBaseListener
     {
         public override void ExitArraySelector(OberonGrammarParser.ArraySelectorContext context)
         {
@@ -85,8 +85,8 @@ namespace Oberon0.Compiler
                 return;
             }
 
-            if (!(ConstantSolver.Solve(context.e.expReturn, parser.currentBlock) is ConstantExpression
-                constantExpression))
+            if (ConstantSolver.Solve(context.e.expReturn, parser.currentBlock) is not ConstantExpression
+                constantExpression)
             {
                 parser.NotifyErrorListeners(context.e.Start, "A constant must resolve during compile time", null);
                 return;
@@ -105,9 +105,14 @@ namespace Oberon0.Compiler
 
         /* expressions */
 
-        public override void ExitExprConstant(OberonGrammarParser.ExprConstantContext context)
+        public override void ExitExprIntegerNumber(OberonGrammarParser.ExprIntegerNumberContext context)
         {
-            context.expReturn = ConstantExpression.Create(context.c.Text);
+            context.expReturn = ConstantExpression.Create(context.int_n.Text, true);
+        }
+
+        public override void ExitExprFloatingNumber(OberonGrammarParser.ExprFloatingNumberContext context)
+        {
+            context.expReturn = ConstantExpression.Create(context.int_r.Text);
         }
 
         public override void ExitExprNotExpression(OberonGrammarParser.ExprNotExpressionContext context)
@@ -149,9 +154,12 @@ namespace Oberon0.Compiler
             context.expReturn = VariableReferenceExpression.Create(decl, context.s.vsRet);
         }
 
+        [GeneratedRegex("^'((?:[^']+|'')*)'$")]
+        internal static partial Regex StringLiteralRegex();
+
         public override void ExitExprStringLiteral(OberonGrammarParser.ExprStringLiteralContext context)
         {
-            var match = Regex.Match(context.s.Text, "^'((?:[^']+|'')*)'$");
+            var match = StringLiteralRegex().Match(context.s.Text);
             if (match.Success)
             {
                 string data = match.Groups[1].Value.Replace("''", "'");
@@ -237,7 +245,7 @@ namespace Oberon0.Compiler
                 return;
             }
 
-            parser.currentBlock.Statements.Add(new ProcedureCallStatement(fp, parameters.ToList()));
+            parser.currentBlock.Statements.Add(new ProcedureCallStatement(fp, [.. parameters]));
         }
 
         public override void ExitProcedureDeclaration(OberonGrammarParser.ProcedureDeclarationContext context)
@@ -293,7 +301,7 @@ namespace Oberon0.Compiler
             }
 
             // build result set
-            context.@params = resultSet.ToArray();
+            context.@params = [..resultSet];
         }
 
         public override void ExitRecordElement(OberonGrammarParser.RecordElementContext context)
@@ -485,7 +493,7 @@ namespace Oberon0.Compiler
             IndexSelector indexSelector,
             TypeDefinition type)
         {
-            if (!(type is ArrayTypeDefinition arrayType))
+            if (type is not ArrayTypeDefinition arrayType)
             {
                 parser.NotifyErrorListeners(indexSelector.Token, "Array reference expected", null);
                 return SimpleTypeDefinition.VoidType;
@@ -514,7 +522,7 @@ namespace Oberon0.Compiler
 
         private TypeDefinition CheckRecordSelector(IdentifierSelector identifierSelector, TypeDefinition type)
         {
-            if (!(type is RecordTypeDefinition recordType))
+            if (type is not RecordTypeDefinition recordType)
             {
                 parser.NotifyErrorListeners(identifierSelector.Token, "Record reference expected", null);
                 return SimpleTypeDefinition.IntType;
