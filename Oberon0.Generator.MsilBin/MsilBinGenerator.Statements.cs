@@ -17,149 +17,133 @@ using Oberon0.Compiler.Solver;
 using Oberon0.Compiler.Statements;
 using Oberon0.Generator.MsilBin.PredefinedFunctions;
 
-namespace Oberon0.Generator.MsilBin
+namespace Oberon0.Generator.MsilBin;
+
+partial class MsilBinGenerator
 {
-    partial class MsilBinGenerator
+    private SyntaxList<StatementSyntax> GenerateBlockStatements(Block block,
+                                                                SyntaxList<StatementSyntax>? givenStatements = null)
     {
-        private SyntaxList<StatementSyntax> GenerateBlockStatements(Block block,
-                                                                    SyntaxList<StatementSyntax>? givenStatements = null)
+        var statements = new SyntaxList<StatementSyntax>(givenStatements);
+
+        foreach (var blockStatement in block.Statements)
         {
-            var statements = new SyntaxList<StatementSyntax>(givenStatements);
-
-            foreach (var blockStatement in block.Statements)
+            switch (blockStatement)
             {
-                switch (blockStatement)
-                {
-                    case WhileStatement whileStatement:
-                        statements = statements.Add(
-                            SyntaxFactory.WhileStatement(CompileExpression(whileStatement.Condition),
-                                SyntaxFactory.Block(GenerateBlockStatements(whileStatement.Block))));
-                        break;
-                    case IfStatement ifStatement:
-                        var current = SyntaxFactory.IfStatement(CompileExpression(ifStatement.Conditions[^1]),
-                            SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ThenParts[^1])));
-                        if (ifStatement.ElsePart != null)
-                        {
-                            current = current.WithElse(SyntaxFactory.ElseClause(
-                                SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ElsePart))));
-                        }
+                case WhileStatement whileStatement:
+                    statements = statements.Add(
+                        SyntaxFactory.WhileStatement(CompileExpression(whileStatement.Condition),
+                            SyntaxFactory.Block(GenerateBlockStatements(whileStatement.Block))));
+                    break;
+                case IfStatement ifStatement:
+                    var current = SyntaxFactory.IfStatement(CompileExpression(ifStatement.Conditions[^1]),
+                        SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ThenParts[^1])));
+                    if (ifStatement.ElsePart != null)
+                    {
+                        current = current.WithElse(SyntaxFactory.ElseClause(
+                            SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ElsePart))));
+                    }
 
-                        for (int i = ifStatement.Conditions.Count - 2; i >= 0; i--)
-                        {
-                            var expression = CompileExpression(ifStatement.Conditions[i]);
-                            current = SyntaxFactory.IfStatement(default, expression,
-                                SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ThenParts[i])),
-                                SyntaxFactory.ElseClause(SyntaxFactory.Block(current)));
-                        }
+                    for (int i = ifStatement.Conditions.Count - 2; i >= 0; i--)
+                    {
+                        var expression = CompileExpression(ifStatement.Conditions[i]);
+                        current = SyntaxFactory.IfStatement(default, expression,
+                            SyntaxFactory.Block(GenerateBlockStatements(ifStatement.ThenParts[i])),
+                            SyntaxFactory.ElseClause(SyntaxFactory.Block(current)));
+                    }
 
-                        statements = statements.Add(current);
-                        break;
-                    case AssignmentStatement assignmentStatement:
-                        var assignment = SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
-                            GenerateVariableReference(assignmentStatement.Variable, assignmentStatement.Selector),
-                            CompileExpression(assignmentStatement.Expression));
-                        statements = statements.Add(SyntaxFactory.ExpressionStatement(assignment));
-                        break;
-                    case ProcedureCallStatement procedureCallStatement:
-                        statements = statements.Add(SyntaxFactory.ExpressionStatement(
-                            CallFunction(procedureCallStatement.FunctionDeclaration,
-                                procedureCallStatement.Parameters)));
-                        break;
-                    case RepeatStatement repeatStatement:
-                        statements = HandleRepeatStatement(statements, repeatStatement);
-                        break;
-                    default:
-                        throw new NotImplementedException("Following not handled: " + blockStatement.GetType());
-                }
+                    statements = statements.Add(current);
+                    break;
+                case AssignmentStatement assignmentStatement:
+                    var assignment = SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression,
+                        GenerateVariableReference(assignmentStatement.Variable, assignmentStatement.Selector),
+                        CompileExpression(assignmentStatement.Expression));
+                    statements = statements.Add(SyntaxFactory.ExpressionStatement(assignment));
+                    break;
+                case ProcedureCallStatement procedureCallStatement:
+                    statements = statements.Add(SyntaxFactory.ExpressionStatement(
+                        CallFunction(procedureCallStatement.FunctionDeclaration,
+                            procedureCallStatement.Parameters)));
+                    break;
+                case RepeatStatement repeatStatement:
+                    statements = HandleRepeatStatement(statements, repeatStatement);
+                    break;
+                default:
+                    throw new NotImplementedException("Following not handled: " + blockStatement.GetType());
             }
-
-            return statements;
         }
 
-        private SyntaxList<StatementSyntax> HandleRepeatStatement(SyntaxList<StatementSyntax> statements,
-                                                                  RepeatStatement repeatStatement)
+        return statements;
+    }
+
+    private SyntaxList<StatementSyntax> HandleRepeatStatement(SyntaxList<StatementSyntax> statements,
+                                                              RepeatStatement repeatStatement)
+    {
+        var expression = BinaryExpression.Create(OberonGrammarLexer.NOT, repeatStatement.Condition, null,
+            repeatStatement.Block.Parent!);
+        var compiled = ConstantSolver.Solve(expression, repeatStatement.Block.Parent!);
+        statements = statements.Add(
+            SyntaxFactory.DoStatement(
+                SyntaxFactory.Block(GenerateBlockStatements(repeatStatement.Block)),
+                CompileExpression(compiled)));
+        return statements;
+    }
+
+    private ExpressionSyntax CallFunction(FunctionDeclaration functionDeclaration, List<Expression> parameters)
+    {
+        if (functionDeclaration.IsInternal)
         {
-            var expression = BinaryExpression.Create(OberonGrammarLexer.NOT, repeatStatement.Condition, null,
-                repeatStatement.Block.Parent!);
-            var compiled = ConstantSolver.Solve(expression, repeatStatement.Block.Parent);
-            statements = statements.Add(
-                SyntaxFactory.DoStatement(
-                    SyntaxFactory.Block(GenerateBlockStatements(repeatStatement.Block)),
-                    CompileExpression(compiled)));
-            return statements;
+            return CallInternalFunction(functionDeclaration, parameters);
         }
 
-        private ExpressionSyntax CallFunction(FunctionDeclaration functionDeclaration, List<Expression> parameters)
+
+        var argumentList = new SyntaxNodeOrTokenList();
+        bool first = true;
+        int i = 0;
+        var parameterDeclarations =
+            functionDeclaration.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray();
+        foreach (var parameter in parameters)
         {
-            if (functionDeclaration.IsInternal)
+            if (!first)
             {
-                return CallInternalFunction(functionDeclaration, parameters);
+                argumentList = argumentList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
             }
 
-
-            var argumentList = new SyntaxNodeOrTokenList();
-            bool first = true;
-            int i = 0;
-            var parameterDeclarations =
-                functionDeclaration.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray();
-            foreach (var parameter in parameters)
+            first = false;
+            var argument = SyntaxFactory.Argument(CompileExpression(parameter));
+            if (parameterDeclarations[i].IsVar)
             {
-                if (!first)
-                {
-                    argumentList = argumentList.Add(SyntaxFactory.Token(SyntaxKind.CommaToken));
-                }
-
-                first = false;
-                var argument = SyntaxFactory.Argument(CompileExpression(parameter));
-                if (parameterDeclarations[i].IsVar)
-                {
-                    argument = argument.WithRefKindKeyword(SyntaxFactory.Token(SyntaxKind.RefKeyword));
-                }
-
-                argumentList = argumentList.Add(argument);
-                i++;
+                argument = argument.WithRefKindKeyword(SyntaxFactory.Token(SyntaxKind.RefKeyword));
             }
 
-            if (functionDeclaration is ExternalFunctionDeclaration efd)
-            {
-                return CallExternalFunction(efd, argumentList);
-            }
-
-            // local function/procedure
-            return
-                SyntaxFactory.InvocationExpression(
-                    MapIdentifierName(functionDeclaration.Name)).WithArgumentList(
-                    SyntaxFactory.ArgumentList(
-                        SyntaxFactory.SeparatedList<ArgumentSyntax>(argumentList)));
+            argumentList = argumentList.Add(argument);
+            i++;
         }
 
-        private static ExpressionSyntax CallExternalFunction(ExternalFunctionDeclaration efd,
-                                                             SyntaxNodeOrTokenList argumentList)
+        if (functionDeclaration is ExternalFunctionDeclaration efd)
         {
-            string[] names = efd.ClassName.Split(".");
-            ExpressionSyntax current = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
-                MapIdentifierName(names[0]),
-                MapIdentifierName(names.Length > 1 ? names[1] : efd.MethodName));
+            return CallExternalFunction(efd, argumentList);
+        }
 
-            if (names.Length < 2)
-                // this case can be handled by a single MemberAccessExpression
-            {
-                return
-                    SyntaxFactory.InvocationExpression(
-                        current).WithArgumentList(
-                        SyntaxFactory.ArgumentList(
-                            SyntaxFactory.SeparatedList<ArgumentSyntax>(argumentList)));
-            }
+        // local function/procedure
+        return
+            SyntaxFactory.InvocationExpression(
+                MapIdentifierName(functionDeclaration.Name)).WithArgumentList(
+                SyntaxFactory.ArgumentList(
+                    SyntaxFactory.SeparatedList<ArgumentSyntax>(argumentList)));
+    }
 
-            int index = names.Length - 1;
-            while (index > 2)
-            {
-                current = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, current,
-                    MapIdentifierName(names[index--]));
-            }
+    private static InvocationExpressionSyntax CallExternalFunction(ExternalFunctionDeclaration efd,
+                                                                   SyntaxNodeOrTokenList argumentList)
+    {
+        string[] names = efd.ClassName.Split(".");
+        ExpressionSyntax current = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+            MapIdentifierName(names[0]),
+            MapIdentifierName(names.Length > 1 ? names[1] : efd.MethodName));
 
-            current = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, current,
-                MapIdentifierName(efd.MethodName));
+        if (names.Length < 2)
+            // this case can be handled by a single MemberAccessExpression
+        {
             return
                 SyntaxFactory.InvocationExpression(
                     current).WithArgumentList(
@@ -167,12 +151,27 @@ namespace Oberon0.Generator.MsilBin
                         SyntaxFactory.SeparatedList<ArgumentSyntax>(argumentList)));
         }
 
-        private ExpressionSyntax CallInternalFunction(FunctionDeclaration functionDeclaration,
-                                                      List<Expression> parameters)
+        int index = names.Length - 1;
+        while (index > 2)
         {
-            var func = StandardFunctionRepository.Get(functionDeclaration);
-            return func.Instance.Generate(func, this, functionDeclaration,
-                parameters);
+            current = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, current,
+                MapIdentifierName(names[index--]));
         }
+
+        current = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, current,
+            MapIdentifierName(efd.MethodName));
+        return
+            SyntaxFactory.InvocationExpression(
+                current).WithArgumentList(
+                SyntaxFactory.ArgumentList(
+                    SyntaxFactory.SeparatedList<ArgumentSyntax>(argumentList)));
+    }
+
+    private ExpressionSyntax CallInternalFunction(FunctionDeclaration functionDeclaration,
+                                                  List<Expression> parameters)
+    {
+        var func = StandardFunctionRepository.Get(functionDeclaration);
+        return func.Instance!.Generate(func, this, functionDeclaration,
+            parameters);
     }
 }

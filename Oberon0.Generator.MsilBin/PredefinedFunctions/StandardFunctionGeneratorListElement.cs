@@ -5,7 +5,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+#pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
+
 using System.Diagnostics;
+using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Types;
 
@@ -18,23 +21,23 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
         ///     Gets or sets the instance handling the standard function
         /// </summary>
         /// <value>The instance.</value>
-        public IStandardFunctionGenerator Instance { get; set; }
+        public IStandardFunctionGenerator? Instance { get; set; }
 
         /// <summary>
         ///     Gets or sets the lookup key to find the appropriate function
         /// </summary>
         /// <value>The instance key.</value>
-        public string InstanceKey { get; set; }
+        public string? InstanceKey { get; set; }
 
-        public string AdditionalInfo { get; set; }
-
-        /// <inheritdoc />
-        public string Name { get; set; }
+        [UsedImplicitly] public string? AdditionalInfo { get; set; }
 
         /// <inheritdoc />
-        public TypeDefinition ReturnType { get; set; }
+        public string? Name { get; set; }
 
         /// <inheritdoc />
-        public ProcedureParameterDeclaration[] ParameterTypes { get; set; }
+        public TypeDefinition? ReturnType { get; set; }
+
+        /// <inheritdoc />
+        public ProcedureParameterDeclaration[]? ParameterTypes { get; set; }
     }
 }

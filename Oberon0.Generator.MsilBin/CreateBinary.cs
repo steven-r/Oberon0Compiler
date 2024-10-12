@@ -49,7 +49,7 @@ namespace Oberon0.Generator.MsilBin
 
         private CreateBinaryOptions SetOptions(CreateBinaryOptions options)
         {
-            options.ModuleName ??= _codeGenerator.Module.Name;
+            options.ModuleName ??= _codeGenerator.Module.Name ?? throw new NullReferenceException("Name needs to be set");
             options.SolutionPath ??= BuildOutputPath(options);
             options.OutputPath ??= Environment.CurrentDirectory;
             return options;
@@ -123,9 +123,7 @@ namespace Oberon0.Generator.MsilBin
             var directoryInfo = new DirectoryInfo(_options.SolutionPath!);
             if (_options.CleanSolution && directoryInfo.Exists)
             {
-#pragma warning disable S1215 // "GC.Collect" should not be called
                 GC.Collect(); // try to unload blocking resources
-#pragma warning restore S1215 // "GC.Collect" should not be called
                 Directory.Delete(_options.SolutionPath!, true);
             }
 

@@ -25,7 +25,7 @@ namespace Oberon0.Compiler.Expressions
             var operations = container.GetExports<ExportFactory<IArithmeticOperation, ArithmeticOpMetadata>>();
 
             // translate all arithmetic operations to a dictionary
-            ArithmeticOperations = new Dictionary<ArithmeticOpKey, ArithmeticOperation>();
+            ArithmeticOperations = [];
             foreach (var mefArithmeticOperation in operations)
             {
                 var key = new ArithmeticOpKey(

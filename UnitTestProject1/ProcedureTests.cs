@@ -484,7 +484,7 @@ namespace Oberon0.Compiler.Tests
 
             var type = m.Block.LookupType(returnTypeName);
             Assert.NotNull(type);
-            var f = new FunctionDeclaration(name, m.Block, type, paramList.ToArray());
+            var f = new FunctionDeclaration(name, m.Block, type, [..paramList]);
             string prototype = FunctionDeclaration.BuildPrototype(f.Name, f.ReturnType,
                 f.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray());
             return prototype;

@@ -13,15 +13,8 @@ using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Operations
 {
-    public class OperationTests
+    public class OperationTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public OperationTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Fact]
         public void TestAddConstConst()
         {
@@ -30,7 +23,7 @@ BEGIN
   WriteInt(1+2);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -39,9 +32,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("3\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("3\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -56,7 +49,7 @@ BEGIN
   WriteInt(2+a);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -65,9 +58,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("3\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("3\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -82,7 +75,7 @@ BEGIN
   WriteInt(a+2);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -91,9 +84,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("3\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("3\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -110,7 +103,7 @@ BEGIN
   WriteInt(b+a);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -119,9 +112,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("-1\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("-1\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -138,7 +131,7 @@ BEGIN
   WriteInt(b+a);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -147,9 +140,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("3\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("3\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -164,7 +157,7 @@ BEGIN
   WriteBool(b);
   WriteLn;
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -173,9 +166,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output, new StringReader("true" + Environment.NewLine));
-            Assert.Equal($"{false}\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1, new StringReader("true" + Environment.NewLine));
+            Assert.Equal($"{false}\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -192,7 +185,7 @@ BEGIN
   WriteInt(b*a);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -201,9 +194,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("-2\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("-2\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -218,7 +211,7 @@ BEGIN
   WriteInt(b);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -227,9 +220,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("-2\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("-2\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -247,7 +240,7 @@ BEGIN
   WriteInt(-a);
   WriteLn;
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -256,9 +249,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("-1\n1\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("-1\n1\n", output1.ToString().NlFix());
         }
 
         //TODO: Move to appropriate test section
@@ -270,7 +263,7 @@ BEGIN
   WriteReal(-2.5);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -279,9 +272,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal($"{-2.5}\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal($"{-2.5}\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -299,7 +292,7 @@ BEGIN
   WriteReal(-a);
   WriteLn
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -308,9 +301,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal($"{-1.5}\n{1.5}\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal($"{-1.5}\n{1.5}\n", output1.ToString().NlFix());
         }
 
         [Fact]
@@ -328,7 +321,7 @@ BEGIN
   WriteBool(b);
   WriteLn;
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -337,10 +330,10 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output,
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1,
                 new StringReader("true" + Environment.NewLine + "false" + Environment.NewLine));
-            Assert.Equal($"{true}\n{false}\n", output.ToString().NlFix());
+            Assert.Equal($"{true}\n{false}\n", output1.ToString().NlFix());
         }
 
         //TODO: Seems the wrong place
@@ -356,7 +349,7 @@ BEGIN
   WriteInt(a);
   WriteLn;
 END Array.";
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -365,9 +358,9 @@ END Array.";
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output, new StringReader("12" + Environment.NewLine));
-            Assert.Equal("12\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1, new StringReader("12" + Environment.NewLine));
+            Assert.Equal("12\n", output1.ToString().NlFix());
         }
     }
 }

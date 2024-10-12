@@ -16,15 +16,8 @@ using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Libraries
 {
-    public class FrontendTests
+    public class FrontendTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public FrontendTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Fact]
         public void TestEmptyArgsRun()
         {
@@ -45,7 +38,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
                 Console.SetError(currentError);
             }
 
-            _output.WriteLine(sw.ToString());
+            output.WriteLine(sw.ToString());
             Assert.Contains("Compile an Oberon0 source file.", sw.ToString());
         }
 
@@ -69,7 +62,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
                 Console.SetError(currentError);
             }
 
-            _output.WriteLine(sw.ToString());
+            output.WriteLine(sw.ToString());
             Assert.StartsWith("File does not exist: 'dummy-file.ob0'.", sw.ToString());
         }
 
@@ -124,7 +117,7 @@ END TestCompileAndViewOutput.
                 int res = Program.Main([sourceFileName, "--verbose", "--clean", "--project-name", "Multiply"]);
                 if (res == 1)
                 {
-                    _output.WriteLine(sw.ToString());
+                    output.WriteLine(sw.ToString());
                 }
 
                 string execName = Path.Combine(dirName, "Multiply");
@@ -170,7 +163,7 @@ END TestCompileAndViewOutput.
                 int res = Program.Main([sourceFileName, "--verbose", "--clean", "--project-name", "Multiply"]);
                 if (res == 1)
                 {
-                    _output.WriteLine(sw.ToString());
+                    output.WriteLine(sw.ToString());
                 }
 
                 Assert.Equal(1, res);
@@ -189,14 +182,14 @@ END TestCompileAndViewOutput.
             var processStart = new ProcessStartInfo(executableName)
             {
                 RedirectStandardError = true,
-                RedirectStandardInput = inputStrings != null && inputStrings.Count > 0,
+                RedirectStandardInput = inputStrings is { Count: > 0 },
                 RedirectStandardOutput = true,
                 ErrorDialog = false,
                 UseShellExecute = false,
             };
             int outputIndex = 0;
             var p = new Process {StartInfo = processStart};
-            p.OutputDataReceived += (sender, e) =>
+            p.OutputDataReceived += (_, e) =>
             {
                 if (string.IsNullOrWhiteSpace(e.Data))
                 {
@@ -210,7 +203,7 @@ END TestCompileAndViewOutput.
 
                 outputIndex++;
             };
-            p.ErrorDataReceived += (sender, e) =>
+            p.ErrorDataReceived += (_, e) =>
             {
                 if (string.IsNullOrWhiteSpace(e.Data))
                 {

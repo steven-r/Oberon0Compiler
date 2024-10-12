@@ -12,15 +12,8 @@ using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Types
 {
-    public class VarTests
+    public class VarTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-
-        public VarTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Fact]
         public void TestReservedWordIssue23()
         {
@@ -35,7 +28,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types
                                       WriteLn 
                                   END Test.
                                   """;
-            var cg = CompileHelper.CompileOberon0Code(source, out string code, _output);
+            var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
 
             Assert.NotEmpty(code);
 
@@ -44,9 +37,9 @@ namespace Oberon0.Generator.MsilBin.Tests.Types
             byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.True(assembly != null);
 
-            using var output = new StringWriter();
-            Runner.Execute(assembly, output);
-            Assert.Equal("1\n", output.ToString().NlFix());
+            using var output1 = new StringWriter();
+            Runner.Execute(assembly, output1);
+            Assert.Equal("1\n", output1.ToString().NlFix());
         }
     }
 }

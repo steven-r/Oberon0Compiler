@@ -23,15 +23,20 @@ namespace Oberon0.Compiler.Expressions.Constant
 
         public abstract bool ToBool();
 
-        internal static Expression Create(object value)
+        internal static Expression Create(object value, bool expectInt = false)
         {
             if (value is string stringVal)
             {
                 // from string
-                if (int.TryParse(stringVal, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture,
-                    out int intVal))
+                if (uint.TryParse(stringVal, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture,
+                    out uint intVal))
                 {
-                    return new ConstantIntExpression(intVal);
+                    if (intVal > int.MaxValue && expectInt)
+                    {
+                        // might be int.MinValue, else real
+                        return new ConstantDoubleExpression(intVal, true);
+                    }
+                    return new ConstantIntExpression((int)intVal);
                 }
 
                 if (double.TryParse(stringVal, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,

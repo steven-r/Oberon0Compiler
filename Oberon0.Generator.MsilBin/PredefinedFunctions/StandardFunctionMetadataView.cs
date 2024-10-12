@@ -9,29 +9,24 @@ using JetBrains.Annotations;
 
 namespace Oberon0.Generator.MsilBin.PredefinedFunctions
 {
-    public class StandardFunctionMetadataView
+    [method: UsedImplicitly]
+    public class StandardFunctionMetadataView()
     {
-        [UsedImplicitly]
-        public StandardFunctionMetadataView()
-        {
-            
-        }
-
         /// <summary>
         ///     Gets or sets the name of the function.
         /// </summary>
         /// <value>The name.</value>
-        public string Name { get; [UsedImplicitly] set; }
+        public string Name { get; [UsedImplicitly] set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the types of the parameter
         /// </summary>
         /// <value>The parameter types.</value>
-        public string ParameterTypes { get; [UsedImplicitly] set; }
+        public string ParameterTypes { get; [UsedImplicitly] set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the name of the return type
         /// </summary>
-        public string ReturnType { get; [UsedImplicitly] set; }
+        public string ReturnType { get; [UsedImplicitly] set; } = string.Empty;
     }
 }

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Antlr4.Runtime;
-using JetBrains.Annotations;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 using Xunit;
@@ -49,24 +48,9 @@ namespace Oberon0.Test.Support
             return CompileString(source, null, expectedErrors);
         }
 
-        public static Module CompileString(string source, [CanBeNull] ITestOutputHelper output,
+        public static Module CompileString(string source, ITestOutputHelper? output,
                                            params string[] expectedErrors)
         {
-            void DumpErrors(IEnumerable<CompilerError> compilerErrors)
-            {
-                foreach (var compilerError in compilerErrors)
-                {
-                    string message = $"[{compilerError.Line}/{compilerError.Column}] {compilerError.Message}";
-                    if (output == null)
-                    {
-                        Console.Error.WriteLine(message);
-                    } else
-                    {
-                        output.WriteLine(message);
-                    }
-                }
-            }
-
             var errors = new List<CompilerError>();
             var m = CompileString(source, errors);
             if (expectedErrors.Length == 0 && errors.Count > 0)
@@ -87,6 +71,21 @@ namespace Oberon0.Test.Support
             }
 
             return m;
+
+            void DumpErrors(IEnumerable<CompilerError> compilerErrors)
+            {
+                foreach (var compilerError in compilerErrors)
+                {
+                    string message = $"[{compilerError.Line}/{compilerError.Column}] {compilerError.Message}";
+                    if (output == null)
+                    {
+                        Console.Error.WriteLine(message);
+                    } else
+                    {
+                        output.WriteLine(message);
+                    }
+                }
+            }
         }
 
         /// <summary>

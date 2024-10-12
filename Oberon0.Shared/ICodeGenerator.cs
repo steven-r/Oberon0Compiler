@@ -6,7 +6,6 @@
 #endregion
 
 using System.IO;
-using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
 
 namespace Oberon0.Shared
@@ -55,6 +54,6 @@ namespace Oberon0.Shared
         /// </summary>
         /// <param name="options">The options to be passed to binary creation</param>
         /// <returns><code>true</code>, if generation was successfully.</returns>
-        bool GenerateBinary([CanBeNull] CreateBinaryOptions options = null);
+        bool GenerateBinary(CreateBinaryOptions? options = null);
     }
 }

@@ -24,7 +24,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions.impl
     [UsedImplicitly]
     public class ReadNumHandler : IStandardFunctionGenerator
     {
-        private static readonly Dictionary<string, string> MapTypeNames = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> MapTypeNames = new()
         {
             {"ReadInt", "Int32"},
             {"ReadReal", "Double"},

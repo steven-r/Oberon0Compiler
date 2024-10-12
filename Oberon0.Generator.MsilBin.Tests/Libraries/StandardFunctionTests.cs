@@ -38,7 +38,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1, new StringReader("12" + Environment.NewLine));

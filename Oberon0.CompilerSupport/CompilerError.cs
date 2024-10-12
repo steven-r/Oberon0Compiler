@@ -15,10 +15,10 @@ namespace Oberon0.Test.Support
     {
         public int Column { get; set; }
 
-        public Exception Exception { get; set; }
+        public Exception? Exception { get; set; }
 
         public int Line { get; set; }
 
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 }
