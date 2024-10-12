@@ -6,7 +6,9 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Oberon0.Compiler.Exceptions;
 
+[ExcludeFromCodeCoverage]
 public class InternalCompilerException(string message) : Exception(message);
