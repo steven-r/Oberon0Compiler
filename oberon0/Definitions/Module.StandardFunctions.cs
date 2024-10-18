@@ -134,7 +134,7 @@ namespace Oberon0.Compiler.Definitions
             string typeName = matches.Groups["name"].Value;
             bool isVar = matches.Groups["ref"].Success;
 
-            var type = block.LookupType(typeName) ?? throw new ArgumentException($"{typeString} is not a valid type reference", nameof(typeString));
+            var type = block.LookupType(typeName) ?? throw new InvalidOperationException($"{typeString} is not a valid type reference");
 
             var targetType = matches.Groups["isarray"].Success
                 ? new ArrayTypeDefinition(int.Parse(matches.Groups["size"].Value), type)

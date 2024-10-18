@@ -401,9 +401,9 @@ namespace Oberon0.Compiler.Tests
         public void GetProcedureParameterByNameThrowUnknownType()
         {
             var m = new Module(null);
-            var t = Assert.Throws<ArgumentException>(() =>
+            var t = Assert.Throws<InvalidOperationException>(() =>
                 Module.GetProcedureParameterByName("isThere", "UNKNOWN", m.Block));
-            Assert.Equal("UNKNOWN is not a valid type reference (Parameter 'typeString')", t.Message);
+            Assert.Equal("UNKNOWN is not a valid type reference", t.Message);
         }
 
         [Fact]
@@ -465,16 +465,47 @@ namespace Oberon0.Compiler.Tests
         [Fact]
         public void TestBuildPrototypeWithIntResultRecordFail()
         {
-            var e = Assert.Throws<ArgumentException>(() =>
+            var e = Assert.Throws<InvalidOperationException>(() =>
                 BuildPrototypeTester("TestFunction", "INTEGER", ("a", "RECORD a: INTEGER END")));
-            Assert.Equal("RECORD a: INTEGER END is not a valid type reference (Parameter 'typeString')", e.Message);
-            Assert.Equal("typeString", e.ParamName);
+            Assert.Equal("RECORD a: INTEGER END is not a valid type reference", e.Message);
+        }
+
+        [Fact]
+        public void TestBuildPrototypeWithRecordByValue()
+        {
+            string p = BuildPrototypeTester("TestFunction", "INTEGER", module =>
+                {
+                    module.Block.Types.Add(new RecordTypeDefinition().Clone("recType"));
+                },
+                ("a", "recType"));
+            Assert.Equal("INTEGER TestFunction(recType)", p);
+        }
+
+        [Fact]
+        public void TestBuildPrototypeWithRecordByRef()
+        {
+            string p = BuildPrototypeTester("TestFunction", "INTEGER", module =>
+                {
+                    module.Block.Types.Add(new RecordTypeDefinition().Clone("recType"));
+                },
+                ("a", "&recType"));
+            Assert.Equal("INTEGER TestFunction(&recType)", p);
         }
 
         private static string BuildPrototypeTester(string name, string returnTypeName,
                                                    params (string, string)[] parameters)
         {
+            return BuildPrototypeTester(name, returnTypeName, (_) => { }, parameters);
+        }
+
+        private static string BuildPrototypeTester(string name, string returnTypeName,
+                                                   Action<Module> additionalCode,
+                                                   params (string, string)[] parameters)
+        {
             var m = new Module(null);
+            
+            additionalCode(m); // allow user types, ...
+
             var paramList = new List<ProcedureParameterDeclaration>();
             if (parameters != null)
             {
@@ -489,5 +520,6 @@ namespace Oberon0.Compiler.Tests
                 f.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray());
             return prototype;
         }
+
     }
 }
