@@ -195,7 +195,7 @@ namespace Oberon0.Generator.MsilBin
             var method =
                 SyntaxFactory.MethodDeclaration(GetTypeName(functionDeclaration.ReturnType), functionDeclaration.Name);
 
-            if (!functionDeclaration.Block.Declarations.Any(x => x is ProcedureParameterDeclaration))
+            if (!functionDeclaration.Block.Declarations.Exists(x => x is ProcedureParameterDeclaration))
             {
                 return method;
             }

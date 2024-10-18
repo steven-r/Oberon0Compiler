@@ -118,7 +118,7 @@ namespace Oberon0.Compiler.Definitions
             var b = this;
             while (b != null)
             {
-                var res = b.Types.FirstOrDefault(x => x.Name == name);
+                var res = b.Types.Find(x => x.Name == name);
                 if (res != null)
                 {
                     return res;
@@ -145,7 +145,7 @@ namespace Oberon0.Compiler.Definitions
                 b = b.Parent;
             }
 
-            var res = b.Types.FirstOrDefault(x => x.Type == baseTypes && x.IsInternal);
+            var res = b.Types.Find(x => x.Type == baseTypes && x.IsInternal);
             if (res == null)
             {
                 throw new InternalCompilerException($"LookupTypeByBaseType: Cannot lookup type {baseTypes:G}");
@@ -165,7 +165,7 @@ namespace Oberon0.Compiler.Definitions
             var b = this;
             while (b != null)
             {
-                var res = b.Declarations.FirstOrDefault(x => x.Name == name);
+                var res = b.Declarations.Find(x => x.Name == name);
                 if (res != null)
                 {
                     return res;

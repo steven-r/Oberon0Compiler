@@ -29,7 +29,7 @@ namespace Oberon0.Generator.MsilBin
             ArgumentNullException.ThrowIfNull(codeGenerator);
 
             MSBuildLocator.RegisterDefaults();
-            _codeGenerator = codeGenerator ?? throw new ArgumentNullException(nameof(codeGenerator));
+            _codeGenerator = codeGenerator;
             _options = SetOptions(options ?? new CreateBinaryOptions());
             if (!Directory.Exists(_options.OutputPath))
             {
