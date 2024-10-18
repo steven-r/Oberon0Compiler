@@ -26,7 +26,6 @@ jobs:
         dotnet tool install --global dotnet-coverage
 
     - name: Begin analysis on SonarCloud
-      if: ${{ steps.secret-check.outputs.run_analysis == 'true' }}
       run: >
         dotnet sonarscanner begin 
             /k:"steven-r_Oberon0Compiler" 
