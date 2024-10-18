@@ -484,9 +484,9 @@ namespace Oberon0.Compiler
                     null);
             }
 
-            parser.module.HasExports = parser.module.Block.Declarations.Any(x => x.Exportable)
-             || parser.module.Block.Procedures.Any(x => x.Exportable)
-             || parser.module.Block.Types.Any(x => x.Exportable);
+            parser.module.HasExports = parser.module.Block.Declarations.Exists(x => x.Exportable)
+             || parser.module.Block.Procedures.Exists(x => x.Exportable)
+             || parser.module.Block.Types.Exists(x => x.Exportable);
         }
 
         private TypeDefinition CheckArrayIndexSelector(
