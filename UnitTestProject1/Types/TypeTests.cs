@@ -5,6 +5,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
@@ -117,5 +119,12 @@ public class TypeTests
         Assert.Equal(as1.Expression.TargetType, as2.Expression.TargetType);
         Assert.NotEqual(as1.Expression.TargetType, j.Type);
         Assert.Equal(as1.Expression.TargetType.Type, j.Type.Type);
+    }
+
+    [Fact]
+    public void LookupBaseTypeFail()
+    {
+        var b = new Block(null, new Module(null));
+        Assert.Throws<InternalCompilerException>(() => b.LookupTypeByBaseType(BaseTypes.Any));
     }
 }

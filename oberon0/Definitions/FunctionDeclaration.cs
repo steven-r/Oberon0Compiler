@@ -121,7 +121,7 @@ namespace Oberon0.Compiler.Definitions
             ProcedureParameterDeclaration[]? parameters)
         {
             var sb = new StringBuilder();
-            if (returnType.Name != SimpleTypeDefinition.VoidTypeName)
+            if (returnType.Name != TypeDefinition.VoidTypeName)
             {
                 sb.Append(returnType.Name);
                 sb.Append(' ');

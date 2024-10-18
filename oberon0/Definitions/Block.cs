@@ -44,19 +44,6 @@ namespace Oberon0.Compiler.Definitions
         }
 
         // test only
-        public FunctionDeclaration? LookupFunction(string name, IToken token)
-        {
-            return LookupFunction(name, token, new List<CallParameter>());
-        }
-
-        // test only
-        public FunctionDeclaration? LookupFunction(string name, IToken token, string parameters)
-        {
-            var callParameters = CallParameter.CreateFromStringExpression(this, parameters);
-            return LookupFunction(name, token, callParameters);
-        }
-
-        // test only
         public FunctionDeclaration? LookupFunction(string name, string parameters)
         {
             var callParameters = CallParameter.CreateFromStringExpression(this, parameters);
