@@ -1,28 +1,41 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: .NET CI
 
 on:
-  push:
-    branches: [ "master", "feat/*", "bug/*" ]
-  pull_request:
-    branches: [ "master" ]
+ push:
+ workflow_dispatch:
+ pull_request:
+   types: [opened, edited]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
     steps:
-    - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4
+    - uses: actions/checkout@v4
+
     - name: Setup .NET
-      uses: actions/setup-dotnet@6bd8b7f7774af54e05809fcc5431931b3eb1ddee # v4
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
+
+    - name: Install dotnet tools
+      run: |
+        dotnet tool install --global dotnet-sonarscanner
+        dotnet tool install --global dotnet-coverage
+
+    - name: Begin analysis on SonarCloud
+      run: |
+        dotnet sonarscanner begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.branch.name=$BRANCH_NAME /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token=${{ secrets.SONAR_SECRET }} /d:sonar.pullrequest.provider=github /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.vscoveragexml.reportsPaths=**/dynamic-coverage-*.xml #/d:sonar.verbose=true
+              
     - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet build
+
+    - name: Run Tests (with Coverage)
+      run: |
+        dotnet-coverage collect 'dotnet test --no-build --verbosity normal' -f xml -o dynamic-coverage-std.xml
+        
+    - name: End analysis on SonarCloud
+      run: |
+        dotnet sonarscanner end /d:sonar.token=${{ secrets.SONAR_SECRET }}

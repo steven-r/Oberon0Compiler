@@ -309,7 +309,7 @@ namespace Oberon0.Compiler
             foreach (var token in context._ids)
             {
                 string name = token.Text;
-                if (context.record.Elements.Any(x => x.Name == name))
+                if (context.record.Elements.Exists(x => x.Name == name))
                 {
                     parser.NotifyErrorListeners(token, $"Element {name} defined more than once", null);
                     continue; // ignore this element
@@ -468,7 +468,7 @@ namespace Oberon0.Compiler
         public override void ExitImportDefinition(OberonGrammarParser.ImportDefinitionContext context)
         {
             string moduleName = context.id.Text;
-            if (parser.module.ExternalReferences.Any(x => x.GetName().Name == moduleName))
+            if (parser.module.ExternalReferences.Exists(x => x.GetName().Name == moduleName))
             {
                 parser.NotifyErrorListeners(context.id, $"Module {moduleName} has already been imported", null);
             }
@@ -484,9 +484,9 @@ namespace Oberon0.Compiler
                     null);
             }
 
-            parser.module.HasExports = parser.module.Block.Declarations.Any(x => x.Exportable)
-             || parser.module.Block.Procedures.Any(x => x.Exportable)
-             || parser.module.Block.Types.Any(x => x.Exportable);
+            parser.module.HasExports = parser.module.Block.Declarations.Exists(x => x.Exportable)
+             || parser.module.Block.Procedures.Exists(x => x.Exportable)
+             || parser.module.Block.Types.Exists(x => x.Exportable);
         }
 
         private TypeDefinition CheckArrayIndexSelector(
@@ -528,11 +528,11 @@ namespace Oberon0.Compiler
                 return SimpleTypeDefinition.IntType;
             }
 
-            foreach (var declaration in recordType.Elements.Where(declaration => declaration.Name == identifierSelector.Name))
+            var declaration = recordType.Elements.Find(declaration => declaration.Name == identifierSelector.Name);
+            if (declaration != null)
             {
-                identifierSelector.Element = declaration;
-
                 // found
+                identifierSelector.Element = declaration;
                 return declaration.Type;
             }
 

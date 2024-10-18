@@ -18,6 +18,14 @@ namespace Oberon0.Compiler.Types
         /// </summary>
         public const string VoidTypeName = "$$VOID";
 
+        public const string IntegerTypeName = "INTEGER";
+
+        public const string RealTypeName = "REAL";
+
+        public const string StringTypeName = "STRING";
+
+        public const string BooleanTypeName = "BOOLEAN";
+
         protected TypeDefinition(BaseTypes baseTypes)
             : this(baseTypes, false)
         {

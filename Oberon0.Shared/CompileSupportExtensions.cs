@@ -84,7 +84,7 @@ namespace Oberon0.Shared
                 return;
             }
 
-            var firstError = compilationErrors.First();
+            var firstError = compilationErrors[0];
             string errorNumber = firstError.Id;
             string errorDescription = firstError.GetMessage();
             string firstErrorMessage = $"{errorNumber}: {errorDescription};";

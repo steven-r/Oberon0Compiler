@@ -49,7 +49,7 @@ namespace Oberon0.Compiler.Expressions.Constant
 
         public override bool ToBool()
         {
-            return (double) Value != 0;
+            return !((double) Value).Equals(0.0);
         }
     }
 }

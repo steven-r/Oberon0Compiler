@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Types;
 using Oberon0System.Attributes;
@@ -31,33 +30,33 @@ namespace Oberon0.Compiler.Definitions
         [
             new()
             {
-                Name = "ABS", Type = "INTEGER",
-                ParameterTypes = ["INTEGER"]
+                Name = "ABS", Type = TypeDefinition.IntegerTypeName,
+                ParameterTypes = [TypeDefinition.IntegerTypeName]
             },
             new()
             {
-                Name = "ABS", Type = "REAL",
-                ParameterTypes = ["REAL"]
+                Name = "ABS", Type = TypeDefinition.RealTypeName,
+                ParameterTypes = [TypeDefinition.RealTypeName]
             },
             new()
             {
                 Name = "WriteInt",
-                ParameterTypes = ["INTEGER"]
+                ParameterTypes = [TypeDefinition.IntegerTypeName]
             },
             new()
             {
                 Name = "WriteBool",
-                ParameterTypes = ["BOOLEAN"]
+                ParameterTypes = [TypeDefinition.BooleanTypeName]
             },
             new()
             {
                 Name = "WriteString",
-                ParameterTypes = ["STRING"]
+                ParameterTypes = [TypeDefinition.StringTypeName]
             },
             new()
             {
                 Name = "WriteReal",
-                ParameterTypes = ["REAL"]
+                ParameterTypes = [TypeDefinition.RealTypeName]
             },
             new()
             {
@@ -145,11 +144,11 @@ namespace Oberon0.Compiler.Definitions
         private void DeclareStandardConstants()
         {
             Block.Declarations.Add(
-                new ConstDeclaration("TRUE", Block.LookupType("BOOLEAN")!, new ConstantBoolExpression(true)));
+                new ConstDeclaration("TRUE", Block.LookupType(TypeDefinition.BooleanTypeName)!, new ConstantBoolExpression(true)));
             Block.Declarations.Add(
-                new ConstDeclaration("FALSE", Block.LookupType("BOOLEAN")!, new ConstantBoolExpression(false)));
+                new ConstDeclaration("FALSE", Block.LookupType(TypeDefinition.BooleanTypeName)!, new ConstantBoolExpression(false)));
             Block.Declarations.Add(
-                new ConstDeclaration("EPSILON", Block.LookupType("REAL")!,
+                new ConstDeclaration("EPSILON", Block.LookupType(TypeDefinition.RealTypeName)!,
                     new ConstantDoubleExpression(double.Epsilon)));
         }
 
@@ -175,10 +174,10 @@ namespace Oberon0.Compiler.Definitions
 
         private void DeclareStandardTypes()
         {
-            SimpleTypeDefinition.IntType = new SimpleTypeDefinition(BaseTypes.Int, "INTEGER", true);
-            SimpleTypeDefinition.BoolType = new SimpleTypeDefinition(BaseTypes.Bool, "BOOLEAN", true);
-            SimpleTypeDefinition.RealType = new SimpleTypeDefinition(BaseTypes.Real, "REAL", true);
-            SimpleTypeDefinition.StringType = new SimpleTypeDefinition(BaseTypes.String, "STRING", true);
+            SimpleTypeDefinition.IntType = new SimpleTypeDefinition(BaseTypes.Int, TypeDefinition.IntegerTypeName, true);
+            SimpleTypeDefinition.BoolType = new SimpleTypeDefinition(BaseTypes.Bool, TypeDefinition.BooleanTypeName, true);
+            SimpleTypeDefinition.RealType = new SimpleTypeDefinition(BaseTypes.Real, TypeDefinition.RealTypeName, true);
+            SimpleTypeDefinition.StringType = new SimpleTypeDefinition(BaseTypes.String, TypeDefinition.StringTypeName, true);
             SimpleTypeDefinition.VoidType = new SimpleTypeDefinition(
                 BaseTypes.Void,
                 TypeDefinition.VoidTypeName,
@@ -239,7 +238,7 @@ namespace Oberon0.Compiler.Definitions
                 className, methodName, procParameters);
         }
 
-        private class HardwiredFunction
+        private sealed class HardwiredFunction
         {
             public required string Name { get; init; }
             public string? Type { get; init; }
