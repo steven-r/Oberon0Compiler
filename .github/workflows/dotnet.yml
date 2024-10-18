@@ -26,17 +26,8 @@ jobs:
         dotnet tool install --global dotnet-coverage
 
     - name: Begin analysis on SonarCloud
-      run: >
-        dotnet sonarscanner begin 
-            /k:"steven-r_Oberon0Compiler" 
-            /o:"steven-r-github" 
-            /d:sonar.branch.name=$BRANCH_NAME 
-            /d:sonar.host.url="https://sonarcloud.io" 
-            /d:sonar.token=${{ secrets.SONAR_SECRET }} 
-            /d:sonar.pullrequest.provider=github 
-            /d:sonar.dotnet.excludeTestProjects=true 
-            /d:sonar.cs.vscoveragexml.reportsPaths=**/dynamic-coverage-*.xml
-            /d:sonar.verbose=true
+      run: |
+        dotnet sonarscanner begin /k:"steven-r_Oberon0Compiler" /o:"steven-r-github" /d:sonar.branch.name=$BRANCH_NAME /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token=${{ secrets.SONAR_SECRET }} /d:sonar.pullrequest.provider=github /d:sonar.dotnet.excludeTestProjects=true /d:sonar.cs.vscoveragexml.reportsPaths=**/dynamic-coverage-*.xml /d:sonar.verbose=true
               
     - name: Build
       run: dotnet build
