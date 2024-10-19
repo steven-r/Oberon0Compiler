@@ -7,7 +7,6 @@
 
 using System;
 using System.Globalization;
-using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Constant
 {
@@ -39,8 +38,7 @@ namespace Oberon0.Compiler.Expressions.Constant
                     return new ConstantIntExpression((int)intVal);
                 }
 
-                if (double.TryParse(stringVal, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
-                    CultureInfo.InvariantCulture, out double doubleVal))
+                if (double.TryParse(stringVal, CultureInfo.InvariantCulture, out double doubleVal))
                 {
                     return new ConstantDoubleExpression(doubleVal);
                 }
