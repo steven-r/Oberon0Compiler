@@ -166,7 +166,7 @@ namespace Oberon0.Compiler.Tests.Types
             Assert.Single(m.Block.Statements);
             var statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
-            Assert.Equal($"r:REAL := {double.Epsilon}", statement.ToString());
+            Assert.Equal($"r:REAL := EPSILON(REAL)", statement.ToString());
         }
 
 
@@ -186,7 +186,8 @@ namespace Oberon0.Compiler.Tests.Types
             Assert.Single(m.Block.Statements);
             var statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
-            Assert.Equal("r:REAL := 0", statement.ToString());
+            // value is not optimized away
+            Assert.Equal($"r:REAL := DIV (REAL, INTEGER) -> REAL", statement.ToString());
         }
     }
 }

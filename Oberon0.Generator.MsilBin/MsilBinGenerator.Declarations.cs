@@ -8,13 +8,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Types;
+using Oberon0.Generator.MsilBin.GeneratorInfo;
 
 namespace Oberon0.Generator.MsilBin
 {
@@ -125,7 +126,11 @@ namespace Oberon0.Generator.MsilBin
 
             foreach (var declaration in recordType.Elements)
             {
-                record = record.AddMembers(GenerateFieldDeclaration(declaration, true));
+                var fieldDeclaration = GenerateFieldDeclaration(declaration, true);
+                if (fieldDeclaration != null)
+                {
+                    record = record.AddMembers(fieldDeclaration);
+                }
             }
 
             return record;
@@ -134,8 +139,15 @@ namespace Oberon0.Generator.MsilBin
         private static VariableDeclaratorSyntax FieldConstDeclaration(ConstDeclaration constDeclaration,
                                                                       VariableDeclaratorSyntax varDeclarator)
         {
-            var assignment =
-                constDeclaration.Type.Type switch
+            EqualsValueClauseSyntax assignment;
+            if (constDeclaration.GeneratorInfo is ConstDeclarationGeneratorInfo { GeneratorFunc: not null } gi)
+            {
+                assignment = SyntaxFactory.EqualsValueClause(gi.GeneratorFunc(constDeclaration));
+            } 
+            else
+            {
+                // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+                assignment = constDeclaration.Type.Type switch
                 {
                     BaseTypes.Int => SyntaxFactory.EqualsValueClause(
                         SyntaxFactory.LiteralExpression(
@@ -154,12 +166,18 @@ namespace Oberon0.Generator.MsilBin
                         "Cannot handle type " + Enum.GetName(typeof(BaseTypes), constDeclaration.Type.Type),
                         nameof(constDeclaration))
                 };
+            }
             return varDeclarator.WithInitializer(assignment);
         }
 
-        private static FieldDeclarationSyntax GenerateFieldDeclaration(Declaration declaration, bool makePublic)
+        private static FieldDeclarationSyntax? GenerateFieldDeclaration(Declaration declaration, bool makePublic)
         {
-            var field = SyntaxFactory.FieldDeclaration(GenerateVariableDeclaration(declaration));
+            var varDeclaration = GenerateVariableDeclaration(declaration);
+            if (varDeclaration == null)
+            {
+                return null;
+            }
+            var field = SyntaxFactory.FieldDeclaration(varDeclaration);
             if (makePublic || declaration.Exportable)
             {
                 field = field.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
@@ -171,7 +189,7 @@ namespace Oberon0.Generator.MsilBin
             return field;
         }
 
-        private static VariableDeclarationSyntax GenerateVariableDeclaration(Declaration declaration)
+        private static VariableDeclarationSyntax? GenerateVariableDeclaration(Declaration declaration)
         {
             if (declaration.Type.Type.HasFlag(BaseTypes.Simple))
             {
@@ -183,8 +201,7 @@ namespace Oberon0.Generator.MsilBin
             {
                 BaseTypes.Array   => GenerateArrayVariableDefinition(declaration),
                 BaseTypes.Record  => GenerateRecordVariableDeclaration(declaration),
-                _                 => throw new NotImplementedException()
-            };
+                _                 => throw new InvalidDataException($"Provided type is not known: {declaration.Type.Type:G}")            };
         }
 
         private static VariableDeclarationSyntax GenerateRecordVariableDeclaration(Declaration declaration)
@@ -202,7 +219,7 @@ namespace Oberon0.Generator.MsilBin
                                      .WithInitializer(
                                           SyntaxFactory.EqualsValueClause(
                                               SyntaxFactory.ObjectCreationExpression(
-                                                                GetTypeName(declaration.Type))
+                                                                GetSyntaxType(declaration.Type))
                                                            .WithArgumentList(
                                                                 SyntaxFactory.ArgumentList()))));
             } else
@@ -221,21 +238,25 @@ namespace Oberon0.Generator.MsilBin
                                                                .WithTypeArgumentList(
                                                                     SyntaxFactory.TypeArgumentList(
                                                                         SyntaxFactory.SingletonSeparatedList(
-                                                                            GetTypeName(declaration.Type)))))))));
+                                                                            GetSyntaxType(declaration.Type)))))))));
             }
 
-            var variable = SyntaxFactory.VariableDeclaration(GetTypeName(declaration.Type))
+            var variable = SyntaxFactory.VariableDeclaration(GetSyntaxType(declaration.Type))
                                         .WithVariables(varDeclarator);
             return variable;
         }
 
-        private static VariableDeclarationSyntax GenerateSimpleVariableDeclaration([NotNull] Declaration declaration)
+        private static VariableDeclarationSyntax? GenerateSimpleVariableDeclaration(Declaration declaration)
         {
-            var typeSyntax = GetTypeName(declaration.Type);
+            var typeSyntax = GetSyntaxType(declaration.Type);
 
             var varDeclarator = SyntaxFactory.VariableDeclarator(MapReservedWordName(declaration.Name));
             if (declaration is ConstDeclaration constDeclaration)
             {
+                if (constDeclaration.GeneratorInfo is ConstDeclarationGeneratorInfo { DropGeneration: true })
+                {
+                    return null;
+                }
                 varDeclarator = FieldConstDeclaration(constDeclaration, varDeclarator);
             }
 
@@ -250,7 +271,7 @@ namespace Oberon0.Generator.MsilBin
             Debug.Assert(arrayType != null, nameof(arrayType) + " != null");
             var dgi = declaration.GeneratorInfo as DeclarationGeneratorInfo;
 
-            var typeSyntax = GetTypeName(arrayType.ArrayType);
+            var typeSyntax = GetSyntaxType(arrayType.ArrayType);
 
             VariableDeclaratorSyntax varDeclarator;
 
@@ -259,7 +280,7 @@ namespace Oberon0.Generator.MsilBin
                 varDeclarator = SyntaxFactory.VariableDeclarator(MapReservedWordName(declaration.Name)).WithInitializer(
                     SyntaxFactory.EqualsValueClause(
                         SyntaxFactory.ArrayCreationExpression(SyntaxFactory.ArrayType(
-                                                                                GetSimpleTypeSyntaxName(
+                                                                                GetSimpleTypeSyntax(
                                                                                     arrayType.ArrayType))
                                                                            .WithRankSpecifiers(
                                                                                 SyntaxFactory.SingletonList(
@@ -320,21 +341,29 @@ namespace Oberon0.Generator.MsilBin
             // declarations
             foreach (var declaration in functionDeclaration.Block.Declarations)
             {
-                if (declaration is ProcedureParameterDeclaration)
+                switch (declaration)
                 {
-                    continue;
+                    case ProcedureParameterDeclaration:
+                    case ConstDeclaration constDeclaration when
+                        ((constDeclaration.GeneratorInfo as ConstDeclarationGeneratorInfo)!).DropGeneration:
+                        continue;
+                    default:
+                        var localDeclaration = GenerateVariableDeclaration(declaration);
+                        if (localDeclaration != null)
+                        {
+                            statements =
+                                statements.Add(SyntaxFactory.LocalDeclarationStatement(localDeclaration));
+                        }
+                        break;
                 }
-
-                statements =
-                    statements.Add(SyntaxFactory.LocalDeclarationStatement(GenerateVariableDeclaration(declaration)));
             }
 
             return statements;
         }
 
-        private static TypeSyntax AddTypeSyntaxSpecification([NotNull] Declaration declaration)
+        private static TypeSyntax AddTypeSyntaxSpecification(Declaration declaration)
         {
-            var type = GetTypeName(declaration.Type);
+            var type = GetSyntaxType(declaration.Type);
             if (declaration.Type.Type.HasFlag(BaseTypes.Simple) || declaration.Type.Type == BaseTypes.Record)
             {
                 return type;
@@ -352,6 +381,41 @@ namespace Oberon0.Generator.MsilBin
             // should not happen
             throw new ArgumentException("Unknown type " + Enum.GetName(typeof(BaseTypes), declaration.Type.Type),
                 nameof(declaration));
+        }
+
+        private void PatchConstDeclarations()
+        {
+            PatchConstDeclarations(Module.Block);
+        }
+
+        private static void PatchConstDeclarations(Block block)
+        {
+            foreach (var constDeclaration in block.Declarations.OfType<ConstDeclaration>())
+            {
+                var gi = new ConstDeclarationGeneratorInfo();
+                if (block.Parent == null)
+                {
+                    switch (constDeclaration.Name)
+                    {
+                        // top level
+                        case "EPSILON":
+                            gi.GeneratorFunc = _ => SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DoubleKeyword)), 
+                                  MapIdentifierName("Epsilon"));
+                            break;
+                        case "TRUE" or "FALSE":
+                            gi.DropGeneration = true;
+                            break;
+                    }
+                }
+                constDeclaration.GeneratorInfo = gi;
+            }
+
+            foreach (var blockProcedure in block.Procedures.Where(b => !b.IsInternal))
+            {
+                PatchConstDeclarations(blockProcedure.Block);
+            }
         }
     }
 }

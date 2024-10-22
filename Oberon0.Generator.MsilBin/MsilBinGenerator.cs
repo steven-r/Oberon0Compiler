@@ -123,13 +123,21 @@ namespace Oberon0.Generator.MsilBin
             {
                 throw new InvalidOperationException("Please call GenerateClass() before ProcessMainBlock()");
             }
+
+            PatchConstDeclarations();
+
             _classDeclaration = GenerateRecordDeclarations(_classDeclaration, block);
+
             GenerateComplexTypeMappings(block);
 
             // declarations
             foreach (var declaration in block.Declarations)
             {
-                _classDeclaration = _classDeclaration.AddMembers(GenerateFieldDeclaration(declaration, false));
+                var fieldDeclaration = GenerateFieldDeclaration(declaration, false);
+                if (fieldDeclaration != null)
+                {
+                    _classDeclaration = _classDeclaration.AddMembers(fieldDeclaration);
+                }
             }
 
             // add functions/procedures
@@ -193,12 +201,7 @@ namespace Oberon0.Generator.MsilBin
         private static MethodDeclarationSyntax StartFunction(FunctionDeclaration functionDeclaration)
         {
             var method =
-                SyntaxFactory.MethodDeclaration(GetTypeName(functionDeclaration.ReturnType), functionDeclaration.Name);
-
-            if (!functionDeclaration.Block.Declarations.Exists(x => x is ProcedureParameterDeclaration))
-            {
-                return method;
-            }
+                SyntaxFactory.MethodDeclaration(GetSyntaxType(functionDeclaration.ReturnType), functionDeclaration.Name);
 
             var list = new SyntaxNodeOrTokenList();
             bool first = true;

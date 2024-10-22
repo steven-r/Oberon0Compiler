@@ -13,10 +13,11 @@ using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
 using Oberon0.Test.Support;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Oberon0.Compiler.Tests.Types;
 
-public class TypeTests
+public class TypeTests(ITestOutputHelper output)
 {
     [Fact]
     public void LookupType()
@@ -60,12 +61,13 @@ public class TypeTests
             END Test.
             """);
 
-        var t = m.Block.LookupType("Demo");
-        Assert.NotNull(t);
         var intType = m.Block.LookupType("INTEGER");
         Assert.NotNull(intType);
-        Assert.IsType<SimpleTypeDefinition>(t);
-        var std = (SimpleTypeDefinition) t;
+        
+        var t = m.Block.LookupType("Demo");
+        Assert.NotNull(t);
+        var std = Assert.IsType<SimpleTypeDefinition>(t);
+
         Assert.Equal(intType.Type, std.Type);
     }
 
@@ -81,8 +83,35 @@ public class TypeTests
 
             END Test.
             """,
+            output,
             "Type Demo declared twice");
     }
+
+    [Fact]
+    public void NameDefinedTwiceError()
+    {
+        var m = TestHelper.CompileString(
+            """
+            MODULE Test; 
+            TYPE
+              Demo = INTEGER;
+            VAR
+              Demo: INTEGER;
+
+            END Test.
+            """,
+            output);
+        Assert.NotNull(m);
+        var t = m.Block.LookupType("Demo");
+        Assert.NotNull(t);
+        var tt = Assert.IsAssignableFrom<TypeDefinition>(t);
+        Assert.Equal(BaseTypes.Int, tt.Type);
+
+        var v = m.Block.LookupVar("Demo");
+        Assert.NotNull(v);
+        Assert.Equal(BaseTypes.Int, v.Type.Type);
+    }
+
 
     [Fact]
     public void TypeEquality()
@@ -110,10 +139,9 @@ public class TypeTests
         Assert.Equal(6, m.Block.Statements.Count);
         var s1 = m.Block.Statements[0];
         var s2 = m.Block.Statements[1];
-        Assert.IsType<AssignmentStatement>(s1);
-        Assert.IsType<AssignmentStatement>(s2);
-        var as1 = (AssignmentStatement) s1;
-        var as2 = (AssignmentStatement) s2;
+        
+        var as1 = Assert.IsType<AssignmentStatement>(s1);
+        var as2 = Assert.IsType<AssignmentStatement>(s2);
         Assert.IsType<ConstantIntExpression>(as1.Expression);
         Assert.IsType<BinaryExpression>(as2.Expression);
         Assert.Equal(as1.Expression.TargetType, as2.Expression.TargetType);
@@ -126,5 +154,45 @@ public class TypeTests
     {
         var b = new Block(null, new Module(null));
         Assert.Throws<InternalCompilerException>(() => b.LookupTypeByBaseType(BaseTypes.Any));
+    }
+
+    [Fact]
+    public void TestInternalConstants()
+    {
+        var m = new Module(null);
+
+        var var = m.Block.LookupVar("TRUE");
+        Assert.NotNull(var);
+        var constant = Assert.IsAssignableFrom<ConstDeclaration>(var);
+        Assert.NotNull(constant);
+        Assert.True(constant.Value.Internal);
+
+        var = m.Block.LookupVar("FALSE");
+        Assert.NotNull(var);
+        constant = Assert.IsAssignableFrom<ConstDeclaration>(var);
+        Assert.NotNull(constant);
+        Assert.True(constant.Value.Internal);
+    }
+
+
+    [Fact]
+    public void TestInternalFlagNotSetForCustomConstant()
+    {
+        var m = TestHelper.CompileString(
+            """
+            MODULE Test; 
+            CONST
+              test = 1;
+
+            BEGIN
+            END Test.
+            """);
+
+        var i = m.Block.LookupVar("test");
+        Assert.NotNull(i);
+
+        var constant = Assert.IsType<ConstDeclaration>(i);
+        Assert.NotNull(constant);
+        Assert.False(constant.Value.Internal);
     }
 }

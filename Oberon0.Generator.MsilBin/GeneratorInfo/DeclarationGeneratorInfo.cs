@@ -8,11 +8,11 @@
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Generator;
 
-namespace Oberon0.Generator.MsilBin
+namespace Oberon0.Generator.MsilBin.GeneratorInfo
 {
     internal class DeclarationGeneratorInfo : IGeneratorInfo
     {
-        public ProcedureParameterDeclaration OriginalField { get; internal set; } = null!;
-        public Declaration ReplacedBy { get; internal set; } = null!;
+        public ProcedureParameterDeclaration? OriginalField { get; internal set; }
+        public Declaration? ReplacedBy { get; internal set; }
     }
 }

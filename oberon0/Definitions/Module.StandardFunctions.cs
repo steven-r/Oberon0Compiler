@@ -144,12 +144,14 @@ namespace Oberon0.Compiler.Definitions
         private void DeclareStandardConstants()
         {
             Block.Declarations.Add(
-                new ConstDeclaration("TRUE", Block.LookupType(TypeDefinition.BooleanTypeName)!, new ConstantBoolExpression(true)));
+                new ConstDeclaration("TRUE", Block.LookupType(TypeDefinition.BooleanTypeName)!, 
+                    new ConstantBoolExpression(true) { Internal = true }));
             Block.Declarations.Add(
-                new ConstDeclaration("FALSE", Block.LookupType(TypeDefinition.BooleanTypeName)!, new ConstantBoolExpression(false)));
+                new ConstDeclaration("FALSE", Block.LookupType(TypeDefinition.BooleanTypeName)!, 
+                    new ConstantBoolExpression(false) { Internal = true }));
             Block.Declarations.Add(
                 new ConstDeclaration("EPSILON", Block.LookupType(TypeDefinition.RealTypeName)!,
-                    new ConstantDoubleExpression(double.Epsilon)));
+                    new ConstantDoubleExpression(double.Epsilon) { Locked = true }));
         }
 
         private void DeclareStandardFunctions()

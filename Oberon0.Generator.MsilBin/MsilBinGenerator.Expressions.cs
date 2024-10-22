@@ -13,6 +13,7 @@ using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Solver;
+using Oberon0.Generator.MsilBin.GeneratorInfo;
 
 namespace Oberon0.Generator.MsilBin;
 
@@ -65,8 +66,8 @@ partial class MsilBinGenerator
     private ExpressionSyntax GenerateVariableReference(Declaration declaration, VariableSelector? selector,
                                                        bool ignoreReplace = false)
     {
-        var dgi = (DeclarationGeneratorInfo?) declaration.GeneratorInfo;
-        if (!ignoreReplace && dgi?.ReplacedBy != null)
+        ;
+        if (!ignoreReplace && declaration.GeneratorInfo is DeclarationGeneratorInfo { ReplacedBy: not null } dgi)
         {
             declaration = dgi.ReplacedBy;
         }
