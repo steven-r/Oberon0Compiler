@@ -14,12 +14,38 @@ namespace Oberon0.Compiler.Expressions.Constant
     {
         public object Value { get; set; } = value;
 
-        public override bool IsConst => true;
+        public override bool IsConst => !Locked;
+        
+        /// <summary>
+        /// If set, this property has a special meaning to be interpreted by the generator, if needed.
+        /// </summary>
+        public bool Internal { get; set; }
 
+        /// <summary>
+        /// If set, this constant cannot be used as part of solving.
+        /// </summary>
+        public bool Locked { get; set; }
+
+
+        /// <summary>
+        /// Return the value as an integer, if possible
+        /// </summary>
+        /// <returns>The integer representation of the value.</returns>
+        /// <exception cref="NotImplementedException">Thrown if there's no integer representation of the value</exception>
         public abstract int ToInt32();
 
+        /// <summary>
+        /// Return the value as a double value, if possible
+        /// </summary>
+        /// <returns>The double representation of the value.</returns>
+        /// <exception cref="NotImplementedException">Thrown if there's no double representation of the value</exception>
         public abstract double ToDouble();
 
+        /// <summary>
+        /// Return the value as a boolean value, if possible
+        /// </summary>
+        /// <returns>The boolean representation of the value.</returns>
+        /// <exception cref="NotImplementedException">Thrown if there's no boolean representation of the value</exception>
         public abstract bool ToBool();
 
         internal static Expression Create(object value, bool expectInt = false)

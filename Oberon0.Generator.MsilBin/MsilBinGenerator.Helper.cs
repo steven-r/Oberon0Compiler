@@ -5,7 +5,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System;
 using System.IO;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -16,13 +15,13 @@ namespace Oberon0.Generator.MsilBin;
 
 partial class MsilBinGenerator
 {
-    private static TypeSyntax GetTypeName(TypeDefinition typeDefinition)
+    private static TypeSyntax GetSyntaxType(TypeDefinition typeDefinition)
     {
         while (true)
         {
             if (typeDefinition.Type.HasFlag(BaseTypes.Simple))
             {
-                return GetSimpleTypeSyntaxName(typeDefinition);
+                return GetSimpleTypeSyntax(typeDefinition);
             }
 
             if (typeDefinition is ArrayTypeDefinition atd)
@@ -35,7 +34,7 @@ partial class MsilBinGenerator
         }
     }
 
-    private static PredefinedTypeSyntax GetSimpleTypeSyntaxName(TypeDefinition typeDefinition)
+    private static PredefinedTypeSyntax GetSimpleTypeSyntax(TypeDefinition typeDefinition)
     {
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
         return typeDefinition.Type switch
@@ -45,8 +44,7 @@ partial class MsilBinGenerator
             BaseTypes.Real   => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DoubleKeyword)),
             BaseTypes.String => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword)),
             BaseTypes.Void   => SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-            _ => throw new InvalidDataException("provided type is not simple " +
-                Enum.GetName(typeof(BaseTypes), typeDefinition.Type))
+            _ => throw new InvalidDataException($"Provided type is not known: {typeDefinition.Type:G}")
         };
     }
 

@@ -19,24 +19,24 @@ namespace Oberon0.Compiler.Expressions
 
         public static Expression? Create(Declaration? declaration, VariableSelector? s)
         {
-            if (declaration == null)
+            switch (declaration)
             {
-                return null;
+                case null:
+                    return null;
+                case ConstDeclaration { Value.IsConst: true } c:
+                    return c.Value;
+                default:
+                {
+                    var e = new VariableReferenceExpression
+                    {
+                        Name = declaration.Name,
+                        Declaration = declaration,
+                        TargetType = s?.SelectorResultType ?? declaration.Type,
+                        Selector = s
+                    };
+                    return e;
+                }
             }
-
-            if (declaration is ConstDeclaration c)
-            {
-                return c.Value;
-            }
-
-            var e = new VariableReferenceExpression
-            {
-                Name = declaration.Name,
-                Declaration = declaration,
-                TargetType = s?.SelectorResultType ?? declaration.Type,
-                Selector = s
-            };
-            return e;
         }
 
         public override string ToString()
