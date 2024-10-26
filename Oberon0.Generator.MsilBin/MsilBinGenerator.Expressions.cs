@@ -66,7 +66,6 @@ partial class MsilBinGenerator
     private ExpressionSyntax GenerateVariableReference(Declaration declaration, VariableSelector? selector,
                                                        bool ignoreReplace = false)
     {
-        ;
         if (!ignoreReplace && declaration.GeneratorInfo is DeclarationGeneratorInfo { ReplacedBy: not null } dgi)
         {
             declaration = dgi.ReplacedBy;
