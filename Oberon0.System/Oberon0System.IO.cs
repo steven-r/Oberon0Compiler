@@ -24,9 +24,7 @@ namespace Oberon0System
         [UsedImplicitly]
         [Oberon0Export("eot", "BOOLEAN")]
         // ReSharper disable once InconsistentNaming
-#pragma warning disable IDE1006 // Naming Styles
-        public static bool eot()
-#pragma warning restore IDE1006 // Naming Styles
+        public static bool Eot()
         {
             return Console.In.Peek() < 0;
         }
