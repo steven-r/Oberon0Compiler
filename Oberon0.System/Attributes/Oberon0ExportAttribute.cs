@@ -6,7 +6,6 @@
 #endregion
 
 using System;
-using JetBrains.Annotations;
 
 namespace Oberon0System.Attributes
 {
@@ -15,7 +14,6 @@ namespace Oberon0System.Attributes
     /// </summary>
     /// <seealso cref="Attribute" />
     [AttributeUsage(AttributeTargets.Method)]
-    [UsedImplicitly]
     public class Oberon0ExportAttribute : Attribute
     {
         /// <summary>

@@ -5,7 +5,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using JetBrains.Annotations;
 using Oberon0System.Attributes;
 
 namespace Oberon0System
@@ -20,9 +19,9 @@ namespace Oberon0System
         /// </summary>
         /// <param name="d">The value to check</param>
         /// <returns>the result of <see cref="double.IsInfinity" />.</returns>
-        [UsedImplicitly]
         // ReSharper disable once StringLiteralTypo
         [Oberon0Export("isinfinity", "BOOLEAN", "REAL")]
+        // ReSharper disable once UnusedMember.Global
         public static bool IsInfinity(double d)
         {
             return double.IsInfinity(d);

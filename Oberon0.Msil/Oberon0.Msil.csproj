@@ -5,17 +5,31 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
     <LibPath>bin\$(Configuration)\$(TargetFramework)</LibPath>
-    <CodeAnalysisRuleSet>..\.sonarlint\steven-r_oberon0compilercsharp.ruleset</CodeAnalysisRuleSet>
     <ProjectGuid>{9F54EACE-13EA-4586-9C11-925AEDF8F65C}</ProjectGuid>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
+  <PropertyGroup>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>oberon0.msil</ToolCommandName>
+    <PackageOutputPath>../nupkg</PackageOutputPath>
+    <Authors>Stephen Reindl</Authors>
+    <Description>Oberon 0 is a simple language designed by Níklaus Wirth and is used as a sample for compiler design. This package is a implementation of Oberon 0 in c# that generates MSIL output files</Description>
+    <Copyright>2024 Stephen Reindl</Copyright>
+    <PackageProjectUrl>https://github.com/steven-r/Oberon0</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Title>Oberon 0 compiler  (MSIL target)</Title>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Oberon0.Generator.MsilBin\Oberon0.Generator.MsilBin.csproj" />
     <ProjectReference Include="..\Oberon0.System\Oberon0.System.csproj" />
     <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <AdditionalFiles Include="..\.sonarlint\steven-r_oberon0compiler\CSharp\SonarLint.xml" Link="SonarLint.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.2" />

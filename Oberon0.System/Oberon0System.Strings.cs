@@ -6,7 +6,6 @@
 #endregion
 
 using System.Globalization;
-using JetBrains.Annotations;
 using Oberon0System.Attributes;
 
 namespace Oberon0System
@@ -19,7 +18,7 @@ namespace Oberon0System
         /// <param name="value">the value to convert</param>
         /// <returns>the converted string</returns>
         [Oberon0Export("ToString", "STRING", "INTEGER")]
-        [UsedImplicitly]
+        // ReSharper disable once UnusedMember.Global
         public static string ConvertToString(int value)
         {
             return value.ToString(CultureInfo.InvariantCulture);
@@ -31,7 +30,7 @@ namespace Oberon0System
         /// <param name="value">the value to convert</param>
         /// <returns>the converted string</returns>
         [Oberon0Export("ToString", "STRING", "REAL")]
-        [UsedImplicitly]
+        // ReSharper disable once UnusedMember.Global
         public static string ConvertToString(double value)
         {
             return value.ToString(CultureInfo.InvariantCulture);
@@ -43,7 +42,7 @@ namespace Oberon0System
         /// <param name="value">the value to convert</param>
         /// <returns>the converted string</returns>
         [Oberon0Export("ToString", "STRING", "BOOLEAN")]
-        [UsedImplicitly]
+        // ReSharper disable once UnusedMember.Global
         public static string ConvertToString(bool value)
         {
             return value.ToString(CultureInfo.InvariantCulture);

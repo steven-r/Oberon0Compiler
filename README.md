@@ -24,4 +24,13 @@ Current status:
 * Support for STRING (limited)
 * Handling of complex type scenarios (`ARRAY OF RECORD`, ...) is limited (see #12)
 
-Use `Oberon0Msil.exe` to compile and execute code.
+# Installation
+
+Starting with 0.60 Oberon 0 can be installed by using the [`dotnet tool`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install)-command:
+
+```
+dotnet tool install Oberon0.Msil --add-source https://github.com/steven-r/Oberon0Compiler/releases/download/<version>/Oberon0.Msil.nupkg
+```
+
+Use `oberon0.msil` to compile and execute code.
+s
