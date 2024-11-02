@@ -6,7 +6,6 @@
 #endregion
 
 using System;
-using JetBrains.Annotations;
 using Oberon0System.Attributes;
 
 namespace Oberon0System
@@ -21,12 +20,9 @@ namespace Oberon0System
         ///     Check if there's no more data available on standard input
         /// </summary>
         /// <returns><c>true</c> if end of file reached, <c>false</c> otherwise.</returns>
-        [UsedImplicitly]
         [Oberon0Export("eot", "BOOLEAN")]
-        // ReSharper disable once InconsistentNaming
-#pragma warning disable IDE1006 // Naming Styles
-        public static bool eot()
-#pragma warning restore IDE1006 // Naming Styles
+        // ReSharper disable once UnusedMember.Global
+        public static bool Eot()
         {
             return Console.In.Peek() < 0;
         }

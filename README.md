@@ -1,9 +1,10 @@
 # Oberon-0 Compiler
 
-CI/CD: [![Build status](https://dev.azure.com/reindlit/Oberon0/_apis/build/status/Oberon%200%20CICD%20build)](https://dev.azure.com/reindlit/Oberon0/_build/latest?definitionId=7)
-Master: [![Build status](https://dev.azure.com/reindlit/Oberon0/_apis/build/status/Oberon%200%20Master%20build)](https://dev.azure.com/reindlit/Oberon0/_build/latest?definitionId=29)
+CI/CD: ![Build Status](https://img.shields.io/github/actions/workflow/status/steven-r/Oberon0Compiler/dotnet.yml)
 
-[![QUality](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=alert_status)](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=alert_status)
+Quality: [![Quality](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=alert_status)](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=alert_status)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=steven-r_Oberon0Compiler&metric=coverage)](https://sonarcloud.io/summary/new_code?id=steven-r_Oberon0Compiler)
+
 [![GitHub license](https://img.shields.io/github/license/steven-r/Oberon0Compiler.svg)](https://github.com/steven-r/Oberon0Compiler/blob/master/LICENSE.md)
 ![GitHub release](https://img.shields.io/github/release/steven-r/Oberon0Compiler.svg)
 
@@ -23,4 +24,13 @@ Current status:
 * Support for STRING (limited)
 * Handling of complex type scenarios (`ARRAY OF RECORD`, ...) is limited (see #12)
 
-Use `Oberon0Msil.exe` to compile and execute code.
+# Installation
+
+Starting with 0.60 Oberon 0 can be installed by using the [`dotnet tool`](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-tool-install)-command:
+
+```
+dotnet tool install Oberon0.Msil --add-source https://github.com/steven-r/Oberon0Compiler/releases/download/<version>/Oberon0.Msil.nupkg
+```
+
+Use `oberon0.msil` to compile and execute code.
+s

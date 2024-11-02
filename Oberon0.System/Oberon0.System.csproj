@@ -4,12 +4,26 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
     <RootNamespace>Oberon0System</RootNamespace>
-    <CodeAnalysisRuleSet>..\.sonarlint\steven-r_oberon0compilercsharp.ruleset</CodeAnalysisRuleSet>
+    <Nullable>enable</Nullable>
+    <LangVersion>12</LangVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Oberon 0 System Library</Title>
+    <Authors>Stephen Reindl</Authors>
+    <Company />
+    <Description>System Library being used to compile and execute Oberon 0 libaries and applications</Description>
+    <Copyright>Copyright (C) Stephen Reindl</Copyright>
+    <PackageProjectUrl>https://github.com/steven-r/Oberon0Compiler</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageOutputPath>../nupkg</PackageOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <AdditionalFiles Include="..\.sonarlint\steven-r_oberon0compiler\CSharp\SonarLint.xml" Link="SonarLint.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 </Project>

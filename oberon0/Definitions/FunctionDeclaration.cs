@@ -159,10 +159,18 @@ namespace Oberon0.Compiler.Definitions
         [ExcludeFromCodeCoverage]
         public override string ToString()
         {
-            string @params = string.Join(
-                ", ",
-                Block.Declarations.OfType<ProcedureParameterDeclaration>().Select(x => x.Type.Type.ToString("G")));
-            return $"{(IsInternal ? "internal " : string.Empty)}{ReturnType:G} {Name}(" + @params + ")";
+            var @params = 
+                Block.Declarations.OfType<ProcedureParameterDeclaration>().Select(x => x.Type.Type.ToString("G"));
+
+            return $"{(IsInternal ? "internal " : string.Empty)}{GeneratePrototype(this)}";
+        }
+
+        public static string GeneratePrototype(FunctionDeclaration fd)
+        {
+            var @params =
+                fd.Block.Declarations.OfType<ProcedureParameterDeclaration>()
+                  .Select(x => x.Type.Name);
+            return $"{fd.ReturnType.Name} {fd.Name}(" + string.Join(", ", @params) + ")";
         }
     }
 }

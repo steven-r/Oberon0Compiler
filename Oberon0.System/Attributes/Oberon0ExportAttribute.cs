@@ -6,7 +6,6 @@
 #endregion
 
 using System;
-using JetBrains.Annotations;
 
 namespace Oberon0System.Attributes
 {
@@ -15,7 +14,6 @@ namespace Oberon0System.Attributes
     /// </summary>
     /// <seealso cref="Attribute" />
     [AttributeUsage(AttributeTargets.Method)]
-    [UsedImplicitly]
     public class Oberon0ExportAttribute : Attribute
     {
         /// <summary>
@@ -27,7 +25,7 @@ namespace Oberon0System.Attributes
         ///     list of types (oberon0 notation) describing the parameters. Reference parameters are noted
         ///     with a beginning ampersand (e.g. <code>&amp;INTEGER</code>)
         /// </param>
-        public Oberon0ExportAttribute([NotNull] string name, [NotNull] string returnType, params string[] parameters)
+        public Oberon0ExportAttribute(string name, string returnType, params string[] parameters)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             ReturnType = returnType ?? throw new ArgumentNullException(nameof(returnType));
