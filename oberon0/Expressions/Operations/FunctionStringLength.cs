@@ -5,14 +5,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System;
-using System.Linq;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Expressions.Functions;
 using Oberon0.Compiler.Expressions.Operations.Internal;
-using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Operations;
 
@@ -27,7 +25,11 @@ internal class FunctionStringLength: IInternalFunction {
 
     public Expression Operate(FunctionCallExpression e, Block block, InternalFunctionMetadata functionMetadata)
     {
-        if (e.Parameters.First() is StringExpression se)
+        if (e.Parameters.Count != 1)
+        {
+            throw new InternalCompilerException("Cannot operate on more than one parameters for Length()");
+        }
+        if (e.Parameters[0] is StringExpression se)
         {
             return ConstantExpression.Create(se.Value.Length);
         }

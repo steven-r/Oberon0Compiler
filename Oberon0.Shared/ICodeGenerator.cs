@@ -18,7 +18,7 @@ namespace Oberon0.Shared
         /// <summary>
         ///     The module for which the generator is used for
         /// </summary>
-        Module Module { get; set; }
+        Module Module { get; }
 
         /// <summary>
         ///     The name of the main class (mainly used for testing)

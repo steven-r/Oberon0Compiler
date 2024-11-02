@@ -80,7 +80,7 @@ namespace Oberon0.Msil
                 return 1;
             }
 
-            var cg = new MsilBinGenerator { Module = m };
+            var cg = new MsilBinGenerator(module: m);
 
             cg.GenerateIntermediateCode();
 
