@@ -66,8 +66,10 @@ namespace Oberon0.Compiler.Solver
                 // ignore string expressions
                 case StringExpression:
                     return expression;
-                case FunctionCallExpression:
-                    return expression;
+                case FunctionCallExpression fce:
+                    string prototype = FunctionDeclaration.GeneratePrototype(fce.FunctionDeclaration);
+                    var internalFunc = ExpressionRepository.Instance.GetInternalFunction(prototype);
+                    return internalFunc != null ? internalFunc.Item1.Operate(fce, block, internalFunc.Item2) : expression;
                 default:
                     throw new InvalidOperationException(
                         $"Calculate does not support operation on {expression.GetType().Name}");

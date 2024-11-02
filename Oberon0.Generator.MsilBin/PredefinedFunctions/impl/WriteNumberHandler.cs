@@ -6,7 +6,6 @@
 #endregion
 
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Oberon0.Compiler.Definitions;
@@ -19,7 +18,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions.impl
     [StandardFunctionMetadata("WriteBool", TypeDefinition.VoidTypeName, "BOOLEAN")]
     [StandardFunctionMetadata("WriteReal", TypeDefinition.VoidTypeName, "REAL")]
     [StandardFunctionMetadata("WriteString", TypeDefinition.VoidTypeName, "STRING")]
-    [UsedImplicitly]
+    // ReSharper disable once UnusedMember.Global
     public class WriteHandler : IStandardFunctionGenerator
     {
         public ExpressionSyntax Generate(IStandardFunctionMetadata metadata,

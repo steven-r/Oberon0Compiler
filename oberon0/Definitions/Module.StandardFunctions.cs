@@ -77,6 +77,11 @@ namespace Oberon0.Compiler.Definitions
             {
                 Name = "ReadBool",
                 ParameterTypes = ["&BOOLEAN"]
+            },
+            new()
+            {
+                Name = "Length", Type = TypeDefinition.IntegerTypeName,
+                ParameterTypes = [TypeDefinition.StringTypeName]
             }
         ];
 
@@ -158,7 +163,7 @@ namespace Oberon0.Compiler.Definitions
         {
             foreach (var function in _hardwiredFunctions)
             {
-                var type = function.Type == null ? SimpleTypeDefinition.VoidType : Block.LookupType(function.Type)!;
+                var type = Block.LookupType(function.Type)!;
                 Block.Procedures.Add(FunctionDeclaration.AddHardwiredFunction(function.Name, this, type, 
                     function.ParameterTypes));
             }
@@ -243,9 +248,10 @@ namespace Oberon0.Compiler.Definitions
         private sealed class HardwiredFunction
         {
             public required string Name { get; init; }
-            public string? Type { get; init; }
 
-            public required string[] ParameterTypes { get; init; }
+            public string Type { get; init; } = TypeDefinition.VoidTypeName;
+
+            public required string[] ParameterTypes { get; init; } = [];
         }
     }
 }

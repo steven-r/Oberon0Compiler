@@ -10,6 +10,7 @@ using System.IO;
 using Microsoft.CodeAnalysis;
 using Oberon0.Compiler;
 using Oberon0.Shared;
+using Oberon0.Test.Support;
 using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests
@@ -32,7 +33,7 @@ namespace Oberon0.Generator.MsilBin.Tests
         internal static ICodeGenerator CompileOberon0Code(string source, out string code,
                                                           ITestOutputHelper outputHelper = null)
         {
-            var m = Oberon0Compiler.CompileString(source);
+            var m = TestHelper.CompileString(source, outputHelper);
 
             if (m.CompilerInstance == null)
             {

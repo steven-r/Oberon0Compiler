@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Expressions.Functions;
 using Oberon0.Compiler.Expressions.Operations.Internal;
 using Oberon0.Compiler.Types;
 
@@ -22,6 +24,12 @@ namespace Oberon0.Compiler.Expressions
         {
             var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);
             var container = configuration.CreateContainer();
+            LoadOperations(container);
+            LoadFunctions(container);
+        }
+
+        private void LoadOperations(CompositionHost container)
+        {
             var operations = container.GetExports<ExportFactory<IArithmeticOperation, ArithmeticOpMetadata>>();
 
             // translate all arithmetic operations to a dictionary
@@ -39,13 +47,30 @@ namespace Oberon0.Compiler.Expressions
             }
         }
 
+        private void LoadFunctions(CompositionHost container)
+        {
+            var functions= container.GetExports<ExportFactory<IInternalFunction, InternalFunctionMetadata>>();
+
+            // translate all arithmetic operations to a dictionary
+            InternalFunctions = [];
+            foreach (var mefFunc in functions)
+            {
+                InternalFunctions.Add(
+                    mefFunc.Metadata.Prototype,
+                    new Tuple<IInternalFunction, InternalFunctionMetadata>(mefFunc.CreateExport().Value, mefFunc.Metadata));
+            }
+        }
+
         /// <summary>
         ///     Gets a singleton instance.
         /// </summary>
         /// <value>The instance.</value>
         public static ExpressionRepository Instance { get; } = _instance ??= new ExpressionRepository();
 
-        private Dictionary<ArithmeticOpKey, ArithmeticOperation> ArithmeticOperations { get; }
+        private Dictionary<string, Tuple<IInternalFunction, InternalFunctionMetadata>>
+            InternalFunctions { get; set; } = null!;
+        
+        private Dictionary<ArithmeticOpKey, ArithmeticOperation> ArithmeticOperations { get; set; } = null!;
 
         /// <summary>
         ///     Gets the specified operation.
@@ -64,6 +89,16 @@ namespace Oberon0.Compiler.Expressions
             }
 
             return op;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="prototype"></param>
+        /// <returns></returns>
+        public Tuple<IInternalFunction, InternalFunctionMetadata>? GetInternalFunction(string prototype)
+        {
+            return InternalFunctions.GetValueOrDefault(prototype);
         }
     }
 }

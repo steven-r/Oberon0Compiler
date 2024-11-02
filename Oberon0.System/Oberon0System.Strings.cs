@@ -47,5 +47,17 @@ namespace Oberon0System
         {
             return value.ToString(CultureInfo.InvariantCulture);
         }
+
+        /// <summary>
+        ///     Get string length
+        /// </summary>
+        /// <param name="value">the value to convert</param>
+        /// <returns>the converted string</returns>
+        [Oberon0Export("Length", "INTEGER", "STRING")]
+        // ReSharper disable once UnusedMember.Global
+        public static int Length(string value)
+        {
+            return value.Length;
+        }
     }
 }

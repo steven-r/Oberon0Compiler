@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
 using System.Linq;
+using System.Threading;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Exceptions;
 
 namespace Oberon0.Generator.MsilBin.PredefinedFunctions
 {
@@ -23,6 +25,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
         ///     Gets the specified operation.
         /// </summary>
         /// <param name="function">The operation.</param>
+        /// <exception cref="InternalCompilerException">Called if function is not found</exception>
         /// <returns>Lazy&lt;IArithmeticOperation, IArithmeticOpMetadata&gt;.</returns>
         // ReSharper disable once UnusedMethodReturnValue.Global
         [NotNull]
@@ -31,7 +34,12 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
             string key =
                 $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Block.Declarations.OfType<ProcedureParameterDeclaration>().Select(x => x.TypeName))}";
 
-            var func = _standardFunctionList.First(x => x.InstanceKey == key);
+            var func = _standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
+
+            if (func == null)
+            {
+                throw new InternalCompilerException("Cannot find function " + key);
+            }
 
             return func;
         }

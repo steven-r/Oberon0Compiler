@@ -6,13 +6,18 @@
 #endregion
 
 using System;
+using System.Composition;
+using JetBrains.Annotations;
+using Oberon0.Compiler.Types;
 
-namespace Oberon0.Shared
+namespace Oberon0.Compiler.Expressions.Functions;
+
+[MetadataAttribute]
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class InternalFunctionAttribute(
+    string prototype)
+    : ExportAttribute(typeof(IInternalFunction))
 {
-    public class ProcessOutputReceivedEventArgs(CreateBinaryOptions options, string data) : EventArgs
-    {
-        public CreateBinaryOptions Options { get; } = options;
 
-        public string Data { get; } = data;
-    }
+    public string Prototype { get; set; } = prototype;
 }

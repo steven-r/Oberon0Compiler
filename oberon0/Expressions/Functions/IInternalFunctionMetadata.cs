@@ -5,14 +5,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System;
+namespace Oberon0.Compiler.Expressions.Functions;
 
-namespace Oberon0.Shared
+public class InternalFunctionMetadata
 {
-    public class ProcessOutputReceivedEventArgs(CreateBinaryOptions options, string data) : EventArgs
-    {
-        public CreateBinaryOptions Options { get; } = options;
-
-        public string Data { get; } = data;
-    }
+    public string Prototype { get; set; } = null!;
 }
