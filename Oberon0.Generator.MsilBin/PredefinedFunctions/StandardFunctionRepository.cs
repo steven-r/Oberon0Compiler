@@ -81,6 +81,12 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
             }
         }
 
+        /// <summary>
+        /// Remove a function from the repository. 
+        /// </summary>
+        /// <remarks>This function is mainly used for testing purposes</remarks>
+        /// <param name="key">The key of the function to be removed</param>
+        /// <exception cref="ArgumentException"></exception>
         public static void RemoveFunction(string key)
         {
             var item = _standardFunctionList.Find(x => x.InstanceKey == key);
