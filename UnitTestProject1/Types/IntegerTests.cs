@@ -5,10 +5,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
-using Oberon0.Compiler.Types;
 using Oberon0.Test.Support;
 using Xunit;
 using Xunit.Abstractions;
@@ -33,5 +31,23 @@ public class IntegerTests(ITestOutputHelper output)
         var s = m.Block.Statements[0];
         var a = Assert.IsAssignableFrom<AssignmentStatement>(s);
         Assert.IsAssignableFrom<ConstantIntExpression>(a.Expression);
+    }
+
+    [Fact]
+    public void IntIssue_INTEGER_MinValueMinus1_MustBe_REAL()
+    {
+        var m = TestHelper.CompileString(
+            $"""
+                     MODULE Test; 
+                     VAR
+                       val: REAL;
+                     BEGIN
+                       val := {((double)int.MinValue)-1};
+                     END Test.
+             """, output);
+
+        var s = m.Block.Statements[0];
+        var a = Assert.IsAssignableFrom<AssignmentStatement>(s);
+        Assert.IsAssignableFrom<ConstantDoubleExpression>(a.Expression);
     }
 }

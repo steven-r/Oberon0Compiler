@@ -35,12 +35,7 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
 
             var func = _standardFunctionList.Find(x => x.InstanceKey == key);
 
-            if (func == null)
-            {
-                throw new InternalCompilerException("Cannot find function " + key);
-            }
-
-            return func;
+            return func ?? throw new InternalCompilerException("Cannot find function " + key);
         }
 
         internal static void Initialize(Module module)
@@ -89,11 +84,9 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
         /// <exception cref="ArgumentException"></exception>
         public static void RemoveFunction(string key)
         {
-            var item = _standardFunctionList.Find(x => x.InstanceKey == key);
-            if (item == null)
-            {
-                throw new ArgumentException($"Key {key} does not exist", nameof(key));
-            }
+            var item = 
+                _standardFunctionList.Find(x => x.InstanceKey == key) 
+             ?? throw new ArgumentException($"Key {key} does not exist", nameof(key));
 
             _standardFunctionList.Remove(item);
         }

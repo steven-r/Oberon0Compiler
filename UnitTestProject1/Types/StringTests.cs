@@ -212,6 +212,6 @@ public class StringTests(ITestOutputHelper testOutput)
         Assert.NotNull(m);
         var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
         var se = Assert.IsType<FunctionCallExpression>(s.Expression);
-        Assert.Equal("internal INTEGER Length(STRING)", se.FunctionDeclaration.ToString());
+        Assert.Equal("INTEGER Length(STRING)", se.FunctionDeclaration.ToString());
     }
 }

@@ -15,7 +15,9 @@ namespace Oberon0.Compiler.Tests.Types
     public class RealTests
     {
         [Fact]
+#pragma warning disable S2699
         public void TestAssignmentBoolFail()
+#pragma warning restore S2699
         {
             TestHelper.CompileString(
                 """
@@ -31,7 +33,9 @@ namespace Oberon0.Compiler.Tests.Types
         }
 
         [Fact]
+#pragma warning disable S2699
         public void TestAssignmentBoolVarFail()
+#pragma warning restore S2699
         {
             TestHelper.CompileString(
                 """

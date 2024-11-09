@@ -257,7 +257,9 @@ namespace Oberon0.Compiler.Tests
         }
 
         [Fact]
+#pragma warning disable S2699
         public void ProcMissingEndName()
+#pragma warning restore S2699
         {
             TestHelper.CompileString(
                 """

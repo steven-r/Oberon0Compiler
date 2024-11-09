@@ -7,12 +7,14 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Build.Locator;
 using Oberon0.Shared;
+#pragma warning disable S112
 
 namespace Oberon0.Generator.MsilBin
 {
@@ -37,6 +39,7 @@ namespace Oberon0.Generator.MsilBin
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private static string GetDotnetExe ()
         {
             string execName = "dotnet";
@@ -123,7 +126,9 @@ namespace Oberon0.Generator.MsilBin
             var directoryInfo = new DirectoryInfo(_options.SolutionPath!);
             if (_options.CleanSolution && directoryInfo.Exists)
             {
+#pragma warning disable S1215
                 GC.Collect(); // try to unload blocking resources
+#pragma warning restore S1215
                 Directory.Delete(_options.SolutionPath!, true);
             }
 
