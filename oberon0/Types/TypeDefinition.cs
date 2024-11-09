@@ -6,7 +6,6 @@
 #endregion
 
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using Oberon0.Compiler.Generator;
 
 namespace Oberon0.Compiler.Types
@@ -38,7 +37,7 @@ namespace Oberon0.Compiler.Types
         /// </summary>
         /// <value>Generator information.</value>
         [ExcludeFromCodeCoverage]
-        [UsedImplicitly]
+        // ReSharper disable once UnusedMember.Global
         public IGeneratorInfo? GeneratorInfo { get; set; }
 
         /// <summary>

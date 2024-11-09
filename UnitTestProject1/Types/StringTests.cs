@@ -5,6 +5,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
+using System.Security.Cryptography;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
@@ -213,5 +215,77 @@ public class StringTests(ITestOutputHelper testOutput)
         var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
         var se = Assert.IsType<FunctionCallExpression>(s.Expression);
         Assert.Equal("INTEGER Length(STRING)", se.FunctionDeclaration.ToString());
+    }
+
+    [Fact]
+    public void StringAddVarVar()
+    {
+        var m = TestHelper.CompileString(
+            """
+
+            MODULE test; 
+            VAR 
+              a: STRING;
+              b: STRING;
+              r: STRING;
+            BEGIN
+              a := 'Hello String';
+              b := 'Hello';
+              r := a + b;
+            END test.
+            """,
+            testOutput);
+        Assert.NotNull(m);
+        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[2]);
+        var se = Assert.IsType<BinaryExpression>(s.Expression);
+        Assert.Equal(BaseTypes.String, se.TargetType.Type);
+        Assert.IsType<VariableReferenceExpression>(se.LeftHandSide);
+        Assert.IsType<VariableReferenceExpression>(se.RightHandSide);
+
+    }
+
+    [Fact]
+    public void StringAddVarString()
+    {
+        var m = TestHelper.CompileString(
+            """
+
+            MODULE test; 
+            VAR 
+              a: STRING;
+              r: STRING;
+            BEGIN
+              a := 'Hello ';
+              r := a + 'String';
+            END test.
+            """,
+            testOutput);
+        Assert.NotNull(m);
+        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+        var se = Assert.IsType<BinaryExpression>(s.Expression);
+        Assert.Equal(BaseTypes.String, se.TargetType.Type);
+        Assert.IsType<VariableReferenceExpression>(se.LeftHandSide);
+        Assert.IsType<StringExpression>(se.RightHandSide);
+    }
+
+
+    [Fact]
+    public void StringAddStringString()
+    {
+        var m = TestHelper.CompileString(
+            """
+
+            MODULE test; 
+            VAR 
+              r: STRING;
+            BEGIN
+              r := 'Hello ' + 'String';
+            END test.
+            """,
+            testOutput);
+        Assert.NotNull(m);
+        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
+        var se = Assert.IsType<StringExpression>(s.Expression);
+        Assert.Equal("Hello String", se.Value);
     }
 }
