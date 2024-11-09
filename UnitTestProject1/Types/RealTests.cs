@@ -130,7 +130,7 @@ namespace Oberon0.Compiler.Tests.Types
             var statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
             Assert.IsType<ConstantDoubleExpression>(statement.Expression);
-            Assert.Equal($"r:REAL := {1.234}", statement.ToString());
+            Assert.Equal($"r:REAL := 1.234", statement.ToString());
         }
 
         [Fact]
@@ -150,7 +150,7 @@ namespace Oberon0.Compiler.Tests.Types
             var statement = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(statement);
             Assert.IsType<ConstantDoubleExpression>(statement.Expression);
-            Assert.Equal($"r:REAL := {-1.234}", statement.ToString());
+            Assert.Equal($"r:REAL := -1.234", statement.ToString());
         }
 
 

@@ -129,8 +129,8 @@ public class StringTests(ITestOutputHelper testOutput)
             testOutput);
         Assert.NotNull(m);
         var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
-        var se = Assert.IsType<FunctionCallExpression>(s.Expression);
-        Assert.Equal("STRING ToString(INTEGER)", se.FunctionDeclaration.ToString());
+        var se = Assert.IsType<StringExpression>(s.Expression);
+        Assert.Equal("1", se.Value);
     }
 
     [Fact]
@@ -143,14 +143,14 @@ public class StringTests(ITestOutputHelper testOutput)
             VAR 
               s: STRING;
             BEGIN
-              s := ToString(1.0)
+              s := ToString(1.1)
             END test.
             """,
             testOutput);
         Assert.NotNull(m);
         var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
-        var se = Assert.IsType<FunctionCallExpression>(s.Expression);
-        Assert.Equal("STRING ToString(REAL)", se.FunctionDeclaration.ToString());
+        var se = Assert.IsType<StringExpression>(s.Expression);
+        Assert.Equal("1.1", se.Value);
     }
 
     [Fact]
@@ -169,8 +169,8 @@ public class StringTests(ITestOutputHelper testOutput)
             testOutput);
         Assert.NotNull(m);
         var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
-        var se = Assert.IsType<FunctionCallExpression>(s.Expression);
-        Assert.Equal("STRING ToString(BOOLEAN)", se.FunctionDeclaration.ToString());
+        var se = Assert.IsType<StringExpression>(s.Expression);
+        Assert.Equal("True", se.Value);
     }
 
     [Fact]
