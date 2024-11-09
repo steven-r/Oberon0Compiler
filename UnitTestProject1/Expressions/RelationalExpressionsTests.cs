@@ -44,6 +44,20 @@ namespace Oberon0.Compiler.Tests.Expressions
         }
 
         [Fact]
+        public void ExpressionUnaryMinus()
+        {
+            var m = new Module(null);
+            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("INTEGER")!));
+            var e = BinaryExpression.Create(
+                OberonGrammarLexer.MINUS,
+                VariableReferenceExpression.Create(m.Block.LookupVar("a")!, null)!,
+                null,
+                m.Block);
+            var result = Assert.IsAssignableFrom<UnaryExpression>(ConstantSolver.Solve(e, m.Block));
+            Assert.NotNull(result);
+        }
+
+        [Fact]
         public void ExpressionRelEquals()
         {
             var m = new Module(null);

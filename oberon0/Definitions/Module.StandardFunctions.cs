@@ -7,9 +7,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Types;
 using Oberon0System.Attributes;
@@ -77,11 +77,6 @@ namespace Oberon0.Compiler.Definitions
             {
                 Name = "ReadBool",
                 ParameterTypes = ["&BOOLEAN"]
-            },
-            new()
-            {
-                Name = "Length", Type = TypeDefinition.IntegerTypeName,
-                ParameterTypes = [TypeDefinition.StringTypeName]
             }
         ];
 
@@ -207,10 +202,14 @@ namespace Oberon0.Compiler.Definitions
                 var attr = method.GetCustomAttribute<Oberon0ExportAttribute>();
                 if (attr == null)
                 {
-                    continue; // this method is not officially exported
+                    continue; // this method is not exported
                 }
 
-                Debug.Assert(method.DeclaringType != null, "method.DeclaringType != null");
+                if (method.DeclaringType == null)
+                {
+                    throw new InternalCompilerException($"method.DeclaringType == null for {method.Module.Name}/{method.Name}");
+                }
+                
                 Block.Procedures.Add(AddExternalFunctionDeclaration(attr, method.DeclaringType.FullName!, method.Name));
             }
 

@@ -5,31 +5,31 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System;
-using System.Linq;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions.Constant;
-using Oberon0.Compiler.Expressions.Functions;
+using Oberon0.Compiler.Expressions.Functions.Internal;
 using Oberon0.Compiler.Expressions.Operations.Internal;
-using Oberon0.Compiler.Types;
 
-namespace Oberon0.Compiler.Expressions.Operations;
+namespace Oberon0.Compiler.Expressions.Functions;
 
 /// <summary>
-///     Handle "Length(STRING)".
+///     Handle "ToString(INTEGER), ToString(REAL), ToString(BOOLEAN)".
 /// </summary>
 /// <seealso cref="IArithmeticOperation" />
 /// <remarks>This function is some kind of exception as - usually takes one parameter. The second is handled as a dummy</remarks>
-[InternalFunction("INTEGER Length(STRING)")]
+[InternalFunction("STRING ToString(INTEGER)")]
+[InternalFunction("STRING ToString(REAL)")]
+[InternalFunction("STRING ToString(BOOLEAN)")]
 [UsedImplicitly]
-internal class FunctionStringLength: IInternalFunction {
+internal class FunctionStringToString : IInternalFunction
+{
 
     public Expression Operate(FunctionCallExpression e, Block block, InternalFunctionMetadata functionMetadata)
     {
-        if (e.Parameters.First() is StringExpression se)
+        if (e.Parameters[0] is ConstantExpression ce)
         {
-            return ConstantExpression.Create(se.Value.Length);
+            return new StringExpression(ce.ToString()!);
         }
 
         return e;

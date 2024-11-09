@@ -98,7 +98,7 @@ namespace Oberon0.Compiler.Definitions
             string prototype = FunctionDeclaration.BuildPrototype(
                 procedureName,
                 SimpleTypeDefinition.VoidType,
-                parameterList.ToArray());
+                [.. parameterList]);
             if (Module.CompilerInstance != null)
             {
                 Module.CompilerInstance.Parser.NotifyErrorListeners(
@@ -146,12 +146,8 @@ namespace Oberon0.Compiler.Definitions
             }
 
             var res = b.Types.Find(x => x.Type == baseTypes && x.IsInternal);
-            if (res == null)
-            {
-                throw new InternalCompilerException($"LookupTypeByBaseType: Cannot lookup type {baseTypes:G}");
-            }
-
-            return res;
+            return res 
+             ?? throw new InternalCompilerException($"LookupTypeByBaseType: Cannot lookup type {baseTypes:G}");
         }
 
         /// <summary>

@@ -5,11 +5,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Composition.Hosting;
 using System.Linq;
-using System.Threading;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Exceptions;
@@ -28,20 +28,14 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
         /// <exception cref="InternalCompilerException">Called if function is not found</exception>
         /// <returns>Lazy&lt;IArithmeticOperation, IArithmeticOpMetadata&gt;.</returns>
         // ReSharper disable once UnusedMethodReturnValue.Global
-        [NotNull]
         public static StandardFunctionGeneratorListElement Get(FunctionDeclaration function)
         {
             string key =
                 $"{function.Name}/{function.ReturnType.Name}/{string.Join("/", function.Block.Declarations.OfType<ProcedureParameterDeclaration>().Select(x => x.TypeName))}";
 
-            var func = _standardFunctionList.FirstOrDefault(x => x.InstanceKey == key);
+            var func = _standardFunctionList.Find(x => x.InstanceKey == key);
 
-            if (func == null)
-            {
-                throw new InternalCompilerException("Cannot find function " + key);
-            }
-
-            return func;
+            return func ?? throw new InternalCompilerException("Cannot find function " + key);
         }
 
         internal static void Initialize(Module module)
@@ -80,6 +74,21 @@ namespace Oberon0.Generator.MsilBin.PredefinedFunctions
                     $"{element.Name}/{element.ReturnType!.Name}/{string.Join("/", element.ParameterTypes.Select(x => x.TypeName))}";
                 _standardFunctionList.Add(element);
             }
+        }
+
+        /// <summary>
+        /// Remove a function from the repository. 
+        /// </summary>
+        /// <remarks>This function is mainly used for testing purposes</remarks>
+        /// <param name="key">The key of the function to be removed</param>
+        /// <exception cref="ArgumentException"></exception>
+        public static void RemoveFunction(string key)
+        {
+            var item = 
+                _standardFunctionList.Find(x => x.InstanceKey == key) 
+             ?? throw new ArgumentException($"Key {key} does not exist", nameof(key));
+
+            _standardFunctionList.Remove(item);
         }
     }
 }

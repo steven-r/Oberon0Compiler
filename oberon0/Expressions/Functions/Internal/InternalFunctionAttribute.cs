@@ -10,7 +10,7 @@ using System.Composition;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Types;
 
-namespace Oberon0.Compiler.Expressions.Functions;
+namespace Oberon0.Compiler.Expressions.Functions.Internal;
 
 [MetadataAttribute]
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]

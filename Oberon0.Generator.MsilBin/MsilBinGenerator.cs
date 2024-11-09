@@ -42,7 +42,17 @@ namespace Oberon0.Generator.MsilBin
         /// <summary>
         ///     The used compiler module
         /// </summary>
-        public Module Module { get; set; } = null!;
+        public Module Module { get; }
+
+        /// <summary>
+        /// Initialize the generator
+        /// </summary>
+        /// <param name="module">The compiled module to be translated to MSIL</param>
+        public MsilBinGenerator(Module module)
+        {
+            Module = module;
+            StandardFunctionRepository.Initialize(module);
+        }
 
         /// <summary>
         ///     Dump generated code as string
@@ -71,8 +81,6 @@ namespace Oberon0.Generator.MsilBin
             {
                 throw new DataException("Please set Module before calling GenerateIntermediateCode()");
             }
-
-            StandardFunctionRepository.Initialize(Module);
 
             _compiledCode = SyntaxFactory.CompilationUnit();
 

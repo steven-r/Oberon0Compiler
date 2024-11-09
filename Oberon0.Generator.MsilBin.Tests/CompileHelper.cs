@@ -44,7 +44,7 @@ namespace Oberon0.Generator.MsilBin.Tests
                 throw new ArgumentException("Source code contains errors", nameof(source));
             }
 
-            var cg = new MsilBinGenerator {Module = m};
+            var cg = new MsilBinGenerator(module: m);
             if (cg == null)
             {
                 throw new NullReferenceException(nameof(cg));

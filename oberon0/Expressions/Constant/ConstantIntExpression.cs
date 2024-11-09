@@ -6,6 +6,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Constant
@@ -32,7 +33,7 @@ namespace Oberon0.Compiler.Expressions.Constant
 
         public override string ToString()
         {
-            return ((int) Value).ToString("G");
+            return ((int) Value).ToString("G", CultureInfo.InvariantCulture);
         }
 
         public override int ToInt32()

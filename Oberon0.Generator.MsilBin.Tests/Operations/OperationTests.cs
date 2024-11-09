@@ -30,7 +30,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -56,7 +56,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -82,7 +82,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -110,7 +110,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -138,7 +138,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -164,7 +164,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1, new StringReader("true" + Environment.NewLine));
@@ -192,7 +192,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -218,7 +218,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -247,7 +247,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -270,7 +270,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -299,7 +299,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -328,7 +328,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1,
@@ -356,7 +356,7 @@ END Array.";
             var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1, new StringReader("12" + Environment.NewLine));

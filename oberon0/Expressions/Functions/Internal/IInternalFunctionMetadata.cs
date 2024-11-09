@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-namespace Oberon0.Compiler.Expressions.Functions;
+namespace Oberon0.Compiler.Expressions.Functions.Internal;
 
 public class InternalFunctionMetadata
 {
