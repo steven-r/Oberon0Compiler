@@ -8,6 +8,7 @@
 using System;
 using System.Linq;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Solver;
@@ -301,8 +302,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         {
             var m = new Module(null);
             m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")!));
-            var var = VariableReferenceExpression.Create(m.Block.LookupVar("b"), null);
-            Assert.Null(var);
+            Assert.Throws<InternalCompilerException>(() => VariableReferenceExpression.Create(m.Block.LookupVar("b"), null));
         }
 
         /* and */
