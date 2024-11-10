@@ -14,7 +14,6 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Build.Locator;
 using Oberon0.Shared;
-#pragma warning disable S112
 
 namespace Oberon0.Generator.MsilBin
 {
@@ -39,7 +38,7 @@ namespace Oberon0.Generator.MsilBin
             }
         }
 
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverage(Justification = "This function does not have any impact on execution. It's just a small helper.")]
         private static string GetDotnetExe ()
         {
             string execName = "dotnet";
@@ -52,6 +51,7 @@ namespace Oberon0.Generator.MsilBin
 
         private CreateBinaryOptions SetOptions(CreateBinaryOptions options)
         {
+            // ReSharper disable once UnthrowableException
             options.ModuleName ??= _codeGenerator.Module.Name ?? throw new NullReferenceException("Name needs to be set");
             options.SolutionPath ??= BuildOutputPath(options);
             options.OutputPath ??= Environment.CurrentDirectory;
