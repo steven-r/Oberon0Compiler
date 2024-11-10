@@ -5,8 +5,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System;
-using System.Security.Cryptography;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
@@ -287,5 +285,106 @@ public class StringTests(ITestOutputHelper testOutput)
         var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
         var se = Assert.IsType<StringExpression>(s.Expression);
         Assert.Equal("Hello String", se.Value);
+    }
+
+    [Fact]
+    public void TestStringMultVarVar()
+    {
+        var m = TestHelper.CompileString(
+            """
+
+            MODULE test; 
+            VAR 
+              a: STRING;
+              b: INTEGER;
+              r: STRING;
+            BEGIN
+              a := 'Hello String';
+              b := 5;
+              r := a * b;
+            END test.
+            """,
+            testOutput);
+        Assert.NotNull(m);
+        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[2]);
+        var se = Assert.IsType<BinaryExpression>(s.Expression);
+        Assert.Equal(BaseTypes.String, se.TargetType.Type);
+        Assert.Equal(OberonGrammarLexer.STAR, se.Operator);
+        var vr = Assert.IsType<VariableReferenceExpression>(se.LeftHandSide);
+        Assert.Equal("a", vr.Name);
+        Assert.IsType<VariableReferenceExpression>(se.RightHandSide);
+    }
+
+    [Fact]
+    public void TestStringMultVarInt()
+    {
+        var m = TestHelper.CompileString(
+            """
+
+            MODULE test; 
+            VAR 
+              a: STRING;
+              r: STRING;
+            BEGIN
+              a := 'Hello String';
+              r := a * 5;
+            END test.
+            """,
+            testOutput);
+        Assert.NotNull(m);
+        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+        var expression = Assert.IsType<BinaryExpression>(s.Expression);
+        Assert.Equal(BaseTypes.String, expression.TargetType.Type);
+        Assert.Equal(OberonGrammarLexer.STAR, expression.Operator);
+        var vr = Assert.IsType<VariableReferenceExpression>(expression.LeftHandSide);
+        Assert.Equal("a", vr.Name);
+        Assert.IsType<ConstantIntExpression>(expression.RightHandSide);
+    }
+
+    [Fact]
+    public void TestStringMultStringVar()
+    {
+        var m = TestHelper.CompileString(
+            """
+
+            MODULE test; 
+            VAR 
+              b: INTEGER;
+              r: STRING;
+            BEGIN
+              b := 5;
+              r := 'Hello String' * b;
+            END test.
+            """,
+            testOutput);
+        Assert.NotNull(m);
+        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+        var expression = Assert.IsType<BinaryExpression>(s.Expression);
+        Assert.Equal(BaseTypes.String, expression.TargetType.Type);
+        Assert.Equal(OberonGrammarLexer.STAR, expression.Operator);
+        var se = Assert.IsType<StringExpression>(expression.LeftHandSide);
+        Assert.Equal("Hello String", se.Value);
+        var vr = Assert.IsType<VariableReferenceExpression>(expression.RightHandSide);
+        Assert.Equal("b", vr.Name);
+    }
+
+    [Fact]
+    public void TestStringMultStringOnRightHandSideFail()
+    {
+        TestHelper.CompileString(
+            """
+
+            MODULE test; 
+            VAR 
+              b: INTEGER;
+              r: STRING;
+            BEGIN
+              b := 5;
+              r := b * 'Hello String';
+            END test.
+            """,
+            testOutput,
+            "Left and right expression are not compatible with *",
+            "Cannot parse right side of assignment");
     }
 }

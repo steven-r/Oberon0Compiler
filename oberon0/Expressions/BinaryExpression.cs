@@ -26,15 +26,19 @@ namespace Oberon0.Compiler.Expressions
         /// <param name="left">The left hand side.</param>
         /// <param name="right">The right hand side.</param>
         /// <param name="block">The block to handle.</param>
-        /// <returns>A binary expression.</returns>
-        public static BinaryExpression Create(int tokenType, Expression left, Expression? right, Block block)
+        /// <returns>A binary expression. If no expression is found, <code>null</code> is returned.</returns>
+        public static BinaryExpression? Create(int tokenType, Expression left, Expression? right, Block block)
         {
-            ArithmeticOperation op;
+            ArithmeticOperation? op;
             BinaryExpression result;
             if (right == null)
             {
                 // unary
                 op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.Type, BaseTypes.Any);
+                if (op == null)
+                {
+                    return null;
+                }
                 result = new UnaryExpression
                 {
                     LeftHandSide = left,
@@ -46,6 +50,10 @@ namespace Oberon0.Compiler.Expressions
             }
 
             op = ExpressionRepository.Instance.Get(tokenType, left.TargetType.Type, right.TargetType.Type);
+            if (op == null)
+            {
+                return null;
+            }
             result = new BinaryExpression
             {
                 LeftHandSide = left,

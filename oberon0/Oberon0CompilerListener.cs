@@ -178,20 +178,37 @@ namespace Oberon0.Compiler
 
         public override void ExitExprMultPrecedence(OberonGrammarParser.ExprMultPrecedenceContext context)
         {
-            context.expReturn = BinaryExpression.Create(
+            var exp = BinaryExpression.Create(
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
                 parser.currentBlock);
+            if (exp == null)
+            {
+                parser.NotifyErrorListeners(context.op,
+                    $"Left and right expression are not compatible with {context.op.Text}", null);
+            } else
+            {
+                context.expReturn = exp;
+            }
         }
 
         public override void ExitExprRelPrecedence(OberonGrammarParser.ExprRelPrecedenceContext context)
         {
-            context.expReturn = BinaryExpression.Create(
+            var exp = BinaryExpression.Create(
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
                 parser.currentBlock);
+            if (exp == null)
+            {
+                parser.NotifyErrorListeners(context.op, $"Unknown Operation {context.op.Text}", null);
+                context.expReturn = ConstantIntExpression.Zero;
+            } else
+            {
+
+                context.expReturn = exp;
+            }
         }
 
         public override void ExitExprFuncCall(OberonGrammarParser.ExprFuncCallContext context)

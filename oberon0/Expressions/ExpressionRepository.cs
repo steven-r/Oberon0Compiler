@@ -77,17 +77,11 @@ namespace Oberon0.Compiler.Expressions
         /// <param name="operation">The operation.</param>
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
-        /// <returns>Lazy&lt;IArithmeticOperation, IArithmeticOpMetadata&gt;.</returns>
-        public ArithmeticOperation Get(int operation, BaseTypes left, BaseTypes right)
+        /// <returns>ArithmeticOperation</returns>
+        public ArithmeticOperation? Get(int operation, BaseTypes left, BaseTypes right)
         {
             var key = new ArithmeticOpKey(operation, left, right);
-            if (!ArithmeticOperations.TryGetValue(key, out var op))
-            {
-                throw new ArgumentException(
-                    $"Cannot find operation {OberonGrammarLexer.DefaultVocabulary.GetDisplayName(operation)} ({left:G}, {right:G})");
-            }
-
-            return op;
+            return ArithmeticOperations.GetValueOrDefault(key);
         }
 
         /// <summary>
