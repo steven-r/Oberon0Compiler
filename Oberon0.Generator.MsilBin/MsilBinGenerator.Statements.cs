@@ -81,7 +81,7 @@ partial class MsilBinGenerator
     {
         var expression = BinaryExpression.Create(OberonGrammarLexer.NOT, repeatStatement.Condition, null,
             repeatStatement.Block.Parent!);
-        var compiled = ConstantSolver.Solve(expression, repeatStatement.Block.Parent!);
+        var compiled = ConstantSolver.Solve(expression!, repeatStatement.Block.Parent!);
         statements = statements.Add(
             SyntaxFactory.DoStatement(
                 SyntaxFactory.Block(GenerateBlockStatements(repeatStatement.Block)),
