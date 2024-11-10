@@ -7,12 +7,14 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Expressions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Solver;
+using Oberon0.Compiler.Types;
 using Oberon0.Generator.MsilBin.GeneratorInfo;
 
 namespace Oberon0.Generator.MsilBin;
@@ -26,6 +28,11 @@ partial class MsilBinGenerator
         {OberonGrammarLexer.NOT, SyntaxKind.LogicalNotExpression}
     };
 
+    /// <summary>
+    /// Mapping table to map an Oberon0 binary operation to the corresponding Roslyn mapping. Works for numbers only.
+    ///
+    /// Please have a look at <see cref="HandleBinaryExpression"/> for handling
+    /// </summary>
     private static readonly Dictionary<int, SyntaxKind> BinaryExpressionMapping = new()
     {
         {OberonGrammarLexer.EQUAL, SyntaxKind.EqualsExpression},
@@ -43,16 +50,13 @@ partial class MsilBinGenerator
         {OberonGrammarLexer.MOD, SyntaxKind.ModuloExpression}
     };
 
-    public ExpressionSyntax CompileExpression(Expression compilerExpression)
+    internal ExpressionSyntax CompileExpression(Expression compilerExpression)
     {
         return compilerExpression switch
         {
             UnaryExpression ua => SyntaxFactory.PrefixUnaryExpression(UnaryExpressionMapping[ua.Operator],
                 CompileExpression(ua.LeftHandSide)),
-            BinaryExpression be => SyntaxFactory.ParenthesizedExpression(SyntaxFactory.BinaryExpression(
-                BinaryExpressionMapping[be.Operator],
-                CompileExpression(be.LeftHandSide),
-                CompileExpression(be.RightHandSide!))),
+            BinaryExpression be => HandleBinaryExpression(be),
             VariableReferenceExpression vre => GenerateVariableReference(vre.Declaration, vre.Selector),
             ConstantExpression ce           => GenerateConstantLiteral(ce),
             StringExpression se => SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression,
@@ -61,6 +65,42 @@ partial class MsilBinGenerator
             _ => throw new ArgumentException("Cannot process exception type " + compilerExpression.GetType().Name,
                 nameof(compilerExpression))
         };
+    }
+
+    private ExpressionSyntax HandleBinaryExpression(BinaryExpression be)
+    {
+        if (be is { Operator: OberonGrammarLexer.STAR, TargetType.Type: BaseTypes.String })
+        {
+            // special treatment for string multiplication:
+            // implement the following C# code: string.Concat(Enumerable.Repeat(LHS, RHS))
+            var argumentList = new SyntaxNodeOrTokenList();
+            argumentList = argumentList.AddRange([
+                SyntaxFactory.Argument(CompileExpression(be.LeftHandSide)),
+                SyntaxFactory.Token(SyntaxKind.CommaToken),
+                SyntaxFactory.Argument(CompileExpression(be.RightHandSide!))
+            ]);
+            var ie = SyntaxFactory.InvocationExpression(
+                                       SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                                           MapIdentifierName("Enumerable"),
+                                           MapIdentifierName("Repeat")))
+                                  .WithArgumentList(SyntaxFactory.ArgumentList(
+                SyntaxFactory.SeparatedList<ArgumentSyntax>(argumentList)));
+            // ReSharper disable once UseCollectionExpression
+            argumentList = new SyntaxNodeOrTokenList();
+            argumentList = argumentList.Add(SyntaxFactory.Argument(ie));
+            return SyntaxFactory.InvocationExpression(
+                                     SyntaxFactory.MemberAccessExpression(
+                                         SyntaxKind.SimpleMemberAccessExpression,
+                                         SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                         MapIdentifierName("Concat")))
+                                .WithArgumentList(SyntaxFactory.ArgumentList(
+                                     SyntaxFactory.SeparatedList<ArgumentSyntax>(argumentList)));
+        }
+        // standard treatment
+        return SyntaxFactory.ParenthesizedExpression(SyntaxFactory.BinaryExpression(
+            BinaryExpressionMapping[be.Operator],
+            CompileExpression(be.LeftHandSide),
+            CompileExpression(be.RightHandSide!)));
     }
 
     private ExpressionSyntax GenerateVariableReference(Declaration declaration, VariableSelector? selector,
@@ -86,7 +126,7 @@ partial class MsilBinGenerator
                     var binaryExpression = BinaryExpression.Create(OberonGrammarLexer.MINUS,
                         indexSelector.IndexDefinition,
                         new ConstantIntExpression(1), declaration.Block!);
-                    var solvedExpression = ConstantSolver.Solve(binaryExpression, declaration.Block!);
+                    var solvedExpression = ConstantSolver.Solve(binaryExpression!, declaration.Block!);
                     var accessor = SyntaxFactory.ElementAccessExpression(
                         MapIdentifierName(declaration.Name),
                         SyntaxFactory.BracketedArgumentList(
