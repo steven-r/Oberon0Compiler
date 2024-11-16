@@ -12,7 +12,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.Build.Locator;
 using Oberon0.Shared;
 
 namespace Oberon0.Generator.MsilBin
@@ -29,7 +28,6 @@ namespace Oberon0.Generator.MsilBin
         {
             ArgumentNullException.ThrowIfNull(codeGenerator);
 
-            MSBuildLocator.RegisterDefaults();
             _codeGenerator = codeGenerator;
             _options = SetOptions(options ?? new CreateBinaryOptions());
             if (!Directory.Exists(_options.OutputPath))
