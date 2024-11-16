@@ -117,22 +117,18 @@ namespace Oberon0.Compiler
 
         public override void ExitExprNotExpression(OberonGrammarParser.ExprNotExpressionContext context)
         {
-            switch (context.op.Type)
+            context.expReturn = context.op.Type switch
             {
-                case OberonGrammarLexer.MINUS:
-                    context.expReturn = BinaryExpression.Create(
-                        OberonGrammarLexer.MINUS,
-                        context.e.expReturn,
-                        null,
-                        parser.currentBlock);
-                    break;
-                case OberonGrammarLexer.NOT:
-                    context.expReturn = BinaryExpression.Create(
-                        OberonGrammarLexer.NOT,
-                        context.e.expReturn,
-                        null,
-                        parser.currentBlock);
-                    break;
+                OberonGrammarLexer.MINUS => BinaryExpression.Create(OberonGrammarLexer.MINUS, context.e.expReturn, null,
+                    parser.currentBlock),
+                OberonGrammarLexer.NOT => BinaryExpression.Create(OberonGrammarLexer.NOT, context.e.expReturn, null,
+                    parser.currentBlock),
+                _ => null
+            };
+            if (context.expReturn == null)
+            {
+                parser.NotifyErrorListeners(context.op,
+                    $"Expression is not compatible with {context.op.Text}", null);
             }
         }
 
@@ -174,41 +170,39 @@ namespace Oberon0.Compiler
                 context.l.expReturn,
                 context.r.expReturn,
                 parser.currentBlock);
+            if (context.expReturn == null)
+            {
+                parser.NotifyErrorListeners(context.op,
+                    $"Left and right expression are not compatible with {context.op.Text}", null);
+            }
         }
 
         public override void ExitExprMultPrecedence(OberonGrammarParser.ExprMultPrecedenceContext context)
         {
-            var exp = BinaryExpression.Create(
+            context.expReturn = BinaryExpression.Create(
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
                 parser.currentBlock);
-            if (exp == null)
+            if (context.expReturn == null)
             {
                 parser.NotifyErrorListeners(context.op,
                     $"Left and right expression are not compatible with {context.op.Text}", null);
-            } else
-            {
-                context.expReturn = exp;
-            }
+            } 
         }
 
         public override void ExitExprRelPrecedence(OberonGrammarParser.ExprRelPrecedenceContext context)
         {
-            var exp = BinaryExpression.Create(
+            context.expReturn = BinaryExpression.Create(
                 context.op.Type,
                 context.l.expReturn,
                 context.r.expReturn,
                 parser.currentBlock);
-            if (exp == null)
+            if (context.expReturn == null)
             {
-                parser.NotifyErrorListeners(context.op, $"Unknown Operation {context.op.Text}", null);
-                context.expReturn = ConstantIntExpression.Zero;
-            } else
-            {
-
-                context.expReturn = exp;
-            }
+                parser.NotifyErrorListeners(context.op,
+                    $"Left and right expression are not compatible with {context.op.Text}", null);
+            } 
         }
 
         public override void ExitExprFuncCall(OberonGrammarParser.ExprFuncCallContext context)

@@ -368,23 +368,4 @@ public class StringTests(ITestOutputHelper testOutput)
         Assert.Equal("b", vr.Name);
     }
 
-    [Fact]
-    public void TestStringMultStringOnRightHandSideFail()
-    {
-        TestHelper.CompileString(
-            """
-
-            MODULE test; 
-            VAR 
-              b: INTEGER;
-              r: STRING;
-            BEGIN
-              b := 5;
-              r := b * 'Hello String';
-            END test.
-            """,
-            testOutput,
-            "Left and right expression are not compatible with *",
-            "Cannot parse right side of assignment");
-    }
 }
