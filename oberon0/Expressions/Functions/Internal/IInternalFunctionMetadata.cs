@@ -7,7 +7,9 @@
 
 namespace Oberon0.Compiler.Expressions.Functions.Internal;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class InternalFunctionMetadata
 {
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public string Prototype { get; set; } = null!;
 }
