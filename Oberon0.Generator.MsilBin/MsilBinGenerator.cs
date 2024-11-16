@@ -6,13 +6,13 @@
 #endregion
 
 using System;
-using System.Data;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Types;
 using Oberon0.Generator.MsilBin.PredefinedFunctions;
 using Oberon0.Shared;
@@ -79,7 +79,7 @@ namespace Oberon0.Generator.MsilBin
         {
             if (Module == null)
             {
-                throw new DataException("Please set Module before calling GenerateIntermediateCode()");
+                throw new InternalCompilerException("Please set Module before calling GenerateIntermediateCode()");
             }
 
             _compiledCode = SyntaxFactory.CompilationUnit();
@@ -92,7 +92,9 @@ namespace Oberon0.Generator.MsilBin
                                       .NormalizeWhitespace();
 
             // Add System using statement: (using System)
-            _namespace = _namespace.AddUsings(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")),
+            _namespace = _namespace.AddUsings(
+                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")),
+                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Linq")),
                 SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("AnyClone")));
 
             GenerateClass();

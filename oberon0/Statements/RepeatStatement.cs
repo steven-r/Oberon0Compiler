@@ -14,6 +14,6 @@ namespace Oberon0.Compiler.Statements
     {
         public Expression Condition { get; set; } = null!;
 
-        public Block Block { get; set; } = new(parent, parent.Module);
+        public Block Block { get; } = new(parent, parent.Module);
     }
 }

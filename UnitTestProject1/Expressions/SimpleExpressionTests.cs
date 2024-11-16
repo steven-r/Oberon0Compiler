@@ -237,9 +237,9 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestUnaryOpException()
         {
             var m = new Module(null);
-            var e = Assert.Throws<ArgumentException>(() => BinaryExpression.Create(OberonGrammarLexer.PLUS,
-                ConstantExpression.Create(false), null, m.Block));
-            Assert.Equal("Cannot find operation '+' (Bool, Any)", e.Message);
+            var e = BinaryExpression.Create(OberonGrammarLexer.PLUS,
+                ConstantExpression.Create(false), null, m.Block);
+            Assert.Null(e);
         }
 
         private class UnknownExpression : Expression

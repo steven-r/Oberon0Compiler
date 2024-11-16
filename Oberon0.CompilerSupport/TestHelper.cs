@@ -92,24 +92,38 @@ namespace Oberon0.Test.Support
         ///     Helper to compile some code with a standard application surrounding
         /// </summary>
         /// <param name="operations"></param>
+        /// <param name="outputHelper"></param>
+        /// <param name="expectedErrors"></param>
+        /// <returns></returns>
+        public static Module CompileSingleStatement(string operations, ITestOutputHelper? outputHelper, params string[] expectedErrors)
+        {
+            return CompileString(
+                $"""
+                 MODULE test; 
+                 CONST 
+                    true_ = TRUE; 
+                    false_ = FALSE; 
+                 VAR 
+                    a,b,c,d,e,f,g,h,x,y,z: BOOLEAN; 
+                    i, j, k, l: INTEGER;
+                    r, s, t: REAL;
+                 BEGIN 
+                   {operations} 
+                 END test.
+                 """,
+                outputHelper,
+                expectedErrors);
+        }
+
+        /// <summary>
+        ///     Helper to compile some code with a standard application surrounding
+        /// </summary>
+        /// <param name="operations"></param>
         /// <param name="expectedErrors"></param>
         /// <returns></returns>
         public static Module CompileSingleStatement(string operations, params string[] expectedErrors)
         {
-            return CompileString(
-                @$"
-MODULE test; 
-CONST 
-   true_ = TRUE; 
-   false_ = FALSE; 
-VAR 
-   a,b,c,d,e,f,g,h,x,y,z: BOOLEAN; 
-   i, j, k, l: INTEGER;
-   r, s, t: REAL;
-BEGIN 
-  {operations} 
-END test.",
-                expectedErrors);
+            return CompileSingleStatement(operations, null, expectedErrors);
         }
 
         internal class TestErrorListener<TSymbol>(List<CompilerError> compilerErrors) : IAntlrErrorListener<TSymbol>

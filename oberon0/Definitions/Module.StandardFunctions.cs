@@ -109,7 +109,7 @@ namespace Oberon0.Compiler.Definitions
             return new ProcedureParameterDeclaration(parameterName, block, targetType, isVar);
         }
 
-        [GeneratedRegex(@"(?<ref>&|VAR\s+)?(?<name>[A-Za-z][A-Za-z$0-9]*)(?<isarray>\[(?<size>\d+)\])?")]
+        [GeneratedRegex(@"^(?<ref>&|VAR\s+)?(?<name>[A-Za-z][A-Za-z$0-9]*)(?<isarray>\[(?<size>\d+)\])?$")]
         internal static partial Regex ParameterDeclarationRegex();
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Oberon0.Compiler.Definitions
             var matches = ParameterDeclarationRegex().Match(typeString);
             if (!matches.Success)
             {
-                throw new ArgumentException($"{typeString} is not a valid type reference", nameof(typeString));
+                throw new InternalCompilerException($"{typeString} is not a valid type reference");
             }
 
             string typeName = matches.Groups["name"].Value;

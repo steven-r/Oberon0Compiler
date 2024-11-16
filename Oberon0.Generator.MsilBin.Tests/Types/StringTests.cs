@@ -68,4 +68,118 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
         Runner.Execute(assembly, output1);
         Assert.Equal($"Hello String", output1.ToString());
     }
+
+    [Fact]
+    public void StringMultVarVar()
+    {
+        const string source = $"""
+                               MODULE Test; 
+                               VAR
+                                 a, s: STRING;
+                                 b: INTEGER;
+
+                               BEGIN
+                                   a := 'Hello';
+                                   b := 5;
+                                   WriteString(a * b)
+                               END Test.
+                               """;
+        var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
+        Assert.NotEmpty(code);
+
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+
+        byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+        Assert.NotNull(assembly);
+
+        using var output1 = new StringWriter();
+        Runner.Execute(assembly, output1);
+        Assert.Equal("HelloHelloHelloHelloHello", output1.ToString());
+    }
+
+    [Fact]
+    public void StringMultVarInt()
+    {
+        const string source = $"""
+                               MODULE Test; 
+                               VAR
+                                 a, s: STRING;
+                                 b: INTEGER;
+
+                               BEGIN
+                                   a := 'Hello';
+                                   b := 5;
+                                   WriteString(a * 3)
+                               END Test.
+                               """;
+        var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
+        Assert.NotEmpty(code);
+
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+
+        byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+        Assert.NotNull(assembly);
+
+        using var output1 = new StringWriter();
+        Runner.Execute(assembly, output1);
+        Assert.Equal("HelloHelloHello", output1.ToString());
+    }
+
+    [Fact]
+    public void StringMultStringVar()
+    {
+        const string source = $"""
+                               MODULE Test; 
+                               VAR
+                                 a, s: STRING;
+                                 b: INTEGER;
+
+                               BEGIN
+                                   a := 'Hello';
+                                   b := 4;
+                                   WriteString('HI' * b)
+                               END Test.
+                               """;
+        var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
+        Assert.NotEmpty(code);
+
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+
+        byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+        Assert.NotNull(assembly);
+
+        using var output1 = new StringWriter();
+        Runner.Execute(assembly, output1);
+        // ReSharper disable once StringLiteralTypo
+        Assert.Equal("HIHIHIHI", output1.ToString());
+    }
+
+    [Fact]
+    public void StringMultVarZero()
+    {
+        const string source = $"""
+                               MODULE Test; 
+                               VAR
+                                 a, s: STRING;
+                                 b: INTEGER;
+
+                               BEGIN
+                                   a := 'Hello';
+                                   b := 5;
+                                   WriteString(a * 0)
+                               END Test.
+                               """;
+        var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
+        Assert.NotEmpty(code);
+
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+
+        byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+        Assert.NotNull(assembly);
+
+        using var output1 = new StringWriter();
+        Runner.Execute(assembly, output1);
+        Assert.Equal("", output1.ToString());
+    }
+
 }

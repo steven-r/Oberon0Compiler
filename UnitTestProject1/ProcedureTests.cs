@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
 using Oberon0.Test.Support;
@@ -467,7 +468,7 @@ namespace Oberon0.Compiler.Tests
         [Fact]
         public void TestBuildPrototypeWithIntResultRecordFail()
         {
-            var e = Assert.Throws<InvalidOperationException>(() =>
+            var e = Assert.Throws<InternalCompilerException>(() =>
                 BuildPrototypeTester("TestFunction", "INTEGER", ("a", "RECORD a: INTEGER END")));
             Assert.Equal("RECORD a: INTEGER END is not a valid type reference", e.Message);
         }

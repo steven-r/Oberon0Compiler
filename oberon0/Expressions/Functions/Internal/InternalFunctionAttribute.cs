@@ -7,8 +7,7 @@
 
 using System;
 using System.Composition;
-using JetBrains.Annotations;
-using Oberon0.Compiler.Types;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Oberon0.Compiler.Expressions.Functions.Internal;
 
@@ -19,5 +18,8 @@ public class InternalFunctionAttribute(
     : ExportAttribute(typeof(IInternalFunction))
 {
 
-    public string Prototype { get; set; } = prototype;
+    // ReSharper disable once UnusedMember.Global
+    public string Prototype { get;
+        [ExcludeFromCodeCoverage]
+        set; } = prototype;
 }

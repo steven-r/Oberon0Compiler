@@ -5,6 +5,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Types;
 using Oberon0.Test.Support;
 using Xunit;
@@ -218,4 +220,18 @@ public class DeclarationTests(ITestOutputHelper output)
             "Variable declared twice");
     }
 
+    [Fact]
+    public void TestGetParameterDeclarationFromStringFail()
+    {
+        var m = TestHelper.CompileString(
+            """
+            MODULE Test;
+            
+            END Test.
+            """,
+            output);
+        var ex = Assert.Throws<InternalCompilerException>(() =>
+            Module.GetParameterDeclarationFromString("This-Fails", m.Block));
+        Assert.Equal("This-Fails is not a valid type reference", ex.Message);
+    }
 }
