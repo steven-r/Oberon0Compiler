@@ -5,6 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Globalization;
 using System.IO;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
@@ -180,6 +181,75 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
         using var output1 = new StringWriter();
         Runner.Execute(assembly, output1);
         Assert.Equal("", output1.ToString());
+    }
+
+    [Theory]
+    [InlineData(0.0, "0", "G")]
+    [InlineData(1.0, "1", "G")]
+    [InlineData(10000000000000.00001, "10000000000000", "G")]
+    [InlineData(0.1, "0.1", "G")]
+    [InlineData(2.3E-06, "2.3E-06", "G")]
+    [InlineData(2.3E06, "2300000", "G")]
+    [InlineData(double.MinValue, "-1.7976931348623157E+308", "G")]
+    public void TestToStringRealFormat(double value, string expected, string format)
+    {
+        string source = $"""
+                         MODULE Test; 
+                         VAR
+                           r: REAL;
+                           s: STRING;
+                           b: INTEGER;
+
+                         BEGIN
+                             r := {value.ToString(CultureInfo.InvariantCulture)};
+                             s := ToString(r, '{format}');
+                             WriteString(s)
+                         END Test.
+                         """;
+        var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
+        Assert.NotEmpty(code);
+
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+
+        byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+        Assert.NotNull(assembly);
+
+        using var output1 = new StringWriter();
+        Runner.Execute(assembly, output1);
+        Assert.Equal(expected, output1.ToString());
+    }
+
+    [Theory]
+    [InlineData(false, "false", "true", "false")]
+    [InlineData(true, "true", "true", "false")]
+    [InlineData(false, "0", "1", "0")]
+    [InlineData(true, "1", "1", "0")]
+    public void TestToStringBooleanFormat(bool value, string expected, string trueVal, string falseVal)
+    {
+        string source = $"""
+                         MODULE Test; 
+                         VAR
+                           r: BOOLEAN;
+                           s: STRING;
+                           b: INTEGER;
+
+                         BEGIN
+                             r := {value.ToString().ToUpper()};
+                             s := ToString(r, '{trueVal}', '{falseVal}');
+                             WriteString(s)
+                         END Test.
+                         """;
+        var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
+        Assert.NotEmpty(code);
+
+        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+
+        byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
+        Assert.NotNull(assembly);
+
+        using var output1 = new StringWriter();
+        Runner.Execute(assembly, output1);
+        Assert.Equal(expected, output1.ToString());
     }
 
 }

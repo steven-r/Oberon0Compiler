@@ -49,4 +49,29 @@ public static partial class Oberon0SystemTests
         Assert.Equal(value.ToString(), result);
     }
 
+
+    [Theory]
+    [InlineData(0.0, "0", "G")]
+    [InlineData(1.0, "1", "G")]
+    [InlineData(10000000000000.00001, "10000000000000", "G")]
+    [InlineData(0.1, "0.1", "G")]
+    [InlineData(2.3E-06, "2.3E-06", "G")]
+    [InlineData(2.3E06, "2300000", "G")]
+    [InlineData(double.MinValue, "-1.7976931348623157E+308", "G")]
+    public static void TestToStringRealFormat(double value, string expected, string format)
+    {
+        string result = Oberon0System.ConvertToString(value, format);
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData(false, "false", "true", "false")]
+    [InlineData(true, "true", "true", "false")]
+    [InlineData(false, "0", "1", "0")]
+    [InlineData(true, "1", "1", "0")]
+    public static void TestToStringBooleanFormat(bool value, string expected, string trueVal, string falseVal)
+    {
+        string result = Oberon0System.ConvertToString(value, trueVal, falseVal);
+        Assert.Equal(expected, result);
+    }
 }
