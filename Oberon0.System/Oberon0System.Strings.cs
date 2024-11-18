@@ -49,18 +49,6 @@ public static partial class Oberon0System
     }
 
     /// <summary>
-    ///     Get string length
-    /// </summary>
-    /// <param name="value">the value to convert</param>
-    /// <returns>the converted string</returns>
-    [Oberon0Export("Length", "INTEGER", "STRING")]
-    // ReSharper disable once UnusedMember.Global
-    public static int Length(string value)
-    {
-        return value.Length;
-    }
-
-    /// <summary>
     ///     Convert REAL to STRING.
     /// </summary>
     /// <param name="value">the value to convert</param>
@@ -85,5 +73,17 @@ public static partial class Oberon0System
     public static string ConvertToString(bool value, string trueValue, string falseValue)
     {
         return value ? trueValue : falseValue;
+    }
+
+    /// <summary>
+    ///     Get string length
+    /// </summary>
+    /// <param name="value">the value to convert</param>
+    /// <returns>the converted string</returns>
+    [Oberon0Export("Length", "INTEGER", "STRING")]
+    // ReSharper disable once UnusedMember.Global
+    public static int Length(string value)
+    {
+        return value.Length;
     }
 }
