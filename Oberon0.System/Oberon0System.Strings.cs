@@ -113,7 +113,7 @@ public static partial class Oberon0System
     }
 
     /// <summary>
-    /// Parse a REAL number from a string and return the number itself
+    /// Parse a BOOLEAN from a string and return the boolean itself
     /// </summary>
     /// <param name="value"></param>
     /// <param name="result"></param>
