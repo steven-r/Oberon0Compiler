@@ -342,6 +342,26 @@ public class StringTests(ITestOutputHelper testOutput)
     }
 
     [Fact]
+    public void TestStringMultStringInt()
+    {
+        var m = TestHelper.CompileString(
+            """
+
+            MODULE test; 
+            VAR 
+              r: STRING;
+            BEGIN
+              r := 'Hello' * 5;
+            END test.
+            """,
+            testOutput);
+        Assert.NotNull(m);
+        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
+        var stringExpression = Assert.IsType<StringExpression>(s.Expression);
+        Assert.Equal("HelloHelloHelloHelloHello", stringExpression.Value);
+    }
+
+    [Fact]
     public void TestStringMultStringVar()
     {
         var m = TestHelper.CompileString(

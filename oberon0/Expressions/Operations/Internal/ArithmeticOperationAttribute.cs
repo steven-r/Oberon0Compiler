@@ -7,7 +7,7 @@
 
 using System;
 using System.Composition;
-using JetBrains.Annotations;
+using System.Diagnostics.CodeAnalysis;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Operations.Internal
@@ -21,12 +21,22 @@ namespace Oberon0.Compiler.Expressions.Operations.Internal
         BaseTypes resultType)
         : ExportAttribute(typeof(IArithmeticOperation)), IArithmeticOpMetadata
     {
-        [UsedImplicitly] public BaseTypes LeftHandType { get; set; } = leftHandType;
+        // ReSharper disable once UnusedMember.Global
+        public BaseTypes LeftHandType { get; set; } = leftHandType;
 
-        [UsedImplicitly] public BaseTypes RightHandType { get; set; } = rightHandType;
+        // ReSharper disable once UnusedMember.Global
+        public BaseTypes RightHandType { get; set; } = rightHandType;
 
-        public int Operation { get; set; } = operation;
+        public int Operation { 
+            get;
+            [ExcludeFromCodeCoverage(Justification = "Called by MEF")]
+            set;
+        } = operation;
 
-        public BaseTypes ResultType { get; set; } = resultType;
+        public BaseTypes ResultType { 
+            get; 
+            [ExcludeFromCodeCoverage(Justification = "Called by MEF")]
+            set;
+        } = resultType;
     }
 }

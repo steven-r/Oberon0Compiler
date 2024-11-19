@@ -8,6 +8,7 @@
 using System;
 using JetBrains.Annotations;
 using Oberon0.Compiler.Definitions;
+using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Expressions.Operations.Internal;
 using Oberon0.Compiler.Types;
@@ -72,17 +73,13 @@ namespace Oberon0.Compiler.Expressions.Operations
             ConstantExpression left,
             ConstantExpression right)
         {
-            if (operationParameters.Operation == OberonGrammarLexer.EQUAL)
+            return operationParameters.Operation switch
             {
-                return left.ToBool() == right.ToBool();
-            }
-
-            if (operationParameters.Operation == OberonGrammarLexer.NOTEQUAL)
-            {
-                return left.ToBool() != right.ToBool();
-            }
-
-            return false;
+                OberonGrammarLexer.EQUAL    => left.ToBool() == right.ToBool(),
+                OberonGrammarLexer.NOTEQUAL => left.ToBool() != right.ToBool(),
+                _ => throw new InternalCompilerException(
+                    $"Unknown comparison{OberonGrammarLexer.ruleNames[operationParameters.Operation]}")
+            };
         }
 
         private static bool HandleStandardRelop(
@@ -98,7 +95,8 @@ namespace Oberon0.Compiler.Expressions.Operations
                 OberonGrammarLexer.LE       => left.ToDouble() <= right.ToDouble(),
                 OberonGrammarLexer.NOTEQUAL => Math.Abs(left.ToDouble() - right.ToDouble()) > double.Epsilon,
                 OberonGrammarLexer.EQUAL    => Math.Abs(left.ToDouble() - right.ToDouble()) < double.Epsilon,
-                _                           => throw new InvalidOperationException("Unknown comparison")
+                _                           => throw new InternalCompilerException(
+                    $"Unknown comparison{OberonGrammarLexer.ruleNames[operationParameters.Operation]}")
             };
 
             return res;

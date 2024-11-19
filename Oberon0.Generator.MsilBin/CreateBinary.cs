@@ -12,6 +12,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using Oberon0.Compiler.Exceptions;
 using Oberon0.Shared;
 
 namespace Oberon0.Generator.MsilBin
@@ -49,8 +50,7 @@ namespace Oberon0.Generator.MsilBin
 
         private CreateBinaryOptions SetOptions(CreateBinaryOptions options)
         {
-            // ReSharper disable once UnthrowableException
-            options.ModuleName ??= _codeGenerator.Module.Name ?? throw new NullReferenceException("Name needs to be set");
+            options.ModuleName ??= _codeGenerator.Module.Name ?? throw new InternalCompilerException("Name needs to be set");
             options.SolutionPath ??= BuildOutputPath(options);
             options.OutputPath ??= Environment.CurrentDirectory;
             return options;
