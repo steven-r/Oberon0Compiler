@@ -123,4 +123,30 @@ public static partial class Oberon0System
     {
         return bool.TryParse(value, out result);
     }
+
+    /// <summary>
+    /// Parse a BOOLEAN from a string and return the boolean itself
+    /// </summary>
+    /// <param name="value">The original string</param>
+    /// <param name="source">The string to be replaced</param>
+    /// <param name="target">The replacement string</param>
+    [Oberon0Export("ReplaceString", "STRING", "STRING", "STRING", "STRING")]
+    // ReSharper disable once UnusedMember.Global
+    public static string ReplaceString(string value, string source, string target)
+    {
+        return value.Replace(source, target);
+    }
+
+    /// <summary>
+    /// Parse a BOOLEAN from a string and return the boolean itself
+    /// </summary>
+    /// <param name="value">The string where the substring has to be built</param>
+    /// <param name="start">Start of substring (counting from 1)</param>
+    /// <param name="len">The length of the substring. Passing 0 will return the rest of the string starting from *start*.</param>
+    [Oberon0Export("SubString", "STRING", "STRING", "INTEGER", "INTEGER")]
+    // ReSharper disable once UnusedMember.Global
+    public static string SubString(string value, int start, int len)
+    {
+        return len > 0 ? value.Substring(start - 1, len) : value[(start - 1)..];
+    }
 }
