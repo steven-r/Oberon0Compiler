@@ -74,4 +74,48 @@ public static partial class Oberon0SystemTests
         string result = Oberon0System.ConvertToString(value, trueVal, falseVal);
         Assert.Equal(expected, result);
     }
+
+    [Theory]
+    [InlineData("0", 0, true)]
+    [InlineData("  0 ", 0, true)]
+    [InlineData(" 1.2 ", 1.2, true)]
+    [InlineData(" 1 E2 ", 0, false)]
+    [InlineData(" 1,2 ", 0, false)]
+    public static void TestParseStringReal(string value, double expected, bool expectedReturn)
+    {
+        double result = 0;
+        bool returnValue = Oberon0System.ParseString(value, ref result);
+        Assert.Equal(expectedReturn, returnValue);
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData("0", 0, true)]
+    [InlineData("  0 ", 0, true)]
+    [InlineData(" 12 ", 12, true)]
+    [InlineData(" 1 E2 ", 0, false)]
+    [InlineData(" 1,2 ", 0, false)]
+    public static void TestParseStringInt(string value, int expected, bool expectedReturn)
+    {
+        int result = 0;
+        bool returnValue = Oberon0System.ParseString(value, ref result);
+        Assert.Equal(expectedReturn, returnValue);
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData("0", false, false)]
+    [InlineData("  true ", true, true)]
+    [InlineData(" TRUE ", true, true)]
+    [InlineData(" E2 ", false, false)]
+    [InlineData(" 1,2 ", false, false)]
+    [InlineData("False", false, true)]
+    public static void TestParseStringBool(string value, bool expected, bool expectedReturn)
+    {
+        bool result = false;
+        bool returnValue = Oberon0System.ParseString(value, ref result);
+        Assert.Equal(expectedReturn, returnValue);
+        Assert.Equal(expected, result);
+    }
+
 }
