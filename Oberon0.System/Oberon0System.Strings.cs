@@ -49,7 +49,7 @@ public static partial class Oberon0System
     }
 
     /// <summary>
-    ///     Convert REAL to STRING.
+    ///     Convert REAL to STRING with format.
     /// </summary>
     /// <param name="value">the value to convert</param>
     /// <param name="format">The format according to https://learn.microsoft.com/en-us/dotnet/api/system.double.tostring?view=net-8.0</param>
@@ -62,7 +62,7 @@ public static partial class Oberon0System
     }
 
     /// <summary>
-    ///     Convert REAL to STRING.
+    ///     Convert BOOLEAN to STRING with format.
     /// </summary>
     /// <param name="value">the value to convert</param>
     /// <param name="trueValue">value to be returned if <c>value</c> is true</param>
@@ -85,5 +85,68 @@ public static partial class Oberon0System
     public static int Length(string value)
     {
         return value.Length;
+    }
+
+    /// <summary>
+    /// Parse a string containing a number and return the REAL number itself
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="result"></param>
+    [Oberon0Export("ParseString", "BOOLEAN", "STRING", "&REAL")]
+    // ReSharper disable once UnusedMember.Global
+    public static bool ParseString(string value, ref double result)
+    {
+        return double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out result);
+    }
+
+    /// <summary>
+    /// Parse a REAL number from a string and return the number itself
+    /// </summary>
+    /// <param name="value">The string to be parsed</param>
+    /// <param name="result">The resulting number</param>
+    /// <returns>true, if the parse was successful</returns>
+    [Oberon0Export("ParseString", "BOOLEAN", "STRING", "&INTEGER")]
+    // ReSharper disable once UnusedMember.Global
+    public static bool ParseString(string value, ref int result)
+    {
+        return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out result);
+    }
+
+    /// <summary>
+    /// Parse a BOOLEAN from a string and return the boolean itself
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="result"></param>
+    [Oberon0Export("ParseString", "BOOLEAN", "STRING", "&BOOLEAN")]
+    // ReSharper disable once UnusedMember.Global
+    public static bool ParseString(string value, ref bool result)
+    {
+        return bool.TryParse(value, out result);
+    }
+
+    /// <summary>
+    /// Parse a BOOLEAN from a string and return the boolean itself
+    /// </summary>
+    /// <param name="value">The original string</param>
+    /// <param name="source">The string to be replaced</param>
+    /// <param name="target">The replacement string</param>
+    [Oberon0Export("ReplaceString", "STRING", "STRING", "STRING", "STRING")]
+    // ReSharper disable once UnusedMember.Global
+    public static string ReplaceString(string value, string source, string target)
+    {
+        return value.Replace(source, target);
+    }
+
+    /// <summary>
+    /// Parse a BOOLEAN from a string and return the boolean itself
+    /// </summary>
+    /// <param name="value">The string where the substring has to be built</param>
+    /// <param name="start">Start of substring (counting from 1)</param>
+    /// <param name="len">The length of the substring. Passing 0 will return the rest of the string starting from *start*.</param>
+    [Oberon0Export("SubString", "STRING", "STRING", "INTEGER", "INTEGER")]
+    // ReSharper disable once UnusedMember.Global
+    public static string SubString(string value, int start, int len)
+    {
+        return len > 0 ? value.Substring(start - 1, len) : value[(start - 1)..];
     }
 }
