@@ -7,6 +7,7 @@
 
 using System;
 using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using JetBrains.Annotations;
@@ -34,24 +35,29 @@ namespace Oberon0.Msil
         /// </returns>
         public static int Main(string[] args)
         {
-            var fileArg = new Argument<FileInfo>("input-file", "The input file to be compiled") { Arity = ArgumentArity.ExactlyOne }
-                   .ExistingOnly();
+            var fileArg = new Argument<FileInfo>
+            {
+                Name = "input-file",
+                Description = "The input file to be compiled",
+                Arity = ArgumentArity.ExactlyOne
+            };
+            
             var outputPathOpt = new Option<DirectoryInfo>(
-                ["--output-path", "-o"],
-                    "Output path where target files should be written to. Default: Current directory"
-                );
+                aliases: new[] { "--output-path", "-o" },
+                description: "Output path where target files should be written to. Default: Current directory");
+            
             var verboseOpt = new Option<bool>(
-                ["--verbose", "-v"],
-                    "Output more information"
-                );
+                aliases: new[] { "--verbose", "-v" },
+                description: "Output more information");
+            
             var cleanOpt = new Option<bool>(
-                ["--clean"],
-                    "Clean the build before running a new one."
-                );
+                aliases: new[] { "--clean" },
+                description: "Clean the build before running a new one.");
+            
             var projectNameOpt = new Option<string>(
-                ["--project-name"],
-                    "Name the project different to module name."
-                );
+                aliases: new[] { "--project-name" },
+                description: "Name the project different to module name.");
+            
             var rootCommand = new RootCommand("Compile an Oberon0 source file.")
             {
                 fileArg,
@@ -60,16 +66,15 @@ namespace Oberon0.Msil
                 cleanOpt,
                 projectNameOpt
             };
-            rootCommand.SetHandler(context =>
+            
+            int exitCode = 0;
+            rootCommand.SetHandler((FileInfo inputFile, DirectoryInfo outputPath, bool verbose, bool clean, string projectName) =>
             {
-                var file = context.ParseResult.GetValueForArgument(fileArg);
-                var outputPath = context.ParseResult.GetValueForOption(outputPathOpt);
-                bool verbose = context.ParseResult.GetValueForOption(verboseOpt);
-                bool clean = context.ParseResult.GetValueForOption(cleanOpt);
-                string projectName = context.ParseResult.GetValueForOption(projectNameOpt);
-                return Task.FromResult(StartCompile(file, outputPath, projectName, clean, verbose));
-            });
-            return rootCommand.Invoke(args);
+                exitCode = StartCompile(inputFile, outputPath, projectName, clean, verbose);
+            }, fileArg, outputPathOpt, verboseOpt, cleanOpt, projectNameOpt);
+            
+            rootCommand.Invoke(args);
+            return exitCode;
         }
 
         private static int StartCompile(FileSystemInfo inputFile, DirectoryInfo outputPath, string projectName, bool clean, bool verbose)
