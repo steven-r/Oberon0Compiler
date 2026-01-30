@@ -5,15 +5,15 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using JetBrains.Annotations;
 using Oberon0.Compiler;
 using Oberon0.Generator.MsilBin;
 using Oberon0.Shared;
+using System;
+using System.CommandLine;
+using System.CommandLine.Parsing;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Oberon0.Msil
@@ -35,28 +35,31 @@ namespace Oberon0.Msil
         /// </returns>
         public static int Main(string[] args)
         {
-            var fileArg = new Argument<FileInfo>
+            Argument<FileInfo> fileArg = new ("input-file")
             {
-                Name = "input-file",
                 Description = "The input file to be compiled",
                 Arity = ArgumentArity.ExactlyOne
             };
-            
-            var outputPathOpt = new Option<DirectoryInfo>(
-                aliases: new[] { "--output-path", "-o" },
-                description: "Output path where target files should be written to. Default: Current directory");
-            
-            var verboseOpt = new Option<bool>(
-                aliases: new[] { "--verbose", "-v" },
-                description: "Output more information");
-            
-            var cleanOpt = new Option<bool>(
-                aliases: new[] { "--clean" },
-                description: "Clean the build before running a new one.");
-            
-            var projectNameOpt = new Option<string>(
-                aliases: new[] { "--project-name" },
-                description: "Name the project different to module name.");
+
+            Option<DirectoryInfo> outputPathOpt = new("--output-path", "-o")
+            {
+                Description = "Output path where target files should be written to. Default: Current directory"
+            };
+
+            Option<bool> verboseOpt = new("--verbose", "-v")
+            {
+                Description = "Output more information"
+            };
+
+            Option<bool> cleanOpt = new("--clean")
+            {
+                Description = "Clean the build before running a new one."
+            };
+
+            Option<string> projectNameOpt = new("--project-name")
+            {
+                Description = "Name the project different to module name."
+            };
             
             var rootCommand = new RootCommand("Compile an Oberon0 source file.")
             {
@@ -66,44 +69,26 @@ namespace Oberon0.Msil
                 cleanOpt,
                 projectNameOpt
             };
-            
-            // Use a custom handler that properly returns the exit code
-            rootCommand.Handler = new AnonymousCommandHandler(context =>
+
+            var result = rootCommand.Parse(args);
+            if (result.Errors.Count > 0)
             {
-                var inputFile = context.ParseResult.GetValueForArgument(fileArg);
-                var outputPath = context.ParseResult.GetValueForOption(outputPathOpt);
-                var verbose = context.ParseResult.GetValueForOption(verboseOpt);
-                var clean = context.ParseResult.GetValueForOption(cleanOpt);
-                var projectName = context.ParseResult.GetValueForOption(projectNameOpt);
-                
-                context.ExitCode = StartCompile(inputFile, outputPath, projectName, clean, verbose);
-                return Task.FromResult(0);
-            });
-            
-            return rootCommand.Invoke(args);
+                foreach (ParseError parseError in result.Errors)
+                {
+                    Console.Error.WriteLine(parseError.Message);
+                }
+                return 1;
+            }
+
+            var inputFile = result.GetRequiredValue(fileArg);
+            var outputPath = result.GetValue(outputPathOpt);
+            var verbose = result.GetValue(verboseOpt);
+            var clean = result.GetValue(cleanOpt);
+            var projectName = result.GetValue(projectNameOpt);
+
+            return StartCompile(inputFile, outputPath, projectName, clean, verbose);
         }
         
-        private class AnonymousCommandHandler : ICommandHandler
-        {
-            private readonly Func<InvocationContext, Task> _func;
-            
-            public AnonymousCommandHandler(Func<InvocationContext, Task> func)
-            {
-                _func = func;
-            }
-            
-            public int Invoke(InvocationContext context)
-            {
-                _func(context).Wait();
-                return context.ExitCode;
-            }
-            
-            public Task<int> InvokeAsync(InvocationContext context)
-            {
-                return _func(context).ContinueWith(t => context.ExitCode);
-            }
-        }
-
         private static int StartCompile(FileSystemInfo inputFile, DirectoryInfo outputPath, string projectName, bool clean, bool verbose)
         {
             if (!inputFile.Exists)
