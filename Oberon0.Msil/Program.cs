@@ -106,6 +106,12 @@ namespace Oberon0.Msil
 
         private static int StartCompile(FileSystemInfo inputFile, DirectoryInfo outputPath, string projectName, bool clean, bool verbose)
         {
+            if (!inputFile.Exists)
+            {
+                Console.Error.WriteLine($"File does not exist: '{inputFile.Name}'.");
+                return 1;
+            }
+            
             var m = Oberon0Compiler.CompileString(File.ReadAllText(inputFile.FullName));
             if (m.CompilerInstance?.HasError ?? true)
             {
