@@ -21,25 +21,8 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
         [Fact]
         public void TestEmptyArgsRun()
         {
-            var currentOut = Console.Out;
-            var currentError = Console.Error;
-
-            using var sw = new StringWriter();
-            Console.SetOut(sw);
-            Console.SetError(sw);
-
-            try
-            {
-                Program.Main([]);
-            }
-            finally
-            {
-                Console.SetOut(currentOut);
-                Console.SetError(currentError);
-            }
-
-            output.WriteLine(sw.ToString());
-            Assert.Contains("Compile an Oberon0 source file.", sw.ToString());
+            var res = Program.Main([]);
+            Assert.Equal(1,  res);
         }
 
         [Fact]
