@@ -1,0 +1,2011 @@
+{
+  "settings": {
+    "components": {
+      "code": false,
+      "binaries": false
+    },
+    "targetId": "net10.0",
+    "targetDisplayName": ".NETCoreApp,Version=v10.0"
+  },
+  "analysisStartTime": "2026-01-30T18:37:21.7976311Z",
+  "analysisEndTime": "2026-01-30T18:37:30.9849232Z",
+  "privacyModeHelpUrl": "https://go.microsoft.com/fwlink/?linkid=2270980",
+  "stats": {
+    "summary": {
+      "projects": 9,
+      "issues": 4,
+      "incidents": 73,
+      "effort": 73
+    },
+    "charts": {
+      "severity": {
+        "Mandatory": 9,
+        "Optional": 4,
+        "Potential": 51,
+        "Information": 9
+      },
+      "category": {
+        "NuGet": 13,
+        "Project": 9,
+        "Api": 51
+      }
+    }
+  },
+  "projects": [
+    {
+      "path": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 16,
+      "properties": {
+        "appName": "Oberon0.Generator.MsilBin",
+        "projectKind": "ClassLibrary",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 22,
+        "numberOfCodeFiles": 22,
+        "linesTotal": 1908,
+        "linesOfCode": 1908,
+        "totalApiScanned": 2133,
+        "minLinesOfCodeToChange": 14,
+        "maxLinesOfCodeToChange": 14
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "585bc2e6-7628-47ba-85d9-95922bfa6490",
+          "ruleId": "NuGet.0006",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+              "protected": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+            },
+            "kind": "File",
+            "path": "NuGet.config",
+            "snippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+            "protectedSnippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+          }
+        },
+        {
+          "incidentId": "a1973346-c915-4ca2-828c-37a8c9fdb07e",
+          "ruleId": "Project.0002",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+              "protected": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+            "snippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "protectedSnippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        },
+        {
+          "incidentId": "28e43be9-c104-41fd-8f98-173ab0598c03",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.Runtime, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.Runtime, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var exports =\r\n                container.GetExports\u003CExportFactory\u003CIStandardFunctionGenerator, StandardFunctionMetadataView\u003E\u003E();",
+              "protected": "M:System.Composition.CompositionContext.GetExports\u0060\u00601"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionRepository.cs",
+            "snippet": "var exports =\r\n                container.GetExports\u003CExportFactory\u003CIStandardFunctionGenerator, StandardFunctionMetadataView\u003E\u003E();",
+            "protectedSnippet": "M:System.Composition.CompositionContext.GetExports\u0060\u00601",
+            "label": "M:System.Composition.CompositionContext.GetExports\u0060\u00601",
+            "properties": {
+              "PackageId": "System.Composition.Runtime",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 44,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "ba19bb09-f698-49eb-8904-443481704b21",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.Hosting, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.Hosting, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var container = configuration.CreateContainer();",
+              "protected": "T:System.Composition.Hosting.CompositionHost"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionRepository.cs",
+            "snippet": "var container = configuration.CreateContainer();",
+            "protectedSnippet": "T:System.Composition.Hosting.CompositionHost",
+            "label": "T:System.Composition.Hosting.CompositionHost",
+            "properties": {
+              "PackageId": "System.Composition.Hosting",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 43,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "3721f08d-02da-4a71-af1a-3ec7350c356f",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var container = configuration.CreateContainer();",
+              "protected": "M:System.Composition.Hosting.ContainerConfiguration.CreateContainer"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionRepository.cs",
+            "snippet": "var container = configuration.CreateContainer();",
+            "protectedSnippet": "M:System.Composition.Hosting.ContainerConfiguration.CreateContainer",
+            "label": "M:System.Composition.Hosting.ContainerConfiguration.CreateContainer",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 43,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "c530e6ab-8a6b-4ec5-bf31-41532d0ce19b",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IStandardFunctionGenerator).Assembly);",
+              "protected": "T:System.Composition.Hosting.ContainerConfiguration"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IStandardFunctionGenerator).Assembly);",
+            "protectedSnippet": "T:System.Composition.Hosting.ContainerConfiguration",
+            "label": "T:System.Composition.Hosting.ContainerConfiguration",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 42,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "8191f7d7-6aa1-49b1-b281-aa6b5907ae1a",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IStandardFunctionGenerator).Assembly);",
+              "protected": "M:System.Composition.Hosting.ContainerConfiguration.#ctor"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IStandardFunctionGenerator).Assembly);",
+            "protectedSnippet": "M:System.Composition.Hosting.ContainerConfiguration.#ctor",
+            "label": "M:System.Composition.Hosting.ContainerConfiguration.#ctor",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 42,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "4d009eb3-adcd-4281-8fbc-0cd2c15a627c",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IStandardFunctionGenerator).Assembly);",
+              "protected": "T:System.Composition.Hosting.ContainerConfiguration"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IStandardFunctionGenerator).Assembly);",
+            "protectedSnippet": "T:System.Composition.Hosting.ContainerConfiguration",
+            "label": "T:System.Composition.Hosting.ContainerConfiguration",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 42,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "b959cda2-9c43-40e4-a705-4eba84b11217",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IStandardFunctionGenerator).Assembly);",
+              "protected": "M:System.Composition.Hosting.ContainerConfiguration.WithAssembly(System.Reflection.Assembly)"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IStandardFunctionGenerator).Assembly);",
+            "protectedSnippet": "M:System.Composition.Hosting.ContainerConfiguration.WithAssembly(System.Reflection.Assembly)",
+            "label": "M:System.Composition.Hosting.ContainerConfiguration.WithAssembly(System.Reflection.Assembly)",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 42,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "a6608aff-28fe-4340-9869-c578742cb792",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "MetadataAttribute",
+              "protected": "M:System.Composition.MetadataAttributeAttribute.#ctor"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionMetadataAttribute.cs",
+            "snippet": "MetadataAttribute",
+            "protectedSnippet": "M:System.Composition.MetadataAttributeAttribute.#ctor",
+            "label": "M:System.Composition.MetadataAttributeAttribute.#ctor",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 13,
+            "column": 5
+          }
+        },
+        {
+          "incidentId": "dcaac3b4-c7dd-4902-93ba-0c9bceee6a9a",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "MetadataAttribute",
+              "protected": "T:System.Composition.MetadataAttributeAttribute"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionMetadataAttribute.cs",
+            "snippet": "MetadataAttribute",
+            "protectedSnippet": "T:System.Composition.MetadataAttributeAttribute",
+            "label": "T:System.Composition.MetadataAttributeAttribute",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 13,
+            "column": 5
+          }
+        },
+        {
+          "incidentId": "a12df3fe-bb25-450d-afae-739ac13eaeb0",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": ": base(typeof(IStandardFunctionGenerator))",
+              "protected": "M:System.Composition.ExportAttribute.#ctor(System.Type)"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionMetadataAttribute.cs",
+            "snippet": ": base(typeof(IStandardFunctionGenerator))",
+            "protectedSnippet": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "label": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 37,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "a9576389-5136-4005-88ae-759dd412f7ea",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": ": base(typeof(IStandardFunctionGenerator))",
+              "protected": "M:System.Composition.ExportAttribute.#ctor(System.Type)"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionMetadataAttribute.cs",
+            "snippet": ": base(typeof(IStandardFunctionGenerator))",
+            "protectedSnippet": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "label": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 24,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "e5a1f5c6-0fb6-477e-b428-f8cb9fe3395e",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": ": base(typeof(IStandardFunctionGenerator))",
+              "protected": "M:System.Composition.ExportAttribute.#ctor(System.Type)"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionMetadataAttribute.cs",
+            "snippet": ": base(typeof(IStandardFunctionGenerator))",
+            "protectedSnippet": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "label": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 37,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "3a518d17-cd13-437f-ad53-ba79b8c387d3",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": ": base(typeof(IStandardFunctionGenerator))",
+              "protected": "M:System.Composition.ExportAttribute.#ctor(System.Type)"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionMetadataAttribute.cs",
+            "snippet": ": base(typeof(IStandardFunctionGenerator))",
+            "protectedSnippet": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "label": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 24,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "d508b9e7-a179-4788-9aad-4a1ed258910c",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "Oberon0.Generator.MsilBin\\Oberon0.Generator.MsilBin.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "ExportAttribute",
+              "protected": "T:System.Composition.ExportAttribute"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin\\PredefinedFunctions\\StandardFunctionMetadataAttribute.cs",
+            "snippet": "ExportAttribute",
+            "protectedSnippet": "T:System.Composition.ExportAttribute",
+            "label": "T:System.Composition.ExportAttribute",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 15,
+            "column": 53
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "Oberon0.Generator.MsilBin.Tests\\Oberon0.Generator.MsilBin.Tests.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 3,
+      "properties": {
+        "appName": "Oberon0.Generator.MsilBin.Tests",
+        "projectKind": "DotNetCoreApp",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 24,
+        "numberOfCodeFiles": 22,
+        "linesTotal": 5119,
+        "linesOfCode": 2503,
+        "totalApiScanned": 1811,
+        "minLinesOfCodeToChange": 0,
+        "maxLinesOfCodeToChange": 0
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "7fe7994f-c946-4352-9c09-5cdf195a2acf",
+          "ruleId": "NuGet.0006",
+          "projectPath": "Oberon0.Generator.MsilBin.Tests\\Oberon0.Generator.MsilBin.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+              "protected": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+            },
+            "kind": "File",
+            "path": "NuGet.config",
+            "snippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+            "protectedSnippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+          }
+        },
+        {
+          "incidentId": "cde05d3f-8cd7-4cd6-9124-10c6fc90e2c6",
+          "ruleId": "NuGet.0005",
+          "projectPath": "Oberon0.Generator.MsilBin.Tests\\Oberon0.Generator.MsilBin.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+              "protected": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin.Tests\\Oberon0.Generator.MsilBin.Tests.csproj",
+            "snippet": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+            "protectedSnippet": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+            "label": "xunit 2.9.3",
+            "properties": {
+              "PackageId": "xunit",
+              "PackageVersion": "2.9.3",
+              "PackageNewVersion": null,
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "e95b3817-816a-410b-b76e-9d13ef5477c1",
+          "ruleId": "Project.0002",
+          "projectPath": "Oberon0.Generator.MsilBin.Tests\\Oberon0.Generator.MsilBin.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+              "protected": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0"
+            },
+            "kind": "File",
+            "path": "Oberon0.Generator.MsilBin.Tests\\Oberon0.Generator.MsilBin.Tests.csproj",
+            "snippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "protectedSnippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "Oberon0.Msil\\Oberon0.Msil.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 13,
+      "properties": {
+        "appName": "Oberon0.Msil",
+        "projectKind": "DotNetCoreApp",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 2,
+        "numberOfCodeFiles": 2,
+        "linesTotal": 158,
+        "linesOfCode": 158,
+        "totalApiScanned": 94,
+        "minLinesOfCodeToChange": 11,
+        "maxLinesOfCodeToChange": 11
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "f60a6c03-6bc3-4630-b7ee-38702a73c9e3",
+          "ruleId": "NuGet.0006",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+              "protected": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+            },
+            "kind": "File",
+            "path": "NuGet.config",
+            "snippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+            "protectedSnippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+          }
+        },
+        {
+          "incidentId": "c1d7db29-3f61-482b-82e7-c4e17bad5c98",
+          "ruleId": "Project.0002",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+              "protected": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Oberon0.Msil.csproj",
+            "snippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "protectedSnippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        },
+        {
+          "incidentId": "2ce904d1-4568-4dab-a3f3-e23e2cecc842",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+              "protected": "M:System.CommandLine.Command.Add(System.CommandLine.Option)"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+            "protectedSnippet": "M:System.CommandLine.Command.Add(System.CommandLine.Option)",
+            "label": "M:System.CommandLine.Command.Add(System.CommandLine.Option)",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 54,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "91e72cca-5be0-490d-91c3-e27215411f67",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+              "protected": "M:System.CommandLine.Command.Add(System.CommandLine.Option)"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+            "protectedSnippet": "M:System.CommandLine.Command.Add(System.CommandLine.Option)",
+            "label": "M:System.CommandLine.Command.Add(System.CommandLine.Option)",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 54,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "e6278854-2fe6-4db3-8211-55c97751ea81",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+              "protected": "M:System.CommandLine.Command.Add(System.CommandLine.Option)"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+            "protectedSnippet": "M:System.CommandLine.Command.Add(System.CommandLine.Option)",
+            "label": "M:System.CommandLine.Command.Add(System.CommandLine.Option)",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 54,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "6c2e7677-4fbc-4c9a-9e12-69b8b38f7a8d",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+              "protected": "M:System.CommandLine.Command.Add(System.CommandLine.Option)"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+            "protectedSnippet": "M:System.CommandLine.Command.Add(System.CommandLine.Option)",
+            "label": "M:System.CommandLine.Command.Add(System.CommandLine.Option)",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 54,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "88d86821-3e6c-4c15-9b94-4931a308fc1f",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+              "protected": "T:System.CommandLine.RootCommand"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+            "protectedSnippet": "T:System.CommandLine.RootCommand",
+            "label": "T:System.CommandLine.RootCommand",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 54,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "0673e531-856d-4405-9f6b-fcb881d2a738",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+              "protected": "M:System.CommandLine.RootCommand.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var rootCommand = new RootCommand(\u0022Compile an Oberon0 source file.\u0022)\r\n            {\r\n                fileArg,\r\n                outputPathOpt,\r\n                verboseOpt,\r\n                cleanOpt,\r\n                projectNameOpt\r\n            };",
+            "protectedSnippet": "M:System.CommandLine.RootCommand.#ctor(System.String)",
+            "label": "M:System.CommandLine.RootCommand.#ctor(System.String)",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 54,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "b7713c85-06fe-4344-98d9-c11c810f554b",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var fileArg = new Argument\u003CFileInfo\u003E(\u0022input-file\u0022, \u0022The input file to be compiled\u0022) { Arity = ArgumentArity.ExactlyOne }\r\n                   .ExistingOnly();",
+              "protected": "T:System.CommandLine.ArgumentArity"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var fileArg = new Argument\u003CFileInfo\u003E(\u0022input-file\u0022, \u0022The input file to be compiled\u0022) { Arity = ArgumentArity.ExactlyOne }\r\n                   .ExistingOnly();",
+            "protectedSnippet": "T:System.CommandLine.ArgumentArity",
+            "label": "T:System.CommandLine.ArgumentArity",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 36,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "b2e4f525-b446-4df2-8fdc-4e98fa7144ba",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var fileArg = new Argument\u003CFileInfo\u003E(\u0022input-file\u0022, \u0022The input file to be compiled\u0022) { Arity = ArgumentArity.ExactlyOne }\r\n                   .ExistingOnly();",
+              "protected": "T:System.CommandLine.ArgumentArity"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var fileArg = new Argument\u003CFileInfo\u003E(\u0022input-file\u0022, \u0022The input file to be compiled\u0022) { Arity = ArgumentArity.ExactlyOne }\r\n                   .ExistingOnly();",
+            "protectedSnippet": "T:System.CommandLine.ArgumentArity",
+            "label": "T:System.CommandLine.ArgumentArity",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 36,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "b83b7d5f-4eed-483b-8926-6f7387521384",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var fileArg = new Argument\u003CFileInfo\u003E(\u0022input-file\u0022, \u0022The input file to be compiled\u0022) { Arity = ArgumentArity.ExactlyOne }\r\n                   .ExistingOnly();",
+              "protected": "P:System.CommandLine.ArgumentArity.ExactlyOne"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var fileArg = new Argument\u003CFileInfo\u003E(\u0022input-file\u0022, \u0022The input file to be compiled\u0022) { Arity = ArgumentArity.ExactlyOne }\r\n                   .ExistingOnly();",
+            "protectedSnippet": "P:System.CommandLine.ArgumentArity.ExactlyOne",
+            "label": "P:System.CommandLine.ArgumentArity.ExactlyOne",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 36,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "9b403ee4-eb9a-48e7-8d94-8a6e8f01dc59",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var fileArg = new Argument\u003CFileInfo\u003E(\u0022input-file\u0022, \u0022The input file to be compiled\u0022) { Arity = ArgumentArity.ExactlyOne }\r\n                   .ExistingOnly();",
+              "protected": "T:System.CommandLine.ArgumentArity"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var fileArg = new Argument\u003CFileInfo\u003E(\u0022input-file\u0022, \u0022The input file to be compiled\u0022) { Arity = ArgumentArity.ExactlyOne }\r\n                   .ExistingOnly();",
+            "protectedSnippet": "T:System.CommandLine.ArgumentArity",
+            "label": "T:System.CommandLine.ArgumentArity",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 36,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "bcf2dbb3-8844-4e72-ac39-10f724ef571b",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.CommandLine, 2.0.0-beta4.22272.1. Add package reference to System.CommandLine, 2.0.0-beta4.22272.1",
+          "projectPath": "Oberon0.Msil\\Oberon0.Msil.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var fileArg = new Argument\u003CFileInfo\u003E(\u0022input-file\u0022, \u0022The input file to be compiled\u0022) { Arity = ArgumentArity.ExactlyOne }\r\n                   .ExistingOnly();",
+              "protected": "P:System.CommandLine.Argument.Arity"
+            },
+            "kind": "File",
+            "path": "Oberon0.Msil\\Program.cs",
+            "snippet": "var fileArg = new Argument\u003CFileInfo\u003E(\u0022input-file\u0022, \u0022The input file to be compiled\u0022) { Arity = ArgumentArity.ExactlyOne }\r\n                   .ExistingOnly();",
+            "protectedSnippet": "P:System.CommandLine.Argument.Arity",
+            "label": "P:System.CommandLine.Argument.Arity",
+            "properties": {
+              "PackageId": "System.CommandLine",
+              "PackageNewVersion": "2.0.0-beta4.22272.1"
+            },
+            "line": 36,
+            "column": 12
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "Oberon0.Shared\\Oberon0.Shared.csproj",
+      "startingProject": true,
+      "issues": 2,
+      "storyPoints": 2,
+      "properties": {
+        "appName": "Oberon0.Shared",
+        "projectKind": "ClassLibrary",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 5,
+        "numberOfCodeFiles": 5,
+        "linesTotal": 259,
+        "linesOfCode": 259,
+        "totalApiScanned": 166,
+        "minLinesOfCodeToChange": 0,
+        "maxLinesOfCodeToChange": 0
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "4d7472bc-f9ba-4688-8d7d-9cd0d3765eb8",
+          "ruleId": "NuGet.0006",
+          "projectPath": "Oberon0.Shared\\Oberon0.Shared.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+              "protected": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+            },
+            "kind": "File",
+            "path": "NuGet.config",
+            "snippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+            "protectedSnippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+          }
+        },
+        {
+          "incidentId": "0e787224-4ff0-4ea9-a444-a2a5707e2206",
+          "ruleId": "Project.0002",
+          "projectPath": "Oberon0.Shared\\Oberon0.Shared.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+              "protected": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0"
+            },
+            "kind": "File",
+            "path": "Oberon0.Shared\\Oberon0.Shared.csproj",
+            "snippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "protectedSnippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "Oberon0.System\\Oberon0.System.csproj",
+      "startingProject": true,
+      "issues": 2,
+      "storyPoints": 2,
+      "properties": {
+        "appName": "Oberon0.System",
+        "projectKind": "ClassLibrary",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 6,
+        "numberOfCodeFiles": 6,
+        "linesTotal": 322,
+        "linesOfCode": 322,
+        "totalApiScanned": 123,
+        "minLinesOfCodeToChange": 0,
+        "maxLinesOfCodeToChange": 0
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "61012ded-88c6-4da8-8f16-fb7f354b51de",
+          "ruleId": "NuGet.0006",
+          "projectPath": "Oberon0.System\\Oberon0.System.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+              "protected": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+            },
+            "kind": "File",
+            "path": "NuGet.config",
+            "snippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+            "protectedSnippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+          }
+        },
+        {
+          "incidentId": "01e64780-b22c-480c-a262-f69bce791f1e",
+          "ruleId": "Project.0002",
+          "projectPath": "Oberon0.System\\Oberon0.System.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+              "protected": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0"
+            },
+            "kind": "File",
+            "path": "Oberon0.System\\Oberon0.System.csproj",
+            "snippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "protectedSnippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "Oberon0.System.Tests\\Oberon0.System.Tests.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 3,
+      "properties": {
+        "appName": "Oberon0.System.Tests",
+        "projectKind": "DotNetCoreApp",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 4,
+        "numberOfCodeFiles": 2,
+        "linesTotal": 2784,
+        "linesOfCode": 168,
+        "totalApiScanned": 239,
+        "minLinesOfCodeToChange": 0,
+        "maxLinesOfCodeToChange": 0
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "9eabdf4e-e310-45c3-a288-08a98996dfff",
+          "ruleId": "NuGet.0006",
+          "projectPath": "Oberon0.System.Tests\\Oberon0.System.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+              "protected": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+            },
+            "kind": "File",
+            "path": "NuGet.config",
+            "snippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+            "protectedSnippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+          }
+        },
+        {
+          "incidentId": "508a5f83-e3fe-44c8-94ba-7106b9a55218",
+          "ruleId": "NuGet.0005",
+          "projectPath": "Oberon0.System.Tests\\Oberon0.System.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+              "protected": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3"
+            },
+            "kind": "File",
+            "path": "Oberon0.System.Tests\\Oberon0.System.Tests.csproj",
+            "snippet": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+            "protectedSnippet": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+            "label": "xunit 2.9.3",
+            "properties": {
+              "PackageId": "xunit",
+              "PackageVersion": "2.9.3",
+              "PackageNewVersion": null,
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "efc5e6b4-29fa-4ba0-bc13-21b0d16e8d35",
+          "ruleId": "Project.0002",
+          "projectPath": "Oberon0.System.Tests\\Oberon0.System.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+              "protected": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0"
+            },
+            "kind": "File",
+            "path": "Oberon0.System.Tests\\Oberon0.System.Tests.csproj",
+            "snippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "protectedSnippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "Oberon0.CompilerSupport\\Oberon0.Test.Support.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 3,
+      "properties": {
+        "appName": "Oberon0.Test.Support",
+        "projectKind": "ClassLibrary",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 3,
+        "numberOfCodeFiles": 3,
+        "linesTotal": 212,
+        "linesOfCode": 212,
+        "totalApiScanned": 106,
+        "minLinesOfCodeToChange": 0,
+        "maxLinesOfCodeToChange": 0
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "f212aba2-4910-48fe-8185-2bec22575913",
+          "ruleId": "NuGet.0006",
+          "projectPath": "Oberon0.CompilerSupport\\Oberon0.Test.Support.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+              "protected": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+            },
+            "kind": "File",
+            "path": "NuGet.config",
+            "snippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+            "protectedSnippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+          }
+        },
+        {
+          "incidentId": "ad52484a-9f4d-412e-9d20-7a6c460041d2",
+          "ruleId": "NuGet.0005",
+          "projectPath": "Oberon0.CompilerSupport\\Oberon0.Test.Support.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+              "protected": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3"
+            },
+            "kind": "File",
+            "path": "Oberon0.CompilerSupport\\Oberon0.Test.Support.csproj",
+            "snippet": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+            "protectedSnippet": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+            "label": "xunit 2.9.3",
+            "properties": {
+              "PackageId": "xunit",
+              "PackageVersion": "2.9.3",
+              "PackageNewVersion": null,
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "174656ce-b566-458e-a706-6179dcdebd95",
+          "ruleId": "Project.0002",
+          "projectPath": "Oberon0.CompilerSupport\\Oberon0.Test.Support.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+              "protected": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0"
+            },
+            "kind": "File",
+            "path": "Oberon0.CompilerSupport\\Oberon0.Test.Support.csproj",
+            "snippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "protectedSnippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "oberon0\\Oberon0Compiler.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 28,
+      "properties": {
+        "appName": "Oberon0Compiler",
+        "projectKind": "ClassLibrary",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 65,
+        "numberOfCodeFiles": 65,
+        "linesTotal": 3907,
+        "linesOfCode": 3907,
+        "totalApiScanned": 9376,
+        "minLinesOfCodeToChange": 26,
+        "maxLinesOfCodeToChange": 26
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "1f0fdc3b-524e-4ceb-86dd-e532af041e67",
+          "ruleId": "NuGet.0006",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+              "protected": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+            },
+            "kind": "File",
+            "path": "NuGet.config",
+            "snippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+            "protectedSnippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+          }
+        },
+        {
+          "incidentId": "80de1a6b-501e-4372-bb77-82b9b3edceb7",
+          "ruleId": "Project.0002",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+              "protected": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0"
+            },
+            "kind": "File",
+            "path": "oberon0\\Oberon0Compiler.csproj",
+            "snippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "protectedSnippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        },
+        {
+          "incidentId": "fa3a358a-b1c3-4fc4-ab61-8a014dd9d97d",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "MetadataAttribute",
+              "protected": "M:System.Composition.MetadataAttributeAttribute.#ctor"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\Functions\\Internal\\InternalFunctionAttribute.cs",
+            "snippet": "MetadataAttribute",
+            "protectedSnippet": "M:System.Composition.MetadataAttributeAttribute.#ctor",
+            "label": "M:System.Composition.MetadataAttributeAttribute.#ctor",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 13,
+            "column": 1
+          }
+        },
+        {
+          "incidentId": "30686a1c-3d19-40f8-8787-04f7a5eb949f",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "MetadataAttribute",
+              "protected": "T:System.Composition.MetadataAttributeAttribute"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\Functions\\Internal\\InternalFunctionAttribute.cs",
+            "snippet": "MetadataAttribute",
+            "protectedSnippet": "T:System.Composition.MetadataAttributeAttribute",
+            "label": "T:System.Composition.MetadataAttributeAttribute",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 13,
+            "column": 1
+          }
+        },
+        {
+          "incidentId": "54cc16a3-8336-42c6-8c68-58d4e2317bc8",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "ExportAttribute(typeof(IInternalFunction))",
+              "protected": "M:System.Composition.ExportAttribute.#ctor(System.Type)"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\Functions\\Internal\\InternalFunctionAttribute.cs",
+            "snippet": "ExportAttribute(typeof(IInternalFunction))",
+            "protectedSnippet": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "label": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 17,
+            "column": 6
+          }
+        },
+        {
+          "incidentId": "d54fda7c-42af-4baa-b84e-d6879b372739",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "ExportAttribute(typeof(IInternalFunction))",
+              "protected": "M:System.Composition.ExportAttribute.#ctor(System.Type)"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\Functions\\Internal\\InternalFunctionAttribute.cs",
+            "snippet": "ExportAttribute(typeof(IInternalFunction))",
+            "protectedSnippet": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "label": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 17,
+            "column": 6
+          }
+        },
+        {
+          "incidentId": "2034cc59-8c77-4e41-a4aa-9c3a88a34cfd",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "ExportAttribute",
+              "protected": "T:System.Composition.ExportAttribute"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\Functions\\Internal\\InternalFunctionAttribute.cs",
+            "snippet": "ExportAttribute",
+            "protectedSnippet": "T:System.Composition.ExportAttribute",
+            "label": "T:System.Composition.ExportAttribute",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 17,
+            "column": 6
+          }
+        },
+        {
+          "incidentId": "1971a504-ed5b-4f68-aac4-cde43764729a",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "MetadataAttribute",
+              "protected": "M:System.Composition.MetadataAttributeAttribute.#ctor"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\Operations\\Internal\\ArithmeticOperationAttribute.cs",
+            "snippet": "MetadataAttribute",
+            "protectedSnippet": "M:System.Composition.MetadataAttributeAttribute.#ctor",
+            "label": "M:System.Composition.MetadataAttributeAttribute.#ctor",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 14,
+            "column": 5
+          }
+        },
+        {
+          "incidentId": "dd97224b-0b08-4375-b35a-de811ea4c4e7",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "MetadataAttribute",
+              "protected": "T:System.Composition.MetadataAttributeAttribute"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\Operations\\Internal\\ArithmeticOperationAttribute.cs",
+            "snippet": "MetadataAttribute",
+            "protectedSnippet": "T:System.Composition.MetadataAttributeAttribute",
+            "label": "T:System.Composition.MetadataAttributeAttribute",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 14,
+            "column": 5
+          }
+        },
+        {
+          "incidentId": "ae90942f-1190-4a50-856f-ffb48fd65bad",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "ExportAttribute(typeof(IArithmeticOperation))",
+              "protected": "M:System.Composition.ExportAttribute.#ctor(System.Type)"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\Operations\\Internal\\ArithmeticOperationAttribute.cs",
+            "snippet": "ExportAttribute(typeof(IArithmeticOperation))",
+            "protectedSnippet": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "label": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 21,
+            "column": 10
+          }
+        },
+        {
+          "incidentId": "310e2218-bd0f-4a3e-a790-ad4b8da16a8e",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "ExportAttribute(typeof(IArithmeticOperation))",
+              "protected": "M:System.Composition.ExportAttribute.#ctor(System.Type)"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\Operations\\Internal\\ArithmeticOperationAttribute.cs",
+            "snippet": "ExportAttribute(typeof(IArithmeticOperation))",
+            "protectedSnippet": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "label": "M:System.Composition.ExportAttribute.#ctor(System.Type)",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 21,
+            "column": 10
+          }
+        },
+        {
+          "incidentId": "4d8dba25-16ee-4b45-854e-630246ee6d2a",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.AttributedModel, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.AttributedModel, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "ExportAttribute",
+              "protected": "T:System.Composition.ExportAttribute"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\Operations\\Internal\\ArithmeticOperationAttribute.cs",
+            "snippet": "ExportAttribute",
+            "protectedSnippet": "T:System.Composition.ExportAttribute",
+            "label": "T:System.Composition.ExportAttribute",
+            "properties": {
+              "PackageId": "System.Composition.AttributedModel",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 21,
+            "column": 10
+          }
+        },
+        {
+          "incidentId": "393425f3-177f-4efa-9a56-0a8839dedbeb",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.Hosting, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.Hosting, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "private void LoadFunctions(CompositionHost container)",
+              "protected": "T:System.Composition.Hosting.CompositionHost"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "private void LoadFunctions(CompositionHost container)",
+            "protectedSnippet": "T:System.Composition.Hosting.CompositionHost",
+            "label": "T:System.Composition.Hosting.CompositionHost",
+            "properties": {
+              "PackageId": "System.Composition.Hosting",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 48,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "eafd8fd4-f097-4145-99be-015a44a9af8d",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.Runtime, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.Runtime, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var functions= container.GetExports\u003CExportFactory\u003CIInternalFunction, InternalFunctionMetadata\u003E\u003E();",
+              "protected": "M:System.Composition.CompositionContext.GetExports\u0060\u00601"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var functions= container.GetExports\u003CExportFactory\u003CIInternalFunction, InternalFunctionMetadata\u003E\u003E();",
+            "protectedSnippet": "M:System.Composition.CompositionContext.GetExports\u0060\u00601",
+            "label": "M:System.Composition.CompositionContext.GetExports\u0060\u00601",
+            "properties": {
+              "PackageId": "System.Composition.Runtime",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 50,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "7929c88d-dff4-4d3b-9050-c274d23f4f4d",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.Hosting, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.Hosting, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "private void LoadOperations(CompositionHost container)",
+              "protected": "T:System.Composition.Hosting.CompositionHost"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "private void LoadOperations(CompositionHost container)",
+            "protectedSnippet": "T:System.Composition.Hosting.CompositionHost",
+            "label": "T:System.Composition.Hosting.CompositionHost",
+            "properties": {
+              "PackageId": "System.Composition.Hosting",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 29,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "9847b1f0-fe11-4e06-8a42-3a76b7839df1",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.Runtime, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.Runtime, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var operations = container.GetExports\u003CExportFactory\u003CIArithmeticOperation, ArithmeticOpMetadata\u003E\u003E();",
+              "protected": "M:System.Composition.CompositionContext.GetExports\u0060\u00601"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var operations = container.GetExports\u003CExportFactory\u003CIArithmeticOperation, ArithmeticOpMetadata\u003E\u003E();",
+            "protectedSnippet": "M:System.Composition.CompositionContext.GetExports\u0060\u00601",
+            "label": "M:System.Composition.CompositionContext.GetExports\u0060\u00601",
+            "properties": {
+              "PackageId": "System.Composition.Runtime",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 31,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "1ab7939d-30c8-42ac-a578-1cc8d0f9e6f9",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.Hosting, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.Hosting, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var container = configuration.CreateContainer();",
+              "protected": "T:System.Composition.Hosting.CompositionHost"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var container = configuration.CreateContainer();",
+            "protectedSnippet": "T:System.Composition.Hosting.CompositionHost",
+            "label": "T:System.Composition.Hosting.CompositionHost",
+            "properties": {
+              "PackageId": "System.Composition.Hosting",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 24,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "ac4d9731-7d59-4437-b638-5941b52b7c87",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var container = configuration.CreateContainer();",
+              "protected": "M:System.Composition.Hosting.ContainerConfiguration.CreateContainer"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var container = configuration.CreateContainer();",
+            "protectedSnippet": "M:System.Composition.Hosting.ContainerConfiguration.CreateContainer",
+            "label": "M:System.Composition.Hosting.ContainerConfiguration.CreateContainer",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 24,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "c6169d66-155c-4370-9a10-a03a11d9fc76",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+              "protected": "T:System.Composition.Hosting.ContainerConfiguration"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+            "protectedSnippet": "T:System.Composition.Hosting.ContainerConfiguration",
+            "label": "T:System.Composition.Hosting.ContainerConfiguration",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 23,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "9d1f9291-6e9c-4423-8191-097d4f3ce6f8",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+              "protected": "M:System.Composition.Hosting.ContainerConfiguration.#ctor"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+            "protectedSnippet": "M:System.Composition.Hosting.ContainerConfiguration.#ctor",
+            "label": "M:System.Composition.Hosting.ContainerConfiguration.#ctor",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 23,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "9c5f5431-c14d-4b8c-a157-548352dbadf1",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+              "protected": "T:System.Composition.Hosting.ContainerConfiguration"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+            "protectedSnippet": "T:System.Composition.Hosting.ContainerConfiguration",
+            "label": "T:System.Composition.Hosting.ContainerConfiguration",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 23,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "790d5dfc-b3d3-4c30-b159-f7116c0abafa",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+              "protected": "M:System.Composition.Hosting.ContainerConfiguration.WithAssembly(System.Reflection.Assembly)"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+            "protectedSnippet": "M:System.Composition.Hosting.ContainerConfiguration.WithAssembly(System.Reflection.Assembly)",
+            "label": "M:System.Composition.Hosting.ContainerConfiguration.WithAssembly(System.Reflection.Assembly)",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 23,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "7bff02f6-61f4-480d-8b73-a7e665deaf6b",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.Hosting, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.Hosting, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var container = configuration.CreateContainer();",
+              "protected": "T:System.Composition.Hosting.CompositionHost"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var container = configuration.CreateContainer();",
+            "protectedSnippet": "T:System.Composition.Hosting.CompositionHost",
+            "label": "T:System.Composition.Hosting.CompositionHost",
+            "properties": {
+              "PackageId": "System.Composition.Hosting",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 24,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "0350302b-480e-4589-8742-2284a52207bc",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var container = configuration.CreateContainer();",
+              "protected": "M:System.Composition.Hosting.ContainerConfiguration.CreateContainer"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var container = configuration.CreateContainer();",
+            "protectedSnippet": "M:System.Composition.Hosting.ContainerConfiguration.CreateContainer",
+            "label": "M:System.Composition.Hosting.ContainerConfiguration.CreateContainer",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 24,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "9adb2a23-7fb1-4caf-b92a-41a1c4529955",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+              "protected": "T:System.Composition.Hosting.ContainerConfiguration"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+            "protectedSnippet": "T:System.Composition.Hosting.ContainerConfiguration",
+            "label": "T:System.Composition.Hosting.ContainerConfiguration",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 23,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "cb7db7fb-3008-4c75-8f9a-399cbfe41531",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+              "protected": "M:System.Composition.Hosting.ContainerConfiguration.#ctor"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+            "protectedSnippet": "M:System.Composition.Hosting.ContainerConfiguration.#ctor",
+            "label": "M:System.Composition.Hosting.ContainerConfiguration.#ctor",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 23,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "d3bd69ab-179f-4fed-9c6a-48ac1b4d9c12",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+              "protected": "T:System.Composition.Hosting.ContainerConfiguration"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+            "protectedSnippet": "T:System.Composition.Hosting.ContainerConfiguration",
+            "label": "T:System.Composition.Hosting.ContainerConfiguration",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 23,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "b4cd4e5f-0290-4a5a-a70a-99447233f63b",
+          "ruleId": "Api.0002",
+          "description": "API is available in package System.Composition.TypedParts, 9.0.0-preview.6.24302.3. Add package reference to System.Composition.TypedParts, 9.0.0-preview.6.24302.3",
+          "projectPath": "oberon0\\Oberon0Compiler.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+              "protected": "M:System.Composition.Hosting.ContainerConfiguration.WithAssembly(System.Reflection.Assembly)"
+            },
+            "kind": "File",
+            "path": "oberon0\\Expressions\\ExpressionRepository.cs",
+            "snippet": "var configuration = new ContainerConfiguration().WithAssembly(typeof(IArithmeticOperation).Assembly);",
+            "protectedSnippet": "M:System.Composition.Hosting.ContainerConfiguration.WithAssembly(System.Reflection.Assembly)",
+            "label": "M:System.Composition.Hosting.ContainerConfiguration.WithAssembly(System.Reflection.Assembly)",
+            "properties": {
+              "PackageId": "System.Composition.TypedParts",
+              "PackageNewVersion": "9.0.0-preview.6.24302.3"
+            },
+            "line": 23,
+            "column": 12
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "UnitTestProject1\\Oberon0Compiler.Tests.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 3,
+      "properties": {
+        "appName": "Oberon0Compiler.Tests",
+        "projectKind": "DotNetCoreApp",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 26,
+        "numberOfCodeFiles": 24,
+        "linesTotal": 6869,
+        "linesOfCode": 4253,
+        "totalApiScanned": 5654,
+        "minLinesOfCodeToChange": 0,
+        "maxLinesOfCodeToChange": 0
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "1d41543b-688a-40b3-8a1f-e4b52fda07c5",
+          "ruleId": "NuGet.0006",
+          "projectPath": "UnitTestProject1\\Oberon0Compiler.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+              "protected": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+            },
+            "kind": "File",
+            "path": "NuGet.config",
+            "snippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n",
+            "protectedSnippet": "Es wurden 1 Dateien gefunden, die der Regel entsprechen:\r\n\r\nNuGet.config\r\n"
+          }
+        },
+        {
+          "incidentId": "400947c4-5f98-4823-ad13-000dcde30952",
+          "ruleId": "NuGet.0005",
+          "projectPath": "UnitTestProject1\\Oberon0Compiler.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+              "protected": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3"
+            },
+            "kind": "File",
+            "path": "UnitTestProject1\\Oberon0Compiler.Tests.csproj",
+            "snippet": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+            "protectedSnippet": "xunit, 2.9.3\n\nEmpfehlung:\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+            "label": "xunit 2.9.3",
+            "properties": {
+              "PackageId": "xunit",
+              "PackageVersion": "2.9.3",
+              "PackageNewVersion": null,
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "6b76e9f4-08da-4176-9c53-64f871c49a59",
+          "ruleId": "Project.0002",
+          "projectPath": "UnitTestProject1\\Oberon0Compiler.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+              "protected": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0"
+            },
+            "kind": "File",
+            "path": "UnitTestProject1\\Oberon0Compiler.Tests.csproj",
+            "snippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "protectedSnippet": "Aktuelles Zielframework: net8.0\nEmpfohlenes Zielframework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        }
+      ],
+      "features": []
+    }
+  ],
+  "rules": {
+    "NuGet.0006": {
+      "id": "NuGet.0006",
+      "isFeature": false,
+      "description": "NuGet-Paketquellzuordnungen werden empfohlen.\n\nWenn NuGet.config mehrere Paketquellen enth\u00E4lt, ist die Paketquellzuordnungen ein Tool, mit dem Sie die Sicherheit Ihrer Lieferkette verbessern k\u00F6nnen, insbesondere wenn Sie eine Mischung aus \u00F6ffentlichen und privaten Paketquellen verwenden.\n\nStandardm\u00E4\u00DFig durchsucht NuGet alle konfigurierten Paketquellen, wenn es ein Paket herunterladen muss. Wenn ein Paket auf mehreren Quellen existiert, kann es sein, dass es nicht eindeutig ist, von welcher Quelle das Paket heruntergeladen wird. Mit Paketquellzuordnungen k\u00F6nnen Sie pro Paket filtern, welche Quelle(n) NuGet durchsuchen soll.",
+      "label": "NuGet-Paketquellzuordnungen werden empfohlen.",
+      "severity": "Information",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2288407",
+          "isCustom": false
+        }
+      ]
+    },
+    "Project.0002": {
+      "id": "Project.0002",
+      "isFeature": false,
+      "description": "Die Zielframeworks des Projekts m\u00FCssen in das neue Zielframework ge\u00E4ndert werden, das Sie f\u00FCr dieses Upgrade ausgew\u00E4hlt haben.\n\nW\u00E4hrend des Upgrades wird das Zielframework an die entsprechende Plattform angepasst, falls zutreffend. In einigen F\u00E4llen, f\u00FChrte das Upgrade des Projekts zu mehreren Zielframeworks, wenn es Features verwendete, die jetzt \u00FCber eigene Plattformen in modernen .NET-Frameworks (Windows, iOS, Android usw.) verf\u00FCgen.",
+      "label": "Die Zielframeworks des Projekts m\u00FCssen ge\u00E4ndert werden",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "title": "\u00DCbersicht \u00FCber das Portieren von .NET\u00A0Framework zu .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265227",
+          "isCustom": false
+        },
+        {
+          "title": ".NET-Projekt-SDKs",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265226",
+          "isCustom": false
+        }
+      ]
+    },
+    "Api.0002": {
+      "id": "Api.0002",
+      "isFeature": false,
+      "description": "API is source incompatible for selected .NET version: requires code changes to compile successfully when targeting a new version, such as removing obsolete APIs or changing method signatures.",
+      "label": "Source incompatible for selected .NET version",
+      "severity": "Potential",
+      "effort": 1,
+      "links": [
+        {
+          "title": "Breaking Changes in .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262679",
+          "isCustom": false
+        }
+      ]
+    },
+    "NuGet.0005": {
+      "id": "NuGet.0005",
+      "isFeature": false,
+      "description": "Das NuGet-Paket ist veraltet.\n\nWechseln Sie zur Dokumentation, und wenn ein Leitfaden zum Ersetzen der von diesem Paket bereitgestellten Funktionen vorhanden ist.",
+      "label": "Das NuGet-Paket ist veraltet",
+      "severity": "Optional",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262531",
+          "isCustom": false
+        }
+      ]
+    }
+  }
+}
