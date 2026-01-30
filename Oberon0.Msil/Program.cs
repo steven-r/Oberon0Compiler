@@ -67,14 +67,41 @@ namespace Oberon0.Msil
                 projectNameOpt
             };
             
-            int exitCode = 0;
-            rootCommand.SetHandler((FileInfo inputFile, DirectoryInfo outputPath, bool verbose, bool clean, string projectName) =>
+            // Use a custom handler that properly returns the exit code
+            rootCommand.Handler = new AnonymousCommandHandler(context =>
             {
-                exitCode = StartCompile(inputFile, outputPath, projectName, clean, verbose);
-            }, fileArg, outputPathOpt, verboseOpt, cleanOpt, projectNameOpt);
+                var inputFile = context.ParseResult.GetValueForArgument(fileArg);
+                var outputPath = context.ParseResult.GetValueForOption(outputPathOpt);
+                var verbose = context.ParseResult.GetValueForOption(verboseOpt);
+                var clean = context.ParseResult.GetValueForOption(cleanOpt);
+                var projectName = context.ParseResult.GetValueForOption(projectNameOpt);
+                
+                context.ExitCode = StartCompile(inputFile, outputPath, projectName, clean, verbose);
+                return Task.FromResult(0);
+            });
             
-            rootCommand.Invoke(args);
-            return exitCode;
+            return rootCommand.Invoke(args);
+        }
+        
+        private class AnonymousCommandHandler : ICommandHandler
+        {
+            private readonly Func<InvocationContext, Task> _func;
+            
+            public AnonymousCommandHandler(Func<InvocationContext, Task> func)
+            {
+                _func = func;
+            }
+            
+            public int Invoke(InvocationContext context)
+            {
+                _func(context).Wait();
+                return context.ExitCode;
+            }
+            
+            public Task<int> InvokeAsync(InvocationContext context)
+            {
+                return _func(context).ContinueWith(t => context.ExitCode);
+            }
         }
 
         private static int StartCompile(FileSystemInfo inputFile, DirectoryInfo outputPath, string projectName, bool clean, bool verbose)
