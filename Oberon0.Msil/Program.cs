@@ -7,6 +7,7 @@
 
 using System;
 using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using JetBrains.Annotations;
@@ -34,24 +35,29 @@ namespace Oberon0.Msil
         /// </returns>
         public static int Main(string[] args)
         {
-            var fileArg = new Argument<FileInfo>("input-file", "The input file to be compiled") { Arity = ArgumentArity.ExactlyOne }
-                   .ExistingOnly();
+            var fileArg = new Argument<FileInfo>
+            {
+                Name = "input-file",
+                Description = "The input file to be compiled",
+                Arity = ArgumentArity.ExactlyOne
+            };
+            
             var outputPathOpt = new Option<DirectoryInfo>(
-                ["--output-path", "-o"],
-                    "Output path where target files should be written to. Default: Current directory"
-                );
+                aliases: new[] { "--output-path", "-o" },
+                description: "Output path where target files should be written to. Default: Current directory");
+            
             var verboseOpt = new Option<bool>(
-                ["--verbose", "-v"],
-                    "Output more information"
-                );
+                aliases: new[] { "--verbose", "-v" },
+                description: "Output more information");
+            
             var cleanOpt = new Option<bool>(
-                ["--clean"],
-                    "Clean the build before running a new one."
-                );
+                aliases: new[] { "--clean" },
+                description: "Clean the build before running a new one.");
+            
             var projectNameOpt = new Option<string>(
-                ["--project-name"],
-                    "Name the project different to module name."
-                );
+                aliases: new[] { "--project-name" },
+                description: "Name the project different to module name.");
+            
             var rootCommand = new RootCommand("Compile an Oberon0 source file.")
             {
                 fileArg,
@@ -60,20 +66,52 @@ namespace Oberon0.Msil
                 cleanOpt,
                 projectNameOpt
             };
-            rootCommand.SetHandler(context =>
+            
+            // Use a custom handler that properly returns the exit code
+            rootCommand.Handler = new AnonymousCommandHandler(context =>
             {
-                var file = context.ParseResult.GetValueForArgument(fileArg);
+                var inputFile = context.ParseResult.GetValueForArgument(fileArg);
                 var outputPath = context.ParseResult.GetValueForOption(outputPathOpt);
-                bool verbose = context.ParseResult.GetValueForOption(verboseOpt);
-                bool clean = context.ParseResult.GetValueForOption(cleanOpt);
-                string projectName = context.ParseResult.GetValueForOption(projectNameOpt);
-                return Task.FromResult(StartCompile(file, outputPath, projectName, clean, verbose));
+                var verbose = context.ParseResult.GetValueForOption(verboseOpt);
+                var clean = context.ParseResult.GetValueForOption(cleanOpt);
+                var projectName = context.ParseResult.GetValueForOption(projectNameOpt);
+                
+                context.ExitCode = StartCompile(inputFile, outputPath, projectName, clean, verbose);
+                return Task.FromResult(0);
             });
+            
             return rootCommand.Invoke(args);
+        }
+        
+        private class AnonymousCommandHandler : ICommandHandler
+        {
+            private readonly Func<InvocationContext, Task> _func;
+            
+            public AnonymousCommandHandler(Func<InvocationContext, Task> func)
+            {
+                _func = func;
+            }
+            
+            public int Invoke(InvocationContext context)
+            {
+                _func(context).Wait();
+                return context.ExitCode;
+            }
+            
+            public Task<int> InvokeAsync(InvocationContext context)
+            {
+                return _func(context).ContinueWith(t => context.ExitCode);
+            }
         }
 
         private static int StartCompile(FileSystemInfo inputFile, DirectoryInfo outputPath, string projectName, bool clean, bool verbose)
         {
+            if (!inputFile.Exists)
+            {
+                Console.Error.WriteLine($"File does not exist: '{inputFile.Name}'.");
+                return 1;
+            }
+            
             var m = Oberon0Compiler.CompileString(File.ReadAllText(inputFile.FullName));
             if (m.CompilerInstance?.HasError ?? true)
             {
