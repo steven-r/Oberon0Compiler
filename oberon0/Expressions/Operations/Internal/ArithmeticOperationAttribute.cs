@@ -6,37 +6,23 @@
 #endregion
 
 using System;
-using System.Composition;
-using System.Diagnostics.CodeAnalysis;
 using Oberon0.Compiler.Types;
 
-namespace Oberon0.Compiler.Expressions.Operations.Internal
+namespace Oberon0.Compiler.Expressions.Operations.Internal;
+
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class ArithmeticOperationAttribute(
+    int operation,
+    BaseTypes leftHandType,
+    BaseTypes rightHandType,
+    BaseTypes resultType)
+    : Attribute
 {
-    [MetadataAttribute]
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ArithmeticOperationAttribute(
-        int operation,
-        BaseTypes leftHandType,
-        BaseTypes rightHandType,
-        BaseTypes resultType)
-        : ExportAttribute(typeof(IArithmeticOperation)), IArithmeticOpMetadata
-    {
-        // ReSharper disable once UnusedMember.Global
-        public BaseTypes LeftHandType { get; set; } = leftHandType;
+    public BaseTypes LeftHandType => leftHandType;
 
-        // ReSharper disable once UnusedMember.Global
-        public BaseTypes RightHandType { get; set; } = rightHandType;
+    public BaseTypes RightHandType => rightHandType;
 
-        public int Operation { 
-            get;
-            [ExcludeFromCodeCoverage(Justification = "Called by MEF")]
-            set;
-        } = operation;
+    public int Operation => operation;
 
-        public BaseTypes ResultType { 
-            get; 
-            [ExcludeFromCodeCoverage(Justification = "Called by MEF")]
-            set;
-        } = resultType;
-    }
+    public BaseTypes ResultType => resultType;
 }

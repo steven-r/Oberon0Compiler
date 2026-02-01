@@ -12,8 +12,8 @@ using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
+using Oberon0.Runtime.Core;
 using Oberon0.Test.Support;
-using Oberon0System.Attributes;
 using Xunit;
 
 namespace Oberon0.Compiler.Tests

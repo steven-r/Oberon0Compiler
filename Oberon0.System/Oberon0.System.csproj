@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net10.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
     <RootNamespace>Oberon0System</RootNamespace>
     <Nullable>enable</Nullable>
-    <LangVersion>12</LangVersion>
+    <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Oberon 0 System Library</Title>
     <Authors>Stephen Reindl</Authors>
@@ -22,5 +22,11 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Oberon0.Runtime.Core\Oberon0.Runtime.Core.csproj" />
   </ItemGroup>
 </Project>

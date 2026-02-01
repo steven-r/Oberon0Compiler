@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Types;
-using Oberon0System.Attributes;
+using Oberon0.Runtime.Core;
 
 namespace Oberon0.Compiler.Definitions
 {

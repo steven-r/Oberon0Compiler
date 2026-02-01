@@ -5,26 +5,25 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using Oberon0System.Attributes;
+using Oberon0.Runtime.Core;
 
-namespace Oberon0System
+namespace Oberon0System;
+
+/// <summary>
+///     The oberon 0 system math.
+/// </summary>
+public static partial class Oberon0System
 {
     /// <summary>
-    ///     The oberon 0 system math.
+    ///     Check if given double represents "infinity" (see <see cref="double.IsInfinity" />)
     /// </summary>
-    public static partial class Oberon0System
+    /// <param name="d">The value to check</param>
+    /// <returns>the result of <see cref="double.IsInfinity" />.</returns>
+    // ReSharper disable once StringLiteralTypo
+    [Oberon0Export("isinfinity", "BOOLEAN", "REAL")]
+    // ReSharper disable once UnusedMember.Global
+    public static bool IsInfinity(double d)
     {
-        /// <summary>
-        ///     Check if given double represents "infinity" (see <see cref="double.IsInfinity" />)
-        /// </summary>
-        /// <param name="d">The value to check</param>
-        /// <returns>the result of <see cref="double.IsInfinity" />.</returns>
-        // ReSharper disable once StringLiteralTypo
-        [Oberon0Export("isinfinity", "BOOLEAN", "REAL")]
-        // ReSharper disable once UnusedMember.Global
-        public static bool IsInfinity(double d)
-        {
-            return double.IsInfinity(d);
-        }
+        return double.IsInfinity(d);
     }
 }

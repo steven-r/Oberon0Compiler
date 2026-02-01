@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using Oberon0.Shared;
+using Oberon0.Compiler.Generator;
 
 namespace Oberon0.Generator.MsilBin
 {

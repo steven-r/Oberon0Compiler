@@ -69,7 +69,7 @@ namespace Oberon0.Compiler.Solver
                 case FunctionCallExpression fce:
                     string prototype = FunctionDeclaration.GeneratePrototype(fce.FunctionDeclaration);
                     var internalFunc = ExpressionRepository.Instance.GetInternalFunction(prototype);
-                    return internalFunc != null ? internalFunc.Item1.Operate(fce, block, internalFunc.Item2) : expression;
+                    return internalFunc != null ? internalFunc.Operate(fce, block) : expression;
                 default:
                     throw new InvalidOperationException(
                         $"Calculate does not support operation on {expression.GetType().Name}");

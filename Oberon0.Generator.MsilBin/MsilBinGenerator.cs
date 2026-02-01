@@ -13,9 +13,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Exceptions;
+using Oberon0.Compiler.Generator;
 using Oberon0.Compiler.Types;
 using Oberon0.Generator.MsilBin.PredefinedFunctions;
-using Oberon0.Shared;
 
 namespace Oberon0.Generator.MsilBin
 {

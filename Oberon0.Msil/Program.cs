@@ -7,8 +7,8 @@
 
 using JetBrains.Annotations;
 using Oberon0.Compiler;
+using Oberon0.Compiler.Generator;
 using Oberon0.Generator.MsilBin;
-using Oberon0.Shared;
 using System;
 using System.CommandLine;
 using System.CommandLine.Parsing;

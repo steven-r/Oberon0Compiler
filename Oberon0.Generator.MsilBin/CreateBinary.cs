@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using Oberon0.Compiler.Exceptions;
-using Oberon0.Shared;
+using Oberon0.Compiler.Generator;
 
 namespace Oberon0.Generator.MsilBin
 {

@@ -5,25 +5,20 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using Oberon0.Runtime.Core;
-using System;
-
-namespace Oberon0System;
+namespace Oberon0.Compiler.Generator;
 
 /// <summary>
-///     The oberon 0 system library.
+///     Extension methods for <see cref="ICodeGenerator" /> being used in several parts
 /// </summary>
-[Oberon0Library]
-public static partial class Oberon0System
+public static class CodeGeneratorExtensions
 {
     /// <summary>
-    ///     Check if there's no more data available on standard input
+    ///     Generate a full qualified main class name
     /// </summary>
-    /// <returns><c>true</c> if end of file reached, <c>false</c> otherwise.</returns>
-    [Oberon0Export("eot", "BOOLEAN")]
-    // ReSharper disable once UnusedMember.Global
-    public static bool Eot()
+    /// <param name="cg">The code generator class to be used</param>
+    /// <returns>The fully qualified class name</returns>
+    public static string GetMainClassName(this ICodeGenerator cg)
     {
-        return Console.In.Peek() < 0;
+        return cg.MainClassNamespace + "." + cg.MainClassName;
     }
 }

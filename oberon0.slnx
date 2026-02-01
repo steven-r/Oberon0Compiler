@@ -1,0 +1,37 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/BinOutput/">
+    <Project Path="Oberon0.Generator.MsilBin.Tests/Oberon0.Generator.MsilBin.Tests.csproj" />
+    <Project Path="Oberon0.Generator.MsilBin/Oberon0.Generator.MsilBin.csproj" />
+  </Folder>
+  <Folder Name="/CmdTools/">
+    <Project Path="Oberon0.Msil/Oberon0.Msil.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="Oberon0.CompilerSupport/Oberon0.Test.Support.csproj" />
+    <Project Path="Oberon0.OperatorGenerator/Oberon0.InternalGenerators.csproj" />
+    <Project Path="Oberon0.Runtime.Core/Oberon0.Runtime.Core.csproj" Id="794fe6b9-9b05-4c9b-9368-b339293a1d67" />
+    <Project Path="Oberon0.System.Tests/Oberon0.System.Tests.csproj">
+      <BuildDependency Project="Oberon0.System/Oberon0.System.csproj" />
+    </Project>
+    <Project Path="Oberon0.System/Oberon0.System.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".github/workflows/dotnet.yml" />
+    <File Path=".gitignore" />
+    <File Path="antlr-runtime-4.13.2.jar" />
+    <File Path="coverlet.runsettings" />
+    <File Path="GitVersion.yml" />
+    <File Path="LICENSE.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="oberon0/Oberon0Compiler.csproj" />
+  <Project Path="UnitTestProject1/Oberon0Compiler.Tests.csproj" />
+</Solution>

@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Oberon0.Shared\Oberon0.Shared.csproj" />
     <ProjectReference Include="..\Oberon0.System\Oberon0.System.csproj" />
     <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj" />
   </ItemGroup>
