@@ -60,7 +60,7 @@ namespace Oberon0.Msil
             {
                 Description = "Name the project different to module name."
             };
-            
+
             var rootCommand = new RootCommand("Compile an Oberon0 source file.")
             {
                 fileArg,
@@ -88,15 +88,15 @@ namespace Oberon0.Msil
 
             return StartCompile(inputFile, outputPath, projectName, clean, verbose);
         }
-        
-        private static int StartCompile(FileSystemInfo inputFile, DirectoryInfo outputPath, string projectName, bool clean, bool verbose)
+
+        private static int StartCompile(FileInfo inputFile, DirectoryInfo outputPath, string projectName, bool clean, bool verbose)
         {
             if (!inputFile.Exists)
             {
                 Console.Error.WriteLine($"File does not exist: '{inputFile.Name}'.");
                 return 1;
             }
-            
+
             var m = Oberon0Compiler.CompileString(File.ReadAllText(inputFile.FullName));
             if (m.CompilerInstance?.HasError ?? true)
             {

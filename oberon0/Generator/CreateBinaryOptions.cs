@@ -34,7 +34,7 @@ public class CreateBinaryOptions
     public bool CleanSolution { get; set; }
 
     /// <summary>
-    /// Gets or sets the solution path that will be used instead of <code>%LOCALAPPDATA%\Oberon0\MSIL\{hash}\{hash}\{ModuleName}</code>
+    /// Gets or sets the solution path that will be used instead of <c>%LOCALAPPDATA%\Oberon0\MSIL\{hash}\{hash}\{ModuleName}</c>
     /// </summary>
     public string? SolutionPath {get; set;}
 
@@ -46,10 +46,10 @@ public class CreateBinaryOptions
     /// <summary>
     /// The framework to be used
     /// </summary>
-    public string FrameworkVersion => "net10.0";
+    public static string FrameworkVersion => "net10.0";
 
     /// <summary>
-    /// Gets or sets the output path where the application will be stored at. 
+    /// Gets or sets the output path where the application will be stored at.
     /// </summary>
     public string? OutputPath { get; set; }
 

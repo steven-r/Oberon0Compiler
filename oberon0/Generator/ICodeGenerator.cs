@@ -53,6 +53,6 @@ public interface ICodeGenerator
     /// Generate a final binary output (e.g. DLL or EXE) based on <see cref="Module"/> settings.
     /// </summary>
     /// <param name="options">The options to be passed to binary creation</param>
-    /// <returns><code>true</code>, if generation was successfully.</returns>
+    /// <returns><c>true</c>, if generation was successfully.</returns>
     bool GenerateBinary(CreateBinaryOptions? options = null);
 }

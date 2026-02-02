@@ -12,7 +12,7 @@ using Oberon0.Compiler.Expressions.Operations.Internal;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions;
-internal partial class ExpressionRepository
+internal sealed partial class ExpressionRepository
 {
     private static ExpressionRepository? _instance;
 
@@ -62,7 +62,7 @@ internal partial class ExpressionRepository
     public static ExpressionRepository Instance { get; } = _instance ??= new ExpressionRepository();
 
     private Dictionary<string, IInternalFunction> InternalFunctions { get; set; } = null!;
-    
+
     private Dictionary<ArithmeticOpKey, ArithmeticOperation> ArithmeticOperations { get; set; } = null!;
 
     /// <summary>
@@ -79,10 +79,10 @@ internal partial class ExpressionRepository
     }
 
     /// <summary>
-    /// 
+    /// Get the internal function by its prototype
     /// </summary>
-    /// <param name="prototype"></param>
-    /// <returns></returns>
+    /// <param name="prototype">The prototype of the internal function to look-up.</param>
+    /// <returns>An internal function or <c>null</c> if not found.</returns>
     public IInternalFunction? GetInternalFunction(string prototype)
     {
         return InternalFunctions.GetValueOrDefault(prototype);

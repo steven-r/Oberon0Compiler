@@ -30,7 +30,6 @@ internal interface IInternalFunction
     /// </summary>
     /// <param name="e">The expression to operate on</param>
     /// <param name="block">The block to operate on</param>
-    /// <param name="functionMetadata">The function to work on</param>
     /// <returns>The expression based on target type.</returns>
     Expression Operate(
         FunctionCallExpression e, Block block);

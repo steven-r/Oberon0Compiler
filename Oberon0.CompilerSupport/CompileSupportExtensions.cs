@@ -64,7 +64,7 @@ public static class CompileSupportExtensions
         foreach (var diagnostic in result.Diagnostics.Where(x => !x.IsSuppressed))
         {
             if (diagnostic.Severity == DiagnosticSeverity.Error ||
-                diagnostic.Severity == DiagnosticSeverity.Warning && showWarnings)
+                (diagnostic.Severity == DiagnosticSeverity.Warning && showWarnings))
             {
                 Console.Out.WriteLine($"{diagnostic.Location}: {diagnostic.Id} - {diagnostic.GetMessage()}");
             }

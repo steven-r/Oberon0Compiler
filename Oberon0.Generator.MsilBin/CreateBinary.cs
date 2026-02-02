@@ -124,9 +124,7 @@ namespace Oberon0.Generator.MsilBin
             var directoryInfo = new DirectoryInfo(_options.SolutionPath!);
             if (_options.CleanSolution && directoryInfo.Exists)
             {
-#pragma warning disable S1215
                 GC.Collect(); // try to unload blocking resources
-#pragma warning restore S1215
                 Directory.Delete(_options.SolutionPath!, true);
             }
 
@@ -143,7 +141,7 @@ namespace Oberon0.Generator.MsilBin
                 "new",
                 // ReSharper disable once StringLiteralTypo
                 _codeGenerator.Module.HasExports ? "classlib" : "console",
-                "--framework", _options.FrameworkVersion
+                "--framework", CreateBinaryOptions.FrameworkVersion
             ];
 
             string execName = GetDotnetExe();

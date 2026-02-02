@@ -81,7 +81,7 @@ namespace Oberon0.Compiler.Definitions
         ];
 
         private void AddParameters(Oberon0ExportAttribute attr, int i,
-                                   IList<ProcedureParameterDeclaration> procParameters)
+                                   ProcedureParameterDeclaration[] procParameters)
         {
             string paramName = "attr" + i;
             procParameters[i] = GetProcedureParameterByName(paramName, attr.Parameters[i], Block);
@@ -96,7 +96,7 @@ namespace Oberon0.Compiler.Definitions
         /// <returns>A <see cref="ProcedureParameterDeclaration" /> element</returns>
         /// <remarks>
         ///     <see cref="parameterType" /> can hold a simple type name. If you want to create a reference type, pretend the
-        ///     type-name with either <code>%amp;</code> or <code>VAR </code>
+        ///     type-name with either <c>%amp;</c> or <c>VAR </c>
         /// </remarks>
         public static ProcedureParameterDeclaration GetProcedureParameterByName(
             string parameterName, string parameterType, Block block)
@@ -144,10 +144,10 @@ namespace Oberon0.Compiler.Definitions
         private void DeclareStandardConstants()
         {
             Block.Declarations.Add(
-                new ConstDeclaration("TRUE", Block.LookupType(TypeDefinition.BooleanTypeName)!, 
+                new ConstDeclaration("TRUE", Block.LookupType(TypeDefinition.BooleanTypeName)!,
                     new ConstantBoolExpression(true) { Internal = true }));
             Block.Declarations.Add(
-                new ConstDeclaration("FALSE", Block.LookupType(TypeDefinition.BooleanTypeName)!, 
+                new ConstDeclaration("FALSE", Block.LookupType(TypeDefinition.BooleanTypeName)!,
                     new ConstantBoolExpression(false) { Internal = true }));
             Block.Declarations.Add(
                 new ConstDeclaration("EPSILON", Block.LookupType(TypeDefinition.RealTypeName)!,
@@ -159,7 +159,7 @@ namespace Oberon0.Compiler.Definitions
             foreach (var function in _hardwiredFunctions)
             {
                 var type = Block.LookupType(function.Type)!;
-                Block.Procedures.Add(FunctionDeclaration.AddHardwiredFunction(function.Name, this, type, 
+                Block.Procedures.Add(FunctionDeclaration.AddHardwiredFunction(function.Name, this, type,
                     function.ParameterTypes));
             }
 
@@ -209,7 +209,7 @@ namespace Oberon0.Compiler.Definitions
                 {
                     throw new InternalCompilerException($"method.DeclaringType == null for {method.Module.Name}/{method.Name}");
                 }
-                
+
                 Block.Procedures.Add(AddExternalFunctionDeclaration(attr, method.DeclaringType.FullName!, method.Name));
             }
 
