@@ -8,8 +8,6 @@
 using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.Test.Support;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Compiler.Tests.Types;
 
@@ -29,8 +27,8 @@ public class IntegerTests(ITestOutputHelper output)
              """, output);
 
         var s = m.Block.Statements[0];
-        var a = Assert.IsAssignableFrom<AssignmentStatement>(s);
-        Assert.IsAssignableFrom<ConstantIntExpression>(a.Expression);
+        var a = Assert.IsType<AssignmentStatement>(s, exactMatch: false);
+        Assert.IsType<ConstantIntExpression>(a.Expression, exactMatch: false);
     }
 
     [Fact]
@@ -47,7 +45,7 @@ public class IntegerTests(ITestOutputHelper output)
              """, output);
 
         var s = m.Block.Statements[0];
-        var a = Assert.IsAssignableFrom<AssignmentStatement>(s);
-        Assert.IsAssignableFrom<ConstantDoubleExpression>(a.Expression);
+        var a = Assert.IsType<AssignmentStatement>(s, exactMatch: false);
+        Assert.IsType<ConstantDoubleExpression>(a.Expression, exactMatch: false);
     }
 }

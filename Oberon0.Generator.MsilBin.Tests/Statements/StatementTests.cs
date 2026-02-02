@@ -8,7 +8,6 @@
 using System.IO;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Statements
 {
@@ -35,10 +34,10 @@ namespace Oberon0.Generator.MsilBin.Tests.Statements
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -63,10 +62,10 @@ namespace Oberon0.Generator.MsilBin.Tests.Statements
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -95,10 +94,10 @@ namespace Oberon0.Generator.MsilBin.Tests.Statements
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);
@@ -124,10 +123,10 @@ namespace Oberon0.Generator.MsilBin.Tests.Statements
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
-            Assert.True(assembly != null);
+            Assert.NotNull(assembly);
 
             using var output1 = new StringWriter();
             Runner.Execute(assembly, output1);

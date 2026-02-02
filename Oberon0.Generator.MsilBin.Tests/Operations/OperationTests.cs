@@ -9,7 +9,6 @@ using System;
 using System.IO;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Operations
 {
@@ -27,7 +26,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -53,7 +52,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -79,7 +78,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -92,7 +91,7 @@ END Array.";
         [Fact]
         public void TestAddVarNegConstVar()
         {
-            string source = @"MODULE Array;
+            const string source = @"MODULE Array;
 VAR
   a: INTEGER;
   b: INTEGER;
@@ -107,7 +106,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -120,7 +119,7 @@ END Array.";
         [Fact]
         public void TestAddVarVar()
         {
-            string source = @"MODULE Array;
+            const string source = @"MODULE Array;
 VAR
   a: INTEGER;
   b: INTEGER;
@@ -135,7 +134,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -161,7 +160,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -189,7 +188,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -215,7 +214,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -244,7 +243,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -267,7 +266,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -280,7 +279,7 @@ END Array.";
         [Fact]
         public void TestNegRealVar()
         {
-            string source = @"MODULE Array;
+            const string source = @"MODULE Array;
 VAR
   a: REAL;
 
@@ -296,7 +295,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -309,7 +308,7 @@ END Array.";
         [Fact]
         public void TestReadBoolVar()
         {
-            string source = @"MODULE Array;
+            const string source = @"MODULE Array;
 VAR
   a,b: BOOLEAN;
 
@@ -325,7 +324,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -353,7 +352,7 @@ END Array.";
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);

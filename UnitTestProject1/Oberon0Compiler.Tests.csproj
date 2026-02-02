@@ -6,14 +6,12 @@
     <AssemblyName>Oberon0.Compiler.Tests</AssemblyName>
     <RootNamespace>Oberon0.Compiler.Tests</RootNamespace>
     <Configurations>Debug;Release;Test</Configurations>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
+    <PackageReference Include="xunit.v3.assert" Version="3.2.2" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -22,5 +20,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Oberon0.CompilerSupport\Oberon0.Test.Support.csproj" />
     <ProjectReference Include="..\oberon0\Oberon0Compiler.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
   </ItemGroup>
 </Project>

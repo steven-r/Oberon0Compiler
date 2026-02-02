@@ -8,7 +8,6 @@
 using System.IO;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Expressions;
 
@@ -47,7 +46,7 @@ public class ConstExpressionTests(ITestOutputHelper output)
         var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
         Assert.NotEmpty(code);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
         // Assert.Contains("private double EPSILON = double.Epsilon;", code);
 

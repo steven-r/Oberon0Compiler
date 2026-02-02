@@ -7,7 +7,6 @@
 
 using System.IO;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Interface
 {

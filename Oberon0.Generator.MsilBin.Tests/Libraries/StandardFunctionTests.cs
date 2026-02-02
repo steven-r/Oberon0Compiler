@@ -13,7 +13,6 @@ using Oberon0.Compiler.Types;
 using Oberon0.Generator.MsilBin.PredefinedFunctions;
 using Oberon0.Test.Support;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Libraries
 {
@@ -39,7 +38,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -89,7 +88,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Libraries
             }
             StandardFunctionRepository.Initialize(m);
 
-            var ex = Assert.Throws<ArgumentException>(() => StandardFunctionRepository.RemoveFunction($"ThisDoesNotExist"));
+            var ex = Assert.Throws<ArgumentException>(() => StandardFunctionRepository.RemoveFunction("ThisDoesNotExist"));
             Assert.Equal("Key ThisDoesNotExist does not exist (Parameter 'key')", ex.Message);
             Assert.Equal("key", ex.ParamName);
         }

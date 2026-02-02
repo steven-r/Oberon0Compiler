@@ -7,7 +7,6 @@
 
 using Oberon0.Test.Support;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Compiler.Tests;
 

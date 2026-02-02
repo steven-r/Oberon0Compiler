@@ -9,8 +9,6 @@ using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Types;
 using Oberon0.Test.Support;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Compiler.Tests;
 
@@ -183,7 +181,7 @@ public class DeclarationTests(ITestOutputHelper output)
             MODULE Test; 
             VAR
              END Test.
-            """, output, 
+            """, output,
             "extraneous input 'END' expecting ID",
             "no viable alternative at input 'Test.'",
             "The name of the module does not match the end node");

@@ -9,7 +9,6 @@ using System;
 using System.IO;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Expressions;
 
@@ -36,7 +35,7 @@ public class RelationTests(ITestOutputHelper output)
 
         Assert.NotEmpty(code);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
         var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
         Assert.NotNull(assembly);
@@ -77,7 +76,7 @@ public class RelationTests(ITestOutputHelper output)
 
         Assert.NotEmpty(code);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
         var assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
         Assert.NotNull(assembly);

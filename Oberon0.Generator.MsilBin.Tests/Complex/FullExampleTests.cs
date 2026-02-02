@@ -8,7 +8,6 @@
 using System.IO;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Complex
 {
@@ -92,7 +91,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Complex
 
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);

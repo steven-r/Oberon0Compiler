@@ -9,7 +9,6 @@ using System.Globalization;
 using System.IO;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Types;
 
@@ -34,7 +33,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
             var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
             Assert.NotEmpty(code);
 
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
             byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
             Assert.NotNull(assembly);
@@ -47,7 +46,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
     [Fact]
     public void StringAddTest()
     {
-        const string source = $"""
+        const string source = """
                                    MODULE Test; 
                                    VAR 
                                        s: STRING;
@@ -60,20 +59,20 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
         var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
         Assert.NotEmpty(code);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
         byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
         Assert.NotNull(assembly);
 
         using var output1 = new StringWriter();
         Runner.Execute(assembly, output1);
-        Assert.Equal($"Hello String", output1.ToString());
+        Assert.Equal("Hello String", output1.ToString());
     }
 
     [Fact]
     public void StringMultVarVar()
     {
-        const string source = $"""
+        const string source = """
                                MODULE Test; 
                                VAR
                                  a, s: STRING;
@@ -88,7 +87,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
         var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
         Assert.NotEmpty(code);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
         byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
         Assert.NotNull(assembly);
@@ -101,7 +100,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
     [Fact]
     public void StringMultVarInt()
     {
-        const string source = $"""
+        const string source = """
                                MODULE Test; 
                                VAR
                                  a, s: STRING;
@@ -116,7 +115,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
         var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
         Assert.NotEmpty(code);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
         byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
         Assert.NotNull(assembly);
@@ -129,7 +128,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
     [Fact]
     public void StringMultStringVar()
     {
-        const string source = $"""
+        const string source = """
                                MODULE Test; 
                                VAR
                                  a, s: STRING;
@@ -144,7 +143,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
         var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
         Assert.NotEmpty(code);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
         byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
         Assert.NotNull(assembly);
@@ -158,7 +157,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
     [Fact]
     public void StringMultVarZero()
     {
-        const string source = $"""
+        const string source = """
                                MODULE Test; 
                                VAR
                                  a, s: STRING;
@@ -173,7 +172,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
         var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
         Assert.NotEmpty(code);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
         byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
         Assert.NotNull(assembly);
@@ -209,7 +208,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
         var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
         Assert.NotEmpty(code);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
         byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
         Assert.NotNull(assembly);
@@ -242,7 +241,7 @@ namespace Oberon0.Generator.MsilBin.Tests.Types;
         var cg = CompileHelper.CompileOberon0Code(source, out string code, output);
         Assert.NotEmpty(code);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, cancellationToken: TestContext.Current.CancellationToken);
 
         byte[] assembly = syntaxTree.CompileAndLoadAssembly(cg, true);
         Assert.NotNull(assembly);

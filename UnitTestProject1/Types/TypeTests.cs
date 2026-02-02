@@ -12,8 +12,6 @@ using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
 using Oberon0.Test.Support;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Compiler.Tests.Types;
 
@@ -63,7 +61,7 @@ public class TypeTests(ITestOutputHelper output)
 
         var intType = m.Block.LookupType("INTEGER");
         Assert.NotNull(intType);
-        
+
         var t = m.Block.LookupType("Demo");
         Assert.NotNull(t);
         var std = Assert.IsType<SimpleTypeDefinition>(t);
@@ -104,7 +102,7 @@ public class TypeTests(ITestOutputHelper output)
         Assert.NotNull(m);
         var t = m.Block.LookupType("Demo");
         Assert.NotNull(t);
-        var tt = Assert.IsAssignableFrom<TypeDefinition>(t);
+        var tt = Assert.IsType<TypeDefinition>(t, exactMatch: false);
         Assert.Equal(BaseTypes.Int, tt.Type);
 
         var v = m.Block.LookupVar("Demo");
@@ -139,7 +137,7 @@ public class TypeTests(ITestOutputHelper output)
         Assert.Equal(6, m.Block.Statements.Count);
         var s1 = m.Block.Statements[0];
         var s2 = m.Block.Statements[1];
-        
+
         var as1 = Assert.IsType<AssignmentStatement>(s1);
         var as2 = Assert.IsType<AssignmentStatement>(s2);
         Assert.IsType<ConstantIntExpression>(as1.Expression);
@@ -163,13 +161,13 @@ public class TypeTests(ITestOutputHelper output)
 
         var var = m.Block.LookupVar("TRUE");
         Assert.NotNull(var);
-        var constant = Assert.IsAssignableFrom<ConstDeclaration>(var);
+        var constant = Assert.IsType<ConstDeclaration>(var, exactMatch: false);
         Assert.NotNull(constant);
         Assert.True(constant.Value.Internal);
 
         var = m.Block.LookupVar("FALSE");
         Assert.NotNull(var);
-        constant = Assert.IsAssignableFrom<ConstDeclaration>(var);
+        constant = Assert.IsType<ConstDeclaration>(var, exactMatch: false);
         Assert.NotNull(constant);
         Assert.True(constant.Value.Internal);
     }
