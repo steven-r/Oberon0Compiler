@@ -124,7 +124,6 @@ namespace Oberon0.Generator.MsilBin
             var directoryInfo = new DirectoryInfo(_options.SolutionPath!);
             if (_options.CleanSolution && directoryInfo.Exists)
             {
-                //GC.Collect(); // try to unload blocking resources
                 Directory.Delete(_options.SolutionPath!, true);
             }
 
