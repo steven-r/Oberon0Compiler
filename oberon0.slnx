@@ -21,6 +21,7 @@
     </Project>
     <Project Path="Oberon0.System/Oberon0.System.csproj" />
   </Folder>
+  <Folder Name="/Projektmappenelemente/" />
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
