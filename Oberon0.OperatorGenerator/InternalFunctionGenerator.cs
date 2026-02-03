@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,8 +44,6 @@ public class InternalFunctionGenerator : IIncrementalGenerator
             functions.Add(new InternalFunctionSetup { ErrorMessage = "Cannot map context to INamedTypeSymbol" });
             return functions;
         }
-
-        var classDecl = (ClassDeclarationSyntax)ctx.TargetNode;
 
         var interfaces = symbol.Interfaces;
 

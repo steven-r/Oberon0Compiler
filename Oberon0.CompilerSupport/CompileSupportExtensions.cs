@@ -61,13 +61,12 @@ public static class CompileSupportExtensions
     /// <exception cref="BadImageFormatException"></exception>
     public static void ThrowExceptionIfCompilationFailure(this EmitResult result, bool showWarnings = false)
     {
-        foreach (var diagnostic in result.Diagnostics.Where(x => !x.IsSuppressed))
+        foreach (var diagnostic in result.Diagnostics
+                     .Where(x => !x.IsSuppressed && 
+                                 (x.Severity == DiagnosticSeverity.Error ||
+                                  (x.Severity == DiagnosticSeverity.Warning && showWarnings))))
         {
-            if (diagnostic.Severity == DiagnosticSeverity.Error ||
-                (diagnostic.Severity == DiagnosticSeverity.Warning && showWarnings))
-            {
-                Console.Out.WriteLine($"{diagnostic.Location}: {diagnostic.Id} - {diagnostic.GetMessage()}");
-            }
+            Console.Out.WriteLine($"{diagnostic.Location}: {diagnostic.Id} - {diagnostic.GetMessage()}");
         }
 
         if (result.Success)
