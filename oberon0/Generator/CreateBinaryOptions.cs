@@ -29,7 +29,7 @@ public class CreateBinaryOptions
     public Action<object, ProcessOutputReceivedEventArgs>? OutputDataRetrieved { get; set; }
 
     /// <summary>
-    /// Gets ot sets the information if the existing information on the binary generation should be deleted.
+    /// Gets or sets the information if the existing information on the binary generation should be deleted.
     /// </summary>
     public bool CleanSolution { get; set; }
 
