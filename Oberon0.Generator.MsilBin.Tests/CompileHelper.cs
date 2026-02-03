@@ -8,10 +8,9 @@
 using System;
 using System.IO;
 using Microsoft.CodeAnalysis;
-using Oberon0.Compiler;
-using Oberon0.Shared;
+using Oberon0.Compiler.Generator;
 using Oberon0.Test.Support;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Oberon0.Generator.MsilBin.Tests
 {

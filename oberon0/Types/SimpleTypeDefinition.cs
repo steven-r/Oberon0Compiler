@@ -56,8 +56,8 @@ namespace Oberon0.Compiler.Types
         public override bool IsAssignable(TypeDefinition sourceType)
         {
             return sourceType.Type == Type // same simple type
-             || sourceType.Type.HasFlag(BaseTypes.Int) && Type.HasFlag(BaseTypes.Real)
-             || sourceType.Type.HasFlag(BaseTypes.Int) && Type.HasFlag(BaseTypes.Bool);
+             || (sourceType.Type.HasFlag(BaseTypes.Int) && Type.HasFlag(BaseTypes.Real))
+             || (sourceType.Type.HasFlag(BaseTypes.Int) && Type.HasFlag(BaseTypes.Bool));
         }
 
         [ExcludeFromCodeCoverage]

@@ -5,8 +5,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using Oberon0.Runtime.Core;
 using System.Globalization;
-using Oberon0System.Attributes;
 
 namespace Oberon0System;
 
@@ -138,7 +138,7 @@ public static partial class Oberon0System
     }
 
     /// <summary>
-    /// Parse a BOOLEAN from a string and return the boolean itself
+    /// Return a substring from given string
     /// </summary>
     /// <param name="value">The string where the substring has to be built</param>
     /// <param name="start">Start of substring (counting from 1)</param>

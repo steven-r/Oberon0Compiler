@@ -7,12 +7,11 @@
 
 using System;
 
-namespace Oberon0.Shared
-{
-    public class ProcessOutputReceivedEventArgs(CreateBinaryOptions options, string data) : EventArgs
-    {
-        public CreateBinaryOptions Options { get; } = options;
+namespace Oberon0.Runtime.Core;
 
-        public string Data { get; } = data;
-    }
-}
+/// <summary>
+///     All libraries that
+/// </summary>
+/// <seealso cref="System.Attribute" />
+[AttributeUsage(AttributeTargets.Class)]
+public class Oberon0LibraryAttribute : Attribute;

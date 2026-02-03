@@ -5,11 +5,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-namespace Oberon0.Compiler.Expressions.Operations.Internal
+namespace Oberon0.Compiler.Expressions.Operations.Internal;
+
+public class ArithmeticOperation(IArithmeticOperation operation, IArithmeticOpMetadata metadata)
 {
-    public class ArithmeticOperation(IArithmeticOperation operation, IArithmeticOpMetadata metadata)
-    {
-        public IArithmeticOperation Operation { get; } = operation;
-        public IArithmeticOpMetadata Metadata { get; } = metadata;
-    }
+    public IArithmeticOperation Operation { get; } = operation;
+    public IArithmeticOpMetadata Metadata { get; } = metadata;
 }

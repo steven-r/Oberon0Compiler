@@ -24,4 +24,4 @@ using Xunit;
 
 [assembly: Guid("3575337e-6e69-4c94-bcf0-b43fed1ea1e1")]
 
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: CollectionBehavior(MaxParallelThreads = 1)]

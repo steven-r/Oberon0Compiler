@@ -13,7 +13,6 @@ using Antlr4.Runtime;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Definitions;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Test.Support
 {
@@ -39,7 +38,7 @@ namespace Oberon0.Test.Support
                         lexer.RemoveErrorListeners();
                         lexer.AddErrorListener(new TestErrorListener<int>(CompilerErrors));
                     },
-                    AfterCompile = _ => { errors.AddRange(CompilerErrors); }
+                    AfterCompile = _ => errors.AddRange(CompilerErrors)
                 });
         }
 

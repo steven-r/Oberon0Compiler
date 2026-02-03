@@ -10,8 +10,6 @@ using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
 using Oberon0.Test.Support;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Compiler.Tests.Types;
 
@@ -51,7 +49,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[0], exactMatch: false);
         var se = Assert.IsType<StringExpression>(s.Expression);
         Assert.Equal("Hello Test", se.Value);
     }
@@ -72,8 +70,8 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
-        var s1 = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[0], exactMatch: false);
+        var s1 = Assert.IsType<AssignmentStatement>(m.Block.Statements[1], exactMatch: false);
         var se = Assert.IsType<StringExpression>(s.Expression);
         Assert.Equal("Hello Test", se.Value);
         Assert.IsType<VariableReferenceExpression>(s1.Expression);
@@ -128,7 +126,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[0], exactMatch: false);
         var se = Assert.IsType<StringExpression>(s.Expression);
         Assert.Equal("1", se.Value);
     }
@@ -148,7 +146,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[0], exactMatch: false);
         var se = Assert.IsType<StringExpression>(s.Expression);
         Assert.Equal("1.1", se.Value);
     }
@@ -168,7 +166,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[0], exactMatch: false);
         var se = Assert.IsType<StringExpression>(s.Expression);
         Assert.Equal("True", se.Value);
     }
@@ -188,7 +186,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[0], exactMatch: false);
         var se = Assert.IsType<ConstantIntExpression>(s.Expression);
         Assert.Equal(10, se.ToInt32());
     }
@@ -210,7 +208,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[1], exactMatch: false);
         var se = Assert.IsType<FunctionCallExpression>(s.Expression);
         Assert.Equal("INTEGER Length(STRING)", se.FunctionDeclaration.ToString());
     }
@@ -234,7 +232,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[2]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[2], exactMatch: false);
         var se = Assert.IsType<BinaryExpression>(s.Expression);
         Assert.Equal(BaseTypes.String, se.TargetType.Type);
         Assert.IsType<VariableReferenceExpression>(se.LeftHandSide);
@@ -259,7 +257,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[1], exactMatch: false);
         var se = Assert.IsType<BinaryExpression>(s.Expression);
         Assert.Equal(BaseTypes.String, se.TargetType.Type);
         Assert.IsType<VariableReferenceExpression>(se.LeftHandSide);
@@ -282,7 +280,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[0], exactMatch: false);
         var se = Assert.IsType<StringExpression>(s.Expression);
         Assert.Equal("Hello String", se.Value);
     }
@@ -306,7 +304,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[2]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[2], exactMatch: false);
         var se = Assert.IsType<BinaryExpression>(s.Expression);
         Assert.Equal(BaseTypes.String, se.TargetType.Type);
         Assert.Equal(OberonGrammarLexer.STAR, se.Operator);
@@ -332,7 +330,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[1], exactMatch: false);
         var expression = Assert.IsType<BinaryExpression>(s.Expression);
         Assert.Equal(BaseTypes.String, expression.TargetType.Type);
         Assert.Equal(OberonGrammarLexer.STAR, expression.Operator);
@@ -356,7 +354,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[0]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[0], exactMatch: false);
         var stringExpression = Assert.IsType<StringExpression>(s.Expression);
         Assert.Equal("HelloHelloHelloHelloHello", stringExpression.Value);
     }
@@ -378,7 +376,7 @@ public class StringTests(ITestOutputHelper testOutput)
             """,
             testOutput);
         Assert.NotNull(m);
-        var s = Assert.IsAssignableFrom<AssignmentStatement>(m.Block.Statements[1]);
+        var s = Assert.IsType<AssignmentStatement>(m.Block.Statements[1], exactMatch: false);
         var expression = Assert.IsType<BinaryExpression>(s.Expression);
         Assert.Equal(BaseTypes.String, expression.TargetType.Type);
         Assert.Equal(OberonGrammarLexer.STAR, expression.Operator);

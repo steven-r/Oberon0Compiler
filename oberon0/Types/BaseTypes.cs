@@ -7,66 +7,69 @@
 
 using System;
 
-namespace Oberon0.Compiler.Types
+namespace Oberon0.Compiler.Types;
+
+/// <summary>
+///     Standard types
+/// </summary>
+[Flags]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1157:Composite enum value contains undefined flag", Justification = "Compound flags are needed for proper lookup")]
+public enum BaseTypes
 {
+    None = 0,
+
     /// <summary>
-    ///     Standard types
+    ///     Representing a type not array or complex
     /// </summary>
-    public enum BaseTypes
-    {
-        /// <summary>
-        ///     Standard integer
-        /// </summary>
-        Int = Simple + 1,
+    Simple = 0x10000,
 
-        /// <summary>
-        ///     The string type - Not in use
-        /// </summary>
-        String = Simple + 2,
+    /// <summary>
+    ///     Standard integer
+    /// </summary>
+    Int = Simple | 1,
 
-        /// <summary>
-        ///     The REAL type
-        /// </summary>
-        Real = Simple + 4,
+    /// <summary>
+    ///     The string type - Not in use
+    /// </summary>
+    String = Simple | 2,
 
-        /// <summary>
-        /// Generic number type
-        /// </summary>
-        Number = Real | Int,
+    /// <summary>
+    ///     The REAL type
+    /// </summary>
+    Real = Simple | 4,
 
-        /// <summary>
-        ///     The bool type
-        /// </summary>
-        Bool = Simple + 8,
+    /// <summary>
+    /// Generic number type
+    /// </summary>
+    Number = Real | Int,
 
-        /// <summary>
-        ///     a "non" type. This means no value (like an empty return value for a function)
-        /// </summary>
-        Void = Simple + 16,
+    /// <summary>
+    ///     The bool type
+    /// </summary>
+    Bool = Simple | 8,
 
-        /// <summary>
-        ///     record type
-        /// </summary>
-        Record = Complex + 1,
+    /// <summary>
+    ///     a "non" type. This means no value (like an empty return value for a function)
+    /// </summary>
+    Void = Simple | 16,
 
-        /// <summary>
-        ///     array type
-        /// </summary>
-        Array = Complex + 2,
+    /// <summary>
+    ///     Any type - used for internal functions (like WRITELN)
+    /// </summary>
+    Any = 0x20000,
 
-        /// <summary>
-        ///     Any type - used for internal functions (like WRITELN)
-        /// </summary>
-        Any = 0x20000,
+    /// <summary>
+    ///     Complex types
+    /// </summary>
+    Complex = 0x40000,
 
-        /// <summary>
-        ///     Complex types
-        /// </summary>
-        Complex = 0x40000,
+    /// <summary>
+    ///     record type
+    /// </summary>
+    Record = Complex | 1,
 
-        /// <summary>
-        ///     Representing a type not array or complex
-        /// </summary>
-        Simple = 0x10000
-    }
+    /// <summary>
+    ///     array type
+    /// </summary>
+    Array = Complex | 2
 }

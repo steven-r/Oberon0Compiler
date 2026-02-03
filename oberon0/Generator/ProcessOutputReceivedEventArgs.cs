@@ -5,18 +5,13 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using Oberon0.Compiler.Types;
+using System;
 
-namespace Oberon0.Compiler.Expressions.Operations.Internal
+namespace Oberon0.Compiler.Generator;
+
+public class ProcessOutputReceivedEventArgs(CreateBinaryOptions options, string data) : EventArgs
 {
-    public class ArithmeticOpMetadata
-    {
-        public BaseTypes LeftHandType { get; set; }
+    public CreateBinaryOptions Options { get; } = options;
 
-        public int Operation { get; set; }
-
-        public BaseTypes ResultType { get; set; }
-
-        public BaseTypes RightHandType { get; set; }
-    }
+    public string Data { get; } = data;
 }

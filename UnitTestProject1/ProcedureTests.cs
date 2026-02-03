@@ -12,8 +12,8 @@ using Oberon0.Compiler.Definitions;
 using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Statements;
 using Oberon0.Compiler.Types;
+using Oberon0.Runtime.Core;
 using Oberon0.Test.Support;
-using Oberon0System.Attributes;
 using Xunit;
 
 namespace Oberon0.Compiler.Tests
@@ -258,9 +258,7 @@ namespace Oberon0.Compiler.Tests
         }
 
         [Fact]
-#pragma warning disable S2699
         public void ProcMissingEndName()
-#pragma warning restore S2699
         {
             TestHelper.CompileString(
                 """
@@ -302,9 +300,9 @@ namespace Oberon0.Compiler.Tests
             Assert.Throws<InvalidOperationException>(() => m.Block.LookupFunction("__Test1", "INTEGER"));
             var f = m.Block.LookupFunction("__Test1", "INTEGER,REAL");
             Assert.NotNull(f);
-            var externalFunction = Assert.IsAssignableFrom<ExternalFunctionDeclaration>(f);
+            var externalFunction = Assert.IsType<ExternalFunctionDeclaration>(f, exactMatch: false);
             var paramList = externalFunction.Block.Declarations.OfType<ProcedureParameterDeclaration>();
-            var parameters = paramList as ProcedureParameterDeclaration[] ?? paramList.ToArray();
+            var parameters = paramList as ProcedureParameterDeclaration[] ?? [.. paramList];
             Assert.NotNull(parameters);
             Assert.Equal(2, parameters.Length);
             Assert.Equal(SimpleTypeDefinition.IntType.Name, parameters[0].Type.Name);
@@ -322,9 +320,9 @@ namespace Oberon0.Compiler.Tests
             m.Block.Procedures.Add(function);
             var f = m.Block.LookupFunction("__Test1");
             Assert.NotNull(f);
-            var externalFunction = Assert.IsAssignableFrom<ExternalFunctionDeclaration>(f);
+            var externalFunction = Assert.IsType<ExternalFunctionDeclaration>(f, exactMatch: false);
             var paramList = externalFunction.Block.Declarations.OfType<ProcedureParameterDeclaration>();
-            var parameters = paramList as ProcedureParameterDeclaration[] ?? paramList.ToArray();
+            var parameters = paramList as ProcedureParameterDeclaration[] ?? [.. paramList];
             Assert.Empty(parameters);
         }
 
@@ -476,10 +474,8 @@ namespace Oberon0.Compiler.Tests
         [Fact]
         public void TestBuildPrototypeWithRecordByValue()
         {
-            string p = BuildPrototypeTester("TestFunction", "INTEGER", module =>
-                {
-                    module.Block.Types.Add(new RecordTypeDefinition().Clone("recType"));
-                },
+            string p = BuildPrototypeTester("TestFunction", "INTEGER",
+                module => module.Block.Types.Add(new RecordTypeDefinition().Clone("recType")),
                 ("a", "recType"));
             Assert.Equal("INTEGER TestFunction(recType)", p);
         }
@@ -487,10 +483,8 @@ namespace Oberon0.Compiler.Tests
         [Fact]
         public void TestBuildPrototypeWithRecordByRef()
         {
-            string p = BuildPrototypeTester("TestFunction", "INTEGER", module =>
-                {
-                    module.Block.Types.Add(new RecordTypeDefinition().Clone("recType"));
-                },
+            string p = BuildPrototypeTester("TestFunction", "INTEGER",
+                module => module.Block.Types.Add(new RecordTypeDefinition().Clone("recType")),
                 ("a", "&recType"));
             Assert.Equal("INTEGER TestFunction(&recType)", p);
         }
@@ -506,7 +500,7 @@ namespace Oberon0.Compiler.Tests
                                                    params (string, string)[] parameters)
         {
             var m = new Module(null);
-            
+
             additionalCode(m); // allow user types, ...
 
             var paramList = new List<ProcedureParameterDeclaration>();
@@ -520,7 +514,7 @@ namespace Oberon0.Compiler.Tests
             Assert.NotNull(type);
             var f = new FunctionDeclaration(name, m.Block, type, [..paramList]);
             string prototype = FunctionDeclaration.BuildPrototype(f.Name, f.ReturnType,
-                f.Block.Declarations.OfType<ProcedureParameterDeclaration>().ToArray());
+                [.. f.Block.Declarations.OfType<ProcedureParameterDeclaration>()]);
             return prototype;
         }
 

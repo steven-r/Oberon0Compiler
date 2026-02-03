@@ -12,7 +12,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Oberon0.Msil;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Generator.MsilBin.Tests.Libraries
 {

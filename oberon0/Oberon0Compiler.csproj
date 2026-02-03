@@ -6,6 +6,7 @@
     <AssemblyName>Oberon0.Compiler</AssemblyName>
     <Configurations>Debug;Release;Test</Configurations>
     <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="OberonGrammar.g4" />
@@ -18,9 +19,9 @@
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
     <PackageReference Include="Antlr4BuildTasks" Version="12.14.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
-    <PackageReference Include="System.Composition.TypedParts" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Oberon0.OperatorGenerator\Oberon0.InternalGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     <ProjectReference Include="..\Oberon0.System\Oberon0.System.csproj" />
   </ItemGroup>
   <ItemGroup>

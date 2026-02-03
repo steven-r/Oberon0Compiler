@@ -18,7 +18,8 @@ internal class ArithmeticOpKey(
     int operation,
     BaseTypes leftHandType,
     BaseTypes rightHandType,
-    BaseTypes targetTypes = BaseTypes.Any)
+    BaseTypes targetTypes = BaseTypes.Any,
+    IArithmeticOperation? instance = null)
     : IArithmeticOpMetadata, IEquatable<ArithmeticOpKey>
 {
     public BaseTypes LeftHandType { get; } = leftHandType;
@@ -28,6 +29,8 @@ internal class ArithmeticOpKey(
     public int Operation { get; } = operation;
 
     public BaseTypes ResultType { get; } = targetTypes;
+
+    public IArithmeticOperation? Instance { get; } = instance;
 
     [ExcludeFromCodeCoverage]
     public bool Equals(ArithmeticOpKey? other)

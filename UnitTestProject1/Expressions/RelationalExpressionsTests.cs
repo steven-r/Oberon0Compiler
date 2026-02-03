@@ -14,8 +14,6 @@ using Oberon0.Compiler.Expressions.Constant;
 using Oberon0.Compiler.Solver;
 using Oberon0.Compiler.Statements;
 using Oberon0.Test.Support;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Oberon0.Compiler.Tests.Expressions
 {
@@ -39,7 +37,7 @@ namespace Oberon0.Compiler.Tests.Expressions
             m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")!));
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.NOT,
-                VariableReferenceExpression.Create(m.Block.LookupVar("a")!, null)!,
+                VariableReferenceExpression.Create(m.Block.LookupVar("a"), null)!,
                 null,
                 m.Block);
             Assert.NotNull(e);
@@ -54,11 +52,11 @@ namespace Oberon0.Compiler.Tests.Expressions
             m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("INTEGER")!));
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.MINUS,
-                VariableReferenceExpression.Create(m.Block.LookupVar("a")!, null)!,
+                VariableReferenceExpression.Create(m.Block.LookupVar("a"), null)!,
                 null,
                 m.Block);
             Assert.NotNull(e);
-            var result = Assert.IsAssignableFrom<UnaryExpression>(ConstantSolver.Solve(e, m.Block));
+            var result = Assert.IsType<UnaryExpression>(ConstantSolver.Solve(e, m.Block), exactMatch: false);
             Assert.NotNull(result);
         }
 
@@ -331,7 +329,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestAnd1()
         {
             var m = TestHelper.CompileSingleStatement("x := a & b");
-            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            var assignment = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(assignment);
             var binExpr = assignment.Expression as BinaryExpression;
             Assert.NotNull(binExpr);
@@ -343,7 +341,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestAnd2()
         {
             var m = TestHelper.CompileSingleStatement("x := a & TRUE");
-            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            var assignment = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(assignment);
             var binExpr = assignment.Expression as BinaryExpression;
             Assert.NotNull(binExpr);
@@ -362,7 +360,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestAndConstFalse()
         {
             var m = TestHelper.CompileSingleStatement("x := TRUE & FALSE");
-            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            var assignment = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
             Assert.NotNull(boolExpression);
@@ -373,7 +371,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestAndConstTrue()
         {
             var m = TestHelper.CompileSingleStatement("x := TRUE & TRUE");
-            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            var assignment = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
             Assert.NotNull(boolExpression);
@@ -386,7 +384,7 @@ namespace Oberon0.Compiler.Tests.Expressions
             var m = TestHelper.CompileString(
                 "MODULE test; CONST true_ = TRUE; false_ = FALSE; VAR a,b,c,d,e,f,g,h,x,y,z: BOOLEAN; BEGIN b := 1 END test.");
 
-            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            var assignment = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantIntExpression;
             Assert.NotNull(boolExpression);
@@ -398,7 +396,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestNotConst()
         {
             var m = TestHelper.CompileSingleStatement("x := ~false_");
-            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            var assignment = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
             Assert.NotNull(boolExpression);
@@ -409,7 +407,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestNotDirect()
         {
             var m = TestHelper.CompileSingleStatement("x := ~FALSE");
-            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            var assignment = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
             Assert.NotNull(boolExpression);
@@ -435,7 +433,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestOr1()
         {
             var m = TestHelper.CompileSingleStatement("x := a OR b");
-            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            var assignment = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(assignment);
             var binExpr = assignment.Expression as BinaryExpression;
             Assert.NotNull(binExpr);
@@ -446,7 +444,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestOr2()
         {
             var m = TestHelper.CompileSingleStatement("x := a OR TRUE");
-            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            var assignment = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(assignment);
             var binExpr = assignment.Expression as BinaryExpression;
             Assert.NotNull(binExpr);
@@ -457,7 +455,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestOrConstTrue()
         {
             var m = TestHelper.CompileSingleStatement("x := FALSE OR TRUE");
-            var assignment = m.Block.Statements.First() as AssignmentStatement;
+            var assignment = m.Block.Statements[0] as AssignmentStatement;
             Assert.NotNull(assignment);
             var boolExpression = assignment.Expression as ConstantBoolExpression;
             Assert.NotNull(boolExpression);
@@ -481,7 +479,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestEqConstFalseTrueFalse()
         {
             var m = TestHelper.CompileSingleStatement("x := FALSE = TRUE");
-            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
             var boolExpression = Assert.IsType<ConstantBoolExpression>(assignment.Expression);
             Assert.False(boolExpression.ToBool());
         }
@@ -490,7 +488,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestEqConstFalseFalseTrue()
         {
             var m = TestHelper.CompileSingleStatement("x := FALSE = FALSE");
-            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
             var boolExpression = Assert.IsType<ConstantBoolExpression>(assignment.Expression);
             Assert.True(boolExpression.ToBool());
         }
@@ -499,7 +497,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestNotEqConstFalseFalseFalse()
         {
             var m = TestHelper.CompileSingleStatement("x := FALSE # FALSE");
-            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
             var boolExpression = Assert.IsType<ConstantBoolExpression>(assignment.Expression);
             Assert.False(boolExpression.ToBool());
         }
@@ -508,7 +506,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestNotEqConstFalseTrueTrue()
         {
             var m = TestHelper.CompileSingleStatement("x := FALSE # TRUE");
-            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
             var boolExpression = Assert.IsType<ConstantBoolExpression>(assignment.Expression);
             Assert.True(boolExpression.ToBool());
         }
@@ -517,7 +515,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestModIntInt()
         {
             var m = TestHelper.CompileSingleStatement("i := 10 MOD 3");
-            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
             var intExpression = Assert.IsType<ConstantIntExpression>(assignment.Expression);
             Assert.Equal(1, intExpression.ToInt32());
         }
@@ -526,7 +524,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void TestModIntDouble()
         {
             var m = TestHelper.CompileSingleStatement("r := 10.3 MOD 3");
-            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.First());
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements[0]);
             var result = Assert.IsType<ConstantDoubleExpression>(assignment.Expression);
             Assert.True(Math.Abs(1.3 - result.ToDouble()) < double.Epsilon);
         }
@@ -535,7 +533,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void ConstantSolverReturnRegularExpression()
         {
             var m = TestHelper.CompileSingleStatement("s := 5.2; r := 10.3 MOD s");
-            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements.Last());
+            var assignment = Assert.IsType<AssignmentStatement>(m.Block.Statements[^1]);
             var bin = Assert.IsType<BinaryExpression>(assignment.Expression);
             Assert.Equal(OberonGrammarLexer.MOD, bin.Operator);
             Assert.Equal("REAL", bin.TargetType.Name);
