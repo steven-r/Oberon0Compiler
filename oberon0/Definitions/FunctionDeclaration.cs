@@ -44,8 +44,8 @@ namespace Oberon0.Compiler.Definitions
         ///     Initializes a new instance of the <see cref="FunctionDeclaration" /> class.
         /// </summary>
         /// <param name="name">The name.</param>
-        /// <param name="block">The block.</param>
         /// <param name="returnType">Type of the return.</param>
+        /// <param name="block">The block.</param>
         /// <param name="parameters">The parameters.</param>
         internal FunctionDeclaration(
             string name,
@@ -109,7 +109,7 @@ namespace Oberon0.Compiler.Definitions
         /// </summary>
         /// <example>
         ///     An example prototype might look like:
-        ///     <code>$$Void WriteInt(INTEGER)</code> or <code>$$VOID ReadInt(&amp;INTEGER);</code>
+        ///     <c>$$Void WriteInt(INTEGER)</c> or <c>$$VOID ReadInt(&amp;INTEGER);</c>
         /// </example>
         /// <param name="name">The function/procedure</param>
         /// <param name="returnType">the return type</param>
@@ -149,7 +149,7 @@ namespace Oberon0.Compiler.Definitions
                     list.Add(parameterName);
                 }
 
-                sb.Append(string.Join(",", list));
+                sb.AppendJoin(",", list);
                 sb.Append(')');
             }
 

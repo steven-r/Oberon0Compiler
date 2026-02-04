@@ -188,7 +188,7 @@ namespace Oberon0.Compiler
             {
                 parser.NotifyErrorListeners(context.op,
                     $"Left and right expression are not compatible with {context.op.Text}", null);
-            } 
+            }
         }
 
         public override void ExitExprRelPrecedence(OberonGrammarParser.ExprRelPrecedenceContext context)
@@ -202,7 +202,7 @@ namespace Oberon0.Compiler
             {
                 parser.NotifyErrorListeners(context.op,
                     $"Left and right expression are not compatible with {context.op.Text}", null);
-            } 
+            }
         }
 
         public override void ExitExprFuncCall(OberonGrammarParser.ExprFuncCallContext context)
@@ -326,7 +326,7 @@ namespace Oberon0.Compiler
                     continue; // ignore this element
                 }
 
-                context.record.Elements.Add(new Declaration(name, context.t.returnType));
+                context.record.Elements.Add(new VariableDeclaration(name, context.t.returnType));
             }
         }
 
@@ -441,7 +441,7 @@ namespace Oberon0.Compiler
                     parser.NotifyErrorListeners(token.Start, "Variable declared twice", null);
                 } else
                 {
-                    var declaration = new Declaration(
+                    var declaration = new VariableDeclaration(
                         token.ID().GetText(),
                         context.t.returnType,
                         parser.currentBlock) {Exportable = token.export != null};
@@ -553,8 +553,8 @@ namespace Oberon0.Compiler
 
         private void CheckExportable(IToken? exportElement, bool isExportable, bool checkParent = false)
         {
-            if (isExportable && (parser.currentBlock.Parent != null && !checkParent ||
-                checkParent && parser.currentBlock.Parent?.Parent != null))
+            if (isExportable && ((parser.currentBlock.Parent != null && !checkParent) ||
+                (checkParent && parser.currentBlock.Parent?.Parent != null)))
             {
                 parser.NotifyErrorListeners(exportElement, "Exportable elements can only be defined as global", null);
             }

@@ -5,23 +5,19 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System;
+using Oberon0.Compiler.Generator;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Oberon0.Compiler.Exceptions;
+namespace Oberon0.Generator.MsilBin.GeneratorInfo;
 
+/// <summary>
+/// Options for binary file generation
+/// </summary>
 [ExcludeFromCodeCoverage]
-public class InternalCompilerException : Exception
+public class MsilCreateBinaryOptions: CreateBinaryOptionsBase
 {
-    public InternalCompilerException(string message) : base(message)
-    {
-    }
-
-    public InternalCompilerException() : base()
-    {
-    }
-
-    public InternalCompilerException(string? message, Exception? innerException) : base(message, innerException)
-    {
-    }
+    /// <summary>
+    /// The framework to be used
+    /// </summary>
+    public static string FrameworkVersion => "net10.0";
 }

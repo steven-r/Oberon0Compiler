@@ -14,39 +14,33 @@ namespace Oberon0.Compiler.Definitions
     /// <summary>
     ///     Function that has been declared outside the compiler structure (e.g. Oberon0System).
     /// </summary>
+    /// <remarks>
+    ///     Declare a new external function
+    /// </remarks>
+    /// <param name="name">The name of the function in Oberon0</param>
+    /// <param name="block">The surrounding block</param>
+    /// <param name="returnType">The return type</param>
+    /// <param name="className">The class name</param>
+    /// <param name="methodName">The method name</param>
+    /// <param name="parameters">a list of parameters</param>
     [DebuggerDisplay("<EXT> {ReturnType} {Name} -> {ClassName}.{MethodName}")]
-    public class ExternalFunctionDeclaration : FunctionDeclaration
+    public class ExternalFunctionDeclaration(
+        string name,
+        Block block,
+        TypeDefinition returnType,
+        string className,
+        string methodName,
+        params ProcedureParameterDeclaration[] parameters) : FunctionDeclaration(name, block, returnType, parameters)
     {
-        /// <summary>
-        ///     Declare a new external function
-        /// </summary>
-        /// <param name="name">The name of the function in Oberon0</param>
-        /// <param name="block">The surrounding block</param>
-        /// <param name="returnType">The return type</param>
-        /// <param name="methodName">The method name</param>
-        /// <param name="parameters">a list of parameters</param>
-        /// <param name="className">The class name</param>
-        public ExternalFunctionDeclaration(
-            string name,
-            Block block,
-            TypeDefinition returnType,
-            string className,
-            string methodName,
-            params ProcedureParameterDeclaration[] parameters)
-            : base(name, block, returnType, parameters)
-        {
-            ClassName = className ?? throw new ArgumentNullException(nameof(className));
-            MethodName = methodName ?? throw new ArgumentNullException(nameof(methodName));
-        }
 
         /// <summary>
         ///     The class name this Method belongs to
         /// </summary>
-        public string ClassName { get; }
+        public string ClassName { get; } = className ?? throw new ArgumentNullException(nameof(className));
 
         /// <summary>
         ///     The name of the implementation method
         /// </summary>
-        public string MethodName { get; }
+        public string MethodName { get; } = methodName ?? throw new ArgumentNullException(nameof(methodName));
     }
 }

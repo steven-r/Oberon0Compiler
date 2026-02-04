@@ -44,7 +44,7 @@ namespace Oberon0.Generator.MsilBin
                 pp.GeneratorInfo = new DeclarationGeneratorInfo();
 
                 // rename parameter and create a new field
-                var field = new Declaration(name, pp.Type, block)
+                var field = new VariableDeclaration(name, pp.Type, block)
                 {
                     GeneratorInfo = new DeclarationGeneratorInfo()
                 };
@@ -58,7 +58,7 @@ namespace Oberon0.Generator.MsilBin
 
         /**
          * Add RECORD elements to a class
-         * 
+         *
          * @return The updated @see classDeclaration
          */
         private ClassDeclarationSyntax GenerateRecordDeclarations(ClassDeclarationSyntax classDeclaration, Block block)
@@ -85,10 +85,9 @@ namespace Oberon0.Generator.MsilBin
         }
 
         /**
- * 
- * 
- * @returns the class declaration containing all added records
- */
+         *
+         * @returns the class declaration containing all added records
+         */
 
         /// <summary>
         /// Generate a class containing a RECORD definitions
@@ -110,7 +109,7 @@ namespace Oberon0.Generator.MsilBin
         /// as it is (legally) created as part of the variable declaration.
         /// </para>
         /// <para>
-        /// To create a structure that is valid for the intermediate code, those fields get a unique name <code>__internal__{id}</code>
+        /// To create a structure that is valid for the intermediate code, those fields get a unique name <c>__internal__{id}</c>
         /// where id is an increasing counter.
         /// </para>
         /// </remarks>
@@ -143,7 +142,7 @@ namespace Oberon0.Generator.MsilBin
             if (constDeclaration.GeneratorInfo is ConstDeclarationGeneratorInfo { GeneratorFunc: not null } gi)
             {
                 assignment = SyntaxFactory.EqualsValueClause(gi.GeneratorFunc(constDeclaration));
-            } 
+            }
             else
             {
                 // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
@@ -163,7 +162,7 @@ namespace Oberon0.Generator.MsilBin
                             SyntaxKind.NumericLiteralExpression,
                             SyntaxFactory.Literal(constDeclaration.Value.ToDouble()))),
                     _ => throw new ArgumentException(
-                        "Cannot handle type " + Enum.GetName(typeof(BaseTypes), constDeclaration.Type.Type),
+                        "Cannot handle type " + Enum.GetName(constDeclaration.Type.Type),
                         nameof(constDeclaration))
                 };
             }
@@ -178,15 +177,9 @@ namespace Oberon0.Generator.MsilBin
                 return null;
             }
             var field = SyntaxFactory.FieldDeclaration(varDeclaration);
-            if (makePublic || declaration.Exportable)
-            {
-                field = field.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
-            } else
-            {
-                field = field.AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
-            }
-
-            return field;
+            return makePublic || declaration.Exportable
+                ? field.AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                : field.AddModifiers(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
         }
 
         private static VariableDeclarationSyntax? GenerateVariableDeclaration(Declaration declaration)
@@ -334,7 +327,7 @@ namespace Oberon0.Generator.MsilBin
             return variable;
         }
 
-        private static IReadOnlyList<StatementSyntax> GenerateLocalDefinitions(FunctionDeclaration functionDeclaration)
+        private static SyntaxList<StatementSyntax> GenerateLocalDefinitions(FunctionDeclaration functionDeclaration)
         {
             var statements =
                 new SyntaxList<StatementSyntax>();
@@ -379,7 +372,7 @@ namespace Oberon0.Generator.MsilBin
             }
 
             // should not happen
-            throw new ArgumentException("Unknown type " + Enum.GetName(typeof(BaseTypes), declaration.Type.Type),
+            throw new ArgumentException("Unknown type " + Enum.GetName(declaration.Type.Type),
                 nameof(declaration));
         }
 
@@ -401,7 +394,7 @@ namespace Oberon0.Generator.MsilBin
                         case "EPSILON":
                             gi.GeneratorFunc = _ => SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
-                                SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DoubleKeyword)), 
+                                SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DoubleKeyword)),
                                   MapIdentifierName("Epsilon"));
                             break;
                         case "TRUE" or "FALSE":

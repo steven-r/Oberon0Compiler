@@ -6,16 +6,16 @@
 #endregion
 
 using Oberon0.Compiler.Generator;
+using Oberon0.Generator.MsilBin.GeneratorInfo;
 
-namespace Oberon0.Generator.MsilBin
+namespace Oberon0.Generator.MsilBin;
+
+public partial class MsilBinGenerator
 {
-    public partial class MsilBinGenerator
+    /// <inheritdoc />
+    public bool GenerateBinary(CreateBinaryOptionsBase? options = null)
     {
-        /// <inheritdoc />
-        public bool GenerateBinary(CreateBinaryOptions? options = null)
-        {
-            var binary = new CreateBinary(this, options);
-            return binary.Execute();
-        }
+        var binary = new CreateBinary(this, options as MsilCreateBinaryOptions);
+        return binary.Execute();
     }
 }

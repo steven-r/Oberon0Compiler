@@ -57,5 +57,11 @@ namespace Oberon0.Compiler.Types
         public abstract TypeDefinition Clone(string name);
 
         public abstract bool IsAssignable(TypeDefinition sourceType);
+
+        public bool IsSimpleType() => Type.HasFlag(BaseTypes.Simple);
+
+        public bool IsComplexType() => Type.HasFlag(BaseTypes.Complex);
+
+        public bool IsAnyType() => Type == BaseTypes.Any;
     }
 }

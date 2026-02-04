@@ -14,6 +14,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Oberon0.Compiler.Exceptions;
 using Oberon0.Compiler.Generator;
+using Oberon0.Generator.MsilBin.GeneratorInfo;
 
 namespace Oberon0.Generator.MsilBin
 {
@@ -23,14 +24,14 @@ namespace Oberon0.Generator.MsilBin
     internal class CreateBinary
     {
         private readonly ICodeGenerator _codeGenerator;
-        private readonly CreateBinaryOptions _options;
+        private readonly MsilCreateBinaryOptions _options;
 
-        public CreateBinary(ICodeGenerator codeGenerator, CreateBinaryOptions? options = null)
+        public CreateBinary(ICodeGenerator codeGenerator, MsilCreateBinaryOptions? options = null)
         {
             ArgumentNullException.ThrowIfNull(codeGenerator);
 
             _codeGenerator = codeGenerator;
-            _options = SetOptions(options ?? new CreateBinaryOptions());
+            _options = SetOptions(options ?? new MsilCreateBinaryOptions());
             if (!Directory.Exists(_options.OutputPath))
             {
                 throw new ArgumentException("Output path does not exist", nameof(options));
@@ -48,7 +49,7 @@ namespace Oberon0.Generator.MsilBin
             return execName;
         }
 
-        private CreateBinaryOptions SetOptions(CreateBinaryOptions options)
+        private MsilCreateBinaryOptions SetOptions(MsilCreateBinaryOptions options)
         {
             options.ModuleName ??= _codeGenerator.Module.Name ?? throw new InternalCompilerException("Name needs to be set");
             options.SolutionPath ??= BuildOutputPath(options);
@@ -56,7 +57,7 @@ namespace Oberon0.Generator.MsilBin
             return options;
         }
 
-        private static string BuildOutputPath(CreateBinaryOptions options)
+        private static string BuildOutputPath(MsilCreateBinaryOptions options)
         {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "Oberon0", "MSIL",
@@ -140,7 +141,7 @@ namespace Oberon0.Generator.MsilBin
                 "new",
                 // ReSharper disable once StringLiteralTypo
                 _codeGenerator.Module.HasExports ? "classlib" : "console",
-                "--framework", CreateBinaryOptions.FrameworkVersion
+                "--framework", MsilCreateBinaryOptions.FrameworkVersion
             ];
 
             string execName = GetDotnetExe();

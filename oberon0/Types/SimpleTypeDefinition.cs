@@ -5,65 +5,71 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Oberon0.Compiler.Types
+namespace Oberon0.Compiler.Types;
+
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+public class SimpleTypeDefinition : TypeDefinition
 {
-    public class SimpleTypeDefinition : TypeDefinition
+    private SimpleTypeDefinition(BaseTypes baseTypes, string name)
+        : base(baseTypes)
     {
-        private SimpleTypeDefinition(BaseTypes baseTypes, string name)
-            : base(baseTypes)
-        {
-            Name = name;
-        }
+        Name = name;
+    }
 
-        public SimpleTypeDefinition(BaseTypes baseTypes, string name, bool isInternal)
-            : base(baseTypes, isInternal)
-        {
-            Name = name;
-        }
+    public SimpleTypeDefinition(BaseTypes baseTypes, string name, bool isInternal)
+        : base(baseTypes, isInternal)
+    {
+        Name = name;
+    }
 
-        /// <summary>
-        ///     Gets or sets the global reference to "BOOLEAN".
-        /// </summary>
-        public static TypeDefinition BoolType { get; set; } = null!;
+    /// <summary>
+    ///     Gets or sets the global reference to "BOOLEAN".
+    /// </summary>
+    public static TypeDefinition BoolType { get; set; } = null!;
 
-        /// <summary>
-        ///     Gets or sets the global reference to "INTEGER".
-        /// </summary>
-        public static TypeDefinition IntType { get; set; } = null!;
+    /// <summary>
+    ///     Gets or sets the global reference to "INTEGER".
+    /// </summary>
+    public static TypeDefinition IntType { get; set; } = null!;
 
-        /// <summary>
-        ///     Gets or sets the global reference to "REAL".
-        /// </summary>
-        public static TypeDefinition RealType { get; set; } = null!;
+    /// <summary>
+    ///     Gets or sets the global reference to "REAL".
+    /// </summary>
+    public static TypeDefinition RealType { get; set; } = null!;
 
-        /// <summary>
-        ///     Gets or sets the global reference to "STRING".
-        /// </summary>
-        public static TypeDefinition StringType { get; set; } = null!;
+    /// <summary>
+    ///     Gets or sets the global reference to "STRING".
+    /// </summary>
+    public static TypeDefinition StringType { get; set; } = null!;
 
-        /// <summary>
-        ///     Gets or sets the global reference to "VOID".
-        /// </summary>
-        public static TypeDefinition VoidType { get; set; } = null!;
+    /// <summary>
+    ///     Gets or sets the global reference to "VOID".
+    /// </summary>
+    public static TypeDefinition VoidType { get; set; } = null!;
 
-        public override TypeDefinition Clone(string name)
-        {
-            return new SimpleTypeDefinition(Type, name);
-        }
+    public override TypeDefinition Clone(string name)
+    {
+        return new SimpleTypeDefinition(Type, name);
+    }
 
-        public override bool IsAssignable(TypeDefinition sourceType)
-        {
-            return sourceType.Type == Type // same simple type
-             || (sourceType.Type.HasFlag(BaseTypes.Int) && Type.HasFlag(BaseTypes.Real))
-             || (sourceType.Type.HasFlag(BaseTypes.Int) && Type.HasFlag(BaseTypes.Bool));
-        }
+    public override bool IsAssignable(TypeDefinition sourceType)
+    {
+        return sourceType.Type == Type // same simple type
+         || (sourceType.Type.HasFlag(BaseTypes.Int) && Type.HasFlag(BaseTypes.Real))
+         || (sourceType.Type.HasFlag(BaseTypes.Int) && Type.HasFlag(BaseTypes.Bool));
+    }
 
-        [ExcludeFromCodeCoverage]
-        public override string ToString()
-        {
-            return Name ?? "<unset>";
-        }
+    [ExcludeFromCodeCoverage]
+    public override string ToString()
+    {
+        return Name ?? "<unset>";
+    }
+
+    private string GetDebuggerDisplay()
+    {
+        return ToString();
     }
 }

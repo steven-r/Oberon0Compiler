@@ -12,8 +12,7 @@ namespace Oberon0.Compiler.Types;
 /// <summary>
 ///     Standard types
 /// </summary>
-[Flags]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1157:Composite enum value contains undefined flag", Justification = "Compound flags are needed for proper lookup")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1130:Bitwise operation on enum without Flags attribute", Justification = "<Ausstehend>")]
 public enum BaseTypes
 {
     None = 0,
@@ -26,32 +25,32 @@ public enum BaseTypes
     /// <summary>
     ///     Standard integer
     /// </summary>
-    Int = Simple | 1,
+    Int = 0x10001,
 
     /// <summary>
-    ///     The string type - Not in use
+    ///     The string type
     /// </summary>
-    String = Simple | 2,
+    String = 0x10002,
 
     /// <summary>
     ///     The REAL type
     /// </summary>
-    Real = Simple | 4,
+    Real = 0x10004,
 
     /// <summary>
     /// Generic number type
     /// </summary>
-    Number = Real | Int,
+    Number = Int | Real,
 
     /// <summary>
     ///     The bool type
     /// </summary>
-    Bool = Simple | 8,
+    Bool = 0x10008,
 
     /// <summary>
     ///     a "non" type. This means no value (like an empty return value for a function)
     /// </summary>
-    Void = Simple | 16,
+    Void = 0x10010,
 
     /// <summary>
     ///     Any type - used for internal functions (like WRITELN)
@@ -66,10 +65,10 @@ public enum BaseTypes
     /// <summary>
     ///     record type
     /// </summary>
-    Record = Complex | 1,
+    Record = 0x40001,
 
     /// <summary>
     ///     array type
     /// </summary>
-    Array = Complex | 2
+    Array = 0x40002,
 }

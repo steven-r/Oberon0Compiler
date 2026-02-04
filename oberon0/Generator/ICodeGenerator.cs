@@ -54,5 +54,5 @@ public interface ICodeGenerator
     /// </summary>
     /// <param name="options">The options to be passed to binary creation</param>
     /// <returns><c>true</c>, if generation was successfully.</returns>
-    bool GenerateBinary(CreateBinaryOptions? options = null);
+    bool GenerateBinary(CreateBinaryOptionsBase? options = null);
 }

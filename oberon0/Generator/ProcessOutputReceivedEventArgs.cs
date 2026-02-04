@@ -9,9 +9,9 @@ using System;
 
 namespace Oberon0.Compiler.Generator;
 
-public class ProcessOutputReceivedEventArgs(CreateBinaryOptions options, string data) : EventArgs
+public class ProcessOutputReceivedEventArgs(CreateBinaryOptionsBase options, string data) : EventArgs
 {
-    public CreateBinaryOptions Options { get; } = options;
+    public CreateBinaryOptionsBase Options { get; } = options;
 
     public string Data { get; } = data;
 }

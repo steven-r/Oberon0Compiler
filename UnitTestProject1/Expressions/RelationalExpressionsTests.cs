@@ -34,7 +34,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void ExpressionNot2()
         {
             var m = new Module(null);
-            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")!));
+            m.Block.Declarations.Add(new VariableDeclaration("a", m.Block.LookupType("BOOLEAN")!));
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.NOT,
                 VariableReferenceExpression.Create(m.Block.LookupVar("a"), null)!,
@@ -49,7 +49,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void ExpressionUnaryMinus()
         {
             var m = new Module(null);
-            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("INTEGER")!));
+            m.Block.Declarations.Add(new VariableDeclaration("a", m.Block.LookupType("INTEGER")!));
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.MINUS,
                 VariableReferenceExpression.Create(m.Block.LookupVar("a"), null)!,
@@ -304,7 +304,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void ExpressionRelVar()
         {
             var m = new Module(null);
-            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("INTEGER")!));
+            m.Block.Declarations.Add(new VariableDeclaration("a", m.Block.LookupType("INTEGER")!));
             var e = BinaryExpression.Create(
                 OberonGrammarLexer.NOTEQUAL,
                 VariableReferenceExpression.Create(m.Block.LookupVar("a"), null)!,
@@ -320,7 +320,7 @@ namespace Oberon0.Compiler.Tests.Expressions
         public void ExpressionVarNotFound()
         {
             var m = new Module(null);
-            m.Block.Declarations.Add(new Declaration("a", m.Block.LookupType("BOOLEAN")!));
+            m.Block.Declarations.Add(new VariableDeclaration("a", m.Block.LookupType("BOOLEAN")!));
             Assert.Throws<InternalCompilerException>(() => VariableReferenceExpression.Create(m.Block.LookupVar("b"), null));
         }
 

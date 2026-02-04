@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 using Oberon0.Compiler;
 using Oberon0.Compiler.Generator;
 using Oberon0.Generator.MsilBin;
+using Oberon0.Generator.MsilBin.GeneratorInfo;
 using System;
 using System.CommandLine;
 using System.CommandLine.Parsing;
@@ -107,7 +108,7 @@ namespace Oberon0.Msil
 
             cg.GenerateIntermediateCode();
 
-            return cg.GenerateBinary(new CreateBinaryOptions()
+            return cg.GenerateBinary(new MsilCreateBinaryOptions()
             {
                 OutputPath = outputPath?.FullName ?? Path.GetDirectoryName(inputFile.FullName),
                 CleanSolution = clean,

@@ -10,9 +10,20 @@ using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Definitions
 {
-    public class Declaration(string name, TypeDefinition type, Block? block)
+    /// <summary>
+    /// Represents a declaration in an Oberon0 program, such as variables, constants, types, or procedures.
+    /// </summary>
+    /// <param name="name">The name of the declared entity.</param>
+    /// <param name="type">The type definition of the declared entity.</param>
+    /// <param name="block">The block in which the declaration is defined, or <c>null</c> if not associated with a specific block.</param>
+    public abstract class Declaration(string name, TypeDefinition type, Block? block)
     {
-        public Declaration(string name, TypeDefinition type)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Declaration"/> class without an associated block.
+        /// </summary>
+        /// <param name="name">The name of the declared entity.</param>
+        /// <param name="type">The type definition of the declared entity.</param>
+        protected Declaration(string name, TypeDefinition type)
             : this(name, type, null)
         {
         }
@@ -43,6 +54,10 @@ namespace Oberon0.Compiler.Definitions
         /// </summary>
         public TypeDefinition Type { get; } = type;
 
+        /// <summary>
+        /// Returns a string representation of this declaration.
+        /// </summary>
+        /// <returns>A string in the format "{Name}:{Type}".</returns>
         public override string ToString()
         {
             return $"{Name}:{Type}";

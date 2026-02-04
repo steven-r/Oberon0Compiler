@@ -30,7 +30,7 @@ namespace Oberon0.Generator.MsilBin
         private NamespaceDeclarationSyntax? _namespace;
 
         /// <summary>
-        ///     The main class being generated (usually <code>Oberon0.{module name}</code>)
+        ///     The main class being generated (usually <c>Oberon0.{module name}</c>)
         /// </summary>
         public string MainClassName { get; set; } = null!;
 
@@ -122,9 +122,8 @@ namespace Oberon0.Generator.MsilBin
             var statements =
                 new SyntaxList<StatementSyntax>(GenerateLocalDefinitions(functionDeclaration));
             statements = GenerateBlockStatements(functionDeclaration.Block, statements);
-            function = function.WithBody(
+            return function.WithBody(
                 SyntaxFactory.Block(statements));
-            return function;
         }
 
         private void ProcessMainBlock(Block block)

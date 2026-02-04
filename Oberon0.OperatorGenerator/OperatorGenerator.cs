@@ -2,12 +2,14 @@
 using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
 namespace InternalGenerators;
 
 [Generator]
+[ExcludeFromCodeCoverage]
 public class OperatorGenerator : IIncrementalGenerator
 {
     internal static readonly string AttributeName = "ArithmeticOperation";
