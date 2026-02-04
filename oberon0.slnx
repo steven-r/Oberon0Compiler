@@ -8,6 +8,7 @@
   <Folder Name="/BinOutput/">
     <Project Path="Oberon0.Generator.MsilBin.Tests/Oberon0.Generator.MsilBin.Tests.csproj" />
     <Project Path="Oberon0.Generator.MsilBin/Oberon0.Generator.MsilBin.csproj" />
+    <Project Path="Oberon0.LLVM/Oberon0.LLVM.csproj" />
   </Folder>
   <Folder Name="/CmdTools/">
     <Project Path="Oberon0.Msil/Oberon0.Msil.csproj" />
