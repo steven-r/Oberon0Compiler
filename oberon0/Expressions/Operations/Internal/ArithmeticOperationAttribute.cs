@@ -6,10 +6,12 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Oberon0.Compiler.Types;
 
 namespace Oberon0.Compiler.Expressions.Operations.Internal;
 
+[ExcludeFromCodeCoverage]
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public class ArithmeticOperationAttribute(
     int operation,
