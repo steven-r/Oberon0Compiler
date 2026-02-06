@@ -332,22 +332,16 @@ namespace Oberon0.Generator.MsilBin
             var statements =
                 new SyntaxList<StatementSyntax>();
             // declarations
-            foreach (var declaration in functionDeclaration.Block.Declarations)
+            foreach (var declaration in functionDeclaration.Block.Declarations
+                .Where(d => d is VariableDeclaration ||
+                            (d is ConstDeclaration constDeclaration &&
+                                constDeclaration.GeneratorInfo is ConstDeclarationGeneratorInfo { DropGeneration: false })))
             {
-                switch (declaration)
+                var localDeclaration = GenerateVariableDeclaration(declaration);
+                if (localDeclaration != null)
                 {
-                    case ProcedureParameterDeclaration:
-                    case ConstDeclaration constDeclaration when
-                        ((constDeclaration.GeneratorInfo as ConstDeclarationGeneratorInfo)!).DropGeneration:
-                        continue;
-                    default:
-                        var localDeclaration = GenerateVariableDeclaration(declaration);
-                        if (localDeclaration != null)
-                        {
-                            statements =
-                                statements.Add(SyntaxFactory.LocalDeclarationStatement(localDeclaration));
-                        }
-                        break;
+                    statements =
+                        statements.Add(SyntaxFactory.LocalDeclarationStatement(localDeclaration));
                 }
             }
 
