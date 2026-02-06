@@ -68,6 +68,7 @@ public class SimpleTypeDefinition : TypeDefinition
         return Name ?? "<unset>";
     }
 
+    [ExcludeFromCodeCoverage, DebuggerHidden]
     private string GetDebuggerDisplay()
     {
         return ToString();
